@@ -1,0 +1,56 @@
+{
+  "name": "carouzel",
+  "version": "1.0.1",
+  "description": "<TO BE UPDATED>",
+  "private": false,
+  "scripts": {
+    "generatedata": "node ./scripts/generatedata.js && node ./scripts/generatedata-2.js",
+    "compile:sass": "node-sass --source-map true src/sass-theme-1/ -o dist/styles/theme-1 && node-sass --source-map true src/sass-theme-2/ -o dist/styles/theme-2",
+    "compile:ts": "tsc --target es3 --module commonjs --outDir ./dist/scripts --declaration true --declarationMap true --sourceMap true",
+    "uglify:js": "uglifyjs dist/scripts/carouzel.js -o dist/scripts/carouzel.min.js -c -m",
+    "uglify:css": "uglifycss dist/styles/theme-1/carouzel.css --output dist/styles/theme-1/carouzel.min.css && uglifycss dist/styles/theme-2/carouzel.css --output dist/styles/theme-2/carouzel.min.css",
+    "only:js": "npm run compile:ts && npm run uglify:js",
+    "only:css": "npm run compile:sass && npm run uglify:css",
+    "build:dev": "npm run compile:ts && npm run compile:sass",
+    "build:prod": "npm run build:dev && npm run uglify:js && npm run uglify:css && npm run compile:sitesass",
+    "compile:sitesass": "node-sass src/sass-site/ -o dist/styles/site && uglifycss dist/styles/site/index.css --output dist/styles/site/index.min.css",
+    "test": "karma start karma.conf.js"
+  },
+  "main": "dist/scripts/carouzel.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adityakahb/carouzel.git"
+  },
+  "keywords": [
+    "<TO BE UPDATED>",
+    "es6",
+    "es3"
+  ],
+  "author": "https://github.com/adityakahb",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/adityakahb/carouzel/issues"
+  },
+  "homepage": "https://adityakahb.github.io/carouzel",
+  "devDependencies": {
+    "@babel/core": "^7.15.5",
+    "@babel/preset-env": "^7.15.6",
+    "bootstrap": "^5.1.1",
+    "istanbul": "^0.4.5",
+    "jasmine-core": "^3.9.0",
+    "karma": "^6.3.4",
+    "karma-babel-preprocessor": "^8.0.1",
+    "karma-chrome-launcher": "^3.1.0",
+    "karma-coverage": "^2.0.3",
+    "karma-firefox-launcher": "^2.1.1",
+    "karma-ie-launcher": "^1.0.0",
+    "karma-jasmine": "^4.0.1",
+    "karma-jasmine-html-reporter": "^1.7.0",
+    "karma-spec-reporter": "0.0.32",
+    "karma-viewport": "^1.0.8",
+    "node-sass": "^6.0.1",
+    "typescript": "^4.4.3",
+    "uglify-js": "^3.14.2",
+    "uglifycss": "0.0.29"
+  }
+}
