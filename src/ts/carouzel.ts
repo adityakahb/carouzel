@@ -14,73 +14,53 @@ namespace Carouzel {
 
   interface IRoot {
     [key: string]: any;
-  }
+  };
+  interface ICarouzelResponsiveSettings {
+    breakpoint?: number;
+    showArrows?: boolean;
+    showNav?: boolean;
+    slidesToScroll?: number;
+    slidesToShow?: number;
+  };
   interface ICarouzelSettings {
     activeCls?: string;
-    actOnHover?: boolean;
-    actOnHoverAt?: number;
-    backBtnCls?: string;
-    closeBtnCls?: string;
-    colCls?: string;
-    colShiftCls?: string;
-    colWidthCls?: string;
-    focusCls?: string;
-    hoverCls?: string;
+    arrowsSelector?: string;
+    buttonSelector?: string;
     idPrefix?: string;
+    innerSelector?: string;
     isRTL?: boolean;
-    l0AnchorCls?: string;
-    l0PanelCls?: string;
-    l1ActiveCls?: string;
-    l1AnchorCls?: string;
-    l1PanelCls?: string;
-    l2ActiveCls?: string;
-    l2AnchorCls?: string;
-    landingCtaCls?: string;
-    lastcolCls?: string;
-    mainBtnCls?: string;
-    mainElementCls?: string;
-    offcanvasCls?: string;
-    overflowHiddenCls?: string;
-    panelCls?: string;
+    navSelector?: string;
+    nextArrowSelector?: string;
+    prevArrowSelector?: string;
+    responsive?: ICarouzelResponsiveSettings[];
     rootCls?: string;
+    rootSelector?: string;
     rtl_Cls?: string;
-    shiftColumns?: boolean;
-    supportedCols?: number;
-    toggleBtnCls?: string;
-  }
-
+    slideSelector?: string;
+    titleSelector?: string;
+    trackSelector?: string;
+  };
+  interface IEventHandler {
+    currentElement: Element;
+    removeEvent?: Function;
+  };
+  const _useCapture = false;
   const _Defaults = {
-    activeCls: '__amegmen-active',
-    actOnHover: false,
-    actOnHoverAt: 1280,
-    backBtnCls: '__amegmen--back-cta',
-    closeBtnCls: '__amegmen--close-cta',
-    colCls: '__amegmen--col',
-    colShiftCls: '__amegmen-shift',
-    colWidthCls: '__amegmen-width',
-    focusCls: '__amegmen-focus',
-    hoverCls: '__amegmen-hover',
-    idPrefix: '__amegmen_id',
+    activeCls: '__carouzel-active',
+    arrowsSelector: '[data-carouzelarrows]',
+    buttonSelector: '[data-carouzelbutton]',
+    idPrefix: '__carouzel_id',
+    innerSelector: '[data-carouzelwrap]',
     isRTL: false,
-    l0AnchorCls: '__amegmen--anchor-l0',
-    l0PanelCls: '__amegmen--panel-l0',
-    l1ActiveCls: '__amegmen--l1-active',
-    l1AnchorCls: '__amegmen--anchor-l1',
-    l1PanelCls: '__amegmen--panel-l1',
-    l2ActiveCls: '__amegmen--l2-active',
-    l2AnchorCls: '__amegmen--anchor-l2',
-    landingCtaCls: '__amegmen--landing',
-    lastcolCls: '__amegmen--col-last',
-    mainBtnCls: '__amegmen--main-cta',
-    mainElementCls: '__amegmen--main',
-    offcanvasCls: '__amegmen--canvas',
-    overflowHiddenCls: '__amegmen--nooverflow',
-    panelCls: '__amegmen--panel',
-    rootCls: '__amegmen',
-    rtl_Cls: '__amegmen--r-to-l',
-    shiftColumns: false,
-    supportedCols: 4,
-    toggleBtnCls: '__amegmen--toggle-cta',
+    navSelector: '[data-carouzelnav]',
+    nextArrowSelector: '[data-carouzelnext]',
+    prevArrowSelector: '[data-carouzelprev]',
+    rootCls: '__carouzel',
+    rootSelector: '[data-carouzel]',
+    rtl_Cls: '__carouzel--r-to-l',
+    slideSelector: '[data-carouzelslide]',
+    titleSelector: '[data-carouzeltitle]',
+    trackSelector: '[data-carouzeltrack]',
   };
 
   /**
@@ -171,6 +151,19 @@ namespace Carouzel {
       };
     }
   };
+  
+  /**
+   * Function to trim whitespaces from a string
+   * 
+   * @param str - The string which needs to be trimmed
+   * 
+   * @returns The trimmed string.
+   *
+   */
+  const _StringTrim = (str: string) => {
+    return str.replace(/^\s+|\s+$/g, '');
+  };
+
   /**
    * Function to convert NodeList and other lists to loopable Arrays
    * 
@@ -186,6 +179,148 @@ namespace Carouzel {
       return [];
     }
   };
+
+  /**
+   * Function to check wheather an element has a string in its class attribute
+   * 
+   * @param element - An HTML Element
+   * @param cls - A string
+   * 
+   * @returns `true` if the string exists in class attribute, otherwise `false`
+   *
+   */
+  const _HasClass = (element: HTMLElement, cls: string) => {
+    if (element) {
+      const clsarr = element.className.split(' ');
+      return clsarr.indexOf(cls) > -1 ? true : false;
+    }
+
+    return false;
+  };
+
+  /**
+   * Function to add a string to an element's class attribute
+   * 
+   * @param element - An HTML Element
+   * @param cls - A string
+   *
+   */
+  const _AddClass = (element: HTMLElement, cls: string) => {
+    if (element) {
+      let clsarr = cls.split(' ');
+      let clsarrLength = clsarr.length;
+      for (let i = 0; i < clsarrLength; i++) {
+        let thiscls = clsarr[i];
+        if (!_HasClass(element, thiscls)) {
+          element.className += ' ' + thiscls;
+        }
+      }
+      element.className = _StringTrim(element.className);
+    }
+  };
+
+  /**
+   * Function to remove a string from an element's class attribute
+   * 
+   * @param element - An HTML Element
+   * @param cls - A string
+   *
+   */
+  const _RemoveClass = (element: HTMLElement, cls: string) => {
+    if (element) {
+      let clsarr = cls.split(' ');
+      let curclass = element.className.split(' ');
+      let curclassLength = curclass.length;
+      for (let i = 0; i < curclassLength; i++) {
+        let thiscls = curclass[i];
+        if (clsarr.indexOf(thiscls) > -1) {
+          curclass.splice(i, 1);
+          i--;
+        }
+      }
+      element.className = _StringTrim(curclass.join(' '));
+    }
+  };
+
+  /**
+   * Function to add a unique id attribute if it is not present already. 
+   * This is required to monitor the outside click and hover behavior
+   * 
+   * @param element - An HTML Element
+   * @param settings - Options specific to individual AMegMen instance
+   * @param unique_number - A unique number as additional identification
+   * @param shouldAdd - If `true`, adds an id. Otherwise it is removed.
+   *
+   */
+  const _ToggleUniqueId = (element: HTMLElement, settings: ICarouzelSettings, unique_number: number, shouldAddId: boolean) => {
+    if (settings.idPrefix) {
+      if (shouldAddId && !element.getAttribute('id')) {
+        element.setAttribute('id', settings.idPrefix + '_' + new Date().getTime() + '_' + unique_number);
+      } else if (!shouldAddId && element.getAttribute('id')) {
+        const thisid = element.getAttribute('id');
+        const regex = new RegExp(settings.idPrefix, 'gi');
+        if (regex.test(thisid || '')) {
+          element.removeAttribute('id');
+        }
+      }
+    }
+  };
+
+  /**
+   * Function to remove all local events assigned to the navigation elements.
+   * 
+   * @param core - AMegMen instance core object
+   * @param element - An HTML Element from which the events need to be removed
+   *
+   */
+  const carouzel_removeEventListeners = (core: any, element: Element) => {
+    if ((core.eventHandlers || []).length > 0) {
+      let j = core.eventHandlers.length;
+      while (j--) {
+        if(core.eventHandlers[j].currentElement.isEqualNode && core.eventHandlers[j].currentElement.isEqualNode(element)) {
+          core.eventHandlers[j].removeEvent();
+          core.eventHandlers.splice(j, 1);
+        }
+      }
+    }
+  };
+
+  /**
+   * Function to remove all local events assigned to the navigation elements.
+   * 
+   * @param element - An HTML Element which needs to be assigned an event
+   * @param type - Event type
+   * @param listener - The Event handler function
+   * 
+   * @returns The event handler object
+   *
+   */
+  const carouzel_eventHandler = (element: Element, type: string, listener: EventListenerOrEventListenerObject) => {
+    const eventHandler:IEventHandler = {
+      currentElement: element,
+      removeEvent: () => {
+        element.removeEventListener(type, listener, _useCapture);
+      }
+    };
+    element.addEventListener(type, listener, _useCapture);
+    return eventHandler;
+  };
+
+  const carouzel_init = (core: any, rootElem: HTMLElement, settings: ICarouzelSettings) => {
+    _AddClass(rootElem, settings.rootCls ? settings.rootCls : '');
+    core.rootElem = rootElem;
+    core.settings = settings;
+    core.trackElem = rootElem.querySelector(`${settings.trackSelector}`);
+    core.allSlideElem = rootElem.querySelectorAll(`${settings.slideSelector}`);
+    core.prevArrow = rootElem.querySelectorAll(`${settings.prevArrowSelector}`);
+    core.nextArrow = rootElem.querySelectorAll(`${settings.nextArrowSelector}`);
+
+    if (settings.isRTL) {
+      _AddClass(rootElem, settings.rtl_Cls ? settings.rtl_Cls : '');
+    }
+    console.log(_ToggleUniqueId, core, _RemoveClass);
+  };
+
   /**
    *  ██████  ██████  ██████  ███████ 
    * ██      ██    ██ ██   ██ ██      
@@ -201,12 +336,12 @@ namespace Carouzel {
     private core: any = {};
 
     constructor(thisid: string, rootElem: HTMLElement, options?: ICarouzelSettings) {
-      // this.core = amm_init(this.core, rootElem, (Object as any).assign({}, _Defaults, options));
+      this.core = carouzel_init(this.core, rootElem, (Object as any).assign({}, _Defaults, options));
       this.core = options;
       console.log(rootElem);
       AllCarouzelInstances[thisid] = this.core;
     }
-    public destroy = (thisid: string) => {
+    protected destroy = (thisid: string) => {
       // amm_destroy(thisid, this.core);
       console.log(thisid);
     };
@@ -225,7 +360,7 @@ namespace Carouzel {
   export class Root {
     private instances: IRoot = {};
     protected static instance: Root | null = null;
-    
+
     /**
      * Constructor to initiate polyfills
      *
@@ -256,7 +391,7 @@ namespace Carouzel {
      * @param options - The optional object to customize every AMegMen instance.
      *
      */
-    public init = (query: string, options?: ICarouzelSettings) => {
+    protected init = (query: string, options?: ICarouzelSettings) => {
       const roots = _ArrayCall(document.querySelectorAll(query));
       const rootsLen = roots.length;
       let instancelen = 0;
@@ -299,7 +434,7 @@ namespace Carouzel {
      * @param query - The CSS selector for which the AMegMen needs to be initialized.
      *
      */
-    public destroy = (query: string) => {
+    protected destroy = (query: string) => {
       const roots = _ArrayCall(document.querySelectorAll(query));
       const rootsLen = roots.length;
       if (rootsLen > 0) {

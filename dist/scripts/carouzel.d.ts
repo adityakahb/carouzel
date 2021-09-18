@@ -1,36 +1,31 @@
+/***
+ *     ██████  █████  ██████   ██████  ██    ██ ███████ ███████ ██
+ *    ██      ██   ██ ██   ██ ██    ██ ██    ██    ███  ██      ██
+ *    ██      ███████ ██████  ██    ██ ██    ██   ███   █████   ██
+ *    ██      ██   ██ ██   ██ ██    ██ ██    ██  ███    ██      ██
+ *     ██████ ██   ██ ██   ██  ██████   ██████  ███████ ███████ ███████
+ *
+ *
+ */
 declare namespace Carouzel {
     interface ICarouzelSettings {
-        activeCls?: string;
-        actOnHover?: boolean;
-        actOnHoverAt?: number;
-        backBtnCls?: string;
-        closeBtnCls?: string;
-        colCls?: string;
-        colShiftCls?: string;
-        colWidthCls?: string;
-        focusCls?: string;
-        hoverCls?: string;
-        idPrefix?: string;
-        isRTL?: boolean;
-        l0AnchorCls?: string;
-        l0PanelCls?: string;
-        l1ActiveCls?: string;
-        l1AnchorCls?: string;
-        l1PanelCls?: string;
-        l2ActiveCls?: string;
-        l2AnchorCls?: string;
-        landingCtaCls?: string;
-        lastcolCls?: string;
-        mainBtnCls?: string;
-        mainElementCls?: string;
-        offcanvasCls?: string;
-        overflowHiddenCls?: string;
-        panelCls?: string;
-        rootCls?: string;
-        rtl_Cls?: string;
-        shiftColumns?: boolean;
-        supportedCols?: number;
-        toggleBtnCls?: string;
+        activeCls: string;
+        arrowsSelector: string;
+        buttonSelector: string;
+        idPrefix: string;
+        innerSelector: string;
+        isRTL: boolean;
+        navSelector: string;
+        nextArrowSelector: string;
+        prevArrowSelector: string;
+        rootCls: string;
+        rootSelector: string;
+        rtl_Cls: string;
+        slideSelector: string;
+        slidesToScroll: number;
+        slidesToShow: number;
+        titleSelector: string;
+        trackSelector: string;
     }
     /**
      * ██████   ██████   ██████  ████████
@@ -64,14 +59,14 @@ declare namespace Carouzel {
          * @param options - The optional object to customize every AMegMen instance.
          *
          */
-        init: (query: string, options?: ICarouzelSettings | undefined) => void;
+        protected init: (query: string, options?: ICarouzelSettings | undefined) => void;
         /**
          * Function to destroy the AMegMen plugin for provided query strings.
          *
          * @param query - The CSS selector for which the AMegMen needs to be initialized.
          *
          */
-        destroy: (query: string) => void;
+        protected destroy: (query: string) => void;
     }
     export {};
 }

@@ -1,39 +1,34 @@
+/***
+ *     ██████  █████  ██████   ██████  ██    ██ ███████ ███████ ██
+ *    ██      ██   ██ ██   ██ ██    ██ ██    ██    ███  ██      ██
+ *    ██      ███████ ██████  ██    ██ ██    ██   ███   █████   ██
+ *    ██      ██   ██ ██   ██ ██    ██ ██    ██  ███    ██      ██
+ *     ██████ ██   ██ ██   ██  ██████   ██████  ███████ ███████ ███████
+ *
+ *
+ */
 var Carouzel;
 (function (Carouzel) {
     "use strict";
     var AllCarouzelInstances = {};
     var _Defaults = {
-        activeCls: '__amegmen-active',
-        actOnHover: false,
-        actOnHoverAt: 1280,
-        backBtnCls: '__amegmen--back-cta',
-        closeBtnCls: '__amegmen--close-cta',
-        colCls: '__amegmen--col',
-        colShiftCls: '__amegmen-shift',
-        colWidthCls: '__amegmen-width',
-        focusCls: '__amegmen-focus',
-        hoverCls: '__amegmen-hover',
-        idPrefix: '__amegmen_id',
+        activeCls: '__carouzel-active',
+        arrowsSelector: '[data-carouzelarrows]',
+        buttonSelector: '[data-carouzelbutton]',
+        idPrefix: '__carouzel_id',
+        innerSelector: '[data-carouzelwrap]',
         isRTL: false,
-        l0AnchorCls: '__amegmen--anchor-l0',
-        l0PanelCls: '__amegmen--panel-l0',
-        l1ActiveCls: '__amegmen--l1-active',
-        l1AnchorCls: '__amegmen--anchor-l1',
-        l1PanelCls: '__amegmen--panel-l1',
-        l2ActiveCls: '__amegmen--l2-active',
-        l2AnchorCls: '__amegmen--anchor-l2',
-        landingCtaCls: '__amegmen--landing',
-        lastcolCls: '__amegmen--col-last',
-        mainBtnCls: '__amegmen--main-cta',
-        mainElementCls: '__amegmen--main',
-        offcanvasCls: '__amegmen--canvas',
-        overflowHiddenCls: '__amegmen--nooverflow',
-        panelCls: '__amegmen--panel',
-        rootCls: '__amegmen',
-        rtl_Cls: '__amegmen--r-to-l',
-        shiftColumns: false,
-        supportedCols: 4,
-        toggleBtnCls: '__amegmen--toggle-cta'
+        navSelector: '[data-carouzelnav]',
+        nextArrowSelector: '[data-carouzelnext]',
+        prevArrowSelector: '[data-carouzelprev]',
+        rootCls: '__carouzel',
+        rootSelector: '[data-carouzel]',
+        rtl_Cls: '__carouzel--r-to-l',
+        slideSelector: '[data-carouzelslide]',
+        slidesToScroll: 1,
+        slidesToShow: 1,
+        titleSelector: '[data-carouzeltitle]',
+        trackSelector: '[data-carouzeltrack]'
     };
     /**
      * Polyfill function for Object.assign
@@ -123,6 +118,17 @@ var Carouzel;
         }
     };
     /**
+     * Function to trim whitespaces from a string
+     *
+     * @param str - The string which needs to be trimmed
+     *
+     * @returns The trimmed string.
+     *
+     */
+    var _StringTrim = function (str) {
+        return str.replace(/^\s+|\s+$/g, '');
+    };
+    /**
      * Function to convert NodeList and other lists to loopable Arrays
      *
      * @param arr - Either Nodelist of any type of array
@@ -137,6 +143,101 @@ var Carouzel;
         catch (e) {
             return [];
         }
+    };
+    /**
+     * Function to check wheather an element has a string in its class attribute
+     *
+     * @param element - An HTML Element
+     * @param cls - A string
+     *
+     * @returns `true` if the string exists in class attribute, otherwise `false`
+     *
+     */
+    var _HasClass = function (element, cls) {
+        if (element) {
+            var clsarr = element.className.split(' ');
+            return clsarr.indexOf(cls) > -1 ? true : false;
+        }
+        return false;
+    };
+    /**
+     * Function to add a string to an element's class attribute
+     *
+     * @param element - An HTML Element
+     * @param cls - A string
+     *
+     */
+    var _AddClass = function (element, cls) {
+        if (element) {
+            var clsarr = cls.split(' ');
+            var clsarrLength = clsarr.length;
+            for (var i = 0; i < clsarrLength; i++) {
+                var thiscls = clsarr[i];
+                if (!_HasClass(element, thiscls)) {
+                    element.className += ' ' + thiscls;
+                }
+            }
+            element.className = _StringTrim(element.className);
+        }
+    };
+    /**
+     * Function to remove a string from an element's class attribute
+     *
+     * @param element - An HTML Element
+     * @param cls - A string
+     *
+     */
+    var _RemoveClass = function (element, cls) {
+        if (element) {
+            var clsarr = cls.split(' ');
+            var curclass = element.className.split(' ');
+            var curclassLength = curclass.length;
+            for (var i = 0; i < curclassLength; i++) {
+                var thiscls = curclass[i];
+                if (clsarr.indexOf(thiscls) > -1) {
+                    curclass.splice(i, 1);
+                    i--;
+                }
+            }
+            element.className = _StringTrim(curclass.join(' '));
+        }
+    };
+    /**
+     * Function to add a unique id attribute if it is not present already.
+     * This is required to monitor the outside click and hover behavior
+     *
+     * @param element - An HTML Element
+     * @param settings - Options specific to individual AMegMen instance
+     * @param unique_number - A unique number as additional identification
+     * @param shouldAdd - If `true`, adds an id. Otherwise it is removed.
+     *
+     */
+    var _ToggleUniqueId = function (element, settings, unique_number, shouldAddId) {
+        if (settings.idPrefix) {
+            if (shouldAddId && !element.getAttribute('id')) {
+                element.setAttribute('id', settings.idPrefix + '_' + new Date().getTime() + '_' + unique_number);
+            }
+            else if (!shouldAddId && element.getAttribute('id')) {
+                var thisid = element.getAttribute('id');
+                var regex = new RegExp(settings.idPrefix, 'gi');
+                if (regex.test(thisid || '')) {
+                    element.removeAttribute('id');
+                }
+            }
+        }
+    };
+    var carouzel_init = function (core, rootElem, settings) {
+        _AddClass(rootElem, settings.rootCls ? settings.rootCls : '');
+        core.rootElem = rootElem;
+        core.settings = settings;
+        core.trackElem = rootElem.querySelector("" + settings.trackSelector);
+        core.allSlideElem = rootElem.querySelectorAll("" + settings.slideSelector);
+        core.prevArrow = rootElem.querySelectorAll("" + settings.prevArrowSelector);
+        core.nextArrow = rootElem.querySelectorAll("" + settings.nextArrowSelector);
+        if (settings.isRTL) {
+            _AddClass(rootElem, settings.rtl_Cls ? settings.rtl_Cls : '');
+        }
+        console.log(_ToggleUniqueId, core, _RemoveClass);
     };
     /**
      *  ██████  ██████  ██████  ███████
@@ -155,7 +256,7 @@ var Carouzel;
                 // amm_destroy(thisid, this.core);
                 console.log(thisid);
             };
-            // this.core = amm_init(this.core, rootElem, (Object as any).assign({}, _Defaults, options));
+            this.core = carouzel_init(this.core, rootElem, Object.assign({}, _Defaults, options));
             this.core = options;
             console.log(rootElem);
             AllCarouzelInstances[thisid] = this.core;
