@@ -11,19 +11,20 @@ var Carouzel;
 (function (Carouzel) {
     "use strict";
     var AllCarouzelInstances = {};
+    var _useCapture = false;
     var _Defaults = {
         activeCls: '__carouzel-active',
         arrowsSelector: '[data-carouzelarrows]',
         buttonSelector: '[data-carouzelbutton]',
         idPrefix: '__carouzel_id',
         innerSelector: '[data-carouzelwrap]',
-        isRTL: false,
         navSelector: '[data-carouzelnav]',
         nextArrowSelector: '[data-carouzelnext]',
         prevArrowSelector: '[data-carouzelprev]',
         rootCls: '__carouzel',
         rootSelector: '[data-carouzel]',
-        rtl_Cls: '__carouzel--r-to-l',
+        showArrows: true,
+        showNav: true,
         slideSelector: '[data-carouzelslide]',
         slidesToScroll: 1,
         slidesToShow: 1,
@@ -226,6 +227,90 @@ var Carouzel;
             }
         }
     };
+    /**
+     * Function to remove all local events assigned to the navigation elements.
+     *
+     * @param core - AMegMen instance core object
+     * @param element - An HTML Element from which the events need to be removed
+     *
+     */
+    var carouzel_removeEventListeners = function (core, element) {
+        if ((core.eventHandlers || []).length > 0) {
+            var j = core.eventHandlers.length;
+            while (j--) {
+                if (core.eventHandlers[j].currentElement.isEqualNode && core.eventHandlers[j].currentElement.isEqualNode(element)) {
+                    core.eventHandlers[j].removeEvent();
+                    core.eventHandlers.splice(j, 1);
+                }
+            }
+        }
+    };
+    /**
+     * Function to remove all local events assigned to the navigation elements.
+     *
+     * @param element - An HTML Element which needs to be assigned an event
+     * @param type - Event type
+     * @param listener - The Event handler function
+     *
+     * @returns The event handler object
+     *
+     */
+    var carouzel_eventHandler = function (element, type, listener) {
+        var eventHandler = {
+            currentElement: element,
+            removeEvent: function () {
+                element.removeEventListener(type, listener, _useCapture);
+            }
+        };
+        element.addEventListener(type, listener, _useCapture);
+        return eventHandler;
+    };
+    var carouzel_applyLayout = function (core) {
+    };
+    var carouzel_validateBreakpoints = function (breakpoints) {
+        try {
+            var tempArr = [];
+            var len = breakpoints.length;
+            while (len--) {
+                if (tempArr.indexOf(breakpoints[len].breakpoint) === -1) {
+                    tempArr.push(breakpoints[len].breakpoint);
+                }
+            }
+            if (tempArr.length === breakpoints.length) {
+                return {
+                    isValid: true,
+                    breakpoints: breakpoints.sort(function (a, b) { return parseFloat(a.breakpoint) - parseFloat(b.breakpoint); })
+                };
+            }
+            else {
+                throw new TypeError('Duplicate breakpoints found');
+            }
+        }
+        catch (e) {
+            throw new TypeError('Error parsing breakpoints');
+        }
+    };
+    var carouzel_updateBreakpoints = function (core, settings) {
+        var defaultBreakpoint = {
+            breakpoint: 0,
+            showArrows: settings.showArrows,
+            showNav: settings.showNav,
+            slidesToScroll: settings.slidesToScroll,
+            slidesToShow: settings.slidesToShow
+        };
+        var tempArr = [];
+        if ((settings.responsive || []).length > 0) {
+            var i = settings.responsive.length;
+            while (i--) {
+                tempArr.push(settings.responsive[i]);
+            }
+        }
+        tempArr.push(defaultBreakpoint);
+        if (carouzel_validateBreakpoints(tempArr).isValid) {
+            core.breakpoints = tempArr;
+            carouzel_applyLayout(core);
+        }
+    };
     var carouzel_init = function (core, rootElem, settings) {
         _AddClass(rootElem, settings.rootCls ? settings.rootCls : '');
         core.rootElem = rootElem;
@@ -234,9 +319,10 @@ var Carouzel;
         core.allSlideElem = rootElem.querySelectorAll("" + settings.slideSelector);
         core.prevArrow = rootElem.querySelectorAll("" + settings.prevArrowSelector);
         core.nextArrow = rootElem.querySelectorAll("" + settings.nextArrowSelector);
-        if (settings.isRTL) {
-            _AddClass(rootElem, settings.rtl_Cls ? settings.rtl_Cls : '');
-        }
+        core.breakpoints = [];
+        core.eventHandlers = [];
+        carouzel_updateBreakpoints(core, settings);
+        console.log(carouzel_removeEventListeners, carouzel_eventHandler);
         console.log(_ToggleUniqueId, core, _RemoveClass);
     };
     /**
@@ -257,8 +343,6 @@ var Carouzel;
                 console.log(thisid);
             };
             this.core = carouzel_init(this.core, rootElem, Object.assign({}, _Defaults, options));
-            this.core = options;
-            console.log(rootElem);
             AllCarouzelInstances[thisid] = this.core;
         }
         return Core;

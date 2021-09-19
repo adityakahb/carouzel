@@ -31,7 +31,16 @@
     <script src="dist/scripts/carouzel.min.js" type="text/javascript"></script>
     <script type="text/javascript">
       var carouzel_instance1 = Carouzel.Root.getInstance();
-      carouzel_instance1.init('#__carouzel_1');
+      carouzel_instance1.init('#__carouzel_1', {
+        showArrows: false,
+        responsive: [{
+          breakpoint: 768,
+          showArrows: true
+        }, {
+          breakpoint: 1024,
+          showArrows: true
+        }]
+      });
     </script>
   </body>
 </html>

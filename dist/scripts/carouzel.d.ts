@@ -8,24 +8,32 @@
  *
  */
 declare namespace Carouzel {
+    interface ICarouzelBreakpoints {
+        breakpoint?: number | string;
+        showArrows?: boolean;
+        showNav?: boolean;
+        slidesToScroll?: number;
+        slidesToShow?: number;
+    }
     interface ICarouzelSettings {
-        activeCls: string;
-        arrowsSelector: string;
-        buttonSelector: string;
-        idPrefix: string;
-        innerSelector: string;
-        isRTL: boolean;
-        navSelector: string;
-        nextArrowSelector: string;
-        prevArrowSelector: string;
-        rootCls: string;
-        rootSelector: string;
-        rtl_Cls: string;
-        slideSelector: string;
-        slidesToScroll: number;
-        slidesToShow: number;
-        titleSelector: string;
-        trackSelector: string;
+        activeCls?: string;
+        arrowsSelector?: string;
+        responsive: ICarouzelBreakpoints[];
+        buttonSelector?: string;
+        idPrefix?: string;
+        innerSelector?: string;
+        navSelector?: string;
+        nextArrowSelector?: string;
+        prevArrowSelector?: string;
+        rootCls?: string;
+        rootSelector?: string;
+        showArrows?: boolean;
+        showNav?: boolean;
+        slideSelector?: string;
+        slidesToScroll?: number;
+        slidesToShow?: number;
+        titleSelector?: string;
+        trackSelector?: string;
     }
     /**
      * ██████   ██████   ██████  ████████
