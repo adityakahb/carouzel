@@ -310,7 +310,17 @@ namespace Carouzel {
     return eventHandler;
   };
   const carouzel_applyLayout = (core: any) => {
-
+    let viewportWidth = window.innerWidth;
+    let settingsToApply = core.breakpoints[0];
+    let len = 0;
+    while(len < core.breakpoints.length) {
+      if ((core.breakpoints[len + 1] && core.breakpoints[len + 1].breakpoint > viewportWidth) || typeof core.breakpoints[len + 1] === 'undefined') {
+        settingsToApply = core.breakpoints[len];
+        break;
+      }
+      len++;
+    }
+    console.log('==============settingsToApply', settingsToApply);
   };
   const carouzel_validateBreakpoints = (breakpoints: ICarouzelBreakpoints[]) => {
     try {
@@ -333,7 +343,7 @@ namespace Carouzel {
       throw new TypeError('Error parsing breakpoints');
     }
   };
-  const carouzel_updateBreakpoints = (core: any, settings: ICarouzelSettings) => {
+  const carouzel_updateBreakpoints = (settings: ICarouzelSettings) => {
     const defaultBreakpoint = {
       breakpoint: 0,
       showArrows: settings.showArrows,
@@ -349,10 +359,17 @@ namespace Carouzel {
       }
     }
     tempArr.push(defaultBreakpoint);
-    if (carouzel_validateBreakpoints(tempArr).isValid) {
-      core.breakpoints = tempArr;
-      carouzel_applyLayout(core);
+    let updatedArr = carouzel_validateBreakpoints(tempArr);
+    if (updatedArr.isValid) {
+      let bpArr = [updatedArr.breakpoints[0]];
+      let bpLen = 1;
+      while(bpLen < updatedArr.breakpoints.length) {
+        bpArr.push((Object as any).assign({}, bpArr[bpLen-1], updatedArr.breakpoints[bpLen]));
+        bpLen++;
+      }
+      return bpArr;
     }
+    return [];
   };
 
   const carouzel_init = (core: any, rootElem: HTMLElement, settings: ICarouzelSettings) => {
@@ -363,12 +380,12 @@ namespace Carouzel {
     core.allSlideElem = rootElem.querySelectorAll(`${settings.slideSelector}`);
     core.prevArrow = rootElem.querySelectorAll(`${settings.prevArrowSelector}`);
     core.nextArrow = rootElem.querySelectorAll(`${settings.nextArrowSelector}`);
-    core.breakpoints = [];
+    core.breakpoints = carouzel_updateBreakpoints(settings);
     core.eventHandlers = [];
-    
-    carouzel_updateBreakpoints(core, settings);
+    carouzel_applyLayout(core);
     console.log(carouzel_removeEventListeners, carouzel_eventHandler);
     console.log(_ToggleUniqueId, core, _RemoveClass);
+    return core;
   };
 
   /**
@@ -383,7 +400,7 @@ namespace Carouzel {
    */
 
   class Core {
-    private core: any = {};
+    protected core: any = {};
 
     constructor(thisid: string, rootElem: HTMLElement, options?: ICarouzelSettings) {
       this.core = carouzel_init(this.core, rootElem, (Object as any).assign({}, _Defaults, options));
@@ -393,6 +410,10 @@ namespace Carouzel {
       // amm_destroy(thisid, this.core);
       console.log(thisid);
     };
+    protected resize = () => {
+      console.log('=========resize');
+      carouzel_applyLayout(this.core);
+    }
   }
   /**
    * ██████   ██████   ██████  ████████ 
@@ -418,7 +439,23 @@ namespace Carouzel {
       _EnableClosest();
       _EnableAssign();
     }
-
+    private getInstancesLength = () => {
+      let instanceCount = 0;
+      for (let e in this.instances) {
+        if (this.instances.hasOwnProperty(e)) {
+          instanceCount++;
+        }
+      }
+      return instanceCount;
+    }
+    private windowResize = () => {
+      console.log('=============this.instances', this.instances);
+      for (let e in this.instances) {
+        if (this.instances.hasOwnProperty(e)) {
+          this.instances[e].resize();
+        }
+      }
+    }
     /**
      * Function to return single instance
      * 
@@ -469,6 +506,12 @@ namespace Carouzel {
               (roots[i] as HTMLElement).setAttribute('id', thisid);
               this.instances[thisid] = new Core(thisid, (roots[i] as HTMLElement), options);
             }
+            if (window) {
+              window.removeEventListener('resize', this.windowResize);
+              if (this.getInstancesLength() > 0) {
+                window.addEventListener('resize', this.windowResize);
+              }
+            }
           }
         }
       } else {
@@ -492,6 +535,9 @@ namespace Carouzel {
             this.instances[id].destroy(id);
             delete this.instances[id];
           }
+        }
+        if (window && this.getInstancesLength() === 0) {
+          window.removeEventListener('resize', this.windowResize);
         }
       } else {
         console.error('Element(s) with the provided query do(es) not exist');

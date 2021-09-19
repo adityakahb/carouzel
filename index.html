@@ -28,17 +28,19 @@
         <div class="carousel-button" data-carouzelbutton></div>
       </div>
     </div>
-    <script src="dist/scripts/carouzel.min.js" type="text/javascript"></script>
+    <script src="dist/scripts/carouzel.js" type="text/javascript"></script>
     <script type="text/javascript">
       var carouzel_instance1 = Carouzel.Root.getInstance();
       carouzel_instance1.init('#__carouzel_1', {
         showArrows: false,
         responsive: [{
-          breakpoint: 768,
+          breakpoint: 700,
           showArrows: true
         }, {
-          breakpoint: 1024,
-          showArrows: true
+          breakpoint: 1100,
+          showArrows: false
+        }, {
+          breakpoint: 1300
         }]
       });
     </script>

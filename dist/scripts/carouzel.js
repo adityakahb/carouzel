@@ -266,6 +266,17 @@ var Carouzel;
         return eventHandler;
     };
     var carouzel_applyLayout = function (core) {
+        var viewportWidth = window.innerWidth;
+        var settingsToApply = core.breakpoints[0];
+        var len = 0;
+        while (len < core.breakpoints.length) {
+            if ((core.breakpoints[len + 1] && core.breakpoints[len + 1].breakpoint > viewportWidth) || typeof core.breakpoints[len + 1] === 'undefined') {
+                settingsToApply = core.breakpoints[len];
+                break;
+            }
+            len++;
+        }
+        console.log('==============settingsToApply', settingsToApply);
     };
     var carouzel_validateBreakpoints = function (breakpoints) {
         try {
@@ -290,7 +301,7 @@ var Carouzel;
             throw new TypeError('Error parsing breakpoints');
         }
     };
-    var carouzel_updateBreakpoints = function (core, settings) {
+    var carouzel_updateBreakpoints = function (settings) {
         var defaultBreakpoint = {
             breakpoint: 0,
             showArrows: settings.showArrows,
@@ -306,10 +317,17 @@ var Carouzel;
             }
         }
         tempArr.push(defaultBreakpoint);
-        if (carouzel_validateBreakpoints(tempArr).isValid) {
-            core.breakpoints = tempArr;
-            carouzel_applyLayout(core);
+        var updatedArr = carouzel_validateBreakpoints(tempArr);
+        if (updatedArr.isValid) {
+            var bpArr = [updatedArr.breakpoints[0]];
+            var bpLen = 1;
+            while (bpLen < updatedArr.breakpoints.length) {
+                bpArr.push(Object.assign({}, bpArr[bpLen - 1], updatedArr.breakpoints[bpLen]));
+                bpLen++;
+            }
+            return bpArr;
         }
+        return [];
     };
     var carouzel_init = function (core, rootElem, settings) {
         _AddClass(rootElem, settings.rootCls ? settings.rootCls : '');
@@ -319,11 +337,12 @@ var Carouzel;
         core.allSlideElem = rootElem.querySelectorAll("" + settings.slideSelector);
         core.prevArrow = rootElem.querySelectorAll("" + settings.prevArrowSelector);
         core.nextArrow = rootElem.querySelectorAll("" + settings.nextArrowSelector);
-        core.breakpoints = [];
+        core.breakpoints = carouzel_updateBreakpoints(settings);
         core.eventHandlers = [];
-        carouzel_updateBreakpoints(core, settings);
+        carouzel_applyLayout(core);
         console.log(carouzel_removeEventListeners, carouzel_eventHandler);
         console.log(_ToggleUniqueId, core, _RemoveClass);
+        return core;
     };
     /**
      *  ██████  ██████  ██████  ███████
@@ -337,10 +356,15 @@ var Carouzel;
      */
     var Core = /** @class */ (function () {
         function Core(thisid, rootElem, options) {
+            var _this = this;
             this.core = {};
             this.destroy = function (thisid) {
                 // amm_destroy(thisid, this.core);
                 console.log(thisid);
+            };
+            this.resize = function () {
+                console.log('=========resize');
+                carouzel_applyLayout(_this.core);
             };
             this.core = carouzel_init(this.core, rootElem, Object.assign({}, _Defaults, options));
             AllCarouzelInstances[thisid] = this.core;
@@ -365,6 +389,23 @@ var Carouzel;
         function Root() {
             var _this = this;
             this.instances = {};
+            this.getInstancesLength = function () {
+                var instanceCount = 0;
+                for (var e in _this.instances) {
+                    if (_this.instances.hasOwnProperty(e)) {
+                        instanceCount++;
+                    }
+                }
+                return instanceCount;
+            };
+            this.windowResize = function () {
+                console.log('=============this.instances', _this.instances);
+                for (var e in _this.instances) {
+                    if (_this.instances.hasOwnProperty(e)) {
+                        _this.instances[e].resize();
+                    }
+                }
+            };
             /**
              * Function to initialize the AMegMen plugin for provided query strings.
              *
@@ -402,6 +443,12 @@ var Carouzel;
                                 roots[i].setAttribute('id', thisid);
                                 _this.instances[thisid] = new Core(thisid, roots[i], options);
                             }
+                            if (window) {
+                                window.removeEventListener('resize', _this.windowResize);
+                                if (_this.getInstancesLength() > 0) {
+                                    window.addEventListener('resize', _this.windowResize);
+                                }
+                            }
                         }
                     }
                 }
@@ -425,6 +472,9 @@ var Carouzel;
                             _this.instances[id].destroy(id);
                             delete _this.instances[id];
                         }
+                    }
+                    if (window && _this.getInstancesLength() === 0) {
+                        window.removeEventListener('resize', _this.windowResize);
                     }
                 }
                 else {
