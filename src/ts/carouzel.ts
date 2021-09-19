@@ -41,6 +41,7 @@ namespace Carouzel {
     slidesToShow?: number;
     titleSelector?: string;
     trackSelector?: string;
+    trackInnerSelector?: string;
   }
   interface IEventHandler {
     currentElement: Element;
@@ -52,7 +53,7 @@ namespace Carouzel {
     arrowsSelector: '[data-carouzelarrows]',
     buttonSelector: '[data-carouzelbutton]',
     idPrefix: '__carouzel_id',
-    innerSelector: '[data-carouzelwrap]',
+    innerSelector: '[data-carouzelinner]',
     navSelector: '[data-carouzelnav]',
     nextArrowSelector: '[data-carouzelnext]',
     prevArrowSelector: '[data-carouzelprev]',
@@ -65,6 +66,7 @@ namespace Carouzel {
     slidesToShow: 1,
     titleSelector: '[data-carouzeltitle]',
     trackSelector: '[data-carouzeltrack]',
+    trackInnerSelector: '[data-carouzeltrackinner]',
   };
 
   /**
@@ -309,6 +311,9 @@ namespace Carouzel {
     element.addEventListener(type, listener, _useCapture);
     return eventHandler;
   };
+  const carouzel_toggleEvents = (core: any) => {
+    
+  };
   const carouzel_applyLayout = (core: any) => {
     let viewportWidth = window.innerWidth;
     let settingsToApply = core.breakpoints[0];
@@ -320,7 +325,12 @@ namespace Carouzel {
       }
       len++;
     }
-    console.log('==============settingsToApply', settingsToApply);
+    let trackWidth = ((100 / settingsToApply.slidesToShow) * (core.allSlideElem.length > settingsToApply.slidesToShow ? core.allSlideElem.length : settingsToApply.slidesToShow)) + '%';
+    let slideWidth = (100 / settingsToApply.slidesToShow) + '%';
+    core.trackInner.style.width = trackWidth;
+    for (let k = 0; k < (core.allSlideElem || []).length; k++) {
+      core.allSlideElem[k].style.width = slideWidth;
+    }
   };
   const carouzel_validateBreakpoints = (breakpoints: ICarouzelBreakpoints[]) => {
     try {
@@ -377,12 +387,14 @@ namespace Carouzel {
     core.rootElem = rootElem;
     core.settings = settings;
     core.trackElem = rootElem.querySelector(`${settings.trackSelector}`);
-    core.allSlideElem = rootElem.querySelectorAll(`${settings.slideSelector}`);
+    core.trackInner = rootElem.querySelector(`${settings.trackInnerSelector}`);
+    core.allSlideElem = _ArrayCall(rootElem.querySelectorAll(`${settings.slideSelector}`));
     core.prevArrow = rootElem.querySelectorAll(`${settings.prevArrowSelector}`);
     core.nextArrow = rootElem.querySelectorAll(`${settings.nextArrowSelector}`);
     core.breakpoints = carouzel_updateBreakpoints(settings);
     core.eventHandlers = [];
     carouzel_applyLayout(core);
+    carouzel_toggleEvents(core);
     console.log(carouzel_removeEventListeners, carouzel_eventHandler);
     console.log(_ToggleUniqueId, core, _RemoveClass);
     return core;
@@ -411,7 +423,6 @@ namespace Carouzel {
       console.log(thisid);
     };
     protected resize = () => {
-      console.log('=========resize');
       carouzel_applyLayout(this.core);
     }
   }
@@ -449,7 +460,6 @@ namespace Carouzel {
       return instanceCount;
     }
     private windowResize = () => {
-      console.log('=============this.instances', this.instances);
       for (let e in this.instances) {
         if (this.instances.hasOwnProperty(e)) {
           this.instances[e].resize();

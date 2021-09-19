@@ -34,6 +34,7 @@ declare namespace Carouzel {
         slidesToShow?: number;
         titleSelector?: string;
         trackSelector?: string;
+        trackInnerSelector?: string;
     }
     /**
      * ██████   ██████   ██████  ████████
@@ -53,6 +54,8 @@ declare namespace Carouzel {
          *
          */
         constructor();
+        private getInstancesLength;
+        private windowResize;
         /**
          * Function to return single instance
          *

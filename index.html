@@ -10,19 +10,23 @@
   </head>
   <body>
     <div class="carousel-component" data-carouzel id="__carouzel_1">
-      <div class="carousel-inner" data-carouzelwrap>
+      <div class="carousel-inner" data-carouzelinner>
         <div class="carousel-title" data-carouzeltitle></div>
+
+        <div class="carousel-track" data-carouzeltrack>
+          <div class="carousel-track-inner" data-carouzeltrackinner>
+            <div data-carouzelslide style="background-color: green;">1</div>
+            <div data-carouzelslide style="background-color: yellow;">2</div>
+            <div data-carouzelslide style="background-color: blue;">3</div>
+            <div data-carouzelslide style="background-color: gray;">4</div>
+          </div>
+        </div>
 
         <div class="carousel-arrows" data-carouzelarrows>
           <button type="button" data-carouzelprev>prev</button>
           <button type="button" data-carouzelnext>next</button>
         </div>
-
-        <div class="carousel-track" data-carouzeltrack>
-          <div data-carouzelslide>1</div>
-          <div data-carouzelslide>2</div>
-        </div>
-
+        
         <div class="carousel-dots" data-carouzelnav></div>
 
         <div class="carousel-button" data-carouzelbutton></div>
@@ -33,12 +37,14 @@
       var carouzel_instance1 = Carouzel.Root.getInstance();
       carouzel_instance1.init('#__carouzel_1', {
         showArrows: false,
+        slidesToShow: 1,
         responsive: [{
           breakpoint: 700,
           showArrows: true
         }, {
           breakpoint: 1100,
-          showArrows: false
+          showArrows: false,
+          slidesToShow: 3
         }, {
           breakpoint: 1300
         }]

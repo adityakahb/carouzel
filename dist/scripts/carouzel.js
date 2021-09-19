@@ -17,7 +17,7 @@ var Carouzel;
         arrowsSelector: '[data-carouzelarrows]',
         buttonSelector: '[data-carouzelbutton]',
         idPrefix: '__carouzel_id',
-        innerSelector: '[data-carouzelwrap]',
+        innerSelector: '[data-carouzelinner]',
         navSelector: '[data-carouzelnav]',
         nextArrowSelector: '[data-carouzelnext]',
         prevArrowSelector: '[data-carouzelprev]',
@@ -29,7 +29,8 @@ var Carouzel;
         slidesToScroll: 1,
         slidesToShow: 1,
         titleSelector: '[data-carouzeltitle]',
-        trackSelector: '[data-carouzeltrack]'
+        trackSelector: '[data-carouzeltrack]',
+        trackInnerSelector: '[data-carouzeltrackinner]'
     };
     /**
      * Polyfill function for Object.assign
@@ -277,6 +278,13 @@ var Carouzel;
             len++;
         }
         console.log('==============settingsToApply', settingsToApply);
+        var trackWidth = ((100 / settingsToApply.slidesToShow) * (core.allSlideElem.length > settingsToApply.slidesToShow ? core.allSlideElem.length : settingsToApply.slidesToShow)) + '%';
+        var slideWidth = (100 / settingsToApply.slidesToShow) + '%';
+        core.trackInner.style.width = trackWidth;
+        for (var k = 0; k < (core.allSlideElem || []).length; k++) {
+            core.allSlideElem[k].style.width = slideWidth;
+        }
+        console.log('=============trackWidth', trackWidth, slideWidth);
     };
     var carouzel_validateBreakpoints = function (breakpoints) {
         try {
@@ -334,7 +342,8 @@ var Carouzel;
         core.rootElem = rootElem;
         core.settings = settings;
         core.trackElem = rootElem.querySelector("" + settings.trackSelector);
-        core.allSlideElem = rootElem.querySelectorAll("" + settings.slideSelector);
+        core.trackInner = rootElem.querySelector("" + settings.trackInnerSelector);
+        core.allSlideElem = _ArrayCall(rootElem.querySelectorAll("" + settings.slideSelector));
         core.prevArrow = rootElem.querySelectorAll("" + settings.prevArrowSelector);
         core.nextArrow = rootElem.querySelectorAll("" + settings.nextArrowSelector);
         core.breakpoints = carouzel_updateBreakpoints(settings);
@@ -363,7 +372,6 @@ var Carouzel;
                 console.log(thisid);
             };
             this.resize = function () {
-                console.log('=========resize');
                 carouzel_applyLayout(_this.core);
             };
             this.core = carouzel_init(this.core, rootElem, Object.assign({}, _Defaults, options));
@@ -399,7 +407,6 @@ var Carouzel;
                 return instanceCount;
             };
             this.windowResize = function () {
-                console.log('=============this.instances', _this.instances);
                 for (var e in _this.instances) {
                     if (_this.instances.hasOwnProperty(e)) {
                         _this.instances[e].resize();

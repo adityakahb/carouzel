@@ -24,7 +24,7 @@
 .__carouzel [data-carouzelnext] {
   right: 10px; }
 
-.__carouzel [data-carouzeltrack] {
+.__carouzel [data-carouzeltrackinner] {
   transform-style: preserve-3d;
   position: relative;
   display: flex;
