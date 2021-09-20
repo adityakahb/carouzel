@@ -33,7 +33,7 @@ declare namespace Carouzel {
         slideSelector?: string;
         slidesToScroll?: number;
         slidesToShow?: number;
-        startAtSlide?: number;
+        startAtIndex?: number;
         titleSelector?: string;
         trackInnerSelector?: string;
         trackSelector?: string;

@@ -29,7 +29,7 @@ var Carouzel;
         slideSelector: '[data-carouzelslide]',
         slidesToScroll: 1,
         slidesToShow: 1,
-        startAtSlide: 1,
+        startAtIndex: 1,
         titleSelector: '[data-carouzeltitle]',
         trackSelector: '[data-carouzeltrack]',
         trackInnerSelector: '[data-carouzeltrackinner]'
@@ -268,13 +268,37 @@ var Carouzel;
         element.addEventListener(type, listener, _useCapture);
         return eventHandler;
     };
+    var carouzel_animateSlider = function (core) {
+        var slidesLength = core.allSlideElem.length;
+        var transformWidth = 100 / (slidesLength > 0 ? slidesLength : 1);
+        // console.log('====================', -1 * transformWidth * core.indexOnResize * core.settingsToApply.slidesToScroll);
+        for (var m = 0; m < slidesLength; m++) {
+            _RemoveClass(core.allSlideElem[m], core.settings.activeSlideCls);
+        }
+        for (var n = core.indexOnResize; n < core.indexOnResize + core.settingsToApply.slidesToShow; n++) {
+            if (core.allSlideElem[n]) {
+                _AddClass(core.allSlideElem[n], core.settings.activeSlideCls);
+            }
+        }
+        core.trackInner.style.transform = "translate(" + -1 * transformWidth * core.indexOnResize * core.settingsToApply.slidesToScroll + "%, 0%)";
+    };
+    var carouzel_updateArrow = function (arrow, index) {
+        if (arrow) {
+            arrow.setAttribute('data-carouzelgotoslide', index + '');
+        }
+    };
     var carouzel_toggleEvents = function (core, shouldAddEvent) {
+        var arrowToggle = function (prevOrNext) {
+            core.isCarouzelStarted = true;
+            prevOrNext === 'prev' ? core.indexOnResize-- : core.indexOnResize++;
+            carouzel_updateArrow(core.prevArrow, core.indexOnResize - 1);
+            carouzel_updateArrow(core.nextArrow, core.indexOnResize + 1);
+            carouzel_animateSlider(core);
+        };
         if (core.prevArrow && shouldAddEvent) {
             carouzel_eventHandler(core.prevArrow, 'click', function (event) {
                 event.preventDefault();
-                if (core.trackInner) {
-                    core.trackInner.style.transform = "translate(" + core.transformWidth + "%, 0%)";
-                }
+                arrowToggle('prev');
             });
         }
         if (core.prevArrow && !shouldAddEvent) {
@@ -283,9 +307,7 @@ var Carouzel;
         if (core.nextArrow && shouldAddEvent) {
             carouzel_eventHandler(core.nextArrow, 'click', function (event) {
                 event.preventDefault();
-                if (core.trackInner) {
-                    core.trackInner.style.transform = "translate(-" + core.transformWidth + "%, 0%)";
-                }
+                arrowToggle('next');
             });
         }
         if (core.nextArrow && !shouldAddEvent) {
@@ -305,38 +327,19 @@ var Carouzel;
         }
         var slideWidth = (100 / settingsToApply.slidesToShow);
         var trackWidth = ((100 / settingsToApply.slidesToShow) * (core.allSlideElem.length > settingsToApply.slidesToShow ? core.allSlideElem.length : settingsToApply.slidesToShow));
+        core.slideWidth = slideWidth;
+        core.settingsToApply = settingsToApply;
         if (core.trackInner) {
             core.trackInner.style.width = trackWidth + '%';
-            core.trackInner.style.transform = 'translate(0%, 0%)';
+            carouzel_animateSlider(core);
         }
-        for (var k = 0; k < (core.allSlideElem || []).length; k++) {
+        for (var k = 0; k < core.allSlideElem.length; k++) {
             if (core.allSlideElem[k]) {
                 core.allSlideElem[k].style.width = slideWidth + '%';
-                _RemoveClass(core.allSlideElem[k], core.settings.activeSlideCls);
             }
         }
-        for (var k = core.settings.startAtSlide - 1; k < settingsToApply.slidesToShow; k++) {
-            if (core.allSlideElem[k]) {
-                _AddClass(core.allSlideElem[k], core.settings.activeSlideCls);
-            }
-        }
-        if (core.prevArrow) {
-            if (core.settings.startAtSlide > 1) {
-                core.prevArrow.setAttribute('data-carouzelgotoslide', core.settings.startAtSlide - 2);
-            }
-            else {
-                core.prevArrow.setAttribute('data-carouzelgotoslide', 'isfirst');
-            }
-        }
-        if (core.nextArrow) {
-            core.nextArrow.setAttribute('data-carouzelgotoslide', core.settings.startAtSlide - 1 + settingsToApply.slidesToShow);
-        }
-        if ((core.allSlideElem || []).length > 0) {
-            core.transformWidth = 100 / core.allSlideElem.length;
-        }
-        else {
-            core.transformWidth = 0;
-        }
+        carouzel_updateArrow(core.prevArrow, core.isCarouzelStarted ? core.indexOnResize - 1 : core.settings.startAtIndex - 1);
+        carouzel_updateArrow(core.nextArrow, core.isCarouzelStarted ? core.indexOnResize + 1 : core.settings.startAtIndex + 1);
     };
     var carouzel_validateBreakpoints = function (breakpoints) {
         try {
@@ -398,7 +401,11 @@ var Carouzel;
         core.allSlideElem = _ArrayCall(rootElem.querySelectorAll("" + settings.slideSelector));
         core.firstSlide = undefined;
         core.lastSlide = undefined;
-        if ((core.allSlideElem || []).length > 0) {
+        core.indexOnResize = core.settings.startAtIndex = core.settings.startAtIndex - 1;
+        core.prevIndex = core.indexOnResize - 1;
+        core.nextIndex = core.indexOnResize + 1;
+        core.isCarouzelStarted = false;
+        if (core.allSlideElem.length > 0) {
             core.firstSlide = core.allSlideElem[0];
             core.lastSlide = core.allSlideElem[core.allSlideElem.length - 1];
         }
