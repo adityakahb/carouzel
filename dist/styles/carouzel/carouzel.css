@@ -31,7 +31,10 @@
   width: 100%;
   flex-direction: row;
   align-items: center;
-  justify-content: center; }
+  justify-content: center;
+  transition-property: transform;
+  transition-timing-function: ease;
+  transition-duration: 250ms; }
 
 .__carouzel [data-carouzelslide] {
   width: 100%;

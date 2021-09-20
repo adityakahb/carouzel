@@ -14,6 +14,7 @@ var Carouzel;
     var _useCapture = false;
     var _Defaults = {
         activeCls: '__carouzel-active',
+        activeSlideCls: '__carouzel-slide-active',
         arrowsSelector: '[data-carouzelarrows]',
         buttonSelector: '[data-carouzelbutton]',
         idPrefix: '__carouzel_id',
@@ -28,6 +29,7 @@ var Carouzel;
         slideSelector: '[data-carouzelslide]',
         slidesToScroll: 1,
         slidesToShow: 1,
+        startAtSlide: 1,
         titleSelector: '[data-carouzeltitle]',
         trackSelector: '[data-carouzeltrack]',
         trackInnerSelector: '[data-carouzeltrackinner]'
@@ -266,6 +268,30 @@ var Carouzel;
         element.addEventListener(type, listener, _useCapture);
         return eventHandler;
     };
+    var carouzel_toggleEvents = function (core, shouldAddEvent) {
+        if (core.prevArrow && shouldAddEvent) {
+            carouzel_eventHandler(core.prevArrow, 'click', function (event) {
+                event.preventDefault();
+                if (core.trackInner) {
+                    core.trackInner.style.transform = "translate(" + core.transformWidth + "%, 0%)";
+                }
+            });
+        }
+        if (core.prevArrow && !shouldAddEvent) {
+            carouzel_removeEventListeners(core, core.prevArrow);
+        }
+        if (core.nextArrow && shouldAddEvent) {
+            carouzel_eventHandler(core.nextArrow, 'click', function (event) {
+                event.preventDefault();
+                if (core.trackInner) {
+                    core.trackInner.style.transform = "translate(-" + core.transformWidth + "%, 0%)";
+                }
+            });
+        }
+        if (core.nextArrow && !shouldAddEvent) {
+            carouzel_removeEventListeners(core, core.nextArrow);
+        }
+    };
     var carouzel_applyLayout = function (core) {
         var viewportWidth = window.innerWidth;
         var settingsToApply = core.breakpoints[0];
@@ -277,14 +303,40 @@ var Carouzel;
             }
             len++;
         }
-        console.log('==============settingsToApply', settingsToApply);
-        var trackWidth = ((100 / settingsToApply.slidesToShow) * (core.allSlideElem.length > settingsToApply.slidesToShow ? core.allSlideElem.length : settingsToApply.slidesToShow)) + '%';
-        var slideWidth = (100 / settingsToApply.slidesToShow) + '%';
-        core.trackInner.style.width = trackWidth;
-        for (var k = 0; k < (core.allSlideElem || []).length; k++) {
-            core.allSlideElem[k].style.width = slideWidth;
+        var slideWidth = (100 / settingsToApply.slidesToShow);
+        var trackWidth = ((100 / settingsToApply.slidesToShow) * (core.allSlideElem.length > settingsToApply.slidesToShow ? core.allSlideElem.length : settingsToApply.slidesToShow));
+        if (core.trackInner) {
+            core.trackInner.style.width = trackWidth + '%';
+            core.trackInner.style.transform = 'translate(0%, 0%)';
         }
-        console.log('=============trackWidth', trackWidth, slideWidth);
+        for (var k = 0; k < (core.allSlideElem || []).length; k++) {
+            if (core.allSlideElem[k]) {
+                core.allSlideElem[k].style.width = slideWidth + '%';
+                _RemoveClass(core.allSlideElem[k], core.settings.activeSlideCls);
+            }
+        }
+        for (var k = core.settings.startAtSlide - 1; k < settingsToApply.slidesToShow; k++) {
+            if (core.allSlideElem[k]) {
+                _AddClass(core.allSlideElem[k], core.settings.activeSlideCls);
+            }
+        }
+        if (core.prevArrow) {
+            if (core.settings.startAtSlide > 1) {
+                core.prevArrow.setAttribute('data-carouzelgotoslide', core.settings.startAtSlide - 2);
+            }
+            else {
+                core.prevArrow.setAttribute('data-carouzelgotoslide', 'isfirst');
+            }
+        }
+        if (core.nextArrow) {
+            core.nextArrow.setAttribute('data-carouzelgotoslide', core.settings.startAtSlide - 1 + settingsToApply.slidesToShow);
+        }
+        if ((core.allSlideElem || []).length > 0) {
+            core.transformWidth = 100 / core.allSlideElem.length;
+        }
+        else {
+            core.transformWidth = 0;
+        }
     };
     var carouzel_validateBreakpoints = function (breakpoints) {
         try {
@@ -344,12 +396,21 @@ var Carouzel;
         core.trackElem = rootElem.querySelector("" + settings.trackSelector);
         core.trackInner = rootElem.querySelector("" + settings.trackInnerSelector);
         core.allSlideElem = _ArrayCall(rootElem.querySelectorAll("" + settings.slideSelector));
-        core.prevArrow = rootElem.querySelectorAll("" + settings.prevArrowSelector);
-        core.nextArrow = rootElem.querySelectorAll("" + settings.nextArrowSelector);
-        core.breakpoints = carouzel_updateBreakpoints(settings);
+        core.firstSlide = undefined;
+        core.lastSlide = undefined;
+        if ((core.allSlideElem || []).length > 0) {
+            core.firstSlide = core.allSlideElem[0];
+            core.lastSlide = core.allSlideElem[core.allSlideElem.length - 1];
+        }
+        core.prevArrow = rootElem.querySelector("" + settings.prevArrowSelector);
+        core.nextArrow = rootElem.querySelector("" + settings.nextArrowSelector);
+        core.slideWidth = 100;
+        if (core.trackInner) {
+            core.breakpoints = carouzel_updateBreakpoints(settings);
+            carouzel_applyLayout(core);
+            carouzel_toggleEvents(core, true);
+        }
         core.eventHandlers = [];
-        carouzel_applyLayout(core);
-        console.log(carouzel_removeEventListeners, carouzel_eventHandler);
         console.log(_ToggleUniqueId, core, _RemoveClass);
         return core;
     };

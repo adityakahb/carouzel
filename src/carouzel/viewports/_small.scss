@@ -35,6 +35,9 @@
     flex-direction: row;
     align-items: center;
     justify-content: center;
+    transition-property: transform;
+    transition-timing-function: ease;
+    transition-duration: 250ms;
   }
   [data-carouzelslide] {
     width: 100%;

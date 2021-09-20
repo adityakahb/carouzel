@@ -17,14 +17,15 @@ declare namespace Carouzel {
     }
     interface ICarouzelSettings {
         activeCls?: string;
+        activeSlideCls?: string;
         arrowsSelector?: string;
-        responsive: ICarouzelBreakpoints[];
         buttonSelector?: string;
         idPrefix?: string;
         innerSelector?: string;
         navSelector?: string;
         nextArrowSelector?: string;
         prevArrowSelector?: string;
+        responsive: ICarouzelBreakpoints[];
         rootCls?: string;
         rootSelector?: string;
         showArrows?: boolean;
@@ -32,9 +33,10 @@ declare namespace Carouzel {
         slideSelector?: string;
         slidesToScroll?: number;
         slidesToShow?: number;
+        startAtSlide?: number;
         titleSelector?: string;
-        trackSelector?: string;
         trackInnerSelector?: string;
+        trackSelector?: string;
     }
     /**
      * ██████   ██████   ██████  ████████

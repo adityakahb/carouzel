@@ -24,14 +24,15 @@ namespace Carouzel {
   }
   interface ICarouzelSettings {
     activeCls?: string;
+    activeSlideCls?: string;
     arrowsSelector?: string;
-    responsive: ICarouzelBreakpoints[];
     buttonSelector?: string;
     idPrefix?: string;
     innerSelector?: string;
     navSelector?: string;
     nextArrowSelector?: string;
     prevArrowSelector?: string;
+    responsive: ICarouzelBreakpoints[];
     rootCls?: string;
     rootSelector?: string;
     showArrows?: boolean;
@@ -39,9 +40,10 @@ namespace Carouzel {
     slideSelector?: string;
     slidesToScroll?: number;
     slidesToShow?: number;
+    startAtSlide?: number;
     titleSelector?: string;
-    trackSelector?: string;
     trackInnerSelector?: string;
+    trackSelector?: string;
   }
   interface IEventHandler {
     currentElement: Element;
@@ -50,6 +52,7 @@ namespace Carouzel {
   const _useCapture = false;
   const _Defaults = {
     activeCls: '__carouzel-active',
+    activeSlideCls: '__carouzel-slide-active',
     arrowsSelector: '[data-carouzelarrows]',
     buttonSelector: '[data-carouzelbutton]',
     idPrefix: '__carouzel_id',
@@ -64,6 +67,7 @@ namespace Carouzel {
     slideSelector: '[data-carouzelslide]',
     slidesToScroll: 1,
     slidesToShow: 1,
+    startAtSlide: 1,
     titleSelector: '[data-carouzeltitle]',
     trackSelector: '[data-carouzeltrack]',
     trackInnerSelector: '[data-carouzeltrackinner]',
@@ -311,8 +315,29 @@ namespace Carouzel {
     element.addEventListener(type, listener, _useCapture);
     return eventHandler;
   };
-  const carouzel_toggleEvents = (core: any) => {
-    
+  const carouzel_toggleEvents = (core: any, shouldAddEvent: boolean) => {
+    if (core.prevArrow && shouldAddEvent) {
+      carouzel_eventHandler(core.prevArrow, 'click', function (event: Event) {
+        event.preventDefault();
+        if (core.trackInner) {
+          core.trackInner.style.transform = `translate(${core.transformWidth}%, 0%)`;
+        }
+      })
+    }
+    if (core.prevArrow && !shouldAddEvent) {
+      carouzel_removeEventListeners(core, core.prevArrow);
+    }
+    if (core.nextArrow && shouldAddEvent) {
+      carouzel_eventHandler(core.nextArrow, 'click', function (event: Event) {
+        event.preventDefault();
+        if (core.trackInner) {
+          core.trackInner.style.transform = `translate(-${core.transformWidth}%, 0%)`;
+        }
+      })
+    }
+    if (core.nextArrow && !shouldAddEvent) {
+      carouzel_removeEventListeners(core, core.nextArrow);
+    }
   };
   const carouzel_applyLayout = (core: any) => {
     let viewportWidth = window.innerWidth;
@@ -325,11 +350,37 @@ namespace Carouzel {
       }
       len++;
     }
-    let trackWidth = ((100 / settingsToApply.slidesToShow) * (core.allSlideElem.length > settingsToApply.slidesToShow ? core.allSlideElem.length : settingsToApply.slidesToShow)) + '%';
-    let slideWidth = (100 / settingsToApply.slidesToShow) + '%';
-    core.trackInner.style.width = trackWidth;
+    let slideWidth = (100 / settingsToApply.slidesToShow);
+    let trackWidth = ((100 / settingsToApply.slidesToShow) * (core.allSlideElem.length > settingsToApply.slidesToShow ? core.allSlideElem.length : settingsToApply.slidesToShow));
+    if (core.trackInner) {
+      core.trackInner.style.width = trackWidth + '%';
+      core.trackInner.style.transform = 'translate(0%, 0%)';
+    }
     for (let k = 0; k < (core.allSlideElem || []).length; k++) {
-      core.allSlideElem[k].style.width = slideWidth;
+      if (core.allSlideElem[k]) {
+        core.allSlideElem[k].style.width = slideWidth + '%';
+        _RemoveClass(core.allSlideElem[k], core.settings.activeSlideCls);
+      }
+    }
+    for (let k = core.settings.startAtSlide - 1; k < settingsToApply.slidesToShow; k++) {
+      if (core.allSlideElem[k]) {
+        _AddClass(core.allSlideElem[k], core.settings.activeSlideCls);
+      }
+    }
+    if (core.prevArrow) {
+      if (core.settings.startAtSlide > 1) {
+        core.prevArrow.setAttribute('data-carouzelgotoslide', core.settings.startAtSlide - 2);
+      } else {
+        core.prevArrow.setAttribute('data-carouzelgotoslide', 'isfirst');
+      }
+    }
+    if (core.nextArrow) {
+      core.nextArrow.setAttribute('data-carouzelgotoslide', core.settings.startAtSlide - 1 + settingsToApply.slidesToShow);
+    }
+    if ((core.allSlideElem || []).length > 0) {
+      core.transformWidth = 100 / core.allSlideElem.length;
+    } else {
+      core.transformWidth = 0;
     }
   };
   const carouzel_validateBreakpoints = (breakpoints: ICarouzelBreakpoints[]) => {
@@ -389,13 +440,21 @@ namespace Carouzel {
     core.trackElem = rootElem.querySelector(`${settings.trackSelector}`);
     core.trackInner = rootElem.querySelector(`${settings.trackInnerSelector}`);
     core.allSlideElem = _ArrayCall(rootElem.querySelectorAll(`${settings.slideSelector}`));
-    core.prevArrow = rootElem.querySelectorAll(`${settings.prevArrowSelector}`);
-    core.nextArrow = rootElem.querySelectorAll(`${settings.nextArrowSelector}`);
-    core.breakpoints = carouzel_updateBreakpoints(settings);
+    core.firstSlide = undefined;
+    core.lastSlide = undefined;
+    if ((core.allSlideElem || []).length > 0) {
+      core.firstSlide = core.allSlideElem[0];
+      core.lastSlide = core.allSlideElem[core.allSlideElem.length - 1];
+    }
+    core.prevArrow = rootElem.querySelector(`${settings.prevArrowSelector}`);
+    core.nextArrow = rootElem.querySelector(`${settings.nextArrowSelector}`);
+    core.slideWidth = 100;
+    if (core.trackInner) {
+      core.breakpoints = carouzel_updateBreakpoints(settings);
+      carouzel_applyLayout(core);
+      carouzel_toggleEvents(core, true);
+    }
     core.eventHandlers = [];
-    carouzel_applyLayout(core);
-    carouzel_toggleEvents(core);
-    console.log(carouzel_removeEventListeners, carouzel_eventHandler);
     console.log(_ToggleUniqueId, core, _RemoveClass);
     return core;
   };
