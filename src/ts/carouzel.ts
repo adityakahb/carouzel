@@ -316,19 +316,47 @@ namespace Carouzel {
     return eventHandler;
   };
 
-  const carouzel_animateSlider = (core: any) => {
+  const carouzel_animateSlider = (core: any, prevOrNext: string) => {
     let slidesLength = core.allSlideElem.length;
-    let transformWidth = 100 / (slidesLength > 0 ? slidesLength : 1);
+    // let transformWidth = 100 / (slidesLength > 0 ? slidesLength : 1);
+    let onLeft = 0;
+    let onRight = 0;
+    let flex = core.indexOnResize * core.settingsToApply.slidesToScroll;
+    let translateWidth = 0;
+    for(let m=0; m<flex; m++) {
+      onLeft++;
+    }
+    for(let m=flex + core.settingsToApply.slidesToShow; m<slidesLength; m++) {
+      onRight++;
+    }
+    if (onRight < core.settingsToApply.slidesToScroll) {
+      while(onRight < core.settingsToApply.slidesToScroll) {
+        onRight++;
+      }
+    }
+    if (onLeft > core.settingsToApply.slidesToScroll) {
+      while(onLeft > core.settingsToApply.slidesToScroll) {
+        onLeft--;
+      }
+    }
+    console.log('=============prevOrNext', prevOrNext);
+    console.log('=============core.settingsToApply.slidesToScroll', core.settingsToApply.slidesToScroll);
+    console.log('=============onLeft', onLeft);
+    console.log('=============onRight', onRight);
+    // let slidesToScroll = core.settingsToApply.slidesToScroll;
     // console.log('====================', -1 * transformWidth * core.indexOnResize * core.settingsToApply.slidesToScroll);
     for(let m=0; m<slidesLength; m++) {
       _RemoveClass(core.allSlideElem[m], core.settings.activeSlideCls);
     }
-    for(let n=core.indexOnResize; n<core.indexOnResize + core.settingsToApply.slidesToShow; n++) {
-      if (core.allSlideElem[n]) {
-        _AddClass(core.allSlideElem[n], core.settings.activeSlideCls);
+    for(let m=flex; m<flex + core.settingsToApply.slidesToShow; m++) {
+      if (core.allSlideElem[m]) {
+        // _AddClass(core.allSlideElem[m], core.settings.activeSlideCls);
       }
     }
-    core.trackInner.style.transform = `translate(${-1 * transformWidth * core.indexOnResize * core.settingsToApply.slidesToScroll}%, 0%)`;
+    // if ((prevOrNext === 'prev' && onLeft >= core.settingsToApply.slidesToScroll) || (prevOrNext === 'next' && onRight >= core.settingsToApply.slidesToScroll)) {
+    //   // translateWidth = -1 * transformWidth * core.settingsToApply.slidesToScroll * core.indexOnResize;
+    // }
+    core.trackInner.style.transform = `translate(${translateWidth}%, 0%)`;
   };
 
   const carouzel_updateArrow = (arrow: Element, index: number) => {
@@ -343,7 +371,7 @@ namespace Carouzel {
       prevOrNext === 'prev' ? core.indexOnResize-- : core.indexOnResize++;
       carouzel_updateArrow(core.prevArrow, core.indexOnResize - 1);
       carouzel_updateArrow(core.nextArrow, core.indexOnResize + 1);
-      carouzel_animateSlider(core);
+      carouzel_animateSlider(core, prevOrNext);
     };
     if (core.prevArrow && shouldAddEvent) {
       carouzel_eventHandler(core.prevArrow, 'click', function (event: Event) {
@@ -382,7 +410,7 @@ namespace Carouzel {
     core.settingsToApply = settingsToApply;
     if (core.trackInner) {
       core.trackInner.style.width = trackWidth + '%';
-      carouzel_animateSlider(core);
+      carouzel_animateSlider(core, 'prev');
     }
     for (let k = 0; k < core.allSlideElem.length; k++) {
       if (core.allSlideElem[k]) {
@@ -468,7 +496,7 @@ namespace Carouzel {
       carouzel_toggleEvents(core, true);
     }
     core.eventHandlers = [];
-    console.log(_ToggleUniqueId, core, _RemoveClass);
+    console.log(_ToggleUniqueId);
     return core;
   };
 
