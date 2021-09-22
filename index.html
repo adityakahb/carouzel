@@ -7,6 +7,23 @@
     <link href="dist/styles/carouzel/carouzel.min.css" rel="stylesheet" />
     <link href="dist/styles/site/index.min.css" rel="stylesheet" />
     <title>Carouzel</title>
+    <style>
+      [data-carouzelslide] {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 70px;
+        font-weight: bold; 
+      }
+      [data-carouzelslide]:nth-child(odd) {
+        border: 1px solid red;
+        color: red;
+      }
+      [data-carouzelslide]:nth-child(even) {
+        border: 1px solid black;
+        color: black;
+      }
+    </style>
   </head>
   <body>
     <div class="carousel-component" data-carouzel id="__carouzel_1">
@@ -15,14 +32,16 @@
 
         <div class="carousel-track" data-carouzeltrack>
           <div class="carousel-track-inner" data-carouzeltrackinner>
-            <div data-carouzelslide style="background-color: green;">1</div>
-            <div data-carouzelslide style="background-color: yellow;">2</div>
-            <div data-carouzelslide style="background-color: blue;">3</div>
-            <div data-carouzelslide style="background-color: gray;">4</div>
-            <div data-carouzelslide style="background-color: magenta;">5</div>
-            <div data-carouzelslide style="background-color: navy;">6</div>
-            <div data-carouzelslide style="background-color: wheat;">7</div>
-            <!-- <div data-carouzelslide style="background-color: mediumvioletred;">8</div> -->
+            <div data-carouzelslide>1</div>
+            <div data-carouzelslide>2</div>
+            <div data-carouzelslide>3</div>
+            <div data-carouzelslide>4</div>
+            <div data-carouzelslide>5</div>
+            <div data-carouzelslide>6</div>
+            <div data-carouzelslide>7</div>
+            <div data-carouzelslide>8</div>
+            <div data-carouzelslide>9</div>
+            <div data-carouzelslide>10</div>
           </div>
         </div>
 
@@ -42,15 +61,15 @@
       carouzel_instance1.init('#__carouzel_1', {
         showArrows: false,
         slidesToShow: 1,
-        startAtIndex: 1,
+        startAtIndex: 2,
         responsive: [{
           breakpoint: 700,
           showArrows: true
         }, {
           breakpoint: 1100,
           showArrows: false,
-          slidesToShow: 3,
-          slidesToScroll: 3
+          slidesToShow: 4,
+          slidesToScroll: 4
         }, {
           breakpoint: 1300
         }]
