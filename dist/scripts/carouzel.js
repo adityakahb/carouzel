@@ -29,10 +29,12 @@ var Carouzel;
         slideSelector: '[data-carouzelslide]',
         slidesToScroll: 1,
         slidesToShow: 1,
+        speed: 250,
         startAtIndex: 1,
+        timingFunction: 'linear',
         titleSelector: '[data-carouzeltitle]',
-        trackSelector: '[data-carouzeltrack]',
-        trackInnerSelector: '[data-carouzeltrackinner]'
+        trackInnerSelector: '[data-carouzeltrackinner]',
+        trackSelector: '[data-carouzeltrack]'
     };
     /**
      * Polyfill function for Object.assign
@@ -350,6 +352,8 @@ var Carouzel;
         core.settingsToApply = settingsToApply;
         if (core.trackInner) {
             core.trackInner.style.width = trackWidth + '%';
+            core.trackInner.style.transitionDuration = core.settings.speed + 'ms';
+            core.trackInner.style.transitionTimingFunction = core.settings.timingFunction;
             carouzel_animateSlider(core);
         }
         for (var k = 0; k < core.allSlides.length; k++) {

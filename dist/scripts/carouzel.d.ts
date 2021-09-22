@@ -14,6 +14,8 @@ declare namespace Carouzel {
         showNav?: boolean;
         slidesToScroll?: number;
         slidesToShow?: number;
+        speed?: number;
+        timingFunction?: string;
     }
     interface ICarouzelSettings {
         activeCls?: string;
@@ -33,7 +35,9 @@ declare namespace Carouzel {
         slideSelector?: string;
         slidesToScroll?: number;
         slidesToShow?: number;
+        speed?: number;
         startAtIndex?: number;
+        timingFunction?: string;
         titleSelector?: string;
         trackInnerSelector?: string;
         trackSelector?: string;

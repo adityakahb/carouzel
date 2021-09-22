@@ -21,6 +21,8 @@ namespace Carouzel {
     showNav?: boolean;
     slidesToScroll?: number;
     slidesToShow?: number;
+    speed?: number;
+    timingFunction?: string;
   }
   interface ICarouzelSettings {
     activeCls?: string;
@@ -40,7 +42,9 @@ namespace Carouzel {
     slideSelector?: string;
     slidesToScroll?: number;
     slidesToShow?: number;
+    speed?: number;
     startAtIndex?: number;
+    timingFunction?: string;
     titleSelector?: string;
     trackInnerSelector?: string;
     trackSelector?: string;
@@ -67,10 +71,12 @@ namespace Carouzel {
     slideSelector: '[data-carouzelslide]',
     slidesToScroll: 1,
     slidesToShow: 1,
+    speed: 250,
     startAtIndex: 1,
+    timingFunction: 'linear',
     titleSelector: '[data-carouzeltitle]',
-    trackSelector: '[data-carouzeltrack]',
     trackInnerSelector: '[data-carouzeltrackinner]',
+    trackSelector: '[data-carouzeltrack]',
   };
 
   /**
@@ -399,6 +405,8 @@ namespace Carouzel {
     core.settingsToApply = settingsToApply;
     if (core.trackInner) {
       core.trackInner.style.width = trackWidth + '%';
+      core.trackInner.style.transitionDuration = core.settings.speed + 'ms';
+      core.trackInner.style.transitionTimingFunction = core.settings.timingFunction;
       carouzel_animateSlider(core);
     }
     for (let k = 0; k < core.allSlides.length; k++) {
