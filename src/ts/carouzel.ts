@@ -376,14 +376,42 @@ namespace Carouzel {
     carouzel_updateArrow(core.prevArrow, core.prevIndex);
   };
   const carouzel_toggleSwipe = (tcore: any) => {
+    let isDragging = false;
+    let startPos = 0;
+    let animationID = 0;
+
+    // function setSliderPosition() {
+    //   // slider.style.transform = `translateX(${currentTranslate}px)`
+    // }
+    function getPositionX(event: Event) {
+      return event.type.includes('mouse') ? (event as MouseEvent).pageX : (event as TouchEvent).touches[0].clientX;
+    }
+    function animation() {
+      if (isDragging) requestAnimationFrame(animation);
+    }
     const touchStart = (thisevent: Event) => {
-      thisevent;
-    };
-    const touchEnd = (thisevent: Event) => {
-      thisevent;
+      startPos = getPositionX(thisevent);
+      isDragging = true;
+      // https://css-tricks.com/using-requestanimationframe/
+      animationID = requestAnimationFrame(animation);
+      // console.log('========startPos', startPos);
     };
     const touchMove = (thisevent: Event) => {
-      thisevent;
+      if (isDragging) {
+        // console.log('========dragged', tcore.currentTransform - (startPos - getPositionX(thisevent)), tcore.currentTransform + (startPos - getPositionX(thisevent)));
+        if (tcore.slideWidth / 2 > startPos - getPositionX(thisevent) && startPos - getPositionX(thisevent) > 0) {
+          // console.log('============negative');
+          tcore.trackInner.style.transform = `translate(${tcore.currentTransform - (startPos - getPositionX(thisevent))}px, 0%)`;
+        }
+        if (-tcore.slideWidth / 2 < startPos - getPositionX(thisevent) && startPos - getPositionX(thisevent) < 0) {
+          // console.log('============positive');
+          tcore.trackInner.style.transform = `translate(${-1 * tcore.currentTransform - (startPos - getPositionX(thisevent))}px, 0%)`;
+        }
+      }
+    };
+    const touchEnd = () => {
+      isDragging = false;
+      cancelAnimationFrame(animationID);
     };
     const toggleTouchEvents = (shouldAdd: boolean) => {
       carouzel_removeEventListeners(tcore, tcore.trackInner);
@@ -391,8 +419,8 @@ namespace Carouzel {
         carouzel_eventHandler(tcore.trackInner, 'touchstart', function(event: Event) {
           touchStart(event);
         });
-        carouzel_eventHandler(tcore.trackInner, 'touchend', function(event: Event) {
-          touchEnd(event);
+        carouzel_eventHandler(tcore.trackInner, 'touchend', function() {
+          touchEnd();
         });
         carouzel_eventHandler(tcore.trackInner, 'touchmove', function(event: Event) {
           touchMove(event);
@@ -400,11 +428,11 @@ namespace Carouzel {
         carouzel_eventHandler(tcore.trackInner, 'mousedown', function(event: Event) {
           touchStart(event);
         });
-        carouzel_eventHandler(tcore.trackInner, 'mouseup', function(event: Event) {
-          touchEnd(event);
+        carouzel_eventHandler(tcore.trackInner, 'mouseup', function() {
+          touchEnd();
         });
-        carouzel_eventHandler(tcore.trackInner, 'mouseleave', function(event: Event) {
-          touchEnd(event);
+        carouzel_eventHandler(tcore.trackInner, 'mouseleave', function() {
+          touchEnd();
         });
         carouzel_eventHandler(tcore.trackInner, 'mousemove', function(event: Event) {
           touchMove(event);
@@ -519,9 +547,6 @@ namespace Carouzel {
     }
     core.eventHandlers = [];
     _AddClass(rootElem, settings.activeCls ? settings.activeCls : '');
-    if (navigator.maxTouchPoints) {
-      _AddClass(core.track, '__carouzel-ms-touch');
-    }
     return core;
   };
 
