@@ -8,8 +8,9 @@
  *
  */
 declare namespace Carouzel {
-    interface ICarouzelBreakpoints {
+    interface ICarouzelBreakpoint {
         breakpoint?: number | string;
+        enableSwipe?: boolean;
         showArrows?: boolean;
         showNav?: boolean;
         slidesToScroll?: number;
@@ -22,12 +23,13 @@ declare namespace Carouzel {
         activeSlideCls?: string;
         arrowsSelector?: string;
         buttonSelector?: string;
+        enableSwipe?: boolean;
         idPrefix?: string;
         innerSelector?: string;
         navSelector?: string;
         nextArrowSelector?: string;
         prevArrowSelector?: string;
-        responsive: ICarouzelBreakpoints[];
+        responsive: ICarouzelBreakpoint[];
         rootCls?: string;
         rootSelector?: string;
         showArrows?: boolean;

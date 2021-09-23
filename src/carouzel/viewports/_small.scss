@@ -1,10 +1,10 @@
 .__carouzel {
-  // opacity: 0;
-  // visibility: hidden;
+  opacity: 0;
+  visibility: hidden;
   &, * {
     box-sizing: border-box;
   }
-  &.active {
+  &.__carouzel-active {
     opacity: 1;
     visibility: visible;
   }
@@ -28,18 +28,19 @@
     right: 10px;
   }
   [data-carouzeltrackinner] {
-    transform-style: preserve-3d;
-    position: relative;
+    align-items: flex-start;
     display: flex;
-    width: 100%;
     flex-direction: row;
-    align-items: center;
     justify-content: center;
+    min-height: 1px;
+    position: relative;
+    transform-style: preserve-3d;
     transition-property: transform;
     transition-timing-function: ease;
+    width: 100%;
   }
   [data-carouzelslide] {
     width: 100%;
-    min-height: 500px;
+    height: 500px;
   }
 }

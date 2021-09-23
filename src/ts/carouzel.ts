@@ -15,8 +15,9 @@ namespace Carouzel {
   interface IRoot {
     [key: string]: any;
   }
-  interface ICarouzelBreakpoints {
+  interface ICarouzelBreakpoint {
     breakpoint?: number | string;
+    enableSwipe?: boolean;
     showArrows?: boolean;
     showNav?: boolean;
     slidesToScroll?: number;
@@ -29,12 +30,13 @@ namespace Carouzel {
     activeSlideCls?: string;
     arrowsSelector?: string;
     buttonSelector?: string;
+    enableSwipe?: boolean;
     idPrefix?: string;
     innerSelector?: string;
     navSelector?: string;
     nextArrowSelector?: string;
     prevArrowSelector?: string;
-    responsive: ICarouzelBreakpoints[];
+    responsive: ICarouzelBreakpoint[];
     rootCls?: string;
     rootSelector?: string;
     showArrows?: boolean;
@@ -59,6 +61,7 @@ namespace Carouzel {
     activeSlideCls: '__carouzel-slide-active',
     arrowsSelector: '[data-carouzelarrows]',
     buttonSelector: '[data-carouzelbutton]',
+    enableSwipe: true,
     idPrefix: '__carouzel_id',
     innerSelector: '[data-carouzelinner]',
     navSelector: '[data-carouzelnav]',
@@ -73,7 +76,7 @@ namespace Carouzel {
     slidesToShow: 1,
     speed: 250,
     startAtIndex: 1,
-    timingFunction: 'linear',
+    timingFunction: 'cubic-bezier(0.250, 0.100, 0.250, 1.000)',
     titleSelector: '[data-carouzeltitle]',
     trackInnerSelector: '[data-carouzeltrackinner]',
     trackSelector: '[data-carouzeltrack]',
@@ -259,30 +262,6 @@ namespace Carouzel {
   };
 
   /**
-   * Function to add a unique id attribute if it is not present already. 
-   * This is required to monitor the outside click and hover behavior
-   * 
-   * @param element - An HTML Element
-   * @param settings - Options specific to individual AMegMen instance
-   * @param unique_number - A unique number as additional identification
-   * @param shouldAdd - If `true`, adds an id. Otherwise it is removed.
-   *
-   */
-  // const _ToggleUniqueId = (element: HTMLElement, settings: ICarouzelSettings, unique_number: number, shouldAddId: boolean) => {
-  //   if (settings.idPrefix) {
-  //     if (shouldAddId && !element.getAttribute('id')) {
-  //       element.setAttribute('id', settings.idPrefix + '_' + new Date().getTime() + '_' + unique_number);
-  //     } else if (!shouldAddId && element.getAttribute('id')) {
-  //       const thisid = element.getAttribute('id');
-  //       const regex = new RegExp(settings.idPrefix, 'gi');
-  //       if (regex.test(thisid || '')) {
-  //         element.removeAttribute('id');
-  //       }
-  //     }
-  //   }
-  // };
-
-  /**
    * Function to remove all local events assigned to the navigation elements.
    * 
    * @param core - AMegMen instance core object
@@ -337,17 +316,25 @@ namespace Carouzel {
     }
   };
 
+  const carouzel_moveToRight = (core: any) => {
+    carouzel_moveSlider(core, 'next');
+  }
+  const carouzel_moveToLeft = (core: any) => {
+    carouzel_moveSlider(core, 'prev');
+  }
+
+  const carouzel_moveSlider = (core: any, prevOrNext: string) => {
+    core.isCarouzelStarted = true;
+    core.currentIndex = prevOrNext === 'prev' ? core.prevIndex : core.nextIndex;
+    carouzel_animateSlider(core);
+    carozuel_updateIndices(core);
+  }
+
   const carouzel_toggleEvents = (core: any, shouldAddEvent: boolean) => {
-    const arrowToggle = (prevOrNext: string) => {
-      core.isCarouzelStarted = true;
-      core.currentIndex = prevOrNext === 'prev' ? core.prevIndex : core.nextIndex;
-      carouzel_animateSlider(core);
-      carozuel_updateIndices(core);
-    };
     if (core.prevArrow && shouldAddEvent) {
       carouzel_eventHandler(core.prevArrow, 'click', function (event: Event) {
         event.preventDefault();
-        arrowToggle('prev');
+        carouzel_moveToLeft(core);
       });
     }
     if (core.prevArrow && !shouldAddEvent) {
@@ -356,7 +343,7 @@ namespace Carouzel {
     if (core.nextArrow && shouldAddEvent) {
       carouzel_eventHandler(core.nextArrow, 'click', function (event: Event) {
         event.preventDefault();
-        arrowToggle('next');
+        carouzel_moveToRight(core);
       });
     }
     if (core.nextArrow && !shouldAddEvent) {
@@ -372,37 +359,79 @@ namespace Carouzel {
     for(let m=0; m<core.currentIndex; m++) {
       onLeft++;
     }
-    for(let m=core.currentIndex + core.settingsToApply.slidesToShow; m<slidesLength; m++) {
+    for(let m=core.currentIndex + core.bpoptions.slidesToShow; m<slidesLength; m++) {
       onRight++;
     }
-    if (onLeft >= core.settingsToApply.slidesToScroll) {
-      core.prevIndex -= core.settingsToApply.slidesToScroll;
+    if (onLeft >= core.bpoptions.slidesToScroll) {
+      core.prevIndex -= core.bpoptions.slidesToScroll;
     } else {
       core.prevIndex = 0;
     }
-    if (onRight >= core.settingsToApply.slidesToScroll) {
-      core.nextIndex += core.settingsToApply.slidesToScroll;
+    if (onRight >= core.bpoptions.slidesToScroll) {
+      core.nextIndex += core.bpoptions.slidesToScroll;
     } else {
-      core.nextIndex = slidesLength - core.settingsToApply.slidesToScroll;
+      core.nextIndex = slidesLength - core.bpoptions.slidesToScroll;
     }
     carouzel_updateArrow(core.nextArrow, core.nextIndex);
     carouzel_updateArrow(core.prevArrow, core.prevIndex);
   };
+  const carouzel_toggleSwipe = (core: any) => {
+    const touchStart = () => {
+      console.log('======touchStart');
+    }
+    const touchEnd = () => {
+      console.log('======touchEnd');
+    }
+    const touchMove = () => {
+      console.log('======touchMove');
+    }
+    const toggleTouchEvents = (shouldAdd: boolean) => {
+      for (let t = 0; t < core.allSlides.length; t++) {
+        carouzel_removeEventListeners(core, core.allSlides[t]);
+        if (shouldAdd) {
+          carouzel_eventHandler(core.allSlides[t], 'touchstart', function() {
+            touchStart();
+          });
+          carouzel_eventHandler(core.allSlides[t], 'touchend', function() {
+            touchEnd();
+          });
+          carouzel_eventHandler(core.allSlides[t], 'touchmove', function() {
+            touchMove();
+          });
+          carouzel_eventHandler(core.allSlides[t], 'mousedown', function() {
+            touchStart();
+          });
+          carouzel_eventHandler(core.allSlides[t], 'mouseup', function() {
+            touchEnd();
+          });
+          carouzel_eventHandler(core.allSlides[t], 'mouseleave', function() {
+            touchEnd();
+          });
+          carouzel_eventHandler(core.allSlides[t], 'mousemove', function() {
+            touchMove();
+          });
+        }
+      }
+    }
+    if (core.bpoptions.enableSwipe && core.trackInner) {
+      toggleTouchEvents(true);
+    } else if (!core.bpoptions.enableSwipe && core.trackInner) {
+      toggleTouchEvents(false);
+    }
+  };
   const carouzel_applyLayout = (core: any) => {
     let viewportWidth = window.innerWidth;
-    let settingsToApply = core.breakpoints[0];
+    let bpoptions = core.breakpoints[0];
     let len = 0;
     while(len < core.breakpoints.length) {
       if ((core.breakpoints[len + 1] && core.breakpoints[len + 1].breakpoint > viewportWidth) || typeof core.breakpoints[len + 1] === 'undefined') {
-        settingsToApply = core.breakpoints[len];
+        bpoptions = core.breakpoints[len];
         break;
       }
       len++;
     }
-    let slideWidth = (100 / settingsToApply.slidesToShow);
-    let trackWidth = ((100 / settingsToApply.slidesToShow) * (core.allSlides.length > settingsToApply.slidesToShow ? core.allSlides.length : settingsToApply.slidesToShow));
-    core.slideWidth = slideWidth;
-    core.settingsToApply = settingsToApply;
+    let slideWidth = (100 / bpoptions.slidesToShow);
+    let trackWidth = ((100 / bpoptions.slidesToShow) * (core.allSlides.length > bpoptions.slidesToShow ? core.allSlides.length : bpoptions.slidesToShow));
     if (core.trackInner) {
       core.trackInner.style.width = trackWidth + '%';
       core.trackInner.style.transitionDuration = core.settings.speed + 'ms';
@@ -414,9 +443,11 @@ namespace Carouzel {
         core.allSlides[k].style.width = slideWidth + '%';
       }
     }
+    core.bpoptions = bpoptions;
+    carouzel_toggleSwipe(core);
     carozuel_updateIndices(core);
   };
-  const carouzel_validateBreakpoints = (breakpoints: ICarouzelBreakpoints[]) => {
+  const carouzel_validateBreakpoints = (breakpoints: ICarouzelBreakpoint[]) => {
     try {
       let tempArr = [];
       let len = breakpoints.length;
@@ -438,12 +469,13 @@ namespace Carouzel {
     }
   };
   const carouzel_updateBreakpoints = (settings: ICarouzelSettings) => {
-    const defaultBreakpoint = {
+    const defaultBreakpoint: ICarouzelBreakpoint = {
       breakpoint: 0,
       showArrows: settings.showArrows,
       showNav: settings.showNav,
       slidesToScroll: settings.slidesToScroll,
       slidesToShow: settings.slidesToShow,
+      enableSwipe: settings.enableSwipe
     };
     let tempArr = [];
     if ((settings.responsive || []).length > 0) {
@@ -470,11 +502,8 @@ namespace Carouzel {
     _AddClass(rootElem, settings.rootCls ? settings.rootCls : '');
     core.rootElem = rootElem;
     core.settings = settings;
-    core.trackElem = rootElem.querySelector(`${settings.trackSelector}`);
     core.trackInner = rootElem.querySelector(`${settings.trackInnerSelector}`);
     core.allSlides = _ArrayCall(rootElem.querySelectorAll(`${settings.slideSelector}`));
-    core.firstSlide = undefined;
-    core.lastSlide = undefined;
     core.currentIndex = core.settings.startAtIndex = core.settings.startAtIndex - 1;
     core.prevIndex = 0;
     core.nextIndex = 0;
@@ -483,14 +512,12 @@ namespace Carouzel {
     core.nextArrow = rootElem.querySelector(`${settings.nextArrowSelector}`);
     core.slideWidth = 100;
     if (core.trackInner && core.allSlides.length > 0) {
-      core.firstSlide = core.allSlides[0];
-      core.lastSlide = core.allSlides[core.allSlides.length - 1];
       core.breakpoints = carouzel_updateBreakpoints(settings);
       carouzel_applyLayout(core);
       carouzel_toggleEvents(core, true);
     }
     core.eventHandlers = [];
-    // console.log(_ToggleUniqueId);
+    _AddClass(rootElem, settings.activeCls ? settings.activeCls : '');
     return core;
   };
 
@@ -605,6 +632,7 @@ namespace Carouzel {
           if (!iselempresent) {
             if (id) {
               this.instances[id] = new Core(id, (roots[i] as HTMLElement), options);
+              console.log('==========this.instances[thisid]', this.instances[id]);
             } else {
               const thisid = id ? id : (Object as any).assign({}, _Defaults, options).idPrefix + '_' + new Date().getTime() + '_root_' + (i + 1);
               (roots[i] as HTMLElement).setAttribute('id', thisid);
