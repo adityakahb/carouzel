@@ -303,12 +303,11 @@ namespace Carouzel {
 
   const carouzel_animateSlider = (core: any) => {
     let slidesLength = core.allSlides.length;
-    let transformWidth = 100 / (slidesLength > 0 ? slidesLength : 1);
     for (let k=0; k<slidesLength; k++) {
       _RemoveClass(core.allSlides[k], core.settings.activeSlideCls);
     }
-    core.currentTransform = -1 * transformWidth * core.currentIndex;
-    core.trackInner.style.transform = `translate(${-1 * transformWidth * core.currentIndex}%, 0%)`;
+    core.currentTransform = -1 * core.slideWidth * core.currentIndex;
+    core.trackInner.style.transform = `translate(${-1 * core.slideWidth * core.currentIndex}px, 0%)`;
   };
 
   const carouzel_updateArrow = (arrow: Element, index: number) => {
@@ -429,18 +428,18 @@ namespace Carouzel {
       }
       len++;
     }
-    let slideWidth = (100 / bpoptions.slidesToShow).toFixed(4);
-    let trackWidth = ((100 / bpoptions.slidesToShow) * (core.allSlides.length > bpoptions.slidesToShow ? core.allSlides.length : bpoptions.slidesToShow)).toFixed(4);
+    let slideWidth = (core.track.clientWidth / bpoptions.slidesToShow).toFixed(4) || 1;
+    let trackWidth = (parseFloat(slideWidth + '') * (core.allSlides.length > bpoptions.slidesToShow ? core.allSlides.length : bpoptions.slidesToShow)).toFixed(4);
     core.slideWidth = slideWidth;
     if (core.trackInner) {
-      core.trackInner.style.width = trackWidth + '%';
+      core.trackInner.style.width = trackWidth + 'px';
       core.trackInner.style.transitionDuration = core.settings.speed + 'ms';
       core.trackInner.style.transitionTimingFunction = core.settings.timingFunction;
       carouzel_animateSlider(core);
     }
     for (let k = 0; k < core.allSlides.length; k++) {
       if (core.allSlides[k]) {
-        core.allSlides[k].style.width = slideWidth + '%';
+        core.allSlides[k].style.width = slideWidth + 'px';
       }
     }
     core.bpoptions = bpoptions;
