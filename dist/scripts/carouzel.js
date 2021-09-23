@@ -253,6 +253,7 @@ var Carouzel;
         for (var k = 0; k < slidesLength; k++) {
             _RemoveClass(core.allSlides[k], core.settings.activeSlideCls);
         }
+        core.currentTransform = -1 * transformWidth * core.currentIndex;
         core.trackInner.style.transform = "translate(" + -1 * transformWidth * core.currentIndex + "%, 0%)";
     };
     var carouzel_updateArrow = function (arrow, index) {
@@ -319,48 +320,46 @@ var Carouzel;
         carouzel_updateArrow(core.nextArrow, core.nextIndex);
         carouzel_updateArrow(core.prevArrow, core.prevIndex);
     };
-    var carouzel_toggleSwipe = function (core) {
-        var touchStart = function () {
-            console.log('======touchStart');
+    var carouzel_toggleSwipe = function (tcore) {
+        var touchStart = function (thisevent) {
+            thisevent;
         };
-        var touchEnd = function () {
-            console.log('======touchEnd');
+        var touchEnd = function (thisevent) {
+            thisevent;
         };
-        var touchMove = function () {
-            console.log('======touchMove');
+        var touchMove = function (thisevent) {
+            thisevent;
         };
         var toggleTouchEvents = function (shouldAdd) {
-            for (var t = 0; t < core.allSlides.length; t++) {
-                carouzel_removeEventListeners(core, core.allSlides[t]);
-                if (shouldAdd) {
-                    carouzel_eventHandler(core.allSlides[t], 'touchstart', function () {
-                        touchStart();
-                    });
-                    carouzel_eventHandler(core.allSlides[t], 'touchend', function () {
-                        touchEnd();
-                    });
-                    carouzel_eventHandler(core.allSlides[t], 'touchmove', function () {
-                        touchMove();
-                    });
-                    carouzel_eventHandler(core.allSlides[t], 'mousedown', function () {
-                        touchStart();
-                    });
-                    carouzel_eventHandler(core.allSlides[t], 'mouseup', function () {
-                        touchEnd();
-                    });
-                    carouzel_eventHandler(core.allSlides[t], 'mouseleave', function () {
-                        touchEnd();
-                    });
-                    carouzel_eventHandler(core.allSlides[t], 'mousemove', function () {
-                        touchMove();
-                    });
-                }
+            carouzel_removeEventListeners(tcore, tcore.trackInner);
+            if (shouldAdd) {
+                carouzel_eventHandler(tcore.trackInner, 'touchstart', function (event) {
+                    touchStart(event);
+                });
+                carouzel_eventHandler(tcore.trackInner, 'touchend', function (event) {
+                    touchEnd(event);
+                });
+                carouzel_eventHandler(tcore.trackInner, 'touchmove', function (event) {
+                    touchMove(event);
+                });
+                carouzel_eventHandler(tcore.trackInner, 'mousedown', function (event) {
+                    touchStart(event);
+                });
+                carouzel_eventHandler(tcore.trackInner, 'mouseup', function (event) {
+                    touchEnd(event);
+                });
+                carouzel_eventHandler(tcore.trackInner, 'mouseleave', function (event) {
+                    touchEnd(event);
+                });
+                carouzel_eventHandler(tcore.trackInner, 'mousemove', function (event) {
+                    touchMove(event);
+                });
             }
         };
-        if (core.bpoptions.enableSwipe && core.trackInner) {
+        if (tcore.bpoptions.enableSwipe && tcore.trackInner) {
             toggleTouchEvents(true);
         }
-        else if (!core.bpoptions.enableSwipe && core.trackInner) {
+        else if (!tcore.bpoptions.enableSwipe && tcore.trackInner) {
             toggleTouchEvents(false);
         }
     };
@@ -375,8 +374,9 @@ var Carouzel;
             }
             len++;
         }
-        var slideWidth = (100 / bpoptions.slidesToShow);
-        var trackWidth = ((100 / bpoptions.slidesToShow) * (core.allSlides.length > bpoptions.slidesToShow ? core.allSlides.length : bpoptions.slidesToShow));
+        var slideWidth = (100 / bpoptions.slidesToShow).toFixed(4);
+        var trackWidth = ((100 / bpoptions.slidesToShow) * (core.allSlides.length > bpoptions.slidesToShow ? core.allSlides.length : bpoptions.slidesToShow)).toFixed(4);
+        core.slideWidth = slideWidth;
         if (core.trackInner) {
             core.trackInner.style.width = trackWidth + '%';
             core.trackInner.style.transitionDuration = core.settings.speed + 'ms';
@@ -448,6 +448,7 @@ var Carouzel;
         _AddClass(rootElem, settings.rootCls ? settings.rootCls : '');
         core.rootElem = rootElem;
         core.settings = settings;
+        core.track = rootElem.querySelector("" + settings.trackSelector);
         core.trackInner = rootElem.querySelector("" + settings.trackInnerSelector);
         core.allSlides = _ArrayCall(rootElem.querySelectorAll("" + settings.slideSelector));
         core.currentIndex = core.settings.startAtIndex = core.settings.startAtIndex - 1;
@@ -457,6 +458,7 @@ var Carouzel;
         core.prevArrow = rootElem.querySelector("" + settings.prevArrowSelector);
         core.nextArrow = rootElem.querySelector("" + settings.nextArrowSelector);
         core.slideWidth = 100;
+        core.longTouch = false;
         if (core.trackInner && core.allSlides.length > 0) {
             core.breakpoints = carouzel_updateBreakpoints(settings);
             carouzel_applyLayout(core);
@@ -464,6 +466,9 @@ var Carouzel;
         }
         core.eventHandlers = [];
         _AddClass(rootElem, settings.activeCls ? settings.activeCls : '');
+        if (navigator.maxTouchPoints) {
+            _AddClass(core.track, '__carouzel-ms-touch');
+        }
         return core;
     };
     /**
@@ -557,7 +562,6 @@ var Carouzel;
                         if (!iselempresent) {
                             if (id) {
                                 _this.instances[id] = new Core(id, roots[i], options);
-                                console.log('==========this.instances[thisid]', _this.instances[id]);
                             }
                             else {
                                 var thisid = id ? id : Object.assign({}, _Defaults, options).idPrefix + '_' + new Date().getTime() + '_root_' + (i + 1);

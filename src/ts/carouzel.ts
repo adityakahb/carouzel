@@ -79,7 +79,7 @@ namespace Carouzel {
     timingFunction: 'cubic-bezier(0.250, 0.100, 0.250, 1.000)',
     titleSelector: '[data-carouzeltitle]',
     trackInnerSelector: '[data-carouzeltrackinner]',
-    trackSelector: '[data-carouzeltrack]',
+    trackSelector: '[data-carouzeltrack]'
   };
 
   /**
@@ -307,6 +307,7 @@ namespace Carouzel {
     for (let k=0; k<slidesLength; k++) {
       _RemoveClass(core.allSlides[k], core.settings.activeSlideCls);
     }
+    core.currentTransform = -1 * transformWidth * core.currentIndex;
     core.trackInner.style.transform = `translate(${-1 * transformWidth * core.currentIndex}%, 0%)`;
   };
 
@@ -375,47 +376,45 @@ namespace Carouzel {
     carouzel_updateArrow(core.nextArrow, core.nextIndex);
     carouzel_updateArrow(core.prevArrow, core.prevIndex);
   };
-  const carouzel_toggleSwipe = (core: any) => {
-    const touchStart = () => {
-      console.log('======touchStart');
-    }
-    const touchEnd = () => {
-      console.log('======touchEnd');
-    }
-    const touchMove = () => {
-      console.log('======touchMove');
-    }
+  const carouzel_toggleSwipe = (tcore: any) => {
+    const touchStart = (thisevent: Event) => {
+      thisevent;
+    };
+    const touchEnd = (thisevent: Event) => {
+      thisevent;
+    };
+    const touchMove = (thisevent: Event) => {
+      thisevent;
+    };
     const toggleTouchEvents = (shouldAdd: boolean) => {
-      for (let t = 0; t < core.allSlides.length; t++) {
-        carouzel_removeEventListeners(core, core.allSlides[t]);
-        if (shouldAdd) {
-          carouzel_eventHandler(core.allSlides[t], 'touchstart', function() {
-            touchStart();
-          });
-          carouzel_eventHandler(core.allSlides[t], 'touchend', function() {
-            touchEnd();
-          });
-          carouzel_eventHandler(core.allSlides[t], 'touchmove', function() {
-            touchMove();
-          });
-          carouzel_eventHandler(core.allSlides[t], 'mousedown', function() {
-            touchStart();
-          });
-          carouzel_eventHandler(core.allSlides[t], 'mouseup', function() {
-            touchEnd();
-          });
-          carouzel_eventHandler(core.allSlides[t], 'mouseleave', function() {
-            touchEnd();
-          });
-          carouzel_eventHandler(core.allSlides[t], 'mousemove', function() {
-            touchMove();
-          });
-        }
+      carouzel_removeEventListeners(tcore, tcore.trackInner);
+      if (shouldAdd) {
+        carouzel_eventHandler(tcore.trackInner, 'touchstart', function(event: Event) {
+          touchStart(event);
+        });
+        carouzel_eventHandler(tcore.trackInner, 'touchend', function(event: Event) {
+          touchEnd(event);
+        });
+        carouzel_eventHandler(tcore.trackInner, 'touchmove', function(event: Event) {
+          touchMove(event);
+        });
+        carouzel_eventHandler(tcore.trackInner, 'mousedown', function(event: Event) {
+          touchStart(event);
+        });
+        carouzel_eventHandler(tcore.trackInner, 'mouseup', function(event: Event) {
+          touchEnd(event);
+        });
+        carouzel_eventHandler(tcore.trackInner, 'mouseleave', function(event: Event) {
+          touchEnd(event);
+        });
+        carouzel_eventHandler(tcore.trackInner, 'mousemove', function(event: Event) {
+          touchMove(event);
+        });
       }
-    }
-    if (core.bpoptions.enableSwipe && core.trackInner) {
+    };
+    if (tcore.bpoptions.enableSwipe && tcore.trackInner) {
       toggleTouchEvents(true);
-    } else if (!core.bpoptions.enableSwipe && core.trackInner) {
+    } else if (!tcore.bpoptions.enableSwipe && tcore.trackInner) {
       toggleTouchEvents(false);
     }
   };
@@ -430,8 +429,9 @@ namespace Carouzel {
       }
       len++;
     }
-    let slideWidth = (100 / bpoptions.slidesToShow);
-    let trackWidth = ((100 / bpoptions.slidesToShow) * (core.allSlides.length > bpoptions.slidesToShow ? core.allSlides.length : bpoptions.slidesToShow));
+    let slideWidth = (100 / bpoptions.slidesToShow).toFixed(4);
+    let trackWidth = ((100 / bpoptions.slidesToShow) * (core.allSlides.length > bpoptions.slidesToShow ? core.allSlides.length : bpoptions.slidesToShow)).toFixed(4);
+    core.slideWidth = slideWidth;
     if (core.trackInner) {
       core.trackInner.style.width = trackWidth + '%';
       core.trackInner.style.transitionDuration = core.settings.speed + 'ms';
@@ -502,6 +502,7 @@ namespace Carouzel {
     _AddClass(rootElem, settings.rootCls ? settings.rootCls : '');
     core.rootElem = rootElem;
     core.settings = settings;
+    core.track = rootElem.querySelector(`${settings.trackSelector}`);
     core.trackInner = rootElem.querySelector(`${settings.trackInnerSelector}`);
     core.allSlides = _ArrayCall(rootElem.querySelectorAll(`${settings.slideSelector}`));
     core.currentIndex = core.settings.startAtIndex = core.settings.startAtIndex - 1;
@@ -511,6 +512,7 @@ namespace Carouzel {
     core.prevArrow = rootElem.querySelector(`${settings.prevArrowSelector}`);
     core.nextArrow = rootElem.querySelector(`${settings.nextArrowSelector}`);
     core.slideWidth = 100;
+    core.longTouch = false;
     if (core.trackInner && core.allSlides.length > 0) {
       core.breakpoints = carouzel_updateBreakpoints(settings);
       carouzel_applyLayout(core);
@@ -518,6 +520,9 @@ namespace Carouzel {
     }
     core.eventHandlers = [];
     _AddClass(rootElem, settings.activeCls ? settings.activeCls : '');
+    if (navigator.maxTouchPoints) {
+      _AddClass(core.track, '__carouzel-ms-touch');
+    }
     return core;
   };
 
@@ -632,7 +637,6 @@ namespace Carouzel {
           if (!iselempresent) {
             if (id) {
               this.instances[id] = new Core(id, (roots[i] as HTMLElement), options);
-              console.log('==========this.instances[thisid]', this.instances[id]);
             } else {
               const thisid = id ? id : (Object as any).assign({}, _Defaults, options).idPrefix + '_' + new Date().getTime() + '_root_' + (i + 1);
               (roots[i] as HTMLElement).setAttribute('id', thisid);
