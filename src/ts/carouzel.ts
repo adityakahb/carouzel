@@ -398,14 +398,15 @@ namespace Carouzel {
     };
     const touchMove = (thisevent: Event) => {
       if (isDragging) {
-        // console.log('========dragged', tcore.currentTransform - (startPos - getPositionX(thisevent)), tcore.currentTransform + (startPos - getPositionX(thisevent)));
-        if (tcore.slideWidth / 2 > startPos - getPositionX(thisevent) && startPos - getPositionX(thisevent) > 0) {
-          // console.log('============negative');
-          tcore.trackInner.style.transform = `translate(${tcore.currentTransform - (startPos - getPositionX(thisevent))}px, 0%)`;
+        // console.log('========dragged', tcore.slideWidth, tcore.currentTransform - (startPos - getPositionX(thisevent)), tcore.currentTransform + (startPos - getPositionX(thisevent)));
+        // console.log('========dragged', tcore.slideWidth, (startPos - getPositionX(thisevent)), (startPos - getPositionX(thisevent)));
+        if ((tcore.slideWidth / 2) > startPos - getPositionX(thisevent) && startPos - getPositionX(thisevent) > 0) {
+          console.log('============negative');
+          // tcore.trackInner.style.transform = `translate(${tcore.currentTransform - (startPos - getPositionX(thisevent))}px, 0%)`;
         }
         if (-tcore.slideWidth / 2 < startPos - getPositionX(thisevent) && startPos - getPositionX(thisevent) < 0) {
-          // console.log('============positive');
-          tcore.trackInner.style.transform = `translate(${-1 * tcore.currentTransform - (startPos - getPositionX(thisevent))}px, 0%)`;
+          console.log('============positive');
+          // tcore.trackInner.style.transform = `translate(${-1 * tcore.currentTransform - (startPos - getPositionX(thisevent))}px, 0%)`;
         }
       }
     };
