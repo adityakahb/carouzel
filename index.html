@@ -4,9 +4,35 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="dist/styles/carouzel/carouzel.min.css" rel="stylesheet" />
+    <title>Carouzel - Not just another carousel slider</title>
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Kumar+One&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <link href="dist/styles/site/index.min.css" rel="stylesheet" />
-    <title>Carouzel</title>
+    <link href="dist/styles/carouzel/carouzel.min.css" rel="stylesheet" />
+    <link rel="apple-touch-icon" sizes="57x57" href="icons/apple-icon-57x57.png" />
+    <link rel="apple-touch-icon" sizes="60x60" href="icons/apple-icon-60x60.png" />
+    <link rel="apple-touch-icon" sizes="72x72" href="icons/apple-icon-72x72.png" />
+    <link rel="apple-touch-icon" sizes="76x76" href="icons/apple-icon-76x76.png" />
+    <link rel="apple-touch-icon" sizes="114x114" href="icons/apple-icon-114x114.png" />
+    <link rel="apple-touch-icon" sizes="120x120" href="icons/apple-icon-120x120.png" />
+    <link rel="apple-touch-icon" sizes="144x144" href="icons/apple-icon-144x144.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="icons/apple-icon-152x152.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-icon-180x180.png" />
+    <link rel="icon" type="image/png" sizes="192x192"  href="icons/android-icon-192x192.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="icons/favicon-96x96.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png" />
+    <link rel="icon" href="favicon.ico" />
+    
+    <link rel="manifest" href="manifest.json" />
+
+    <meta name="msapplication-TileColor" content="#e9ecef" />
+    <meta name="msapplication-TileImage" content="icons/ms-icon-144x144.png" />
+    <meta name="theme-color" content="#e9ecef" />
+
+    <meta name="description" content="TBD" />
+    <meta name="keywords" content="carouzel, carousel, slider, responsive, vanilla, native, javascript, css3" />
+
     <style>
       [data-carouzelslide] {
         display: flex;
@@ -26,35 +52,78 @@
     </style>
   </head>
   <body>
-    <div class="carousel-component" data-carouzel id="__carouzel_1">
-      <div class="carousel-inner" data-carouzelinner>
-        <div class="carousel-title" data-carouzeltitle></div>
-
-        <div class="carousel-track" data-carouzeltrack>
-          <div class="carousel-track-inner" data-carouzeltrackinner>
-            <div data-carouzelslide><div data-carouzelslideinner>1</div></div>
-            <div data-carouzelslide><div data-carouzelslideinner>2</div></div>
-            <div data-carouzelslide><div data-carouzelslideinner>3</div></div>
-            <div data-carouzelslide><div data-carouzelslideinner>4</div></div>
-            <div data-carouzelslide><div data-carouzelslideinner>5</div></div>
-            <div data-carouzelslide><div data-carouzelslideinner>6</div></div>
-            <div data-carouzelslide><div data-carouzelslideinner>7</div></div>
-            <div data-carouzelslide><div data-carouzelslideinner>8</div></div>
-            <div data-carouzelslide><div data-carouzelslideinner>9</div></div>
-            <div data-carouzelslide><div data-carouzelslideinner>10</div></div>
+    <section>
+      <div class="max-wrap">
+        <div class="container-fluid">
+          <div class="row py-5">
+            <div class="col-12 col-md-6 d-flex justify-content-center align-items-center flex-column text-center">
+              <header>
+                <h1>Carouzel</h1>
+                <p class="lead text-uppercase">Accessible MegaMenu</p>
+              </header>
+            </div>
+            <div class="col-12 col-md-6 d-flex justify-content-center align-items-center flex-column text-center">
+              <h2 class="d-md-none">Features</h2>
+              <ul class="list-unstyled m-0">
+                <li class="my-2">Available in Vanilla Javascript and CommonJS module.</li>
+                <li class="my-2">Framework-free.</li>
+                <li class="my-2">Can be used as ES6 module import OR direct source.</li>
+                <li class="my-2">Supports 3 levels.</li>
+                <li class="my-2">Supports Click and Hover behaviors.</li>
+                <li class="my-2">Supports Right to Left UI.</li>
+                <li class="my-2">Fully responsive.</li>
+                <li class="my-2">With bare minimum css (with no icons, reset, normalize, custom fonts or images).</li>
+                <li class="my-2">Can have multiple instances with multiple configurations.</li>
+                <li class="my-2">Compiled through Typescript.</li>
+                <li class="my-2">Styled through SASS (Mobile first and with one breakpoint) - Source included for customization.</li>
+                <li class="my-2">Tested through Karma and Jasmine.</li>
+                <li class="my-2">Polyfills for `Object.assign`, `querySelector:scope`, `querySelectorAll:scope` and `Element.closest` included, no other polyfill required.</li>
+              </ul>
+            </div>
           </div>
         </div>
-
-        <div class="carousel-arrows" data-carouzelarrows>
-          <button type="button" data-carouzelprev>prev</button>
-          <button type="button" data-carouzelnext>next</button>
-        </div>
-        
-        <div class="carousel-dots" data-carouzelnav></div>
-
-        <div class="carousel-button" data-carouzelbutton></div>
       </div>
-    </div>
+    </section>
+    <a href="https://github.com/adityakahb/carouzel" target="_blank" class="github-corner" aria-label="View source on GitHub">
+      <svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: fixed; top: 0; border: 0; right: 0; z-index: 4" aria-hidden="true">
+        <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+        <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+        <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path>
+      </svg>
+    </a>
+    <section>
+      <div class="max-wrap py-5 text-center">
+        <div class="carousel-component" data-carouzel id="__carouzel_1">
+          <div class="carousel-inner" data-carouzelinner>
+            <div class="carousel-title" data-carouzeltitle></div>
+    
+            <div class="carousel-track" data-carouzeltrack>
+              <div class="carousel-track-inner" data-carouzeltrackinner>
+                <div data-carouzelslide><div data-carouzelslideinner>1</div></div>
+                <div data-carouzelslide><div data-carouzelslideinner>2</div></div>
+                <div data-carouzelslide><div data-carouzelslideinner>3</div></div>
+                <div data-carouzelslide><div data-carouzelslideinner>4</div></div>
+                <div data-carouzelslide><div data-carouzelslideinner>5</div></div>
+                <div data-carouzelslide><div data-carouzelslideinner>6</div></div>
+                <div data-carouzelslide><div data-carouzelslideinner>7</div></div>
+                <div data-carouzelslide><div data-carouzelslideinner>8</div></div>
+                <div data-carouzelslide><div data-carouzelslideinner>9</div></div>
+                <div data-carouzelslide><div data-carouzelslideinner>10</div></div>
+              </div>
+            </div>
+    
+            <div class="carousel-arrows" data-carouzelarrows>
+              <button type="button" data-carouzelprev>prev</button>
+              <button type="button" data-carouzelnext>next</button>
+            </div>
+            
+            <div class="carousel-dots" data-carouzelnav></div>
+    
+            <div class="carousel-button" data-carouzelbutton></div>
+          </div>
+        </div>
+      </div>
+    </section>
     <script src="dist/scripts/carouzel.min.js" type="text/javascript"></script>
     <script type="text/javascript">
       var carouzel_instance1 = Carouzel.Root.getInstance();
