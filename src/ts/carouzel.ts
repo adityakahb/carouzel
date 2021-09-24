@@ -52,7 +52,7 @@ namespace Carouzel {
     trackSelector?: string;
   }
   interface IEventHandler {
-    currentElement: Element;
+    currentElement: Element | Document | Window;
     removeEvent?: Function;
   }
   const _useCapture = false;
@@ -290,7 +290,7 @@ namespace Carouzel {
    * @returns The event handler object
    *
    */
-  const carouzel_eventHandler = (element: Element, type: string, listener: EventListenerOrEventListenerObject) => {
+  const carouzel_eventHandler = (element: Element | Document | Window, type: string, listener: EventListenerOrEventListenerObject) => {
     const eventHandler:IEventHandler = {
       currentElement: element,
       removeEvent: () => {
@@ -376,42 +376,68 @@ namespace Carouzel {
     carouzel_updateArrow(core.prevArrow, core.prevIndex);
   };
   const carouzel_toggleSwipe = (tcore: any) => {
+    let posX1 = 0;
+    let posX2 = 0;
+    let posFinal = 0;
+    let threshold = 120;
+    let dragging = false;    
     const touchStart = (thisevent: Event) => {
       thisevent.preventDefault();
-      posInitial = items.offsetLeft;
+      dragging = true;
+      if (thisevent.type === 'touchstart') {
+        posX1 = (thisevent as TouchEvent).touches[0].clientX;
+      } else {
+        posX1 = (thisevent as MouseEvent).clientX;
+      }
     };
     const touchMove = (thisevent: Event) => {
+      if (dragging) {
+        if (thisevent.type == 'touchmove') {
+          posX2 = posX1 - (thisevent as TouchEvent).touches[0].clientX;
+        } else {
+          posX2 = posX1 - (thisevent as MouseEvent).clientX;
+        }
+        tcore.trackInner.style.transform = `translate(${tcore.currentTransform - posX2}px, 0%)`;
+        posFinal = posX2;
+      }
     };
     const touchEnd = () => {
+      if (dragging) {
+        if (posFinal < -threshold) {
+          carouzel_moveToLeft(tcore);
+        } else if (posFinal > threshold) {
+          carouzel_moveToRight(tcore);
+        } else {
+          tcore.trackInner.style.transform = `translate(${tcore.currentTransform}px, 0%)`;
+        }
+      }
+      posX1 = posX2 = posFinal = 0;
+      dragging = false;
     };
     const toggleTouchEvents = (shouldAdd: boolean) => {
       carouzel_removeEventListeners(tcore, tcore.trackInner);
-      carouzel_removeEventListeners(tcore, document);
       if (shouldAdd) {
         carouzel_eventHandler(tcore.trackInner, 'touchstart', function(event: Event) {
           touchStart(event);
         });
-        carouzel_eventHandler(tcore.trackInner, 'touchend', function() {
-          touchEnd();
-        });
         carouzel_eventHandler(tcore.trackInner, 'touchmove', function(event: Event) {
           touchMove(event);
+        });
+        carouzel_eventHandler(tcore.trackInner, 'touchend', function() {
+          touchEnd();
         });
         carouzel_eventHandler(tcore.trackInner, 'mousedown', function(event: Event) {
           touchStart(event);
         });
-        carouzel_eventHandler(tcore.trackInner, 'transitionend', function(event: Event) {
-          checkIndex(event);
+        carouzel_eventHandler(tcore.trackInner, 'mouseup', function() {
+          touchEnd();
         });
-        // carouzel_eventHandler(tcore.trackInner, 'mouseup', function() {
-        //   touchEnd();
-        // });
-        // carouzel_eventHandler(tcore.trackInner, 'mouseleave', function() {
-        //   touchEnd();
-        // });
-        // carouzel_eventHandler(tcore.trackInner, 'mousemove', function(event: Event) {
-        //   touchMove(event);
-        // });
+        carouzel_eventHandler(tcore.trackInner, 'mouseleave', function() {
+          touchEnd();
+        });
+        carouzel_eventHandler(tcore.trackInner, 'mousemove', function(event: Event) {
+          touchMove(event);
+        });
       }
     };
     if (tcore.bpoptions.enableSwipe && tcore.trackInner) {
