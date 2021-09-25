@@ -37,6 +37,7 @@ namespace Carouzel {
     hideCls?: string;
     idPrefix?: string;
     innerSelector?: string;
+    navInnerSelector?: string;
     navSelector?: string;
     nextArrowSelector?: string;
     prevArrowSelector?: string;
@@ -71,6 +72,7 @@ namespace Carouzel {
     hideCls: '__carouzel-hidden',
     idPrefix: '__carouzel_id',
     innerSelector: '[data-carouzelinner]',
+    navInnerSelector: '[data-carouzelnavinner]',
     navSelector: '[data-carouzelnav]',
     nextArrowSelector: '[data-carouzelnext]',
     prevArrowSelector: '[data-carouzelprev]',
@@ -472,6 +474,9 @@ namespace Carouzel {
       toggleTouchEvents(false);
     }
   };
+  const carouzel_addNav = (core: any) => {
+    console.log('===========pages', Math.ceil(core.allSlides.length / core.bpoptions.slidesToShow));
+  };
   const carouzel_applyLayout = (core: any) => {
     let viewportWidth = window.innerWidth;
     let bpoptions = core.breakpoints[0];
@@ -501,6 +506,7 @@ namespace Carouzel {
     carouzel_toggleEvents(core, core.bpoptions.showArrows || false);
     carouzel_toggleSwipe(core);
     carozuel_updateIndices(core);
+    carouzel_addNav(core);
   };
   const carouzel_validateBreakpoints = (breakpoints: ICarouzelBreakpoint[]) => {
     try {
@@ -561,6 +567,7 @@ namespace Carouzel {
     core.trackInner = rootElem.querySelector(`${settings.trackInnerSelector}`);
     core.allSlides = _ArrayCall(rootElem.querySelectorAll(`${settings.slideSelector}`));
     core.currentIndex = core.settings.startAtIndex = core.settings.startAtIndex - 1;
+    core.navInner = rootElem.querySelector(`${settings.navInnerSelector}`);
     core.prevIndex = 0;
     core.nextIndex = 0;
     core.isCarouzelStarted = false;

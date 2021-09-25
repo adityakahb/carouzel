@@ -30,6 +30,7 @@ declare namespace Carouzel {
         hideCls?: string;
         idPrefix?: string;
         innerSelector?: string;
+        navInnerSelector?: string;
         navSelector?: string;
         nextArrowSelector?: string;
         prevArrowSelector?: string;

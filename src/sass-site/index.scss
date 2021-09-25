@@ -21,6 +21,11 @@
   [data-carouzelslideinner] {
     background-color: #fff;
     width: 100%;
+    &:after {
+      display: inline-block;
+      line-height: 1;
+      vertical-align: middle;
+    }
   }
   &:nth-child(odd) {
     [data-carouzelslideinner] {

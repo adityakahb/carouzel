@@ -112,6 +112,9 @@
                       <div data-carouzelslide>
                         <div data-carouzelslideinner></div>
                       </div>
+                      <div data-carouzelslide>
+                        <div data-carouzelslideinner></div>
+                      </div>
                     </div>
                   </div>
           
@@ -124,7 +127,9 @@
                     </button>
                   </div>
                   
-                  <div class="carouzel-dots" data-carouzelnav></div>
+                  <div class="carouzel-dots" data-carouzelnav>
+                    <div class="carouzel-dots" data-carouzelnavinner></div>
+                  </div>
           
                   <div class="carouzel-button" data-carouzelbutton></div>
                 </div>
@@ -134,7 +139,7 @@
         </div>
       </div>
     </section>
-    <script src="dist/scripts/carouzel.min.js" type="text/javascript"></script>
+    <script src="dist/scripts/carouzel.js" type="text/javascript"></script>
     <script type="text/javascript">
       var carouzel_instance1 = Carouzel.Root.getInstance();
         carouzel_instance1.init('#__carouzel_20', {
@@ -142,6 +147,7 @@
           startAtIndex: 1,
           speed: 400,
           responsive: [{
+            slidesToShow: 2,
             breakpoint: 700,
             showArrows: true
           }, {

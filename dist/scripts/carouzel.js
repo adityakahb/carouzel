@@ -23,6 +23,7 @@ var Carouzel;
         hideCls: '__carouzel-hidden',
         idPrefix: '__carouzel_id',
         innerSelector: '[data-carouzelinner]',
+        navInnerSelector: '[data-carouzelnavinner]',
         navSelector: '[data-carouzelnav]',
         nextArrowSelector: '[data-carouzelnext]',
         prevArrowSelector: '[data-carouzelprev]',
@@ -416,6 +417,9 @@ var Carouzel;
             toggleTouchEvents(false);
         }
     };
+    var carouzel_addNav = function (core) {
+        console.log('===========pages', Math.ceil(core.allSlides.length / core.bpoptions.slidesToShow));
+    };
     var carouzel_applyLayout = function (core) {
         var viewportWidth = window.innerWidth;
         var bpoptions = core.breakpoints[0];
@@ -445,6 +449,7 @@ var Carouzel;
         carouzel_toggleEvents(core, core.bpoptions.showArrows || false);
         carouzel_toggleSwipe(core);
         carozuel_updateIndices(core);
+        carouzel_addNav(core);
     };
     var carouzel_validateBreakpoints = function (breakpoints) {
         try {
@@ -506,6 +511,7 @@ var Carouzel;
         core.trackInner = rootElem.querySelector("" + settings.trackInnerSelector);
         core.allSlides = _ArrayCall(rootElem.querySelectorAll("" + settings.slideSelector));
         core.currentIndex = core.settings.startAtIndex = core.settings.startAtIndex - 1;
+        core.navInner = rootElem.querySelector("" + settings.navInnerSelector);
         core.prevIndex = 0;
         core.nextIndex = 0;
         core.isCarouzelStarted = false;
