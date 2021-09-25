@@ -17,6 +17,7 @@ namespace Carouzel {
   }
   interface ICarouzelBreakpoint {
     breakpoint?: number | string;
+    dragThreshold?: number;
     enableSwipe?: boolean;
     showArrows?: boolean;
     showNav?: boolean;
@@ -30,8 +31,10 @@ namespace Carouzel {
     activeSlideCls?: string;
     arrowsSelector?: string;
     buttonSelector?: string;
-    disabledCls?: string;
+    disableCls?: string;
+    dragThreshold?: number;
     enableSwipe?: boolean;
+    hideCls?: string;
     idPrefix?: string;
     innerSelector?: string;
     navSelector?: string;
@@ -62,8 +65,10 @@ namespace Carouzel {
     activeSlideCls: '__carouzel-slide-active',
     arrowsSelector: '[data-carouzelarrows]',
     buttonSelector: '[data-carouzelbutton]',
-    disabledCls: '__carouzel-disabled',
+    disableCls: '__carouzel-disabled',
+    dragThreshold: 120,
     enableSwipe: true,
+    hideCls: '__carouzel-hidden',
     idPrefix: '__carouzel_id',
     innerSelector: '[data-carouzelinner]',
     navSelector: '[data-carouzelnav]',
@@ -303,6 +308,17 @@ namespace Carouzel {
     return eventHandler;
   };
 
+  const carouzel_toggleArrow = (arrow: Element, shouldEnable: boolean, disableCls: string) => {
+    if (arrow && !shouldEnable) {
+      _AddClass(arrow as HTMLElement, disableCls);
+      arrow.setAttribute('disabled', 'disabled');
+    }
+    if (arrow && shouldEnable) {
+      _RemoveClass(arrow as HTMLElement, disableCls);
+      arrow.removeAttribute('disabled');
+    }
+  };
+
   const carouzel_animateSlider = (core: any) => {
     let slidesLength = core.allSlides.length;
     for (let k=0; k<slidesLength; k++) {
@@ -310,21 +326,8 @@ namespace Carouzel {
     }
     core.currentTransform = -1 * core.slideWidth * core.currentIndex;
     core.trackInner.style.transform = `translate(${-1 * core.slideWidth * core.currentIndex}px, 0%)`;
-    console.log('===========core.currentIndex', core.currentIndex);
-    if (core.currentIndex === 0 && core.prevArrow) {
-      _AddClass(core.prevArrow, core.settings.disabledCls);
-      core.prevArrow.setAttribute('disabled', 'disabled');
-    } else if (core.prevArrow) {
-      _RemoveClass(core.prevArrow, core.settings.disabledCls);
-      core.prevArrow.removeAttribute('disabled');
-    }
-    if (core.currentIndex + core.bpoptions.slidesToShow === core.allSlides.length && core.nextArrow) {
-      _AddClass(core.nextArrow, core.settings.disabledCls);
-      core.nextArrow.setAttribute('disabled', 'disabled');
-    } else if (core.nextArrow) {
-      _RemoveClass(core.nextArrow, core.settings.disabledCls);
-      core.nextArrow.removeAttribute('disabled');
-    }
+    carouzel_toggleArrow(core.prevArrow, core.currentIndex !== 0, core.settings.disableCls);
+    carouzel_toggleArrow(core.nextArrow, core.currentIndex + core.bpoptions.slidesToShow !== core.allSlides.length, core.settings.disableCls);
   };
 
   const carouzel_updateArrow = (arrow: Element, index: number) => {
@@ -349,22 +352,28 @@ namespace Carouzel {
 
   const carouzel_toggleEvents = (core: any, shouldAddEvent: boolean) => {
     if (core.prevArrow && shouldAddEvent) {
+      _RemoveClass(core.prevArrow, core.settings.hideCls);
       carouzel_eventHandler(core.prevArrow, 'click', function (event: Event) {
         event.preventDefault();
         carouzel_moveToLeft(core);
       });
     }
     if (core.prevArrow && !shouldAddEvent) {
+      _AddClass(core.prevArrow, core.settings.hideCls);
       carouzel_removeEventListeners(core, core.prevArrow);
+      carouzel_toggleArrow(core.prevArrow, false, core.settings.disableCls);
     }
     if (core.nextArrow && shouldAddEvent) {
+      _RemoveClass(core.nextArrow, core.settings.hideCls);
       carouzel_eventHandler(core.nextArrow, 'click', function (event: Event) {
         event.preventDefault();
         carouzel_moveToRight(core);
       });
     }
     if (core.nextArrow && !shouldAddEvent) {
+      _AddClass(core.nextArrow, core.settings.hideCls);
       carouzel_removeEventListeners(core, core.nextArrow);
+      carouzel_toggleArrow(core.nextArrow, false, core.settings.disableCls);
     }
   };
   const carozuel_updateIndices = (core: any) => {
@@ -396,7 +405,7 @@ namespace Carouzel {
     let posX1 = 0;
     let posX2 = 0;
     let posFinal = 0;
-    let threshold = 120;
+    let threshold = tcore.bpoptions.dragThreshold || 100;
     let dragging = false;    
     const touchStart = (thisevent: Event) => {
       thisevent.preventDefault();
@@ -477,6 +486,7 @@ namespace Carouzel {
     let slideWidth = (core.track.clientWidth / bpoptions.slidesToShow).toFixed(4) || 1;
     let trackWidth = (parseFloat(slideWidth + '') * (core.allSlides.length > bpoptions.slidesToShow ? core.allSlides.length : bpoptions.slidesToShow)).toFixed(4);
     core.slideWidth = slideWidth;
+    core.bpoptions = bpoptions;
     if (core.trackInner) {
       core.trackInner.style.width = trackWidth + 'px';
       core.trackInner.style.transitionDuration = core.settings.speed + 'ms';
@@ -488,7 +498,7 @@ namespace Carouzel {
         core.allSlides[k].style.width = slideWidth + 'px';
       }
     }
-    core.bpoptions = bpoptions;
+    carouzel_toggleEvents(core, core.bpoptions.showArrows || false);
     carouzel_toggleSwipe(core);
     carozuel_updateIndices(core);
   };
@@ -557,11 +567,9 @@ namespace Carouzel {
     core.prevArrow = rootElem.querySelector(`${settings.prevArrowSelector}`);
     core.nextArrow = rootElem.querySelector(`${settings.nextArrowSelector}`);
     core.slideWidth = 100;
-    core.longTouch = false;
     if (core.trackInner && core.allSlides.length > 0) {
       core.breakpoints = carouzel_updateBreakpoints(settings);
       carouzel_applyLayout(core);
-      carouzel_toggleEvents(core, true);
     }
     core.eventHandlers = [];
     _AddClass(rootElem, settings.activeCls ? settings.activeCls : '');

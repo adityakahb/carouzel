@@ -17,8 +17,10 @@ var Carouzel;
         activeSlideCls: '__carouzel-slide-active',
         arrowsSelector: '[data-carouzelarrows]',
         buttonSelector: '[data-carouzelbutton]',
-        disabledCls: '__carouzel-disabled',
+        disableCls: '__carouzel-disabled',
+        dragThreshold: 120,
         enableSwipe: true,
+        hideCls: '__carouzel-hidden',
         idPrefix: '__carouzel_id',
         innerSelector: '[data-carouzelinner]',
         navSelector: '[data-carouzelnav]',
@@ -248,6 +250,16 @@ var Carouzel;
         element.addEventListener(type, listener, _useCapture);
         return eventHandler;
     };
+    var carouzel_toggleArrow = function (arrow, shouldEnable, disableCls) {
+        if (arrow && !shouldEnable) {
+            _AddClass(arrow, disableCls);
+            arrow.setAttribute('disabled', 'disabled');
+        }
+        if (arrow && shouldEnable) {
+            _RemoveClass(arrow, disableCls);
+            arrow.removeAttribute('disabled');
+        }
+    };
     var carouzel_animateSlider = function (core) {
         var slidesLength = core.allSlides.length;
         for (var k = 0; k < slidesLength; k++) {
@@ -255,23 +267,8 @@ var Carouzel;
         }
         core.currentTransform = -1 * core.slideWidth * core.currentIndex;
         core.trackInner.style.transform = "translate(" + -1 * core.slideWidth * core.currentIndex + "px, 0%)";
-        console.log('===========core.currentIndex', core.currentIndex);
-        if (core.currentIndex === 0 && core.prevArrow) {
-            _AddClass(core.prevArrow, core.settings.disabledCls);
-            core.prevArrow.setAttribute('disabled', 'disabled');
-        }
-        else if (core.prevArrow) {
-            _RemoveClass(core.prevArrow, core.settings.disabledCls);
-            core.prevArrow.removeAttribute('disabled');
-        }
-        if (core.currentIndex + core.bpoptions.slidesToShow === core.allSlides.length && core.nextArrow) {
-            _AddClass(core.nextArrow, core.settings.disabledCls);
-            core.nextArrow.setAttribute('disabled', 'disabled');
-        }
-        else if (core.nextArrow) {
-            _RemoveClass(core.nextArrow, core.settings.disabledCls);
-            core.nextArrow.removeAttribute('disabled');
-        }
+        carouzel_toggleArrow(core.prevArrow, core.currentIndex !== 0, core.settings.disableCls);
+        carouzel_toggleArrow(core.nextArrow, core.currentIndex + core.bpoptions.slidesToShow !== core.allSlides.length, core.settings.disableCls);
     };
     var carouzel_updateArrow = function (arrow, index) {
         if (arrow) {
@@ -292,22 +289,28 @@ var Carouzel;
     };
     var carouzel_toggleEvents = function (core, shouldAddEvent) {
         if (core.prevArrow && shouldAddEvent) {
+            _RemoveClass(core.prevArrow, core.settings.hideCls);
             carouzel_eventHandler(core.prevArrow, 'click', function (event) {
                 event.preventDefault();
                 carouzel_moveToLeft(core);
             });
         }
         if (core.prevArrow && !shouldAddEvent) {
+            _AddClass(core.prevArrow, core.settings.hideCls);
             carouzel_removeEventListeners(core, core.prevArrow);
+            carouzel_toggleArrow(core.prevArrow, false, core.settings.disableCls);
         }
         if (core.nextArrow && shouldAddEvent) {
+            _RemoveClass(core.nextArrow, core.settings.hideCls);
             carouzel_eventHandler(core.nextArrow, 'click', function (event) {
                 event.preventDefault();
                 carouzel_moveToRight(core);
             });
         }
         if (core.nextArrow && !shouldAddEvent) {
+            _AddClass(core.nextArrow, core.settings.hideCls);
             carouzel_removeEventListeners(core, core.nextArrow);
+            carouzel_toggleArrow(core.nextArrow, false, core.settings.disableCls);
         }
     };
     var carozuel_updateIndices = function (core) {
@@ -341,7 +344,7 @@ var Carouzel;
         var posX1 = 0;
         var posX2 = 0;
         var posFinal = 0;
-        var threshold = 120;
+        var threshold = tcore.bpoptions.dragThreshold || 100;
         var dragging = false;
         var touchStart = function (thisevent) {
             thisevent.preventDefault();
@@ -427,6 +430,7 @@ var Carouzel;
         var slideWidth = (core.track.clientWidth / bpoptions.slidesToShow).toFixed(4) || 1;
         var trackWidth = (parseFloat(slideWidth + '') * (core.allSlides.length > bpoptions.slidesToShow ? core.allSlides.length : bpoptions.slidesToShow)).toFixed(4);
         core.slideWidth = slideWidth;
+        core.bpoptions = bpoptions;
         if (core.trackInner) {
             core.trackInner.style.width = trackWidth + 'px';
             core.trackInner.style.transitionDuration = core.settings.speed + 'ms';
@@ -438,7 +442,7 @@ var Carouzel;
                 core.allSlides[k].style.width = slideWidth + 'px';
             }
         }
-        core.bpoptions = bpoptions;
+        carouzel_toggleEvents(core, core.bpoptions.showArrows || false);
         carouzel_toggleSwipe(core);
         carozuel_updateIndices(core);
     };
@@ -508,11 +512,9 @@ var Carouzel;
         core.prevArrow = rootElem.querySelector("" + settings.prevArrowSelector);
         core.nextArrow = rootElem.querySelector("" + settings.nextArrowSelector);
         core.slideWidth = 100;
-        core.longTouch = false;
         if (core.trackInner && core.allSlides.length > 0) {
             core.breakpoints = carouzel_updateBreakpoints(settings);
             carouzel_applyLayout(core);
-            carouzel_toggleEvents(core, true);
         }
         core.eventHandlers = [];
         _AddClass(rootElem, settings.activeCls ? settings.activeCls : '');
