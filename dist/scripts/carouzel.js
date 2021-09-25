@@ -11,6 +11,8 @@ var Carouzel;
 (function (Carouzel) {
     "use strict";
     var AllCarouzelInstances = {};
+    // let active_carouzel: any = {};
+    var winResize;
     var _useCapture = false;
     var _Defaults = {
         activeCls: '__carouzel-active',
@@ -23,6 +25,7 @@ var Carouzel;
         hideCls: '__carouzel-hidden',
         idPrefix: '__carouzel_id',
         innerSelector: '[data-carouzelinner]',
+        navBtnTemplate: '<button type="button">${i}</button>',
         navInnerSelector: '[data-carouzelnavinner]',
         navSelector: '[data-carouzelnav]',
         nextArrowSelector: '[data-carouzelnext]',
@@ -224,8 +227,8 @@ var Carouzel;
         if ((core.eventHandlers || []).length > 0) {
             var j = core.eventHandlers.length;
             while (j--) {
-                if (core.eventHandlers[j].currentElement.isEqualNode && core.eventHandlers[j].currentElement.isEqualNode(element)) {
-                    core.eventHandlers[j].removeEvent();
+                if (core.eventHandlers[j].element.isEqualNode && core.eventHandlers[j].element.isEqualNode(element)) {
+                    core.eventHandlers[j].remove();
                     core.eventHandlers.splice(j, 1);
                 }
             }
@@ -243,8 +246,8 @@ var Carouzel;
      */
     var carouzel_eventHandler = function (element, type, listener) {
         var eventHandler = {
-            currentElement: element,
-            removeEvent: function () {
+            element: element,
+            remove: function () {
                 element.removeEventListener(type, listener, _useCapture);
             }
         };
@@ -271,11 +274,11 @@ var Carouzel;
         carouzel_toggleArrow(core.prevArrow, core.currentIndex !== 0, core.settings.disableCls);
         carouzel_toggleArrow(core.nextArrow, core.currentIndex + core.bpoptions.slidesToShow !== core.allSlides.length, core.settings.disableCls);
     };
-    var carouzel_updateArrow = function (arrow, index) {
-        if (arrow) {
-            arrow.setAttribute('data-carouzelgotoslide', index + '');
-        }
-    };
+    // const carouzel_updateArrow = (arrow: Element, index: number) => {
+    //   if (arrow) {
+    //     arrow.setAttribute('data-carouzelgotoslide', index + '');
+    //   }
+    // };
     var carouzel_moveToRight = function (core) {
         carouzel_moveSlider(core, 'next');
     };
@@ -289,29 +292,35 @@ var Carouzel;
         carozuel_updateIndices(core);
     };
     var carouzel_toggleEvents = function (core, shouldAddEvent) {
-        if (core.prevArrow && shouldAddEvent) {
-            _RemoveClass(core.prevArrow, core.settings.hideCls);
-            carouzel_eventHandler(core.prevArrow, 'click', function (event) {
-                event.preventDefault();
-                carouzel_moveToLeft(core);
-            });
-        }
-        if (core.prevArrow && !shouldAddEvent) {
-            _AddClass(core.prevArrow, core.settings.hideCls);
+        if (core.prevArrow) {
             carouzel_removeEventListeners(core, core.prevArrow);
             carouzel_toggleArrow(core.prevArrow, false, core.settings.disableCls);
+            _AddClass(core.prevArrow, core.settings.hideCls);
+            if (shouldAddEvent) {
+                core.eventHandlers.push(carouzel_eventHandler(core.prevArrow, 'click', function (event) {
+                    event.preventDefault();
+                    carouzel_moveToLeft(core);
+                }));
+                if (core.bpoptions.showArrows) {
+                    _RemoveClass(core.prevArrow, core.settings.hideCls);
+                    carouzel_toggleArrow(core.prevArrow, core.currentIndex !== 0, core.settings.disableCls);
+                }
+            }
         }
-        if (core.nextArrow && shouldAddEvent) {
-            _RemoveClass(core.nextArrow, core.settings.hideCls);
-            carouzel_eventHandler(core.nextArrow, 'click', function (event) {
-                event.preventDefault();
-                carouzel_moveToRight(core);
-            });
-        }
-        if (core.nextArrow && !shouldAddEvent) {
-            _AddClass(core.nextArrow, core.settings.hideCls);
+        if (core.nextArrow) {
             carouzel_removeEventListeners(core, core.nextArrow);
             carouzel_toggleArrow(core.nextArrow, false, core.settings.disableCls);
+            _AddClass(core.nextArrow, core.settings.hideCls);
+            if (shouldAddEvent) {
+                core.eventHandlers.push(carouzel_eventHandler(core.nextArrow, 'click', function (event) {
+                    event.preventDefault();
+                    carouzel_moveToRight(core);
+                }));
+                if (core.bpoptions.showArrows) {
+                    _RemoveClass(core.nextArrow, core.settings.hideCls);
+                    carouzel_toggleArrow(core.nextArrow, core.currentIndex + core.bpoptions.slidesToShow !== core.allSlides.length, core.settings.disableCls);
+                }
+            }
         }
     };
     var carozuel_updateIndices = function (core) {
@@ -338,14 +347,14 @@ var Carouzel;
         else {
             core.nextIndex = slidesLength - core.bpoptions.slidesToScroll;
         }
-        carouzel_updateArrow(core.nextArrow, core.nextIndex);
-        carouzel_updateArrow(core.prevArrow, core.prevIndex);
+        // carouzel_updateArrow(core.nextArrow, core.nextIndex);
+        // carouzel_updateArrow(core.prevArrow, core.prevIndex);
     };
-    var carouzel_toggleSwipe = function (tcore) {
+    var carouzel_toggleSwipe = function (core) {
         var posX1 = 0;
         var posX2 = 0;
         var posFinal = 0;
-        var threshold = tcore.bpoptions.dragThreshold || 100;
+        var threshold = core.bpoptions.dragThreshold || 100;
         var dragging = false;
         var touchStart = function (thisevent) {
             thisevent.preventDefault();
@@ -365,60 +374,77 @@ var Carouzel;
                 else {
                     posX2 = posX1 - thisevent.clientX;
                 }
-                tcore.trackInner.style.transform = "translate(" + (tcore.currentTransform - posX2) + "px, 0%)";
+                core.trackInner.style.transform = "translate(" + (core.currentTransform - posX2) + "px, 0%)";
                 posFinal = posX2;
             }
         };
         var touchEnd = function () {
             if (dragging) {
                 if (posFinal < -threshold) {
-                    carouzel_moveToLeft(tcore);
+                    carouzel_moveToLeft(core);
                 }
                 else if (posFinal > threshold) {
-                    carouzel_moveToRight(tcore);
+                    carouzel_moveToRight(core);
                 }
                 else {
-                    tcore.trackInner.style.transform = "translate(" + tcore.currentTransform + "px, 0%)";
+                    core.trackInner.style.transform = "translate(" + core.currentTransform + "px, 0%)";
                 }
             }
             posX1 = posX2 = posFinal = 0;
             dragging = false;
         };
         var toggleTouchEvents = function (shouldAdd) {
-            carouzel_removeEventListeners(tcore, tcore.trackInner);
+            carouzel_removeEventListeners(core, core.trackInner);
             if (shouldAdd) {
-                carouzel_eventHandler(tcore.trackInner, 'touchstart', function (event) {
+                core.eventHandlers.push(carouzel_eventHandler(core.trackInner, 'touchstart', function (event) {
                     touchStart(event);
-                });
-                carouzel_eventHandler(tcore.trackInner, 'touchmove', function (event) {
+                }));
+                core.eventHandlers.push(carouzel_eventHandler(core.trackInner, 'touchmove', function (event) {
                     touchMove(event);
-                });
-                carouzel_eventHandler(tcore.trackInner, 'touchend', function () {
+                }));
+                core.eventHandlers.push(carouzel_eventHandler(core.trackInner, 'touchend', function () {
                     touchEnd();
-                });
-                carouzel_eventHandler(tcore.trackInner, 'mousedown', function (event) {
+                }));
+                core.eventHandlers.push(carouzel_eventHandler(core.trackInner, 'mousedown', function (event) {
                     touchStart(event);
-                });
-                carouzel_eventHandler(tcore.trackInner, 'mouseup', function () {
+                }));
+                core.eventHandlers.push(carouzel_eventHandler(core.trackInner, 'mouseup', function () {
                     touchEnd();
-                });
-                carouzel_eventHandler(tcore.trackInner, 'mouseleave', function () {
+                }));
+                core.eventHandlers.push(carouzel_eventHandler(core.trackInner, 'mouseleave', function () {
                     touchEnd();
-                });
-                carouzel_eventHandler(tcore.trackInner, 'mousemove', function (event) {
+                }));
+                core.eventHandlers.push(carouzel_eventHandler(core.trackInner, 'mousemove', function (event) {
                     touchMove(event);
-                });
+                }));
             }
         };
-        if (tcore.bpoptions.enableSwipe && tcore.trackInner) {
+        if (core.bpoptions.enableSwipe && core.trackInner) {
             toggleTouchEvents(true);
         }
-        else if (!tcore.bpoptions.enableSwipe && tcore.trackInner) {
+        else if (!core.bpoptions.enableSwipe && core.trackInner) {
             toggleTouchEvents(false);
         }
     };
-    var carouzel_addNav = function (core) {
-        console.log('===========pages', Math.ceil(core.allSlides.length / core.bpoptions.slidesToShow));
+    var carouzel_toggleNav = function (core) {
+        if (core.navInner) {
+            var pageLength = 0;
+            // console.log('===========core.allSlides.length', core.allSlides.length);
+            if (core.allSlides.length % 2 === 0) {
+                pageLength = Math.ceil(core.allSlides.length / core.bpoptions.slidesToShow);
+            }
+            else {
+                pageLength = Math.ceil((core.allSlides.length + 1) / core.bpoptions.slidesToShow);
+            }
+            // console.log('=============pageLength', pageLength);
+            var str = '';
+            var templateStr = '';
+            for (var p = 0; p < pageLength; p++) {
+                templateStr = core.settings.navBtnTemplate.replace('${i}', p + 1);
+                str += templateStr;
+            }
+            core.navInner.innerHTML = str;
+        }
     };
     var carouzel_applyLayout = function (core) {
         var viewportWidth = window.innerWidth;
@@ -435,6 +461,9 @@ var Carouzel;
         var trackWidth = (parseFloat(slideWidth + '') * (core.allSlides.length > bpoptions.slidesToShow ? core.allSlides.length : bpoptions.slidesToShow)).toFixed(4);
         core.slideWidth = slideWidth;
         core.bpoptions = bpoptions;
+        if (core.currentIndex + core.bpoptions.slidesToShow > core.allSlides.length) {
+            core.currentIndex = core.allSlides.length - core.bpoptions.slidesToShow;
+        }
         if (core.trackInner) {
             core.trackInner.style.width = trackWidth + 'px';
             core.trackInner.style.transitionDuration = core.settings.speed + 'ms';
@@ -449,7 +478,7 @@ var Carouzel;
         carouzel_toggleEvents(core, core.bpoptions.showArrows || false);
         carouzel_toggleSwipe(core);
         carozuel_updateIndices(core);
-        carouzel_addNav(core);
+        carouzel_toggleNav(core);
     };
     var carouzel_validateBreakpoints = function (breakpoints) {
         try {
@@ -518,11 +547,11 @@ var Carouzel;
         core.prevArrow = rootElem.querySelector("" + settings.prevArrowSelector);
         core.nextArrow = rootElem.querySelector("" + settings.nextArrowSelector);
         core.slideWidth = 100;
+        core.eventHandlers = [];
         if (core.trackInner && core.allSlides.length > 0) {
             core.breakpoints = carouzel_updateBreakpoints(settings);
             carouzel_applyLayout(core);
         }
-        core.eventHandlers = [];
         _AddClass(rootElem, settings.activeCls ? settings.activeCls : '');
         return core;
     };
@@ -580,11 +609,16 @@ var Carouzel;
                 return instanceCount;
             };
             this.windowResize = function () {
-                for (var e in _this.instances) {
-                    if (_this.instances.hasOwnProperty(e)) {
-                        _this.instances[e].resize();
-                    }
+                if (winResize) {
+                    clearTimeout(winResize);
                 }
+                winResize = setTimeout(function () {
+                    for (var e in _this.instances) {
+                        if (_this.instances.hasOwnProperty(e)) {
+                            _this.instances[e].resize();
+                        }
+                    }
+                }, 100);
             };
             /**
              * Function to initialize the AMegMen plugin for provided query strings.
@@ -623,12 +657,12 @@ var Carouzel;
                                 roots[i].setAttribute('id', thisid);
                                 _this.instances[thisid] = new Core(thisid, roots[i], options);
                             }
-                            if (window) {
-                                window.removeEventListener('resize', _this.windowResize);
-                                if (_this.getInstancesLength() > 0) {
-                                    window.addEventListener('resize', _this.windowResize);
-                                }
-                            }
+                        }
+                    }
+                    if (window) {
+                        //  window.removeEventListener('resize', this.windowResize, true);
+                        if (_this.getInstancesLength() > 0) {
+                            window.addEventListener('resize', _this.windowResize, true);
                         }
                     }
                 }
@@ -654,7 +688,7 @@ var Carouzel;
                         }
                     }
                     if (window && _this.getInstancesLength() === 0) {
-                        window.removeEventListener('resize', _this.windowResize);
+                        window.removeEventListener('resize', _this.windowResize, true);
                     }
                 }
                 else {

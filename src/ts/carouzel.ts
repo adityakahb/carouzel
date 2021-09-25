@@ -11,7 +11,7 @@ namespace Carouzel {
   "use strict";
   let AllCarouzelInstances: any = {};
   // let active_carouzel: any = {};
-
+  let winResize: any;
   interface IRoot {
     [key: string]: any;
   }
@@ -37,6 +37,7 @@ namespace Carouzel {
     hideCls?: string;
     idPrefix?: string;
     innerSelector?: string;
+    navBtnTemplate?: string;
     navInnerSelector?: string;
     navSelector?: string;
     nextArrowSelector?: string;
@@ -57,8 +58,8 @@ namespace Carouzel {
     trackSelector?: string;
   }
   interface IEventHandler {
-    currentElement: Element | Document | Window;
-    removeEvent?: Function;
+    element: Element | Document | Window;
+    remove: Function;
   }
   const _useCapture = false;
   const _Defaults = {
@@ -72,6 +73,7 @@ namespace Carouzel {
     hideCls: '__carouzel-hidden',
     idPrefix: '__carouzel_id',
     innerSelector: '[data-carouzelinner]',
+    navBtnTemplate: '<button type="button">${i}</button>',
     navInnerSelector: '[data-carouzelnavinner]',
     navSelector: '[data-carouzelnav]',
     nextArrowSelector: '[data-carouzelnext]',
@@ -281,8 +283,8 @@ namespace Carouzel {
     if ((core.eventHandlers || []).length > 0) {
       let j = core.eventHandlers.length;
       while (j--) {
-        if(core.eventHandlers[j].currentElement.isEqualNode && core.eventHandlers[j].currentElement.isEqualNode(element)) {
-          core.eventHandlers[j].removeEvent();
+        if(core.eventHandlers[j].element.isEqualNode && core.eventHandlers[j].element.isEqualNode(element)) {
+          core.eventHandlers[j].remove();
           core.eventHandlers.splice(j, 1);
         }
       }
@@ -301,8 +303,8 @@ namespace Carouzel {
    */
   const carouzel_eventHandler = (element: Element | Document | Window, type: string, listener: EventListenerOrEventListenerObject) => {
     const eventHandler:IEventHandler = {
-      currentElement: element,
-      removeEvent: () => {
+      element: element,
+      remove: () => {
         element.removeEventListener(type, listener, _useCapture);
       }
     };
@@ -332,11 +334,11 @@ namespace Carouzel {
     carouzel_toggleArrow(core.nextArrow, core.currentIndex + core.bpoptions.slidesToShow !== core.allSlides.length, core.settings.disableCls);
   };
 
-  const carouzel_updateArrow = (arrow: Element, index: number) => {
-    if (arrow) {
-      arrow.setAttribute('data-carouzelgotoslide', index + '');
-    }
-  };
+  // const carouzel_updateArrow = (arrow: Element, index: number) => {
+  //   if (arrow) {
+  //     arrow.setAttribute('data-carouzelgotoslide', index + '');
+  //   }
+  // };
 
   const carouzel_moveToRight = (core: any) => {
     carouzel_moveSlider(core, 'next');
@@ -353,29 +355,35 @@ namespace Carouzel {
   }
 
   const carouzel_toggleEvents = (core: any, shouldAddEvent: boolean) => {
-    if (core.prevArrow && shouldAddEvent) {
-      _RemoveClass(core.prevArrow, core.settings.hideCls);
-      carouzel_eventHandler(core.prevArrow, 'click', function (event: Event) {
-        event.preventDefault();
-        carouzel_moveToLeft(core);
-      });
-    }
-    if (core.prevArrow && !shouldAddEvent) {
-      _AddClass(core.prevArrow, core.settings.hideCls);
+    if (core.prevArrow) {
       carouzel_removeEventListeners(core, core.prevArrow);
       carouzel_toggleArrow(core.prevArrow, false, core.settings.disableCls);
+      _AddClass(core.prevArrow, core.settings.hideCls);
+      if (shouldAddEvent) {
+        core.eventHandlers.push(carouzel_eventHandler(core.prevArrow, 'click', function (event: Event) {
+          event.preventDefault();
+          carouzel_moveToLeft(core);
+        }));
+        if (core.bpoptions.showArrows) {
+          _RemoveClass(core.prevArrow, core.settings.hideCls);
+          carouzel_toggleArrow(core.prevArrow, core.currentIndex !== 0, core.settings.disableCls);
+        }
+      }
     }
-    if (core.nextArrow && shouldAddEvent) {
-      _RemoveClass(core.nextArrow, core.settings.hideCls);
-      carouzel_eventHandler(core.nextArrow, 'click', function (event: Event) {
-        event.preventDefault();
-        carouzel_moveToRight(core);
-      });
-    }
-    if (core.nextArrow && !shouldAddEvent) {
-      _AddClass(core.nextArrow, core.settings.hideCls);
+    if (core.nextArrow) {
       carouzel_removeEventListeners(core, core.nextArrow);
       carouzel_toggleArrow(core.nextArrow, false, core.settings.disableCls);
+      _AddClass(core.nextArrow, core.settings.hideCls);
+      if (shouldAddEvent) {
+        core.eventHandlers.push(carouzel_eventHandler(core.nextArrow, 'click', function (event: Event) {
+          event.preventDefault();
+          carouzel_moveToRight(core);
+        }));
+        if (core.bpoptions.showArrows) {
+          _RemoveClass(core.nextArrow, core.settings.hideCls);
+          carouzel_toggleArrow(core.nextArrow, core.currentIndex + core.bpoptions.slidesToShow !== core.allSlides.length, core.settings.disableCls);
+        }
+      }
     }
   };
   const carozuel_updateIndices = (core: any) => {
@@ -400,14 +408,14 @@ namespace Carouzel {
     } else {
       core.nextIndex = slidesLength - core.bpoptions.slidesToScroll;
     }
-    carouzel_updateArrow(core.nextArrow, core.nextIndex);
-    carouzel_updateArrow(core.prevArrow, core.prevIndex);
+    // carouzel_updateArrow(core.nextArrow, core.nextIndex);
+    // carouzel_updateArrow(core.prevArrow, core.prevIndex);
   };
-  const carouzel_toggleSwipe = (tcore: any) => {
+  const carouzel_toggleSwipe = (core: any) => {
     let posX1 = 0;
     let posX2 = 0;
     let posFinal = 0;
-    let threshold = tcore.bpoptions.dragThreshold || 100;
+    let threshold = core.bpoptions.dragThreshold || 100;
     let dragging = false;    
     const touchStart = (thisevent: Event) => {
       thisevent.preventDefault();
@@ -425,57 +433,73 @@ namespace Carouzel {
         } else {
           posX2 = posX1 - (thisevent as MouseEvent).clientX;
         }
-        tcore.trackInner.style.transform = `translate(${tcore.currentTransform - posX2}px, 0%)`;
+        core.trackInner.style.transform = `translate(${core.currentTransform - posX2}px, 0%)`;
         posFinal = posX2;
       }
     };
     const touchEnd = () => {
       if (dragging) {
         if (posFinal < -threshold) {
-          carouzel_moveToLeft(tcore);
+          carouzel_moveToLeft(core);
         } else if (posFinal > threshold) {
-          carouzel_moveToRight(tcore);
+          carouzel_moveToRight(core);
         } else {
-          tcore.trackInner.style.transform = `translate(${tcore.currentTransform}px, 0%)`;
+          core.trackInner.style.transform = `translate(${core.currentTransform}px, 0%)`;
         }
       }
       posX1 = posX2 = posFinal = 0;
       dragging = false;
     };
     const toggleTouchEvents = (shouldAdd: boolean) => {
-      carouzel_removeEventListeners(tcore, tcore.trackInner);
+      carouzel_removeEventListeners(core, core.trackInner);
       if (shouldAdd) {
-        carouzel_eventHandler(tcore.trackInner, 'touchstart', function(event: Event) {
+        core.eventHandlers.push(carouzel_eventHandler(core.trackInner, 'touchstart', function(event: Event) {
           touchStart(event);
-        });
-        carouzel_eventHandler(tcore.trackInner, 'touchmove', function(event: Event) {
+        }));
+        core.eventHandlers.push(carouzel_eventHandler(core.trackInner, 'touchmove', function(event: Event) {
           touchMove(event);
-        });
-        carouzel_eventHandler(tcore.trackInner, 'touchend', function() {
+        }));
+        core.eventHandlers.push(carouzel_eventHandler(core.trackInner, 'touchend', function() {
           touchEnd();
-        });
-        carouzel_eventHandler(tcore.trackInner, 'mousedown', function(event: Event) {
+        }));
+        core.eventHandlers.push(carouzel_eventHandler(core.trackInner, 'mousedown', function(event: Event) {
           touchStart(event);
-        });
-        carouzel_eventHandler(tcore.trackInner, 'mouseup', function() {
+        }));
+        core.eventHandlers.push(carouzel_eventHandler(core.trackInner, 'mouseup', function() {
           touchEnd();
-        });
-        carouzel_eventHandler(tcore.trackInner, 'mouseleave', function() {
+        }));
+        core.eventHandlers.push(carouzel_eventHandler(core.trackInner, 'mouseleave', function() {
           touchEnd();
-        });
-        carouzel_eventHandler(tcore.trackInner, 'mousemove', function(event: Event) {
+        }));
+        core.eventHandlers.push(carouzel_eventHandler(core.trackInner, 'mousemove', function(event: Event) {
           touchMove(event);
-        });
+        }));
       }
     };
-    if (tcore.bpoptions.enableSwipe && tcore.trackInner) {
+    if (core.bpoptions.enableSwipe && core.trackInner) {
       toggleTouchEvents(true);
-    } else if (!tcore.bpoptions.enableSwipe && tcore.trackInner) {
+    } else if (!core.bpoptions.enableSwipe && core.trackInner) {
       toggleTouchEvents(false);
     }
   };
-  const carouzel_addNav = (core: any) => {
-    console.log('===========pages', Math.ceil(core.allSlides.length / core.bpoptions.slidesToShow));
+  const carouzel_toggleNav = (core: any) => {
+    if (core.navInner) {
+      let pageLength = 0;
+      // console.log('===========core.allSlides.length', core.allSlides.length);
+      if (core.allSlides.length % 2 === 0) {
+        pageLength = Math.ceil(core.allSlides.length / core.bpoptions.slidesToShow);
+      } else {
+        pageLength = Math.ceil((core.allSlides.length + 1) / core.bpoptions.slidesToShow);
+      }
+      // console.log('=============pageLength', pageLength);
+      let str = '';
+      let templateStr = '';
+      for (let p=0; p<pageLength; p++) {
+        templateStr = core.settings.navBtnTemplate.replace('${i}', p + 1);
+        str+=templateStr;
+      }
+      core.navInner.innerHTML = str;
+    }
   };
   const carouzel_applyLayout = (core: any) => {
     let viewportWidth = window.innerWidth;
@@ -492,6 +516,9 @@ namespace Carouzel {
     let trackWidth = (parseFloat(slideWidth + '') * (core.allSlides.length > bpoptions.slidesToShow ? core.allSlides.length : bpoptions.slidesToShow)).toFixed(4);
     core.slideWidth = slideWidth;
     core.bpoptions = bpoptions;
+    if (core.currentIndex + core.bpoptions.slidesToShow > core.allSlides.length) {
+      core.currentIndex = core.allSlides.length - core.bpoptions.slidesToShow;
+    }
     if (core.trackInner) {
       core.trackInner.style.width = trackWidth + 'px';
       core.trackInner.style.transitionDuration = core.settings.speed + 'ms';
@@ -506,7 +533,7 @@ namespace Carouzel {
     carouzel_toggleEvents(core, core.bpoptions.showArrows || false);
     carouzel_toggleSwipe(core);
     carozuel_updateIndices(core);
-    carouzel_addNav(core);
+    carouzel_toggleNav(core);
   };
   const carouzel_validateBreakpoints = (breakpoints: ICarouzelBreakpoint[]) => {
     try {
@@ -574,11 +601,11 @@ namespace Carouzel {
     core.prevArrow = rootElem.querySelector(`${settings.prevArrowSelector}`);
     core.nextArrow = rootElem.querySelector(`${settings.nextArrowSelector}`);
     core.slideWidth = 100;
+    core.eventHandlers = [];
     if (core.trackInner && core.allSlides.length > 0) {
       core.breakpoints = carouzel_updateBreakpoints(settings);
       carouzel_applyLayout(core);
     }
-    core.eventHandlers = [];
     _AddClass(rootElem, settings.activeCls ? settings.activeCls : '');
     return core;
   };
@@ -643,11 +670,16 @@ namespace Carouzel {
       return instanceCount;
     }
     private windowResize = () => {
-      for (let e in this.instances) {
-        if (this.instances.hasOwnProperty(e)) {
-          this.instances[e].resize();
-        }
+      if (winResize) {
+        clearTimeout(winResize);
       }
+      winResize = setTimeout(() => {
+        for (let e in this.instances) {
+          if (this.instances.hasOwnProperty(e)) {
+            this.instances[e].resize();
+          }
+        }
+      }, 100);
     }
     /**
      * Function to return single instance
@@ -699,12 +731,12 @@ namespace Carouzel {
               (roots[i] as HTMLElement).setAttribute('id', thisid);
               this.instances[thisid] = new Core(thisid, (roots[i] as HTMLElement), options);
             }
-            if (window) {
-              window.removeEventListener('resize', this.windowResize);
-              if (this.getInstancesLength() > 0) {
-                window.addEventListener('resize', this.windowResize);
-              }
-            }
+          }
+        }
+        if (window) {
+          //  window.removeEventListener('resize', this.windowResize, true);
+          if (this.getInstancesLength() > 0) {
+            window.addEventListener('resize', this.windowResize, true);
           }
         }
       } else {
@@ -730,7 +762,7 @@ namespace Carouzel {
           }
         }
         if (window && this.getInstancesLength() === 0) {
-          window.removeEventListener('resize', this.windowResize);
+          window.removeEventListener('resize', this.windowResize, true);
         }
       } else {
         console.error('Element(s) with the provided query do(es) not exist');

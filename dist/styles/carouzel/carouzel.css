@@ -6,8 +6,6 @@
   .__carouzel.__carouzel-active {
     opacity: 1;
     visibility: visible; }
-  .__carouzel [data-carouzelinner] {
-    position: relative; }
   .__carouzel [data-carouzeltrack] {
     position: relative;
     overflow: hidden; }
