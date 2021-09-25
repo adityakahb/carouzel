@@ -17,6 +17,7 @@ var Carouzel;
         activeSlideCls: '__carouzel-slide-active',
         arrowsSelector: '[data-carouzelarrows]',
         buttonSelector: '[data-carouzelbutton]',
+        disabledCls: '__carouzel-disabled',
         enableSwipe: true,
         idPrefix: '__carouzel_id',
         innerSelector: '[data-carouzelinner]',
@@ -254,6 +255,23 @@ var Carouzel;
         }
         core.currentTransform = -1 * core.slideWidth * core.currentIndex;
         core.trackInner.style.transform = "translate(" + -1 * core.slideWidth * core.currentIndex + "px, 0%)";
+        console.log('===========core.currentIndex', core.currentIndex);
+        if (core.currentIndex === 0 && core.prevArrow) {
+            _AddClass(core.prevArrow, core.settings.disabledCls);
+            core.prevArrow.setAttribute('disabled', 'disabled');
+        }
+        else if (core.prevArrow) {
+            _RemoveClass(core.prevArrow, core.settings.disabledCls);
+            core.prevArrow.removeAttribute('disabled');
+        }
+        if (core.currentIndex + core.bpoptions.slidesToShow === core.allSlides.length && core.nextArrow) {
+            _AddClass(core.nextArrow, core.settings.disabledCls);
+            core.nextArrow.setAttribute('disabled', 'disabled');
+        }
+        else if (core.nextArrow) {
+            _RemoveClass(core.nextArrow, core.settings.disabledCls);
+            core.nextArrow.removeAttribute('disabled');
+        }
     };
     var carouzel_updateArrow = function (arrow, index) {
         if (arrow) {

@@ -23,6 +23,7 @@ declare namespace Carouzel {
         activeSlideCls?: string;
         arrowsSelector?: string;
         buttonSelector?: string;
+        disabledCls?: string;
         enableSwipe?: boolean;
         idPrefix?: string;
         innerSelector?: string;
