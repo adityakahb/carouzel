@@ -43,6 +43,7 @@ namespace Carouzel {
     nextArrowSelector?: string;
     prevArrowSelector?: string;
     responsive: ICarouzelBreakpoint[];
+    rootAutoSelector?: string;
     rootCls?: string;
     rootSelector?: string;
     showArrows?: boolean;
@@ -78,6 +79,7 @@ namespace Carouzel {
     navSelector: '[data-carouzelnav]',
     nextArrowSelector: '[data-carouzelnext]',
     prevArrowSelector: '[data-carouzelprev]',
+    rootAutoSelector: '[data-carouzelauto]',
     rootCls: '__carouzel',
     rootSelector: '[data-carouzel]',
     showArrows: true,
@@ -390,7 +392,6 @@ namespace Carouzel {
     }
   };
   const carozuel_updateIndices = (core: any) => {
-    console.log('=========herre');
     let slidesLength = core.allSlides.length;
     let onLeft = 0;
     let onRight = 0;
@@ -707,7 +708,7 @@ namespace Carouzel {
      * @param options - The optional object to customize every AMegMen instance.
      *
      */
-    protected init = (query: string, options?: ICarouzelSettings) => {
+    public init = (query: string, options?: ICarouzelSettings) => {
       const roots = _ArrayCall(document.querySelectorAll(query));
       const rootsLen = roots.length;
       let instancelen = 0;
@@ -718,7 +719,7 @@ namespace Carouzel {
       }
       if (rootsLen > 0) {
         for (let i = 0; i < rootsLen; i++) {
-          const id = (roots[i] as HTMLElement).getAttribute('id');
+          const id = roots[i].getAttribute('id');
           let iselempresent = false;
           if (id) {
             for (let j = 0; j < instancelen; j++) {
@@ -730,12 +731,14 @@ namespace Carouzel {
           }
 
           if (!iselempresent) {
+            const newoptions = roots[i].getAttribute('[data-carouzelauto]') ? JSON.parse(roots[i].getAttribute('[data-carouzelauto]')) :  options;
+            console.log('=========roots[i]', roots[i].getAttribute('[data-carouzelauto]'));
             if (id) {
-              this.instances[id] = new Core(id, (roots[i] as HTMLElement), options);
+              this.instances[id] = new Core(id, roots[i], newoptions);
             } else {
-              const thisid = id ? id : (Object as any).assign({}, _Defaults, options).idPrefix + '_' + new Date().getTime() + '_root_' + (i + 1);
-              (roots[i] as HTMLElement).setAttribute('id', thisid);
-              this.instances[thisid] = new Core(thisid, (roots[i] as HTMLElement), options);
+              const thisid = id ? id : (Object as any).assign({}, _Defaults, newoptions).idPrefix + '_' + new Date().getTime() + '_root_' + (i + 1);
+              roots[i].setAttribute('id', thisid);
+              this.instances[thisid] = new Core(thisid, roots[i], newoptions);
             }
           }
         }
@@ -761,7 +764,7 @@ namespace Carouzel {
       const rootsLen = roots.length;
       if (rootsLen > 0) {
         for (let i = 0; i < rootsLen; i++) {
-          const id = (roots[i] as HTMLElement).getAttribute('id');
+          const id = roots[i].getAttribute('id');
           if (id && this.instances[id]) {
             this.instances[id].destroy(id);
             delete this.instances[id];
@@ -776,6 +779,7 @@ namespace Carouzel {
     };
   }
 }
+Carouzel.Root.getInstance().init('[data-carouzelauto]');
 if (typeof exports === 'object' && typeof module !== 'undefined') {
   module.exports = Carouzel;
 }

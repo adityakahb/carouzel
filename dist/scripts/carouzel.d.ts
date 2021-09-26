@@ -36,6 +36,7 @@ declare namespace Carouzel {
         nextArrowSelector?: string;
         prevArrowSelector?: string;
         responsive: ICarouzelBreakpoint[];
+        rootAutoSelector?: string;
         rootCls?: string;
         rootSelector?: string;
         showArrows?: boolean;
@@ -84,7 +85,7 @@ declare namespace Carouzel {
          * @param options - The optional object to customize every AMegMen instance.
          *
          */
-        protected init: (query: string, options?: ICarouzelSettings | undefined) => void;
+        init: (query: string, options?: ICarouzelSettings | undefined) => void;
         /**
          * Function to destroy the AMegMen plugin for provided query strings.
          *

@@ -30,6 +30,7 @@ var Carouzel;
         navSelector: '[data-carouzelnav]',
         nextArrowSelector: '[data-carouzelnext]',
         prevArrowSelector: '[data-carouzelprev]',
+        rootAutoSelector: '[data-carouzelauto]',
         rootCls: '__carouzel',
         rootSelector: '[data-carouzel]',
         showArrows: true,
@@ -327,7 +328,6 @@ var Carouzel;
         }
     };
     var carozuel_updateIndices = function (core) {
-        console.log('=========herre');
         var slidesLength = core.allSlides.length;
         var onLeft = 0;
         var onRight = 0;
@@ -657,13 +657,15 @@ var Carouzel;
                             }
                         }
                         if (!iselempresent) {
+                            var newoptions = roots[i].getAttribute('[data-carouzelauto]') ? JSON.parse(roots[i].getAttribute('[data-carouzelauto]')) : options;
+                            console.log('=========roots[i]', roots[i].getAttribute('[data-carouzelauto]'));
                             if (id) {
-                                _this.instances[id] = new Core(id, roots[i], options);
+                                _this.instances[id] = new Core(id, roots[i], newoptions);
                             }
                             else {
-                                var thisid = id ? id : Object.assign({}, _Defaults, options).idPrefix + '_' + new Date().getTime() + '_root_' + (i + 1);
+                                var thisid = id ? id : Object.assign({}, _Defaults, newoptions).idPrefix + '_' + new Date().getTime() + '_root_' + (i + 1);
                                 roots[i].setAttribute('id', thisid);
-                                _this.instances[thisid] = new Core(thisid, roots[i], options);
+                                _this.instances[thisid] = new Core(thisid, roots[i], newoptions);
                             }
                         }
                     }
@@ -724,6 +726,7 @@ var Carouzel;
     }());
     Carouzel.Root = Root;
 })(Carouzel || (Carouzel = {}));
+Carouzel.Root.getInstance().init('[data-carouzelauto]');
 if (typeof exports === 'object' && typeof module !== 'undefined') {
     module.exports = Carouzel;
 }
