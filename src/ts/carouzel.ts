@@ -312,6 +312,21 @@ namespace Carouzel {
     return eventHandler;
   };
 
+  const carouzel_animateSlider = (core: any) => {
+    let slidesLength = core.allSlides.length;
+    if (core.currentIndex + core.bpoptions.slidesToShow > core.allSlides.length) {
+      core.currentIndex = core.allSlides.length - core.bpoptions.slidesToShow;
+    }
+    for (let k=0; k<slidesLength; k++) {
+      _RemoveClass(core.allSlides[k], core.settings.activeSlideCls);
+    }
+    core.currentTransform = -1 * core.slideWidth * core.currentIndex;
+    core.trackInner.style.transform = `translate(${-1 * core.slideWidth * core.currentIndex}px, 0%)`;
+    carouzel_toggleArrow(core.prevArrow, core.currentIndex !== 0, core.settings.disableCls);
+    carouzel_toggleArrow(core.nextArrow, core.currentIndex + core.bpoptions.slidesToShow !== core.allSlides.length, core.settings.disableCls);
+    carozuel_updateIndices(core);
+  };
+
   const carouzel_toggleArrow = (arrow: Element, shouldEnable: boolean, disableCls: string) => {
     if (arrow && !shouldEnable) {
       _AddClass(arrow as HTMLElement, disableCls);
@@ -321,17 +336,6 @@ namespace Carouzel {
       _RemoveClass(arrow as HTMLElement, disableCls);
       arrow.removeAttribute('disabled');
     }
-  };
-
-  const carouzel_animateSlider = (core: any) => {
-    let slidesLength = core.allSlides.length;
-    for (let k=0; k<slidesLength; k++) {
-      _RemoveClass(core.allSlides[k], core.settings.activeSlideCls);
-    }
-    core.currentTransform = -1 * core.slideWidth * core.currentIndex;
-    core.trackInner.style.transform = `translate(${-1 * core.slideWidth * core.currentIndex}px, 0%)`;
-    carouzel_toggleArrow(core.prevArrow, core.currentIndex !== 0, core.settings.disableCls);
-    carouzel_toggleArrow(core.nextArrow, core.currentIndex + core.bpoptions.slidesToShow !== core.allSlides.length, core.settings.disableCls);
   };
 
   // const carouzel_updateArrow = (arrow: Element, index: number) => {
@@ -351,7 +355,6 @@ namespace Carouzel {
     core.isCarouzelStarted = true;
     core.currentIndex = prevOrNext === 'prev' ? core.prevIndex : core.nextIndex;
     carouzel_animateSlider(core);
-    carozuel_updateIndices(core);
   }
 
   const carouzel_toggleEvents = (core: any, shouldAddEvent: boolean) => {
@@ -387,6 +390,7 @@ namespace Carouzel {
     }
   };
   const carozuel_updateIndices = (core: any) => {
+    console.log('=========herre');
     let slidesLength = core.allSlides.length;
     let onLeft = 0;
     let onRight = 0;
@@ -484,22 +488,13 @@ namespace Carouzel {
   };
   const carouzel_toggleNav = (core: any) => {
     if (core.navInner && document) {
-      let pageLength = 0;
+      let pageLength = Math.ceil(core.allSlides.length / core.bpoptions.slidesToScroll) - (core.bpoptions.slidesToShow - core.bpoptions.slidesToScroll);
       let navBtns = [];
-      if (core.allSlides.length / core.bpoptions.slidesToScroll % 2 === 0) {
-        pageLength = core.allSlides.length / core.bpoptions.slidesToScroll;
-      } else {
-        pageLength = Math.ceil(core.allSlides.length / core.bpoptions.slidesToScroll);
-      }
-      if (core.bpoptions.slidesToScroll !== core.bpoptions.slidesToShow ) {
-        pageLength -= core.bpoptions.slidesToShow - 1;
-      }
-      console.log('================pageLength 2', pageLength);
       core.navInner.innerHTML = '';
       for (let p=0; p<pageLength; p++) {
         let elem = document.createElement(core.settings.navBtnElem);
+        elem.setAttribute('data-carouzelnavbtn', '');
         if (core.settings.navBtnElem.toLowerCase() === 'button') {
-          elem.setAttribute('data-carouzelnavbtn', p);
           elem.setAttribute('type', 'button');
         }
         elem.innerHTML = p  + 1;
@@ -509,6 +504,8 @@ namespace Carouzel {
       for (let p=0; p<navBtns.length; p++) {
         core.eventHandlers.push(carouzel_eventHandler(navBtns[p], 'click', function (event: Event) {
           event.preventDefault();
+          core.currentIndex = p * core.bpoptions.slidesToScroll;
+          carouzel_animateSlider(core);
         }));
       }
     }
@@ -528,9 +525,6 @@ namespace Carouzel {
     let trackWidth = (parseFloat(slideWidth + '') * (core.allSlides.length > bpoptions.slidesToShow ? core.allSlides.length : bpoptions.slidesToShow)).toFixed(4);
     core.slideWidth = slideWidth;
     core.bpoptions = bpoptions;
-    if (core.currentIndex + core.bpoptions.slidesToShow > core.allSlides.length) {
-      core.currentIndex = core.allSlides.length - core.bpoptions.slidesToShow;
-    }
     if (core.trackInner) {
       core.trackInner.style.width = trackWidth + 'px';
       core.trackInner.style.transitionDuration = core.settings.speed + 'ms';

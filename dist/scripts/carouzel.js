@@ -254,6 +254,20 @@ var Carouzel;
         element.addEventListener(type, listener, _useCapture);
         return eventHandler;
     };
+    var carouzel_animateSlider = function (core) {
+        var slidesLength = core.allSlides.length;
+        if (core.currentIndex + core.bpoptions.slidesToShow > core.allSlides.length) {
+            core.currentIndex = core.allSlides.length - core.bpoptions.slidesToShow;
+        }
+        for (var k = 0; k < slidesLength; k++) {
+            _RemoveClass(core.allSlides[k], core.settings.activeSlideCls);
+        }
+        core.currentTransform = -1 * core.slideWidth * core.currentIndex;
+        core.trackInner.style.transform = "translate(" + -1 * core.slideWidth * core.currentIndex + "px, 0%)";
+        carouzel_toggleArrow(core.prevArrow, core.currentIndex !== 0, core.settings.disableCls);
+        carouzel_toggleArrow(core.nextArrow, core.currentIndex + core.bpoptions.slidesToShow !== core.allSlides.length, core.settings.disableCls);
+        carozuel_updateIndices(core);
+    };
     var carouzel_toggleArrow = function (arrow, shouldEnable, disableCls) {
         if (arrow && !shouldEnable) {
             _AddClass(arrow, disableCls);
@@ -263,16 +277,6 @@ var Carouzel;
             _RemoveClass(arrow, disableCls);
             arrow.removeAttribute('disabled');
         }
-    };
-    var carouzel_animateSlider = function (core) {
-        var slidesLength = core.allSlides.length;
-        for (var k = 0; k < slidesLength; k++) {
-            _RemoveClass(core.allSlides[k], core.settings.activeSlideCls);
-        }
-        core.currentTransform = -1 * core.slideWidth * core.currentIndex;
-        core.trackInner.style.transform = "translate(" + -1 * core.slideWidth * core.currentIndex + "px, 0%)";
-        carouzel_toggleArrow(core.prevArrow, core.currentIndex !== 0, core.settings.disableCls);
-        carouzel_toggleArrow(core.nextArrow, core.currentIndex + core.bpoptions.slidesToShow !== core.allSlides.length, core.settings.disableCls);
     };
     // const carouzel_updateArrow = (arrow: Element, index: number) => {
     //   if (arrow) {
@@ -289,7 +293,6 @@ var Carouzel;
         core.isCarouzelStarted = true;
         core.currentIndex = prevOrNext === 'prev' ? core.prevIndex : core.nextIndex;
         carouzel_animateSlider(core);
-        carozuel_updateIndices(core);
     };
     var carouzel_toggleEvents = function (core, shouldAddEvent) {
         if (core.prevArrow) {
@@ -324,6 +327,7 @@ var Carouzel;
         }
     };
     var carozuel_updateIndices = function (core) {
+        console.log('=========herre');
         var slidesLength = core.allSlides.length;
         var onLeft = 0;
         var onRight = 0;
@@ -428,33 +432,28 @@ var Carouzel;
     };
     var carouzel_toggleNav = function (core) {
         if (core.navInner && document) {
-            var pageLength = 0;
+            var pageLength = Math.ceil(core.allSlides.length / core.bpoptions.slidesToScroll) - (core.bpoptions.slidesToShow - core.bpoptions.slidesToScroll);
             var navBtns = [];
-            if (core.allSlides.length / core.bpoptions.slidesToScroll % 2 === 0) {
-                pageLength = core.allSlides.length / core.bpoptions.slidesToScroll;
-            }
-            else {
-                pageLength = Math.ceil(core.allSlides.length / core.bpoptions.slidesToScroll);
-            }
-            if (core.bpoptions.slidesToScroll !== core.bpoptions.slidesToShow) {
-                pageLength -= core.bpoptions.slidesToShow - 1;
-            }
-            console.log('================pageLength 2', pageLength);
             core.navInner.innerHTML = '';
             for (var p = 0; p < pageLength; p++) {
                 var elem = document.createElement(core.settings.navBtnElem);
+                elem.setAttribute('data-carouzelnavbtn', '');
                 if (core.settings.navBtnElem.toLowerCase() === 'button') {
-                    elem.setAttribute('data-carouzelnavbtn', p);
                     elem.setAttribute('type', 'button');
                 }
                 elem.innerHTML = p + 1;
                 navBtns.push(elem);
                 core.navInner.appendChild(elem);
             }
-            for (var p = 0; p < navBtns.length; p++) {
+            var _loop_2 = function (p) {
                 core.eventHandlers.push(carouzel_eventHandler(navBtns[p], 'click', function (event) {
                     event.preventDefault();
+                    core.currentIndex = p * core.bpoptions.slidesToScroll;
+                    carouzel_animateSlider(core);
                 }));
+            };
+            for (var p = 0; p < navBtns.length; p++) {
+                _loop_2(p);
             }
         }
     };
@@ -473,9 +472,6 @@ var Carouzel;
         var trackWidth = (parseFloat(slideWidth + '') * (core.allSlides.length > bpoptions.slidesToShow ? core.allSlides.length : bpoptions.slidesToShow)).toFixed(4);
         core.slideWidth = slideWidth;
         core.bpoptions = bpoptions;
-        if (core.currentIndex + core.bpoptions.slidesToShow > core.allSlides.length) {
-            core.currentIndex = core.allSlides.length - core.bpoptions.slidesToShow;
-        }
         if (core.trackInner) {
             core.trackInner.style.width = trackWidth + 'px';
             core.trackInner.style.transitionDuration = core.settings.speed + 'ms';
