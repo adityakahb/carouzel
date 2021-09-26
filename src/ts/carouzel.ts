@@ -37,7 +37,7 @@ namespace Carouzel {
     hideCls?: string;
     idPrefix?: string;
     innerSelector?: string;
-    navBtnTemplate?: string;
+    navBtnElem?: string;
     navInnerSelector?: string;
     navSelector?: string;
     nextArrowSelector?: string;
@@ -73,7 +73,7 @@ namespace Carouzel {
     hideCls: '__carouzel-hidden',
     idPrefix: '__carouzel_id',
     innerSelector: '[data-carouzelinner]',
-    navBtnTemplate: '<button type="button">${i}</button>',
+    navBtnElem: 'button',
     navInnerSelector: '[data-carouzelnavinner]',
     navSelector: '[data-carouzelnav]',
     nextArrowSelector: '[data-carouzelnext]',
@@ -483,22 +483,34 @@ namespace Carouzel {
     }
   };
   const carouzel_toggleNav = (core: any) => {
-    if (core.navInner) {
+    if (core.navInner && document) {
       let pageLength = 0;
-      // console.log('===========core.allSlides.length', core.allSlides.length);
-      if (core.allSlides.length % 2 === 0) {
-        pageLength = Math.ceil(core.allSlides.length / core.bpoptions.slidesToShow);
+      let navBtns = [];
+      if (core.allSlides.length / core.bpoptions.slidesToScroll % 2 === 0) {
+        pageLength = core.allSlides.length / core.bpoptions.slidesToScroll;
       } else {
-        pageLength = Math.ceil((core.allSlides.length + 1) / core.bpoptions.slidesToShow);
+        pageLength = Math.ceil(core.allSlides.length / core.bpoptions.slidesToScroll);
       }
-      // console.log('=============pageLength', pageLength);
-      let str = '';
-      let templateStr = '';
+      if (core.bpoptions.slidesToScroll !== core.bpoptions.slidesToShow ) {
+        pageLength -= core.bpoptions.slidesToShow - 1;
+      }
+      console.log('================pageLength 2', pageLength);
+      core.navInner.innerHTML = '';
       for (let p=0; p<pageLength; p++) {
-        templateStr = core.settings.navBtnTemplate.replace('${i}', p + 1);
-        str+=templateStr;
+        let elem = document.createElement(core.settings.navBtnElem);
+        if (core.settings.navBtnElem.toLowerCase() === 'button') {
+          elem.setAttribute('data-carouzelnavbtn', p);
+          elem.setAttribute('type', 'button');
+        }
+        elem.innerHTML = p  + 1;
+        navBtns.push(elem);
+        core.navInner.appendChild(elem);
       }
-      core.navInner.innerHTML = str;
+      for (let p=0; p<navBtns.length; p++) {
+        core.eventHandlers.push(carouzel_eventHandler(navBtns[p], 'click', function (event: Event) {
+          event.preventDefault();
+        }));
+      }
     }
   };
   const carouzel_applyLayout = (core: any) => {

@@ -10,15 +10,16 @@
   }
 
   [data-carouzeltrack] {
-    position: relative;
+    margin-bottom: 1em;
     overflow: hidden;
+    position: relative;
   }
   .__carouzel-hidden {
     display: none !important;
   }
   [data-carouzelprev], [data-carouzelnext] {
     background-color: rgba(#000, 0.25);
-    border: 0;
+    border: 1px solid #000;
     color: transparent;
     font-size: 1px;
     height: 48px;
@@ -32,18 +33,18 @@
       opacity: 1;
     }
     &.__carouzel-disabled {
+      cursor: not-allowed;
       opacity: 0.25;
       pointer-events: none;
-      cursor: not-allowed;
     }
   }
   [data-carouzelprev] {
-    left: 0;
     border-radius: 0 8px 8px 0;
+    left: 0;
   }
   [data-carouzelnext] {
-    right: 0;
     border-radius: 8px 0 0 8px;
+    right: 0;
   }
   [data-carouzeltrackinner] {
     align-items: flex-start;
@@ -59,5 +60,35 @@
   }
   [data-carouzelslide] {
     width: 100%;
+  }
+  [data-carouzelnavinner] {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  [data-carouzelnav] {
+    margin-bottom: 1em;
+  }
+  [data-carouzelnavbtn] {
+    background-color: rgba(#000, 0.15);
+    border-radius: 100%;
+    border: 1px solid #000;
+    color: transparent;
+    display: block;
+    font-size: 1px;
+    height: 16px;
+    margin: 0 10px;
+    padding: 0;
+    transition: background-color 250ms ease;
+    width: 16px;
+    &:hover, &:focus {
+      background-color: rgba(#000, 0.5);
+    }
+    &.active {
+      background-color: #000;
+    }
   }
 }
