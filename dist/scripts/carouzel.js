@@ -12,16 +12,19 @@ var Carouzel;
     "use strict";
     var AllCarouzelInstances = {};
     // let active_carouzel: any = {};
+    var supportedAnimations = ['scroll', 'fade'];
     var isWindowEventAttached = false;
     var winResize;
     var navIndex = 0;
-    var old_bpoptions;
     var _useCapture = false;
     var _Defaults = {
         activeCls: '__carouzel-active',
-        activeSlideCls: '__carouzel-slide-active',
+        activeSlideCls: '__carouzel-active',
+        animation: 'scroll',
         arrowsSelector: '[data-carouzelarrows]',
         buttonSelector: '[data-carouzelbutton]',
+        centerMode: false,
+        centeredCls: '__carouzel-centered',
         disableCls: '__carouzel-disabled',
         dragThreshold: 120,
         enableSwipe: true,
@@ -46,6 +49,7 @@ var Carouzel;
         timingFunction: 'cubic-bezier(0.250, 0.100, 0.250, 1.000)',
         titleSelector: '[data-carouzeltitle]',
         trackInnerSelector: '[data-carouzeltrackinner]',
+        trackOuterSelector: '[data-carouzeltrackouter]',
         trackSelector: '[data-carouzeltrack]'
     };
     /**
@@ -203,17 +207,24 @@ var Carouzel;
         return eventHandler;
     };
     var carouzel_animateSlider = function (core) {
-        var slidesLength = core.allSlides.length;
         if (core.currentIndex + core.bpoptions.slidesToShow > core.allSlides.length) {
             core.currentIndex = core.allSlides.length - core.bpoptions.slidesToShow;
         }
-        for (var k = 0; k < slidesLength; k++) {
-            _RemoveClass(core.allSlides[k], core.settings.activeSlideCls);
+        for (var k = 0; k < core.allSlides.length; k++) {
+            _AddClass(core.allSlides[k], '__carouzel-animating');
+            core.allSlides[k].style.transitionDuration = core.settings.speed + 'ms';
         }
         core.currentTransform = -1 * core.slideWidth * core.currentIndex;
-        core.trackInner.style.transform = "translate(" + -1 * core.slideWidth * core.currentIndex + "px, 0%)";
-        carouzel_toggleArrowsAndNav(core);
-        carozuel_updateIndices(core);
+        setTimeout(function () {
+            core.trackInner.style.transform = "translate(" + -1 * core.slideWidth * core.currentIndex + "px, 0%)";
+            carouzel_toggleArrowsAndNav(core);
+            carozuel_updateIndices(core);
+        }, core.bpoptions.animation === 'fade' ? core.settings.speed / 2 : 0);
+        setTimeout(function () {
+            for (var k = 0; k < core.allSlides.length; k++) {
+                _RemoveClass(core.allSlides[k], '__carouzel-animating');
+            }
+        }, core.settings.speed / 2);
     };
     var carouzel_toggleArrowsAndNav = function (core) {
         if (core.prevArrow && core.currentIndex === 0) {
@@ -240,6 +251,12 @@ var Carouzel;
             if (core.navBtns[navIndex]) {
                 _AddClass(core.navBtns[navIndex], core.settings.activeCls);
             }
+        }
+        for (var k = 0; k < core.allSlides.length; k++) {
+            _RemoveClass(core.allSlides[k], core.settings.activeSlideCls);
+        }
+        for (var k = core.currentIndex; k < core.bpoptions.slidesToShow + core.currentIndex; k++) {
+            _AddClass(core.allSlides[k], core.settings.activeSlideCls);
         }
     };
     var carouzel_moveToRight = function (core) {
@@ -331,7 +348,9 @@ var Carouzel;
                 else {
                     posX2 = posX1 - thisevent.clientX;
                 }
-                core.trackInner.style.transform = "translate(" + (core.currentTransform - posX2) + "px, 0%)";
+                if (core.bpoptions.animation !== 'fade') {
+                    core.trackInner.style.transform = "translate(" + (core.currentTransform - posX2) + "px, 0%)";
+                }
                 posFinal = posX2;
             }
         };
@@ -415,6 +434,8 @@ var Carouzel;
         var viewportWidth = window.innerWidth;
         var bpoptions = core.breakpoints[0];
         var len = 0;
+        var slideWidth = '';
+        var trackWidth = '';
         while (len < core.breakpoints.length) {
             if ((core.breakpoints[len + 1] && core.breakpoints[len + 1].breakpoint > viewportWidth) || typeof core.breakpoints[len + 1] === 'undefined') {
                 bpoptions = core.breakpoints[len];
@@ -422,21 +443,39 @@ var Carouzel;
             }
             len++;
         }
-        if ((old_bpoptions || {}).breakpoint !== bpoptions.breakpoint) {
+        if (supportedAnimations.indexOf(bpoptions.animation) === -1) {
+            bpoptions.animation = 'scroll';
+        }
+        if ((core._bpoptions || {}).breakpoint !== bpoptions.breakpoint) {
             core.bpoptions = bpoptions;
             carouzel_toggleArrows(core, bpoptions.showArrows);
             carouzel_toggleNav(core, bpoptions.showNav);
             carouzel_toggleSwipe(core, bpoptions.enableSwipe);
-            old_bpoptions = bpoptions;
+            core._bpoptions = bpoptions;
         }
-        var slideWidth = (core.track.clientWidth / bpoptions.slidesToShow).toFixed(4) || 1;
-        var trackWidth = (parseFloat(slideWidth + '') * (core.allSlides.length > bpoptions.slidesToShow ? core.allSlides.length : bpoptions.slidesToShow)).toFixed(4);
+        slideWidth = (core.trackOuter.clientWidth / bpoptions.slidesToShow).toFixed(4) || '1';
+        trackWidth = (parseFloat(slideWidth + '') * (core.allSlides.length > bpoptions.slidesToShow ? core.allSlides.length : bpoptions.slidesToShow)).toFixed(4);
+        if (bpoptions.centerMode && core.track) {
+            bpoptions.slidesToScroll = 1;
+            _AddClass(core.track, core.settings.centeredCls);
+            core.track.style.width = slideWidth;
+        }
+        else if (core.track) {
+            _RemoveClass(core.track, core.settings.centeredCls);
+            core.track.removeAttribute('style');
+        }
         core.slideWidth = slideWidth;
         if (core.trackInner) {
             core.trackInner.style.width = trackWidth + 'px';
             core.trackInner.style.transitionDuration = core.settings.speed + 'ms';
             core.trackInner.style.transitionTimingFunction = core.settings.timingFunction;
             carouzel_animateSlider(core);
+            for (var a = 0; a < supportedAnimations.length; a++) {
+                _RemoveClass(core.trackInner, "__carouzel-animation-" + supportedAnimations[a]);
+            }
+            if (bpoptions.animation !== 'scroll') {
+                _AddClass(core.trackInner, "__carouzel-animation-" + bpoptions.animation);
+            }
         }
         for (var k = 0; k < core.allSlides.length; k++) {
             if (core.allSlides[k]) {
@@ -469,12 +508,15 @@ var Carouzel;
     };
     var carouzel_updateBreakpoints = function (settings) {
         var defaultBreakpoint = {
+            animation: settings.animation,
             breakpoint: 0,
+            enableSwipe: settings.enableSwipe,
             showArrows: settings.showArrows,
             showNav: settings.showNav,
             slidesToScroll: settings.slidesToScroll,
             slidesToShow: settings.slidesToShow,
-            enableSwipe: settings.enableSwipe
+            centerMode: settings.centerMode,
+            centeredCls: settings.centeredCls
         };
         var tempArr = [];
         if ((settings.responsive || []).length > 0) {
@@ -501,6 +543,7 @@ var Carouzel;
         core.rootElem = rootElem;
         core.settings = settings;
         core.track = rootElem.querySelector("" + settings.trackSelector);
+        core.trackOuter = rootElem.querySelector("" + settings.trackOuterSelector);
         core.trackInner = rootElem.querySelector("" + settings.trackInnerSelector);
         core.allSlides = _ArrayCall(rootElem.querySelectorAll("" + settings.slideSelector));
         core.currentIndex = core.settings.startAtIndex = core.settings.startAtIndex - 1;
@@ -641,7 +684,9 @@ var Carouzel;
                     }
                 }
                 else {
-                    throw new TypeError('Element(s) with the provided query do(es) not exist');
+                    if (query !== '[data-carouzelauto]') {
+                        throw new TypeError('Element(s) with the provided query do(es) not exist');
+                    }
                 }
             };
             /**

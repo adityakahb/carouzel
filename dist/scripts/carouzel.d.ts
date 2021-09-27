@@ -9,21 +9,24 @@
  */
 declare namespace Carouzel {
     interface ICarouzelBreakpoint {
+        animation?: string;
         breakpoint?: number | string;
-        dragThreshold?: number;
+        centeredCls?: string;
+        centerMode?: boolean;
         enableSwipe?: boolean;
         showArrows?: boolean;
         showNav?: boolean;
         slidesToScroll?: number;
         slidesToShow?: number;
-        speed?: number;
-        timingFunction?: string;
     }
     interface ICarouzelSettings {
         activeCls?: string;
         activeSlideCls?: string;
+        animation?: string;
         arrowsSelector?: string;
         buttonSelector?: string;
+        centeredCls?: string;
+        centerMode?: boolean;
         disableCls?: string;
         dragThreshold?: number;
         enableSwipe?: boolean;
@@ -49,6 +52,7 @@ declare namespace Carouzel {
         timingFunction?: string;
         titleSelector?: string;
         trackInnerSelector?: string;
+        trackOuterSelector?: string;
         trackSelector?: string;
     }
     /**

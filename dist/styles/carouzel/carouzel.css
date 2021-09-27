@@ -40,13 +40,22 @@
     align-items: flex-start;
     display: flex;
     flex-direction: row;
-    justify-content: center;
+    justify-content: flex-start;
     min-height: 1px;
     position: relative;
     transform-style: preserve-3d;
     transition-property: transform;
     transition-timing-function: ease;
     width: 100%; }
+    .__carouzel [data-carouzeltrackinner].__carouzel-animation-fade {
+      transition: none; }
+      .__carouzel [data-carouzeltrackinner].__carouzel-animation-fade [data-carouzelslide] {
+        opacity: 1;
+        transition-property: opacity;
+        transition-timing-function: ease; }
+        .__carouzel [data-carouzeltrackinner].__carouzel-animation-fade [data-carouzelslide].__carouzel-animating {
+          transition-duration: 0;
+          opacity: 0; }
   .__carouzel [data-carouzelslide] {
     width: 100%; }
   .__carouzel [data-carouzelnavinner] {

@@ -11,6 +11,7 @@ namespace Carouzel {
   "use strict";
   let AllCarouzelInstances: any = {};
   // let active_carouzel: any = {};
+  const supportedAnimations = ['scroll', 'fade'];
   let isWindowEventAttached = false;
   let winResize: any;
   let navIndex = 0;
@@ -18,21 +19,24 @@ namespace Carouzel {
     [key: string]: any;
   }
   interface ICarouzelBreakpoint {
+    animation?: string;
     breakpoint?: number | string;
-    dragThreshold?: number;
+    centeredCls?: string;
+    centerMode?: boolean;
     enableSwipe?: boolean;
     showArrows?: boolean;
     showNav?: boolean;
     slidesToScroll?: number;
     slidesToShow?: number;
-    speed?: number;
-    timingFunction?: string;
   }
   interface ICarouzelSettings {
     activeCls?: string;
     activeSlideCls?: string;
+    animation?: string;
     arrowsSelector?: string;
     buttonSelector?: string;
+    centeredCls?: string;
+    centerMode?: boolean;
     disableCls?: string;
     dragThreshold?: number;
     enableSwipe?: boolean;
@@ -58,19 +62,23 @@ namespace Carouzel {
     timingFunction?: string;
     titleSelector?: string;
     trackInnerSelector?: string;
+    trackOuterSelector?: string;
     trackSelector?: string;
   }
   interface IEventHandler {
     element: Element | Document | Window;
     remove: Function;
   }
-  let old_bpoptions: ICarouzelBreakpoint;
+
   const _useCapture = false;
   const _Defaults = {
     activeCls: '__carouzel-active',
-    activeSlideCls: '__carouzel-slide-active',
+    activeSlideCls: '__carouzel-active',
+    animation: 'scroll',
     arrowsSelector: '[data-carouzelarrows]',
     buttonSelector: '[data-carouzelbutton]',
+    centerMode: false,
+    centeredCls: '__carouzel-centered',
     disableCls: '__carouzel-disabled',
     dragThreshold: 120,
     enableSwipe: true,
@@ -95,6 +103,7 @@ namespace Carouzel {
     timingFunction: 'cubic-bezier(0.250, 0.100, 0.250, 1.000)',
     titleSelector: '[data-carouzeltitle]',
     trackInnerSelector: '[data-carouzeltrackinner]',
+    trackOuterSelector: '[data-carouzeltrackouter]',
     trackSelector: '[data-carouzeltrack]'
   };
 
@@ -264,17 +273,24 @@ namespace Carouzel {
   };
 
   const carouzel_animateSlider = (core: any) => {
-    let slidesLength = core.allSlides.length;
     if (core.currentIndex + core.bpoptions.slidesToShow > core.allSlides.length) {
       core.currentIndex = core.allSlides.length - core.bpoptions.slidesToShow;
     }
-    for (let k=0; k<slidesLength; k++) {
-      _RemoveClass(core.allSlides[k], core.settings.activeSlideCls);
+    for (let k=0; k<core.allSlides.length; k++) {
+      _AddClass(core.allSlides[k], '__carouzel-animating');
+      core.allSlides[k].style.transitionDuration = core.settings.speed + 'ms';
     }
     core.currentTransform = -1 * core.slideWidth * core.currentIndex;
-    core.trackInner.style.transform = `translate(${-1 * core.slideWidth * core.currentIndex}px, 0%)`;
-    carouzel_toggleArrowsAndNav(core);
-    carozuel_updateIndices(core);
+    setTimeout(() => {
+      core.trackInner.style.transform = `translate(${-1 * core.slideWidth * core.currentIndex}px, 0%)`;
+      carouzel_toggleArrowsAndNav(core);
+      carozuel_updateIndices(core);
+    }, core.bpoptions.animation === 'fade' ? core.settings.speed / 2 : 0);
+    setTimeout(() => {
+      for (let k=0; k<core.allSlides.length; k++) {
+        _RemoveClass(core.allSlides[k], '__carouzel-animating');
+      }
+    }, core.settings.speed / 2);
   };
 
   const carouzel_toggleArrowsAndNav = (core: any) => {
@@ -302,6 +318,12 @@ namespace Carouzel {
       if (core.navBtns[navIndex]) {
         _AddClass(core.navBtns[navIndex], core.settings.activeCls);
       }
+    }
+    for (let k=0; k<core.allSlides.length; k++) {
+      _RemoveClass(core.allSlides[k], core.settings.activeSlideCls);
+    }
+    for (let k=core.currentIndex; k<core.bpoptions.slidesToShow + core.currentIndex; k++) {
+      _AddClass(core.allSlides[k], core.settings.activeSlideCls);
     }
   };
 
@@ -375,7 +397,7 @@ namespace Carouzel {
     let posX2 = 0;
     let posFinal = 0;
     let threshold = core.bpoptions.dragThreshold || 100;
-    let dragging = false;    
+    let dragging = false;
     const touchStart = (thisevent: Event) => {
       thisevent.preventDefault();
       dragging = true;
@@ -392,7 +414,9 @@ namespace Carouzel {
         } else {
           posX2 = posX1 - (thisevent as MouseEvent).clientX;
         }
-        core.trackInner.style.transform = `translate(${core.currentTransform - posX2}px, 0%)`;
+        if (core.bpoptions.animation !== 'fade') {
+          core.trackInner.style.transform = `translate(${core.currentTransform - posX2}px, 0%)`;
+        }
         posFinal = posX2;
       }
     };
@@ -472,6 +496,8 @@ namespace Carouzel {
     let viewportWidth = window.innerWidth;
     let bpoptions = core.breakpoints[0];
     let len = 0;
+    let slideWidth = '';
+    let trackWidth = '';
     while(len < core.breakpoints.length) {
       if ((core.breakpoints[len + 1] && core.breakpoints[len + 1].breakpoint > viewportWidth) || typeof core.breakpoints[len + 1] === 'undefined') {
         bpoptions = core.breakpoints[len];
@@ -479,22 +505,38 @@ namespace Carouzel {
       }
       len++;
     }
-    if ((old_bpoptions || {}).breakpoint !== bpoptions.breakpoint) {
+    if (supportedAnimations.indexOf(bpoptions.animation) === -1) {
+      bpoptions.animation = 'scroll';
+    }
+    if ((core._bpoptions || {}).breakpoint !== bpoptions.breakpoint) {
       core.bpoptions = bpoptions;
       carouzel_toggleArrows(core, bpoptions.showArrows);
       carouzel_toggleNav(core, bpoptions.showNav);
       carouzel_toggleSwipe(core, bpoptions.enableSwipe);
-      old_bpoptions = bpoptions;
+      core._bpoptions = bpoptions;
     }
-
-    let slideWidth = (core.track.clientWidth / bpoptions.slidesToShow).toFixed(4) || 1;
-    let trackWidth = (parseFloat(slideWidth + '') * (core.allSlides.length > bpoptions.slidesToShow ? core.allSlides.length : bpoptions.slidesToShow)).toFixed(4);
+    slideWidth = (core.trackOuter.clientWidth / bpoptions.slidesToShow).toFixed(4) || '1';
+    trackWidth = (parseFloat(slideWidth + '') * (core.allSlides.length > bpoptions.slidesToShow ? core.allSlides.length : bpoptions.slidesToShow)).toFixed(4);  
+    if (bpoptions.centerMode && core.track) {
+      bpoptions.slidesToScroll = 1;
+      _AddClass(core.track, core.settings.centeredCls);
+      core.track.style.width = slideWidth;
+    } else if (core.track) {
+      _RemoveClass(core.track, core.settings.centeredCls);
+      core.track.removeAttribute('style');
+    }
     core.slideWidth = slideWidth;
     if (core.trackInner) {
       core.trackInner.style.width = trackWidth + 'px';
       core.trackInner.style.transitionDuration = core.settings.speed + 'ms';
       core.trackInner.style.transitionTimingFunction = core.settings.timingFunction;
       carouzel_animateSlider(core);
+      for (let a=0; a<supportedAnimations.length; a++) {
+        _RemoveClass(core.trackInner, `__carouzel-animation-${supportedAnimations[a]}`);
+      }
+      if (bpoptions.animation !== 'scroll') {
+        _AddClass(core.trackInner, `__carouzel-animation-${bpoptions.animation}`);
+      }
     }
     for (let k = 0; k < core.allSlides.length; k++) {
       if (core.allSlides[k]) {
@@ -525,12 +567,15 @@ namespace Carouzel {
   };
   const carouzel_updateBreakpoints = (settings: ICarouzelSettings) => {
     const defaultBreakpoint: ICarouzelBreakpoint = {
+      animation: settings.animation,
       breakpoint: 0,
+      enableSwipe: settings.enableSwipe,
       showArrows: settings.showArrows,
       showNav: settings.showNav,
       slidesToScroll: settings.slidesToScroll,
       slidesToShow: settings.slidesToShow,
-      enableSwipe: settings.enableSwipe
+      centerMode: settings.centerMode,
+      centeredCls: settings.centeredCls
     };
     let tempArr = [];
     if ((settings.responsive || []).length > 0) {
@@ -558,6 +603,7 @@ namespace Carouzel {
     core.rootElem = rootElem;
     core.settings = settings;
     core.track = rootElem.querySelector(`${settings.trackSelector}`);
+    core.trackOuter = rootElem.querySelector(`${settings.trackOuterSelector}`);
     core.trackInner = rootElem.querySelector(`${settings.trackInnerSelector}`);
     core.allSlides = _ArrayCall(rootElem.querySelectorAll(`${settings.slideSelector}`));
     core.currentIndex = core.settings.startAtIndex = core.settings.startAtIndex - 1;
@@ -713,7 +759,9 @@ namespace Carouzel {
           window.addEventListener('resize', this.windowResize, true);
         }
       } else {
-        throw new TypeError('Element(s) with the provided query do(es) not exist');
+        if (query !== '[data-carouzelauto]') {
+          throw new TypeError('Element(s) with the provided query do(es) not exist');
+        }
       }
     };
 
