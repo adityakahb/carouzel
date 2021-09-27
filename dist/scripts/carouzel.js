@@ -14,6 +14,7 @@ var Carouzel;
     // let active_carouzel: any = {};
     var isWindowEventAttached = false;
     var winResize;
+    var navIndex = 0;
     var old_bpoptions;
     var _useCapture = false;
     var _Defaults = {
@@ -211,25 +212,36 @@ var Carouzel;
         }
         core.currentTransform = -1 * core.slideWidth * core.currentIndex;
         core.trackInner.style.transform = "translate(" + -1 * core.slideWidth * core.currentIndex + "px, 0%)";
-        carouzel_toggleArrow(core.prevArrow, core.currentIndex !== 0, core.settings.disableCls);
-        carouzel_toggleArrow(core.nextArrow, core.currentIndex + core.bpoptions.slidesToShow !== core.allSlides.length, core.settings.disableCls);
+        carouzel_toggleArrowsAndNav(core);
         carozuel_updateIndices(core);
     };
-    var carouzel_toggleArrow = function (arrow, shouldEnable, disableCls) {
-        if (arrow && !shouldEnable) {
-            _AddClass(arrow, disableCls);
-            arrow.setAttribute('disabled', 'disabled');
+    var carouzel_toggleArrowsAndNav = function (core) {
+        if (core.prevArrow && core.currentIndex === 0) {
+            _AddClass(core.prevArrow, core.settings.disableCls);
+            core.prevArrow.setAttribute('disabled', 'disabled');
         }
-        if (arrow && shouldEnable) {
-            _RemoveClass(arrow, disableCls);
-            arrow.removeAttribute('disabled');
+        if (core.prevArrow && core.currentIndex !== 0) {
+            _RemoveClass(core.prevArrow, core.settings.disableCls);
+            core.prevArrow.removeAttribute('disabled');
+        }
+        if (core.nextArrow && core.currentIndex + core.bpoptions.slidesToShow === core.allSlides.length) {
+            _AddClass(core.nextArrow, core.settings.disableCls);
+            core.nextArrow.setAttribute('disabled', 'disabled');
+        }
+        if (core.nextArrow && core.currentIndex + core.bpoptions.slidesToShow !== core.allSlides.length) {
+            _RemoveClass(core.nextArrow, core.settings.disableCls);
+            core.nextArrow.removeAttribute('disabled');
+        }
+        if (core.navInner && (core.navBtns || []).length > 0) {
+            for (var n = 0; n < core.navBtns.length; n++) {
+                _RemoveClass(core.navBtns[n], core.settings.activeCls);
+            }
+            navIndex = Math.ceil(core.currentIndex / core.bpoptions.slidesToScroll);
+            if (core.navBtns[navIndex]) {
+                _AddClass(core.navBtns[navIndex], core.settings.activeCls);
+            }
         }
     };
-    // const carouzel_updateArrow = (arrow: Element, index: number) => {
-    //   if (arrow) {
-    //     arrow.setAttribute('data-carouzelgotoslide', index + '');
-    //   }
-    // };
     var carouzel_moveToRight = function (core) {
         carouzel_moveSlider(core, 'next');
     };
@@ -241,34 +253,31 @@ var Carouzel;
         core.currentIndex = prevOrNext === 'prev' ? core.prevIndex : core.nextIndex;
         carouzel_animateSlider(core);
     };
-    var carouzel_toggleArrows = function (core, shouldAddEvent) {
+    var carouzel_toggleArrows = function (core, shouldEnableArrows) {
+        carouzel_toggleArrowsAndNav(core);
         if (core.prevArrow) {
             carouzel_removeEventListeners(core, core.prevArrow);
-            carouzel_toggleArrow(core.prevArrow, false, core.settings.disableCls);
             _AddClass(core.prevArrow, core.settings.hideCls);
-            if (shouldAddEvent) {
+            if (shouldEnableArrows) {
                 core.eventHandlers.push(carouzel_eventHandler(core.prevArrow, 'click', function (event) {
                     event.preventDefault();
                     carouzel_moveToLeft(core);
                 }));
                 if (core.bpoptions.showArrows) {
                     _RemoveClass(core.prevArrow, core.settings.hideCls);
-                    carouzel_toggleArrow(core.prevArrow, core.currentIndex !== 0, core.settings.disableCls);
                 }
             }
         }
         if (core.nextArrow) {
             carouzel_removeEventListeners(core, core.nextArrow);
-            carouzel_toggleArrow(core.nextArrow, false, core.settings.disableCls);
             _AddClass(core.nextArrow, core.settings.hideCls);
-            if (shouldAddEvent) {
+            if (shouldEnableArrows) {
                 core.eventHandlers.push(carouzel_eventHandler(core.nextArrow, 'click', function (event) {
                     event.preventDefault();
                     carouzel_moveToRight(core);
                 }));
                 if (core.bpoptions.showArrows) {
                     _RemoveClass(core.nextArrow, core.settings.hideCls);
-                    carouzel_toggleArrow(core.nextArrow, core.currentIndex + core.bpoptions.slidesToShow !== core.allSlides.length, core.settings.disableCls);
                 }
             }
         }
@@ -297,8 +306,6 @@ var Carouzel;
         else {
             core.nextIndex = slidesLength - core.bpoptions.slidesToScroll;
         }
-        // carouzel_updateArrow(core.nextArrow, core.nextIndex);
-        // carouzel_updateArrow(core.prevArrow, core.prevIndex);
     };
     var carouzel_toggleSwipe = function (core, shouldEnableSwipe) {
         var posX1 = 0;
@@ -376,6 +383,7 @@ var Carouzel;
     var carouzel_toggleNav = function (core, shouldEnableNav) {
         if (core.navInner && document) {
             core.navInner.innerHTML = '';
+            core.navBtns = [];
             if (shouldEnableNav) {
                 var pageLength = Math.ceil(core.allSlides.length / core.bpoptions.slidesToScroll) - (core.bpoptions.slidesToShow - core.bpoptions.slidesToScroll);
                 var navBtns = [];
@@ -395,6 +403,7 @@ var Carouzel;
                         core.currentIndex = p * core.bpoptions.slidesToScroll;
                         carouzel_animateSlider(core);
                     }));
+                    core.navBtns.push(navBtns[p]);
                 };
                 for (var p = 0; p < navBtns.length; p++) {
                     _loop_1(p);

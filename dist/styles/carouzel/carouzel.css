@@ -72,7 +72,8 @@
     width: 16px; }
     .__carouzel [data-carouzelnavbtn]:hover, .__carouzel [data-carouzelnavbtn]:focus {
       background-color: rgba(0, 0, 0, 0.5); }
-    .__carouzel [data-carouzelnavbtn].active {
-      background-color: #000; }
+    .__carouzel [data-carouzelnavbtn].__carouzel-active {
+      background-color: #f00;
+      border: 1px solid #f00; }
 
 /*# sourceMappingURL=carouzel.css.map */

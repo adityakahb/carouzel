@@ -87,8 +87,9 @@
     &:hover, &:focus {
       background-color: rgba(#000, 0.5);
     }
-    &.active {
-      background-color: #000;
+    &.__carouzel-active {
+      background-color: #f00;
+      border: 1px solid #f00;
     }
   }
 }

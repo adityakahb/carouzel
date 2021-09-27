@@ -13,6 +13,7 @@ namespace Carouzel {
   // let active_carouzel: any = {};
   let isWindowEventAttached = false;
   let winResize: any;
+  let navIndex = 0;
   interface IRoot {
     [key: string]: any;
   }
@@ -272,27 +273,37 @@ namespace Carouzel {
     }
     core.currentTransform = -1 * core.slideWidth * core.currentIndex;
     core.trackInner.style.transform = `translate(${-1 * core.slideWidth * core.currentIndex}px, 0%)`;
-    carouzel_toggleArrow(core.prevArrow, core.currentIndex !== 0, core.settings.disableCls);
-    carouzel_toggleArrow(core.nextArrow, core.currentIndex + core.bpoptions.slidesToShow !== core.allSlides.length, core.settings.disableCls);
+    carouzel_toggleArrowsAndNav(core);
     carozuel_updateIndices(core);
   };
 
-  const carouzel_toggleArrow = (arrow: Element, shouldEnable: boolean, disableCls: string) => {
-    if (arrow && !shouldEnable) {
-      _AddClass(arrow as HTMLElement, disableCls);
-      arrow.setAttribute('disabled', 'disabled');
+  const carouzel_toggleArrowsAndNav = (core: any) => {
+    if (core.prevArrow && core.currentIndex === 0) {
+      _AddClass(core.prevArrow, core.settings.disableCls);
+      core.prevArrow.setAttribute('disabled', 'disabled');
     }
-    if (arrow && shouldEnable) {
-      _RemoveClass(arrow as HTMLElement, disableCls);
-      arrow.removeAttribute('disabled');
+    if (core.prevArrow && core.currentIndex !== 0) {
+      _RemoveClass(core.prevArrow, core.settings.disableCls);
+      core.prevArrow.removeAttribute('disabled');
+    }
+    if (core.nextArrow && core.currentIndex + core.bpoptions.slidesToShow === core.allSlides.length) {
+      _AddClass(core.nextArrow, core.settings.disableCls);
+      core.nextArrow.setAttribute('disabled', 'disabled');
+    }
+    if (core.nextArrow && core.currentIndex + core.bpoptions.slidesToShow !== core.allSlides.length) {
+      _RemoveClass(core.nextArrow, core.settings.disableCls);
+      core.nextArrow.removeAttribute('disabled');
+    }
+    if (core.navInner && (core.navBtns || []).length > 0) {
+      for (let n = 0; n < core.navBtns.length; n++) {
+        _RemoveClass(core.navBtns[n], core.settings.activeCls);
+      }
+      navIndex = Math.ceil(core.currentIndex / core.bpoptions.slidesToScroll);
+      if (core.navBtns[navIndex]) {
+        _AddClass(core.navBtns[navIndex], core.settings.activeCls);
+      }
     }
   };
-
-  // const carouzel_updateArrow = (arrow: Element, index: number) => {
-  //   if (arrow) {
-  //     arrow.setAttribute('data-carouzelgotoslide', index + '');
-  //   }
-  // };
 
   const carouzel_moveToRight = (core: any) => {
     carouzel_moveSlider(core, 'next');
@@ -308,9 +319,9 @@ namespace Carouzel {
   }
 
   const carouzel_toggleArrows = (core: any, shouldEnableArrows: boolean) => {
+    carouzel_toggleArrowsAndNav(core);
     if (core.prevArrow) {
       carouzel_removeEventListeners(core, core.prevArrow);
-      carouzel_toggleArrow(core.prevArrow, false, core.settings.disableCls);
       _AddClass(core.prevArrow, core.settings.hideCls);
       if (shouldEnableArrows) {
         core.eventHandlers.push(carouzel_eventHandler(core.prevArrow, 'click', function (event: Event) {
@@ -319,13 +330,11 @@ namespace Carouzel {
         }));
         if (core.bpoptions.showArrows) {
           _RemoveClass(core.prevArrow, core.settings.hideCls);
-          carouzel_toggleArrow(core.prevArrow, core.currentIndex !== 0, core.settings.disableCls);
         }
       }
     }
     if (core.nextArrow) {
       carouzel_removeEventListeners(core, core.nextArrow);
-      carouzel_toggleArrow(core.nextArrow, false, core.settings.disableCls);
       _AddClass(core.nextArrow, core.settings.hideCls);
       if (shouldEnableArrows) {
         core.eventHandlers.push(carouzel_eventHandler(core.nextArrow, 'click', function (event: Event) {
@@ -334,7 +343,6 @@ namespace Carouzel {
         }));
         if (core.bpoptions.showArrows) {
           _RemoveClass(core.nextArrow, core.settings.hideCls);
-          carouzel_toggleArrow(core.nextArrow, core.currentIndex + core.bpoptions.slidesToShow !== core.allSlides.length, core.settings.disableCls);
         }
       }
     }
@@ -361,8 +369,6 @@ namespace Carouzel {
     } else {
       core.nextIndex = slidesLength - core.bpoptions.slidesToScroll;
     }
-    // carouzel_updateArrow(core.nextArrow, core.nextIndex);
-    // carouzel_updateArrow(core.prevArrow, core.prevIndex);
   };
   const carouzel_toggleSwipe = (core: any, shouldEnableSwipe: boolean) => {
     let posX1 = 0;
@@ -436,6 +442,7 @@ namespace Carouzel {
   const carouzel_toggleNav = (core: any, shouldEnableNav: boolean) => {
     if (core.navInner && document) {
       core.navInner.innerHTML = '';
+      core.navBtns = [];
       if (shouldEnableNav) {
         let pageLength = Math.ceil(core.allSlides.length / core.bpoptions.slidesToScroll) - (core.bpoptions.slidesToShow - core.bpoptions.slidesToScroll);
         let navBtns = [];
@@ -456,6 +463,7 @@ namespace Carouzel {
             core.currentIndex = p * core.bpoptions.slidesToScroll;
             carouzel_animateSlider(core);
           }));
+          core.navBtns.push(navBtns[p]);
         }
       }
     }
