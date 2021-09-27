@@ -11,6 +11,7 @@ namespace Carouzel {
   "use strict";
   let AllCarouzelInstances: any = {};
   // let active_carouzel: any = {};
+  let isWindowEventAttached = false;
   let winResize: any;
   interface IRoot {
     [key: string]: any;
@@ -62,6 +63,7 @@ namespace Carouzel {
     element: Element | Document | Window;
     remove: Function;
   }
+  let old_bpoptions: ICarouzelBreakpoint;
   const _useCapture = false;
   const _Defaults = {
     activeCls: '__carouzel-active',
@@ -127,60 +129,6 @@ namespace Carouzel {
         writable: true,
         configurable: true,
       });
-    }
-  };
-
-  /**
-   * Polyfill function for `:scope` for `QuerySelector` and `QuerySelectorAll`
-   *
-   */
-  const _EnableQSQSAScope = () => {
-    try {
-      window.document.querySelector(':scope body');
-    } catch (err) {
-      const qsarr = ['querySelector', 'querySelectorAll'];
-      for (let i = 0; i < qsarr.length; i++) {
-        let nativ = (Element.prototype as any)[qsarr[i]];
-        (Element.prototype as any)[qsarr[i]] = function (selectors: string) {
-          if (/(^|,)\s*:scope/.test(selectors)) {
-            let id = this.id;
-            this.id = 'ID_' + Date.now();
-            selectors = selectors.replace(/((^|,)\s*):scope/g, '$1#' + this.id);
-            let result = (window.document as any)[qsarr[i]](selectors);
-            this.id = id;
-            return result;
-          } else {
-            return nativ.call(this, selectors);
-          }
-        };
-      }
-    }
-  };
-
-  /**
-   * Polyfill function for `Element.closest`
-   *
-   */
-  const _EnableClosest = () => {
-    if (!Element.prototype.matches) {
-      Element.prototype.matches =
-        (Element.prototype as any).msMatchesSelector ||
-        Element.prototype.webkitMatchesSelector;
-    }
-
-    if (!Element.prototype.closest) {
-      Element.prototype.closest = function (s: string) {
-        var el = this;
-
-        do {
-          if (Element.prototype.matches.call(el, s)) return el;
-          const parent = el.parentElement || el.parentNode;
-          if (parent) {
-            el = parent as Element;
-          }
-        } while (el !== null && el.nodeType === 1);
-        return null;
-      };
     }
   };
   
@@ -359,12 +307,12 @@ namespace Carouzel {
     carouzel_animateSlider(core);
   }
 
-  const carouzel_toggleEvents = (core: any, shouldAddEvent: boolean) => {
+  const carouzel_toggleArrows = (core: any, shouldEnableArrows: boolean) => {
     if (core.prevArrow) {
       carouzel_removeEventListeners(core, core.prevArrow);
       carouzel_toggleArrow(core.prevArrow, false, core.settings.disableCls);
       _AddClass(core.prevArrow, core.settings.hideCls);
-      if (shouldAddEvent) {
+      if (shouldEnableArrows) {
         core.eventHandlers.push(carouzel_eventHandler(core.prevArrow, 'click', function (event: Event) {
           event.preventDefault();
           carouzel_moveToLeft(core);
@@ -379,7 +327,7 @@ namespace Carouzel {
       carouzel_removeEventListeners(core, core.nextArrow);
       carouzel_toggleArrow(core.nextArrow, false, core.settings.disableCls);
       _AddClass(core.nextArrow, core.settings.hideCls);
-      if (shouldAddEvent) {
+      if (shouldEnableArrows) {
         core.eventHandlers.push(carouzel_eventHandler(core.nextArrow, 'click', function (event: Event) {
           event.preventDefault();
           carouzel_moveToRight(core);
@@ -416,7 +364,7 @@ namespace Carouzel {
     // carouzel_updateArrow(core.nextArrow, core.nextIndex);
     // carouzel_updateArrow(core.prevArrow, core.prevIndex);
   };
-  const carouzel_toggleSwipe = (core: any) => {
+  const carouzel_toggleSwipe = (core: any, shouldEnableSwipe: boolean) => {
     let posX1 = 0;
     let posX2 = 0;
     let posFinal = 0;
@@ -481,33 +429,34 @@ namespace Carouzel {
         }));
       }
     };
-    if (core.bpoptions.enableSwipe && core.trackInner) {
-      toggleTouchEvents(true);
-    } else if (!core.bpoptions.enableSwipe && core.trackInner) {
-      toggleTouchEvents(false);
+    if (core.trackInner) {
+      toggleTouchEvents(shouldEnableSwipe);
     }
   };
-  const carouzel_toggleNav = (core: any) => {
+  const carouzel_toggleNav = (core: any, shouldEnableNav: boolean) => {
     if (core.navInner && document) {
-      let pageLength = Math.ceil(core.allSlides.length / core.bpoptions.slidesToScroll) - (core.bpoptions.slidesToShow - core.bpoptions.slidesToScroll);
-      let navBtns = [];
       core.navInner.innerHTML = '';
-      for (let p=0; p<pageLength; p++) {
-        let elem = document.createElement(core.settings.navBtnElem);
-        elem.setAttribute('data-carouzelnavbtn', '');
-        if (core.settings.navBtnElem.toLowerCase() === 'button') {
-          elem.setAttribute('type', 'button');
+      if (shouldEnableNav) {
+        let pageLength = Math.ceil(core.allSlides.length / core.bpoptions.slidesToScroll) - (core.bpoptions.slidesToShow - core.bpoptions.slidesToScroll);
+        let navBtns = [];
+        
+        for (let p=0; p<pageLength; p++) {
+          let elem = document.createElement(core.settings.navBtnElem);
+          elem.setAttribute('data-carouzelnavbtn', '');
+          if (core.settings.navBtnElem.toLowerCase() === 'button') {
+            elem.setAttribute('type', 'button');
+          }
+          elem.innerHTML = p  + 1;
+          navBtns.push(elem);
+          core.navInner.appendChild(elem);
         }
-        elem.innerHTML = p  + 1;
-        navBtns.push(elem);
-        core.navInner.appendChild(elem);
-      }
-      for (let p=0; p<navBtns.length; p++) {
-        core.eventHandlers.push(carouzel_eventHandler(navBtns[p], 'click', function (event: Event) {
-          event.preventDefault();
-          core.currentIndex = p * core.bpoptions.slidesToScroll;
-          carouzel_animateSlider(core);
-        }));
+        for (let p=0; p<navBtns.length; p++) {
+          core.eventHandlers.push(carouzel_eventHandler(navBtns[p], 'click', function (event: Event) {
+            event.preventDefault();
+            core.currentIndex = p * core.bpoptions.slidesToScroll;
+            carouzel_animateSlider(core);
+          }));
+        }
       }
     }
   };
@@ -522,10 +471,17 @@ namespace Carouzel {
       }
       len++;
     }
+    if ((old_bpoptions || {}).breakpoint !== bpoptions.breakpoint) {
+      core.bpoptions = bpoptions;
+      carouzel_toggleArrows(core, bpoptions.showArrows);
+      carouzel_toggleNav(core, bpoptions.showNav);
+      carouzel_toggleSwipe(core, bpoptions.enableSwipe);
+      old_bpoptions = bpoptions;
+    }
+
     let slideWidth = (core.track.clientWidth / bpoptions.slidesToShow).toFixed(4) || 1;
     let trackWidth = (parseFloat(slideWidth + '') * (core.allSlides.length > bpoptions.slidesToShow ? core.allSlides.length : bpoptions.slidesToShow)).toFixed(4);
     core.slideWidth = slideWidth;
-    core.bpoptions = bpoptions;
     if (core.trackInner) {
       core.trackInner.style.width = trackWidth + 'px';
       core.trackInner.style.transitionDuration = core.settings.speed + 'ms';
@@ -537,10 +493,6 @@ namespace Carouzel {
         core.allSlides[k].style.width = slideWidth + 'px';
       }
     }
-    carouzel_toggleEvents(core, core.bpoptions.showArrows || false);
-    carouzel_toggleSwipe(core);
-    carozuel_updateIndices(core);
-    carouzel_toggleNav(core);
   };
   const carouzel_validateBreakpoints = (breakpoints: ICarouzelBreakpoint[]) => {
     try {
@@ -663,8 +615,6 @@ namespace Carouzel {
      *
      */
     constructor() {
-      _EnableQSQSAScope();
-      _EnableClosest();
       _EnableAssign();
     }
     private getInstancesLength = () => {
@@ -731,8 +681,16 @@ namespace Carouzel {
           }
 
           if (!iselempresent) {
-            const newoptions = roots[i].getAttribute('[data-carouzelauto]') ? JSON.parse(roots[i].getAttribute('[data-carouzelauto]')) :  options;
-            console.log('=========roots[i]', roots[i].getAttribute('[data-carouzelauto]'));
+            let newoptions;
+            if (roots[i].getAttribute('data-carouzelauto')) {
+              try {
+                newoptions = JSON.parse(roots[i].getAttribute('data-carouzelauto'));
+              } catch (e) {
+                throw new TypeError('Unable to parse the options string');
+              }
+            } else {
+              newoptions = options;
+            }
             if (id) {
               this.instances[id] = new Core(id, roots[i], newoptions);
             } else {
@@ -742,14 +700,12 @@ namespace Carouzel {
             }
           }
         }
-        if (window) {
-          //  window.removeEventListener('resize', this.windowResize, true);
-          if (this.getInstancesLength() > 0) {
-            window.addEventListener('resize', this.windowResize, true);
-          }
+        if (window && this.getInstancesLength() > 0 && !isWindowEventAttached) {
+          isWindowEventAttached = true;
+          window.addEventListener('resize', this.windowResize, true);
         }
       } else {
-        console.error('Element(s) with the provided query do(es) not exist');
+        throw new TypeError('Element(s) with the provided query do(es) not exist');
       }
     };
 
@@ -774,7 +730,7 @@ namespace Carouzel {
           window.removeEventListener('resize', this.windowResize, true);
         }
       } else {
-        console.error('Element(s) with the provided query do(es) not exist');
+        throw new TypeError('Element(s) with the provided query do(es) not exist');
       }
     };
   }

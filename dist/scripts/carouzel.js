@@ -12,7 +12,9 @@ var Carouzel;
     "use strict";
     var AllCarouzelInstances = {};
     // let active_carouzel: any = {};
+    var isWindowEventAttached = false;
     var winResize;
+    var old_bpoptions;
     var _useCapture = false;
     var _Defaults = {
         activeCls: '__carouzel-active',
@@ -74,62 +76,6 @@ var Carouzel;
                 writable: true,
                 configurable: true
             });
-        }
-    };
-    /**
-     * Polyfill function for `:scope` for `QuerySelector` and `QuerySelectorAll`
-     *
-     */
-    var _EnableQSQSAScope = function () {
-        try {
-            window.document.querySelector(':scope body');
-        }
-        catch (err) {
-            var qsarr_1 = ['querySelector', 'querySelectorAll'];
-            var _loop_1 = function (i) {
-                var nativ = Element.prototype[qsarr_1[i]];
-                Element.prototype[qsarr_1[i]] = function (selectors) {
-                    if (/(^|,)\s*:scope/.test(selectors)) {
-                        var id = this.id;
-                        this.id = 'ID_' + Date.now();
-                        selectors = selectors.replace(/((^|,)\s*):scope/g, '$1#' + this.id);
-                        var result = window.document[qsarr_1[i]](selectors);
-                        this.id = id;
-                        return result;
-                    }
-                    else {
-                        return nativ.call(this, selectors);
-                    }
-                };
-            };
-            for (var i = 0; i < qsarr_1.length; i++) {
-                _loop_1(i);
-            }
-        }
-    };
-    /**
-     * Polyfill function for `Element.closest`
-     *
-     */
-    var _EnableClosest = function () {
-        if (!Element.prototype.matches) {
-            Element.prototype.matches =
-                Element.prototype.msMatchesSelector ||
-                    Element.prototype.webkitMatchesSelector;
-        }
-        if (!Element.prototype.closest) {
-            Element.prototype.closest = function (s) {
-                var el = this;
-                do {
-                    if (Element.prototype.matches.call(el, s))
-                        return el;
-                    var parent_1 = el.parentElement || el.parentNode;
-                    if (parent_1) {
-                        el = parent_1;
-                    }
-                } while (el !== null && el.nodeType === 1);
-                return null;
-            };
         }
     };
     /**
@@ -295,7 +241,7 @@ var Carouzel;
         core.currentIndex = prevOrNext === 'prev' ? core.prevIndex : core.nextIndex;
         carouzel_animateSlider(core);
     };
-    var carouzel_toggleEvents = function (core, shouldAddEvent) {
+    var carouzel_toggleArrows = function (core, shouldAddEvent) {
         if (core.prevArrow) {
             carouzel_removeEventListeners(core, core.prevArrow);
             carouzel_toggleArrow(core.prevArrow, false, core.settings.disableCls);
@@ -354,7 +300,7 @@ var Carouzel;
         // carouzel_updateArrow(core.nextArrow, core.nextIndex);
         // carouzel_updateArrow(core.prevArrow, core.prevIndex);
     };
-    var carouzel_toggleSwipe = function (core) {
+    var carouzel_toggleSwipe = function (core, shouldEnableSwipe) {
         var posX1 = 0;
         var posX2 = 0;
         var posFinal = 0;
@@ -423,37 +369,36 @@ var Carouzel;
                 }));
             }
         };
-        if (core.bpoptions.enableSwipe && core.trackInner) {
-            toggleTouchEvents(true);
-        }
-        else if (!core.bpoptions.enableSwipe && core.trackInner) {
-            toggleTouchEvents(false);
+        if (core.trackInner) {
+            toggleTouchEvents(shouldEnableSwipe);
         }
     };
-    var carouzel_toggleNav = function (core) {
+    var carouzel_toggleNav = function (core, shouldEnableNav) {
         if (core.navInner && document) {
-            var pageLength = Math.ceil(core.allSlides.length / core.bpoptions.slidesToScroll) - (core.bpoptions.slidesToShow - core.bpoptions.slidesToScroll);
-            var navBtns = [];
             core.navInner.innerHTML = '';
-            for (var p = 0; p < pageLength; p++) {
-                var elem = document.createElement(core.settings.navBtnElem);
-                elem.setAttribute('data-carouzelnavbtn', '');
-                if (core.settings.navBtnElem.toLowerCase() === 'button') {
-                    elem.setAttribute('type', 'button');
+            if (shouldEnableNav) {
+                var pageLength = Math.ceil(core.allSlides.length / core.bpoptions.slidesToScroll) - (core.bpoptions.slidesToShow - core.bpoptions.slidesToScroll);
+                var navBtns = [];
+                for (var p = 0; p < pageLength; p++) {
+                    var elem = document.createElement(core.settings.navBtnElem);
+                    elem.setAttribute('data-carouzelnavbtn', '');
+                    if (core.settings.navBtnElem.toLowerCase() === 'button') {
+                        elem.setAttribute('type', 'button');
+                    }
+                    elem.innerHTML = p + 1;
+                    navBtns.push(elem);
+                    core.navInner.appendChild(elem);
                 }
-                elem.innerHTML = p + 1;
-                navBtns.push(elem);
-                core.navInner.appendChild(elem);
-            }
-            var _loop_2 = function (p) {
-                core.eventHandlers.push(carouzel_eventHandler(navBtns[p], 'click', function (event) {
-                    event.preventDefault();
-                    core.currentIndex = p * core.bpoptions.slidesToScroll;
-                    carouzel_animateSlider(core);
-                }));
-            };
-            for (var p = 0; p < navBtns.length; p++) {
-                _loop_2(p);
+                var _loop_1 = function (p) {
+                    core.eventHandlers.push(carouzel_eventHandler(navBtns[p], 'click', function (event) {
+                        event.preventDefault();
+                        core.currentIndex = p * core.bpoptions.slidesToScroll;
+                        carouzel_animateSlider(core);
+                    }));
+                };
+                for (var p = 0; p < navBtns.length; p++) {
+                    _loop_1(p);
+                }
             }
         }
     };
@@ -468,10 +413,16 @@ var Carouzel;
             }
             len++;
         }
+        if ((old_bpoptions || {}).breakpoint !== bpoptions.breakpoint) {
+            core.bpoptions = bpoptions;
+            carouzel_toggleArrows(core, bpoptions.showArrows);
+            carouzel_toggleNav(core, bpoptions.showNav);
+            carouzel_toggleSwipe(core, bpoptions.enableSwipe);
+            old_bpoptions = bpoptions;
+        }
         var slideWidth = (core.track.clientWidth / bpoptions.slidesToShow).toFixed(4) || 1;
         var trackWidth = (parseFloat(slideWidth + '') * (core.allSlides.length > bpoptions.slidesToShow ? core.allSlides.length : bpoptions.slidesToShow)).toFixed(4);
         core.slideWidth = slideWidth;
-        core.bpoptions = bpoptions;
         if (core.trackInner) {
             core.trackInner.style.width = trackWidth + 'px';
             core.trackInner.style.transitionDuration = core.settings.speed + 'ms';
@@ -483,10 +434,6 @@ var Carouzel;
                 core.allSlides[k].style.width = slideWidth + 'px';
             }
         }
-        carouzel_toggleEvents(core, core.bpoptions.showArrows || false);
-        carouzel_toggleSwipe(core);
-        carozuel_updateIndices(core);
-        carouzel_toggleNav(core);
     };
     var carouzel_validateBreakpoints = function (breakpoints) {
         try {
@@ -657,8 +604,18 @@ var Carouzel;
                             }
                         }
                         if (!iselempresent) {
-                            var newoptions = roots[i].getAttribute('[data-carouzelauto]') ? JSON.parse(roots[i].getAttribute('[data-carouzelauto]')) : options;
-                            console.log('=========roots[i]', roots[i].getAttribute('[data-carouzelauto]'));
+                            var newoptions = void 0;
+                            if (roots[i].getAttribute('data-carouzelauto')) {
+                                try {
+                                    newoptions = JSON.parse(roots[i].getAttribute('data-carouzelauto'));
+                                }
+                                catch (e) {
+                                    throw new TypeError('Unable to parse the options string');
+                                }
+                            }
+                            else {
+                                newoptions = options;
+                            }
                             if (id) {
                                 _this.instances[id] = new Core(id, roots[i], newoptions);
                             }
@@ -669,15 +626,13 @@ var Carouzel;
                             }
                         }
                     }
-                    if (window) {
-                        //  window.removeEventListener('resize', this.windowResize, true);
-                        if (_this.getInstancesLength() > 0) {
-                            window.addEventListener('resize', _this.windowResize, true);
-                        }
+                    if (window && _this.getInstancesLength() > 0 && !isWindowEventAttached) {
+                        isWindowEventAttached = true;
+                        window.addEventListener('resize', _this.windowResize, true);
                     }
                 }
                 else {
-                    console.error('Element(s) with the provided query do(es) not exist');
+                    throw new TypeError('Element(s) with the provided query do(es) not exist');
                 }
             };
             /**
@@ -702,11 +657,9 @@ var Carouzel;
                     }
                 }
                 else {
-                    console.error('Element(s) with the provided query do(es) not exist');
+                    throw new TypeError('Element(s) with the provided query do(es) not exist');
                 }
             };
-            _EnableQSQSAScope();
-            _EnableClosest();
             _EnableAssign();
         }
         /**
