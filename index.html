@@ -467,6 +467,65 @@
 
 
 
+          <div class="row my-5">
+            <div class="col text-center">
+              <hr/>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col text-center">
+              <h2>Right to Left</h2>
+              <h2>===WIP===</h2>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div data-carouzel id="__carouzel_6">
+                <div data-carouzelinner>
+
+                  <div data-carouzeltrackouter>
+                    <div data-carouzeltrack>
+                      <div data-carouzeltrackinner>
+                        <div data-carouzelslide>
+                          <div data-carouzelslideinner></div>
+                        </div>
+                        <div data-carouzelslide>
+                          <div data-carouzelslideinner></div>
+                        </div>
+                        <div data-carouzelslide>
+                          <div data-carouzelslideinner></div>
+                        </div>
+                        <div data-carouzelslide>
+                          <div data-carouzelslideinner></div>
+                        </div>
+                        <div data-carouzelslide>
+                          <div data-carouzelslideinner></div>
+                        </div>
+                        <div data-carouzelslide>
+                          <div data-carouzelslideinner></div>
+                        </div>
+                      </div>
+                      <div data-carouzelarrows>
+                        <button type="button" data-carouzelprev aria-label="Previous">
+                          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z"/></svg>
+                        </button>
+                        <button type="button" data-carouzelnext aria-label="Next">
+                          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6z"/></svg>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+                <div data-carouzelnav>
+                  <div data-carouzelnavinner></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+
         </div>
       </div>
     </section>
@@ -505,8 +564,29 @@
       });
       __carouzel_instance.init('#__carouzel_5', {
         slidesToShow: 4,
-        slidesToScroll: 1,
-        centerMode: true
+        slidesToScroll: 3,
+        centerAmong: 1,
+        responsive: [{
+          breakpoint: 700,
+          centerAmong: 3
+        }, {
+          breakpoint: 1100,
+          centerAmong: 5
+        }]
+      });
+      __carouzel_instance.init('#__carouzel_6', {
+        slidesToShow: 1,
+        startAtIndex: 1,
+        isRTL: true,
+        responsive: [{
+          breakpoint: 700,
+          slidesToScroll: 2,
+          slidesToShow: 2
+        }, {
+          breakpoint: 1100,
+          slidesToScroll: 4,
+          slidesToShow: 4
+        }]
       });
     </script>
   </body>

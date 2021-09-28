@@ -22,7 +22,7 @@ namespace Carouzel {
     animation?: string;
     breakpoint?: number | string;
     centeredCls?: string;
-    centerMode?: boolean;
+    centerAmong?: number;
     enableSwipe?: boolean;
     showArrows?: boolean;
     showNav?: boolean;
@@ -35,14 +35,15 @@ namespace Carouzel {
     animation?: string;
     arrowsSelector?: string;
     buttonSelector?: string;
+    centerAmong?: number;
     centeredCls?: string;
-    centerMode?: boolean;
     disableCls?: string;
     dragThreshold?: number;
     enableSwipe?: boolean;
     hideCls?: string;
     idPrefix?: string;
     innerSelector?: string;
+    isRTL?: boolean;
     navBtnElem?: string;
     navInnerSelector?: string;
     navSelector?: string;
@@ -52,6 +53,7 @@ namespace Carouzel {
     rootAutoSelector?: string;
     rootCls?: string;
     rootSelector?: string;
+    rtlCls?: string;
     showArrows?: boolean;
     showNav?: boolean;
     slideSelector?: string;
@@ -72,12 +74,14 @@ namespace Carouzel {
 
   const _useCapture = false;
   const _Defaults = {
+    isRTL: false,
+    rtlCls: '__carouzel-rtl',
     activeCls: '__carouzel-active',
     activeSlideCls: '__carouzel-active',
     animation: 'scroll',
     arrowsSelector: '[data-carouzelarrows]',
     buttonSelector: '[data-carouzelbutton]',
-    centerMode: false,
+    centerAmong: 0,
     centeredCls: '__carouzel-centered',
     disableCls: '__carouzel-disabled',
     dragThreshold: 120,
@@ -498,6 +502,7 @@ namespace Carouzel {
     let len = 0;
     let slideWidth = '';
     let trackWidth = '';
+    let centeredWidth = '';
     while(len < core.breakpoints.length) {
       if ((core.breakpoints[len + 1] && core.breakpoints[len + 1].breakpoint > viewportWidth) || typeof core.breakpoints[len + 1] === 'undefined') {
         bpoptions = core.breakpoints[len];
@@ -508,6 +513,20 @@ namespace Carouzel {
     if (supportedAnimations.indexOf(bpoptions.animation) === -1) {
       bpoptions.animation = 'scroll';
     }
+    slideWidth = (core.trackOuter.clientWidth / bpoptions.slidesToShow).toFixed(4) || '1';
+    trackWidth = (parseFloat(slideWidth + '') * (core.allSlides.length > bpoptions.slidesToShow ? core.allSlides.length : bpoptions.slidesToShow)).toFixed(4);  
+    if (bpoptions.centerAmong > 0) {
+      bpoptions.slidesToScroll = 1;
+      bpoptions.slidesToShow = 1;
+      _AddClass(core.trackOuter, core.settings.centeredCls);
+      centeredWidth = (core.trackOuter.clientWidth / bpoptions.centerAmong).toFixed(4) || '1';
+      core.track.style.width = centeredWidth + 'px';
+      slideWidth = centeredWidth;
+      trackWidth = (parseFloat(slideWidth + '') * (core.allSlides.length > bpoptions.slidesToShow ? core.allSlides.length : bpoptions.slidesToShow)).toFixed(4);  
+    } else {
+      _RemoveClass(core.trackOuter, core.settings.centeredCls);
+      core.track.removeAttribute('style');
+    }
     if ((core._bpoptions || {}).breakpoint !== bpoptions.breakpoint) {
       core.bpoptions = bpoptions;
       carouzel_toggleArrows(core, bpoptions.showArrows);
@@ -515,16 +534,7 @@ namespace Carouzel {
       carouzel_toggleSwipe(core, bpoptions.enableSwipe);
       core._bpoptions = bpoptions;
     }
-    slideWidth = (core.trackOuter.clientWidth / bpoptions.slidesToShow).toFixed(4) || '1';
-    trackWidth = (parseFloat(slideWidth + '') * (core.allSlides.length > bpoptions.slidesToShow ? core.allSlides.length : bpoptions.slidesToShow)).toFixed(4);  
-    if (bpoptions.centerMode && core.track) {
-      bpoptions.slidesToScroll = 1;
-      _AddClass(core.track, core.settings.centeredCls);
-      core.track.style.width = slideWidth;
-    } else if (core.track) {
-      _RemoveClass(core.track, core.settings.centeredCls);
-      core.track.removeAttribute('style');
-    }
+    core.settings.isRTL ? _AddClass(core.trackInner, core.settings.rtlCls) : _RemoveClass(core.trackInner, core.settings.rtlCls);
     core.slideWidth = slideWidth;
     if (core.trackInner) {
       core.trackInner.style.width = trackWidth + 'px';
@@ -574,7 +584,7 @@ namespace Carouzel {
       showNav: settings.showNav,
       slidesToScroll: settings.slidesToScroll,
       slidesToShow: settings.slidesToShow,
-      centerMode: settings.centerMode,
+      centerAmong: settings.centerAmong,
       centeredCls: settings.centeredCls
     };
     let tempArr = [];

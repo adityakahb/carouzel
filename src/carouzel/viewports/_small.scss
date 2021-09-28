@@ -9,10 +9,15 @@
     visibility: visible;
   }
 
-  [data-carouzeltrack] {
+  [data-carouzeltrackouter] {
     margin-bottom: 1em;
     overflow: hidden;
     position: relative;
+    &.__carouzel-centered {
+      align-items: center;
+      display: flex;
+      justify-content: center;
+    }
   }
   .__carouzel-hidden {
     display: none !important;
@@ -68,6 +73,9 @@
           opacity: 0;
         }
       }
+    }
+    &.__carouzel-rtl {
+      flex-direction: row-reverse;
     }
   }
   [data-carouzelslide] {

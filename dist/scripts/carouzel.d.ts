@@ -12,7 +12,7 @@ declare namespace Carouzel {
         animation?: string;
         breakpoint?: number | string;
         centeredCls?: string;
-        centerMode?: boolean;
+        centerAmong?: number;
         enableSwipe?: boolean;
         showArrows?: boolean;
         showNav?: boolean;
@@ -25,14 +25,15 @@ declare namespace Carouzel {
         animation?: string;
         arrowsSelector?: string;
         buttonSelector?: string;
+        centerAmong?: number;
         centeredCls?: string;
-        centerMode?: boolean;
         disableCls?: string;
         dragThreshold?: number;
         enableSwipe?: boolean;
         hideCls?: string;
         idPrefix?: string;
         innerSelector?: string;
+        isRTL?: boolean;
         navBtnElem?: string;
         navInnerSelector?: string;
         navSelector?: string;
@@ -42,6 +43,7 @@ declare namespace Carouzel {
         rootAutoSelector?: string;
         rootCls?: string;
         rootSelector?: string;
+        rtlCls?: string;
         showArrows?: boolean;
         showNav?: boolean;
         slideSelector?: string;
