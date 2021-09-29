@@ -9,70 +9,106 @@
  */
 namespace Carouzel {
   "use strict";
-  let AllCarouzelInstances: any = {};
-  // const supportedEffects = ['scroll', 'fade'];
+  let allLocalInstances: any = {};
   let isWindowEventAttached = false;
   let winResize: any;
   let navIndex = 0;
   interface IRoot {
     [key: string]: any;
   }
+  interface ICarouzelCoreBreakpoint {
+    _arrows: boolean;
+    _nav: boolean;
+    _toScroll: number;
+    _toShow: number;
+    bp: number | string;
+    cntrAmong: number;
+    hasSwipe: boolean;
+  }
+  interface ICarouzelCoreSettings {
+    _arrows: boolean;
+    _nav: boolean;
+    _toScroll: number;
+    _toShow: number;
+    activeCls?: string;
+    cntrAmong: number;
+    cntrCls?: string;
+    cntrMode?: boolean;
+    disableCls?: string;
+    dupCls?: string;
+    effect?: string;
+    hasSwipe: boolean;
+    idPrefix?: string;
+    isRTL?: boolean;
+    res?: ICarouzelCoreBreakpoint[];
+    rtlCls?: string;
+    speed?: number;
+    startAt?: number;
+    threshold?: number;
+    timeFn?: string;
+  }
+  
   interface ICarouzelBreakpoint {
-    animation?: string;
-    breakpoint?: number | string;
-    centeredCls?: string;
-    centerAmong?: number;
-    enableSwipe?: boolean;
-    showArrows?: boolean;
-    showNav?: boolean;
-    slidesToScroll?: number;
-    slidesToShow?: number;
+    breakpoint: number | string;
+    centerAmong: number;
+    hasTouchSwipe: boolean;
+    showArrows: boolean;
+    showNavigation: boolean;
+    slidesToScroll: number;
+    slidesToShow: number;
   }
   interface ICarouzelSettings {
     activeClass?: string;
-    activeSlideClass?: string;
-    animation?: string;
-    arrowsSelector?: string;
-    buttonSelector?: string;
-    centerAmong?: number;
-    centeredCls?: string;
-    disableClass?: string;
-    dragThreshold?: number;
-    enableSwipe?: boolean;
-    hiddenClass?: string;
-    idPrefix?: string;
-    innerSelector?: string;
+    animationEffect?: string;
+    animationSpeed?: number;
+    centerAmong: number;
+    centeredClass?: string;
+    centerMode?: boolean;
+    disabledClass?: string;
+    duplicateClass?: string;
+    hasTouchSwipe: boolean;
     isRTL?: boolean;
-    navBtnElem?: string;
-    navInnerSelector?: string;
-    navSelector?: string;
-    nextArrowSelector?: string;
-    prevArrowSelector?: string;
-    responsive: ICarouzelBreakpoint[];
-    rootAutoSelector?: string;
-    rootElemClass?: string;
-    rootSelector?: string;
+    responsive?: ICarouzelBreakpoint[];
     rtlClass?: string;
-    showArrows?: boolean;
-    showNav?: boolean;
-    slideSelector?: string;
-    slidesToScroll?: number;
-    slidesToShow?: number;
-    speed?: number;
+    showArrows: boolean;
+    showNavigation: boolean;
+    slidesToScroll: number;
+    slidesToShow: number;
     startAtIndex?: number;
-    timingFunction?: string;
-    titleSelector?: string;
-    trackInnerSelector?: string;
-    trackOuterSelector?: string;
-    trackSelector?: string;
+    timeFunction?: string
+    touchThreshold?: number;
   }
+
   interface IEventHandler {
     element: Element | Document | Window;
     remove: Function;
   }
 
+  interface ICore {
+    arrowN: HTMLElement | null;
+    arrowP: HTMLElement | null;
+    arrowsW: HTMLElement | null;
+    bpall: ICarouzelCoreBreakpoint[];
+    bpo: ICarouzelCoreBreakpoint;
+    bpo_old: ICarouzelCoreBreakpoint;
+    cIndex: number;
+    eHandlers: any[];
+    nav: HTMLElement | null;
+    navW: HTMLElement | null;
+    rootElem: HTMLElement | null;
+    settings: ICarouzelCoreSettings;
+    sLength: number;
+    slides: HTMLElement[];
+    track: HTMLElement | null;
+    trackW: HTMLElement | null;
+  };
+
+  const _animationEffects = ['scroll', 'fade'];
   const _rootSelectorTypeError = 'Element(s) with the provided query do(es) not exist';
   const _optionsParseTypeError = 'Unable to parse the options string';
+  const _duplicateBreakpointsTypeError = 'Duplicate breakpoints found';
+  const _breakpointsParseTypeError = 'Error parsing breakpoints';
+  const _objectAssignTypeError = 'Cannot convert undefined or null to object';
   const _useCapture = false;
   const _Selectors = {
     arrowN: '[data-carouzelnextarrow]',
@@ -84,44 +120,42 @@ namespace Carouzel {
     rootAuto: '[data-carouzelauto]',
     track: '[data-carouzeltrack]',
     trackW: '[data-carouzeltrackwrapper]',
-    slide: 'carouzelslide'
+    slide: '[data-carouzelslide]'
   };
-  const _Defaults = {
-    isRTL: false,
-    rtlClass: '__carouzel-rtl',
+  const _Defaults:ICarouzelSettings = {
     activeClass: '__carouzel-active',
-    activeSlideClass: '__carouzel-active',
-    animation: 'scroll',
-    centerAmong: 0,
-    centeredCls: '__carouzel-centered',
-    disableClass: '__carouzel-disabled',
-    dragThreshold: 120,
-    enableSwipe: true,
-    hiddenClass: '__carouzel-hidden',
-    idPrefix: '__carouzel_id',
-    navBtnElem: 'button',
-    rootElemClass: '__carouzel',
+    animationEffect: _animationEffects[0],
+    animationSpeed: 400,
+    centerAmong: 3,
+    centeredClass: '__carouzel-centered',
+    centerMode: false,
+    disabledClass: '__carouzel-disabled',
+    duplicateClass: '__carouzel-duplicate',
+    hasTouchSwipe: true,
+    isRTL: false,
+    responsive: [],
+    rtlClass: '__carouzel-rtl',
     showArrows: true,
-    showNav: true,
+    showNavigation: true,
     slidesToScroll: 1,
     slidesToShow: 1,
-    speed: 250,
     startAtIndex: 1,
-    timingFunction: 'cubic-bezier(0.250, 0.100, 0.250, 1.000)',
+    timeFunction: 'cubic-bezier(0.250, 0.100, 0.250, 1.000)',
+    touchThreshold: 120,
   };
 
   /**
    * Polyfill function for Object.assign
    * 
    */
-  const _EnableAssign = () => {
+  const enableAssign = () => {
     if (typeof (Object as any).assign !== 'function') {
       Object.defineProperty(Object, 'assign', {
         value: function assign(target: any) {
           // function assign(target: any, varArgs: any)
           'use strict';
           if (target === null || target === undefined) {
-            throw new TypeError('Cannot convert undefined or null to object');
+            throw new TypeError(_objectAssignTypeError);
           }
 
           let to = Object(target);
@@ -153,7 +187,7 @@ namespace Carouzel {
    * @returns The trimmed string.
    *
    */
-  const _StringTrim = (str: string) => {
+  const stringTrim = (str: string) => {
     return str.replace(/^\s+|\s+$/g, '');
   };
 
@@ -165,7 +199,7 @@ namespace Carouzel {
    * @returns A loopable Array.
    *
    */
-  const _ArrayCall = (arr: any[] | NodeListOf<Element>) => {
+  const arrayCall = (arr: NodeListOf<Element> | undefined) => {
     try {
       return Array.prototype.slice.call(arr);
     } catch (e) {
@@ -182,7 +216,7 @@ namespace Carouzel {
    * @returns `true` if the string exists in class attribute, otherwise `false`
    *
    */
-  const _HasClass = (element: HTMLElement, cls: string) => {
+  const hasClass = (element: HTMLElement, cls: string) => {
     if (element) {
       const clsarr = element.className.split(' ');
       return clsarr.indexOf(cls) > -1 ? true : false;
@@ -198,17 +232,17 @@ namespace Carouzel {
    * @param cls - A string
    *
    */
-  const _AddClass = (element: HTMLElement, cls: string) => {
+  const addClass = (element: HTMLElement, cls: string) => {
     if (element) {
       let clsarr = cls.split(' ');
       let clsarrLength = clsarr.length;
       for (let i = 0; i < clsarrLength; i++) {
         let thiscls = clsarr[i];
-        if (!_HasClass(element, thiscls)) {
+        if (!hasClass(element, thiscls)) {
           element.className += ' ' + thiscls;
         }
       }
-      element.className = _StringTrim(element.className);
+      element.className = stringTrim(element.className);
     }
   };
 
@@ -219,7 +253,7 @@ namespace Carouzel {
    * @param cls - A string
    *
    */
-  const _RemoveClass = (element: HTMLElement, cls: string) => {
+  const removeClass = (element: HTMLElement, cls: string) => {
     if (element) {
       let clsarr = cls.split(' ');
       let curclass = element.className.split(' ');
@@ -231,7 +265,7 @@ namespace Carouzel {
           i--;
         }
       }
-      element.className = _StringTrim(curclass.join(' '));
+      element.className = stringTrim(curclass.join(' '));
     }
   };
 
@@ -242,7 +276,7 @@ namespace Carouzel {
    * @param element - An HTML Element from which the events need to be removed
    *
    */
-  const _RemoveEventListeners = (core: any, element: Element | Document | Window) => {
+  const removeEventListeners = (core: any, element: Element | Document | Window) => {
     if ((core.eventHandlers || []).length > 0) {
       let j = core.eventHandlers.length;
       while (j--) {
@@ -264,7 +298,7 @@ namespace Carouzel {
    * @returns The event handler object
    *
    */
-  const _EventHandler = (element: Element | Document | Window, type: string, listener: EventListenerOrEventListenerObject) => {
+  const eventHandler = (element: Element | Document | Window, type: string, listener: EventListenerOrEventListenerObject) => {
     const eventHandler:IEventHandler = {
       element: element,
       remove: () => {
@@ -275,19 +309,175 @@ namespace Carouzel {
     return eventHandler;
   };
 
-  const init = (core: any, rootElem: HTMLElement, settings: ICarouzelSettings) => {
-    let _core = core;
-    _core.rootElem = rootElem;
-    _core.settings = settings;
-    _core.track = rootElem.querySelector(`${settings.trackSelector}`);
-    _core.slides = _ArrayCall(rootElem.querySelectorAll(`${settings.slideSelector}`));
-    _core.currentIndex = core.settings.startAtIndex = core.settings.startAtIndex - 1;
-    _core.eventHandlers = [];
-    navIndex; _Selectors; _AddClass; _RemoveClass; _RemoveEventListeners; _EventHandler;
-    if (_core.trackInner && _core.allSlides.length > 0) {
-    
+  const manageDuplicates = (core: ICore) => {
+    let prevArr = [];
+    let nextArr = [];
+    let duplicates = arrayCall(core.track?.querySelectorAll('.' + core.settings.dupCls));
+    for (let i=0; i<duplicates.length; i++) {
+      duplicates[i].parentNode.removeChild(duplicates[i]);
     }
-    return core;
+    for (let i=0; i<core.bpo._toShow; i++) {
+      let elem = core.slides[i].cloneNode(true);
+      prevArr.push(elem);
+      nextArr.push(elem);
+    }
+  };
+
+  const applyLayout = (core: ICore) => {
+    let viewportWidth = window.innerWidth;
+    let bpoptions = core.bpall[0];
+    let len = 0;
+    let slideWidth = '';
+    let trackWidth = '';
+    while(len < core.bpall.length) {
+      if ((core.bpall[len + 1] && core.bpall[len + 1].bp > viewportWidth) || typeof core.bpall[len + 1] === 'undefined') {
+        bpoptions = core.bpall[len];
+        break;
+      }
+      len++;
+    }
+    if (core.trackW && core.track) {
+      slideWidth = (core.trackW.clientWidth / bpoptions._toShow).toFixed(4) || '1';
+      trackWidth = (parseFloat(slideWidth + '') * (core.sLength > bpoptions._toShow ? core.sLength : bpoptions._toShow)).toFixed(4);
+      core.track.style.width = trackWidth + 'px';
+      for (let i = 0; i < core.sLength; i++) {
+        core.slides[i].style.width = slideWidth + 'px';
+      }
+    }
+    if ((core.bpo_old || {}).bp !== bpoptions.bp) {
+      core.bpo = bpoptions;
+      manageDuplicates(core);
+      // carouzel_toggleArrows(core, bpoptions.showArrows);
+      // carouzel_toggleNav(core, bpoptions.showNav);
+      // carouzel_toggleSwipe(core, bpoptions.enableSwipe);
+      core.bpo_old = bpoptions;
+    }
+  };
+
+
+
+  const validateBreakpoints = (breakpoints: ICarouzelCoreBreakpoint[]) => {
+    try {
+      let tempArr = [];
+      let len = breakpoints.length;
+      while(len--) {
+        if (tempArr.indexOf(breakpoints[len].bp) === -1) {
+          tempArr.push(breakpoints[len].bp);
+        }
+      }
+      if (tempArr.length === breakpoints.length) {
+        return {
+          val: true,
+          bp: breakpoints.sort((a, b) => parseFloat(a.bp as string) - parseFloat(b.bp as string))
+        };
+      } else {
+        throw new TypeError(_duplicateBreakpointsTypeError);
+      }
+    } catch (e) {
+      throw new TypeError(_breakpointsParseTypeError);
+    }
+  }
+
+
+
+  const updateBreakpoints = (settings: ICarouzelCoreSettings) => {
+    const defaultBreakpoint: ICarouzelCoreBreakpoint = {
+      _arrows: settings._arrows ? settings._arrows : _Defaults.showArrows,
+      _nav: settings._nav ? settings._nav : _Defaults.showNavigation,
+      _toScroll: settings._toScroll ? settings._toScroll : _Defaults.slidesToScroll,
+      _toShow: settings._toShow ? settings._toShow : _Defaults.slidesToShow,
+      bp: 0,
+      cntrAmong: settings.cntrAmong ? settings.cntrAmong : _Defaults.centerAmong,
+      hasSwipe: settings.hasSwipe ? settings.hasSwipe : _Defaults.hasTouchSwipe,
+    };
+    let tempArr = [];
+    if (settings.res && settings.res.length > 0) {
+      let settingsLength = settings.res.length;
+      while(settingsLength--) {
+        tempArr.push(settings.res[settingsLength]);
+      }
+    }
+    tempArr.push(defaultBreakpoint);
+    let updatedArr = validateBreakpoints(tempArr);
+    if (updatedArr.val) {
+      let bpArr = [updatedArr.bp[0]];
+      let bpLen = 1;
+      while(bpLen < updatedArr.bp.length) {
+        bpArr.push((Object as any).assign({}, bpArr[bpLen-1], updatedArr.bp[bpLen]));
+        bpLen++;
+      }
+      return bpArr;
+    }
+    return [];
+  };
+
+  const mapSettings = (settings: ICarouzelSettings) => {
+    let settingsobj: ICarouzelCoreSettings = {
+      _arrows: settings.showArrows,
+      _nav: settings.showNavigation,
+      _toScroll: settings.slidesToScroll,
+      _toShow: settings.slidesToShow,
+      activeCls: settings.activeClass,
+      cntrAmong: settings.centerAmong,
+      cntrCls: settings.centeredClass,
+      cntrMode: settings.centerMode,
+      disableCls: settings.disabledClass,
+      dupCls: settings.duplicateClass,
+      effect: settings.animationEffect,
+      hasSwipe: settings.hasTouchSwipe,
+      isRTL: settings.isRTL,
+      res: [],
+      rtlCls: settings.rtlClass,
+      speed: settings.animationSpeed,
+      startAt: settings.animationSpeed,
+      threshold: settings.touchThreshold,
+      timeFn: settings.timeFunction,
+    }
+
+    if (settings.responsive && settings.responsive.length > 0)  {
+      for (let i = 0; i < settings.responsive.length; i++) {
+        let obj: ICarouzelCoreBreakpoint = {
+          _arrows: settings.responsive[i].showArrows,
+          _nav: settings.responsive[i].showNavigation,
+          _toScroll: settings.responsive[i].slidesToScroll,
+          _toShow: settings.responsive[i].slidesToShow,
+          bp: settings.responsive[i].breakpoint,
+          cntrAmong: settings.responsive[i].centerAmong,
+          hasSwipe: settings.responsive[i].hasTouchSwipe,
+        }
+        if (settingsobj.res) {
+          settingsobj.res.push(obj);
+        }
+      }
+    }
+
+    return settingsobj;
+  };
+
+  const init = (core: ICore, rootElem: HTMLElement, settings: ICarouzelSettings) => {
+    let _core: ICore = core;
+    _core.rootElem = rootElem;
+    _core.settings = mapSettings(settings);
+    
+    _core.cIndex = settings.startAtIndex = (settings.startAtIndex || 0) - 1;
+    _core.eHandlers = [];
+    _core.arrowN = rootElem.querySelector(`${_Selectors.arrowN}`);
+    _core.arrowP = rootElem.querySelector(`${_Selectors.arrowP}`);
+    _core.arrowsW = rootElem.querySelector(`${_Selectors.arrowsW}`);
+    _core.nav = rootElem.querySelector(`${_Selectors.nav}`);
+    _core.navW = rootElem.querySelector(`${_Selectors.navW}`);
+    _core.slides = arrayCall(rootElem.querySelectorAll(`${_Selectors.slide}`));
+    _core.track = rootElem.querySelector(`${_Selectors.track}`);
+    _core.trackW = rootElem.querySelector(`${_Selectors.trackW}`);
+    _core.sLength = _core.slides.length;
+
+    navIndex; _Selectors; addClass; removeClass; removeEventListeners; eventHandler;
+    if (_core.track && _core.sLength > 0) {
+      _core.bpall = updateBreakpoints(_core.settings);
+
+      applyLayout(_core);
+    }
+    return { global: core, local: _core };
   };
 
   /**
@@ -303,17 +493,17 @@ namespace Carouzel {
 
   class Core {
     protected core: any = {};
-
     constructor(thisid: string, rootElem: HTMLElement, options?: ICarouzelSettings) {
-      this.core = init(this.core, rootElem, (Object as any).assign({}, _Defaults, options));
-      AllCarouzelInstances[thisid] = this.core;
+      let initObj = init(this.core, rootElem, (Object as any).assign({}, _Defaults, options));
+      this.core = initObj.global;
+      allLocalInstances[thisid] = initObj.local;
     }
     protected destroy = (thisid: string) => {
       // amm_destroy(thisid, this.core);
       console.log(thisid);
     };
-    protected resize = () => {
-      // carouzel_applyLayout(this.core);
+    protected resize = (thisid: string) => {
+      applyLayout(allLocalInstances[thisid]);
     }
   }
   /**
@@ -336,9 +526,9 @@ namespace Carouzel {
      *
      */
     constructor() {
-      _EnableAssign();
+      enableAssign();
     }
-    private getInstancesLength = () => {
+    private getInsLen = () => {
       let instanceCount = 0;
       for (let e in this.instances) {
         if (this.instances.hasOwnProperty(e)) {
@@ -347,14 +537,14 @@ namespace Carouzel {
       }
       return instanceCount;
     }
-    private windowResize = () => {
+    private winResize = () => {
       if (winResize) {
         clearTimeout(winResize);
       }
       winResize = setTimeout(() => {
         for (let e in this.instances) {
           if (this.instances.hasOwnProperty(e)) {
-            this.instances[e].resize();
+            this.instances[e].resize(e);
           }
         }
       }, 100);
@@ -380,7 +570,7 @@ namespace Carouzel {
      *
      */
     public init = (query: string, options?: ICarouzelSettings) => {
-      const roots = _ArrayCall(document.querySelectorAll(query));
+      const roots = arrayCall(document.querySelectorAll(query));
       const rootsLength = roots.length;
       let instanceLength = 0;
       for (let i in this.instances) {
@@ -421,9 +611,9 @@ namespace Carouzel {
             }
           }
         }
-        if (window && this.getInstancesLength() > 0 && !isWindowEventAttached) {
+        if (window && this.getInsLen() > 0 && !isWindowEventAttached) {
           isWindowEventAttached = true;
-          window.addEventListener('resize', this.windowResize, true);
+          window.addEventListener('resize', this.winResize, true);
         }
       } else {
         if (query !== _Selectors.rootAuto) {
@@ -443,7 +633,7 @@ namespace Carouzel {
      *
      */
     protected destroy = (query: string) => {
-      const roots = _ArrayCall(document.querySelectorAll(query));
+      const roots = arrayCall(document.querySelectorAll(query));
       const rootsLength = roots.length;
       if (rootsLength > 0) {
         for (let i = 0; i < rootsLength; i++) {
@@ -453,8 +643,8 @@ namespace Carouzel {
             delete this.instances[id];
           }
         }
-        if (window && this.getInstancesLength() === 0) {
-          window.removeEventListener('resize', this.windowResize, true);
+        if (window && this.getInsLen() === 0) {
+          window.removeEventListener('resize', this.winResize, true);
         }
       } else {
         throw new TypeError(_rootSelectorTypeError);

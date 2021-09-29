@@ -6,7 +6,7 @@
 
 @for $i from 1 through 20 {
   [data-carouzelslide]:nth-child(#{$i}) {
-    [data-carouzelslideinner]:after {
+    &:after {
       content: '#{$i}';
     }
   }
@@ -18,27 +18,21 @@
   font-size: 70px;
   font-weight: bold;
   border: 1px solid transparent;
-  [data-carouzelslideinner] {
-    background-color: #fff;
-    width: 100%;
-    &:after {
-      display: inline-block;
-      line-height: 1;
-      vertical-align: middle;
-    }
+  background-color: #fff;
+  width: 100%;
+  &:after {
+    display: inline-block;
+    line-height: 1;
+    vertical-align: middle;
   }
   &:nth-child(odd) {
-    [data-carouzelslideinner] {
-      border-left: 1px solid red;
-      border-right: 1px solid red;
-      color: red;
-    }
+    border-left: 1px solid red;
+    border-right: 1px solid red;
+    color: red;
   }
   &:nth-child(even) {
-    [data-carouzelslideinner] {
-      border-left: 1px solid black;
-      border-right: 1px solid black;
-      color: black;
-    }
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    color: black;
   }
 }

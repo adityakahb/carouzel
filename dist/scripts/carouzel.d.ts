@@ -9,53 +9,34 @@
  */
 declare namespace Carouzel {
     interface ICarouzelBreakpoint {
-        animation?: string;
-        breakpoint?: number | string;
-        centeredCls?: string;
-        centerAmong?: number;
-        enableSwipe?: boolean;
-        showArrows?: boolean;
-        showNav?: boolean;
-        slidesToScroll?: number;
-        slidesToShow?: number;
+        breakpoint: number | string;
+        centerAmong: number;
+        hasTouchSwipe: boolean;
+        showArrows: boolean;
+        showNavigation: boolean;
+        slidesToScroll: number;
+        slidesToShow: number;
     }
     interface ICarouzelSettings {
         activeClass?: string;
-        activeSlideClass?: string;
-        animation?: string;
-        arrowsSelector?: string;
-        buttonSelector?: string;
-        centerAmong?: number;
-        centeredCls?: string;
-        disableClass?: string;
-        dragThreshold?: number;
-        enableSwipe?: boolean;
-        hiddenClass?: string;
-        idPrefix?: string;
-        innerSelector?: string;
+        animationEffect?: string;
+        animationSpeed?: number;
+        centerAmong: number;
+        centeredClass?: string;
+        centerMode?: boolean;
+        disabledClass?: string;
+        duplicateClass?: string;
+        hasTouchSwipe: boolean;
         isRTL?: boolean;
-        navBtnElem?: string;
-        navInnerSelector?: string;
-        navSelector?: string;
-        nextArrowSelector?: string;
-        prevArrowSelector?: string;
-        responsive: ICarouzelBreakpoint[];
-        rootAutoSelector?: string;
-        rootElemClass?: string;
-        rootSelector?: string;
+        responsive?: ICarouzelBreakpoint[];
         rtlClass?: string;
-        showArrows?: boolean;
-        showNav?: boolean;
-        slideSelector?: string;
-        slidesToScroll?: number;
-        slidesToShow?: number;
-        speed?: number;
+        showArrows: boolean;
+        showNavigation: boolean;
+        slidesToScroll: number;
+        slidesToShow: number;
         startAtIndex?: number;
-        timingFunction?: string;
-        titleSelector?: string;
-        trackInnerSelector?: string;
-        trackOuterSelector?: string;
-        trackSelector?: string;
+        timeFunction?: string;
+        touchThreshold?: number;
     }
     /**
      * ██████   ██████   ██████  ████████
@@ -75,8 +56,8 @@ declare namespace Carouzel {
          *
          */
         constructor();
-        private getInstancesLength;
-        private windowResize;
+        private getInsLen;
+        private winResize;
         /**
          * Function to return single instance
          *

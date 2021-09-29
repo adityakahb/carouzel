@@ -1,22 +1,22 @@
-.__carouzel {
-  opacity: 0;
-  visibility: hidden; }
-  .__carouzel, .__carouzel * {
+[data-carouzel] {
+  opacity: 1;
+  visibility: visible; }
+  [data-carouzel], [data-carouzel] * {
     box-sizing: border-box; }
-  .__carouzel.__carouzel-active {
+  [data-carouzel].__carouzel-active {
     opacity: 1;
     visibility: visible; }
-  .__carouzel [data-carouzeltrackouter] {
+  [data-carouzel] [data-carouzeltrackwrapper] {
     margin-bottom: 1em;
     overflow: hidden;
     position: relative; }
-    .__carouzel [data-carouzeltrackouter].__carouzel-centered {
+    [data-carouzel] [data-carouzeltrackwrapper].__carouzel-centered {
       align-items: center;
       display: flex;
       justify-content: center; }
-  .__carouzel .__carouzel-hidden {
+  [data-carouzel] .__carouzel-hidden {
     display: none !important; }
-  .__carouzel [data-carouzelprev], .__carouzel [data-carouzelnext] {
+  [data-carouzel] [data-carouzelprev], [data-carouzel] [data-carouzelnext] {
     background-color: rgba(0, 0, 0, 0.25);
     border: 1px solid #000;
     color: transparent;
@@ -28,19 +28,19 @@
     transform: translate(0, -50%);
     transition: opacity 250ms ease;
     width: 48px; }
-    .__carouzel [data-carouzelprev]:hover, .__carouzel [data-carouzelprev]:focus, .__carouzel [data-carouzelnext]:hover, .__carouzel [data-carouzelnext]:focus {
+    [data-carouzel] [data-carouzelprev]:hover, [data-carouzel] [data-carouzelprev]:focus, [data-carouzel] [data-carouzelnext]:hover, [data-carouzel] [data-carouzelnext]:focus {
       opacity: 1; }
-    .__carouzel [data-carouzelprev].__carouzel-disabled, .__carouzel [data-carouzelnext].__carouzel-disabled {
+    [data-carouzel] [data-carouzelprev].__carouzel-disabled, [data-carouzel] [data-carouzelnext].__carouzel-disabled {
       cursor: not-allowed;
       opacity: 0.25;
       pointer-events: none; }
-  .__carouzel [data-carouzelprev] {
+  [data-carouzel] [data-carouzelprev] {
     border-radius: 0 8px 8px 0;
     left: 0; }
-  .__carouzel [data-carouzelnext] {
+  [data-carouzel] [data-carouzelnext] {
     border-radius: 8px 0 0 8px;
     right: 0; }
-  .__carouzel [data-carouzeltrackinner] {
+  [data-carouzel] [data-carouzeltrack] {
     align-items: flex-start;
     display: flex;
     flex-direction: row;
@@ -51,29 +51,30 @@
     transition-property: transform;
     transition-timing-function: ease;
     width: 100%; }
-    .__carouzel [data-carouzeltrackinner].__carouzel-animation-fade {
+    [data-carouzel] [data-carouzeltrack].__carouzel-animation-fade {
       transition: none; }
-      .__carouzel [data-carouzeltrackinner].__carouzel-animation-fade [data-carouzelslide] {
+      [data-carouzel] [data-carouzeltrack].__carouzel-animation-fade [data-carouzelslide] {
         opacity: 1;
         transition-property: opacity;
         transition-timing-function: ease; }
-        .__carouzel [data-carouzeltrackinner].__carouzel-animation-fade [data-carouzelslide].__carouzel-animating {
+        [data-carouzel] [data-carouzeltrack].__carouzel-animation-fade [data-carouzelslide].__carouzel-animating {
           transition-duration: 0;
           opacity: 0; }
-    .__carouzel [data-carouzeltrackinner].__carouzel-rtl {
+    [data-carouzel] [data-carouzeltrack].__carouzel-rtl {
       flex-direction: row-reverse; }
-  .__carouzel [data-carouzelslide] {
+  [data-carouzel] [data-carouzelslide] {
+    border: 1px solid transparent;
     width: 100%; }
-  .__carouzel [data-carouzelnavinner] {
+  [data-carouzel] [data-carouzelnavinner] {
     align-items: center;
     display: flex;
     justify-content: center;
     list-style: none;
     margin: 0;
     padding: 0; }
-  .__carouzel [data-carouzelnav] {
+  [data-carouzel] [data-carouzelnav] {
     margin-bottom: 1em; }
-  .__carouzel [data-carouzelnavbtn] {
+  [data-carouzel] [data-carouzelnavbtn] {
     background-color: rgba(0, 0, 0, 0.15);
     border-radius: 100%;
     border: 1px solid #000;
@@ -85,9 +86,9 @@
     padding: 0;
     transition: background-color 250ms ease;
     width: 16px; }
-    .__carouzel [data-carouzelnavbtn]:hover, .__carouzel [data-carouzelnavbtn]:focus {
+    [data-carouzel] [data-carouzelnavbtn]:hover, [data-carouzel] [data-carouzelnavbtn]:focus {
       background-color: rgba(0, 0, 0, 0.5); }
-    .__carouzel [data-carouzelnavbtn].__carouzel-active {
+    [data-carouzel] [data-carouzelnavbtn].__carouzel-active {
       background-color: #f00;
       border: 1px solid #f00; }
 

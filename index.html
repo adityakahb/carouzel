@@ -96,11 +96,6 @@
                     <div data-carouzelslide></div>
                     <div data-carouzelslide></div>
                     <div data-carouzelslide></div>
-                    <div data-carouzelslide></div>
-                    <div data-carouzelslide></div>
-                    <div data-carouzelslide></div>
-                    <div data-carouzelslide></div>
-                    <div data-carouzelslide></div>
                   </div>
                   <div data-carouzelarrowswrapper>
                     <button type="button" data-carouzelpreviousarrow aria-label="Previous">
@@ -126,7 +121,10 @@
     
     <script type="text/javascript">
       var __carouzel_instance = Carouzel.Root.getInstance();
-      __carouzel_instance.init('#__carouzel_1');
+      __carouzel_instance.init('#__carouzel_1', {
+        slidesToShow: 4,
+        slidesToScroll: 4
+      });
       // __carouzel_instance.init('#__carouzel_2', {
       //   slidesToShow: 3,
       //   slidesToScroll: 3
