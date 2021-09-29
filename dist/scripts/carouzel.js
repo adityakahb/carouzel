@@ -226,8 +226,6 @@ var Carouzel;
             prevArr.push(elem1);
             nextArr.push(elem2);
         }
-        console.log('=====prevArr', prevArr);
-        console.log('=====nextArr', nextArr);
         for (var i = 0; i < prevArr.length; i++) {
             (_b = core.track) === null || _b === void 0 ? void 0 : _b.prepend(prevArr[i]);
         }

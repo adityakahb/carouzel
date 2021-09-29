@@ -325,8 +325,6 @@ namespace Carouzel {
       prevArr.push(elem1);
       nextArr.push(elem2);
     }
-    console.log('=====prevArr', prevArr)
-    console.log('=====nextArr', nextArr)
     for (let i=0; i<prevArr.length; i++) {
       core.track?.prepend(prevArr[i]);
     }
