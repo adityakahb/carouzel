@@ -4,13 +4,6 @@
 @import './config/base';
 @import './config/typography';
 
-@for $i from 1 through 20 {
-  [data-carouzelslide]:nth-child(#{$i}) {
-    &:after {
-      content: '#{$i}';
-    }
-  }
-}
 [data-carouzelslide] {
   display: flex;
   justify-content: center;
@@ -20,11 +13,6 @@
   border: 1px solid transparent;
   background-color: #fff;
   width: 100%;
-  &:after {
-    display: inline-block;
-    line-height: 1;
-    vertical-align: middle;
-  }
   &:nth-child(odd) {
     border-left: 1px solid red;
     border-right: 1px solid red;

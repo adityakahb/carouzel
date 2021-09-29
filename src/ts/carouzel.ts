@@ -314,12 +314,22 @@ namespace Carouzel {
     let nextArr = [];
     let duplicates = arrayCall(core.track?.querySelectorAll('.' + core.settings.dupCls));
     for (let i=0; i<duplicates.length; i++) {
+      removeEventListeners(core, duplicates[i]);
       duplicates[i].parentNode.removeChild(duplicates[i]);
     }
     for (let i=0; i<core.bpo._toShow; i++) {
       let elem = core.slides[i].cloneNode(true);
+      addClass(elem as HTMLElement, core.settings.dupCls || '');
       prevArr.push(elem);
       nextArr.push(elem);
+    }
+    console.log('=====prevArr', prevArr)
+    console.log('=====nextArr', nextArr)
+    for (let i=0; i<nextArr.length; i++) {
+      core.track?.append(nextArr[i]);
+    }
+    for (let i=0; i<prevArr.length; i++) {
+      core.track?.prepend(prevArr[i]);
     }
   };
 

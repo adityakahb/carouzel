@@ -210,17 +210,27 @@ var Carouzel;
         return eventHandler;
     };
     var manageDuplicates = function (core) {
-        var _a;
+        var _a, _b, _c;
         var prevArr = [];
         var nextArr = [];
         var duplicates = arrayCall((_a = core.track) === null || _a === void 0 ? void 0 : _a.querySelectorAll('.' + core.settings.dupCls));
         for (var i = 0; i < duplicates.length; i++) {
+            removeEventListeners(core, duplicates[i]);
             duplicates[i].parentNode.removeChild(duplicates[i]);
         }
         for (var i = 0; i < core.bpo._toShow; i++) {
             var elem = core.slides[i].cloneNode(true);
+            addClass(elem, core.settings.dupCls || '');
             prevArr.push(elem);
             nextArr.push(elem);
+        }
+        console.log('=====prevArr', prevArr);
+        console.log('=====nextArr', nextArr);
+        for (var i = 0; i < nextArr.length; i++) {
+            (_b = core.track) === null || _b === void 0 ? void 0 : _b.append(nextArr[i]);
+        }
+        for (var i = 0; i < prevArr.length; i++) {
+            (_c = core.track) === null || _c === void 0 ? void 0 : _c.prepend(prevArr[i]);
         }
     };
     var applyLayout = function (core) {
