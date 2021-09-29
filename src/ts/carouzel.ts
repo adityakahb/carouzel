@@ -10,8 +10,7 @@
 namespace Carouzel {
   "use strict";
   let AllCarouzelInstances: any = {};
-  // let active_carouzel: any = {};
-  const supportedAnimations = ['scroll', 'fade'];
+  // const supportedEffects = ['scroll', 'fade'];
   let isWindowEventAttached = false;
   let winResize: any;
   let navIndex = 0;
@@ -30,17 +29,17 @@ namespace Carouzel {
     slidesToShow?: number;
   }
   interface ICarouzelSettings {
-    activeCls?: string;
-    activeSlideCls?: string;
+    activeClass?: string;
+    activeSlideClass?: string;
     animation?: string;
     arrowsSelector?: string;
     buttonSelector?: string;
     centerAmong?: number;
     centeredCls?: string;
-    disableCls?: string;
+    disableClass?: string;
     dragThreshold?: number;
     enableSwipe?: boolean;
-    hideCls?: string;
+    hiddenClass?: string;
     idPrefix?: string;
     innerSelector?: string;
     isRTL?: boolean;
@@ -51,9 +50,9 @@ namespace Carouzel {
     prevArrowSelector?: string;
     responsive: ICarouzelBreakpoint[];
     rootAutoSelector?: string;
-    rootCls?: string;
+    rootElemClass?: string;
     rootSelector?: string;
-    rtlCls?: string;
+    rtlClass?: string;
     showArrows?: boolean;
     showNav?: boolean;
     slideSelector?: string;
@@ -72,43 +71,43 @@ namespace Carouzel {
     remove: Function;
   }
 
+  const _rootSelectorTypeError = 'Element(s) with the provided query do(es) not exist';
+  const _optionsParseTypeError = 'Unable to parse the options string';
   const _useCapture = false;
+  const _Selectors = {
+    arrowN: '[data-carouzelnextarrow]',
+    arrowP: '[data-carouzelpreviousarrow]',
+    arrowsW: '[data-carouzelarrowswrapper]',
+    nav: '[data-carouzelnavigation]',
+    navW: '[data-carouzelnavigationwrapper]',
+    root: '[data-carouzel]',
+    rootAuto: '[data-carouzelauto]',
+    track: '[data-carouzeltrack]',
+    trackW: '[data-carouzeltrackwrapper]',
+    slide: 'carouzelslide'
+  };
   const _Defaults = {
     isRTL: false,
-    rtlCls: '__carouzel-rtl',
-    activeCls: '__carouzel-active',
-    activeSlideCls: '__carouzel-active',
+    rtlClass: '__carouzel-rtl',
+    activeClass: '__carouzel-active',
+    activeSlideClass: '__carouzel-active',
     animation: 'scroll',
-    arrowsSelector: '[data-carouzelarrows]',
-    buttonSelector: '[data-carouzelbutton]',
     centerAmong: 0,
     centeredCls: '__carouzel-centered',
-    disableCls: '__carouzel-disabled',
+    disableClass: '__carouzel-disabled',
     dragThreshold: 120,
     enableSwipe: true,
-    hideCls: '__carouzel-hidden',
+    hiddenClass: '__carouzel-hidden',
     idPrefix: '__carouzel_id',
-    innerSelector: '[data-carouzelinner]',
     navBtnElem: 'button',
-    navInnerSelector: '[data-carouzelnavinner]',
-    navSelector: '[data-carouzelnav]',
-    nextArrowSelector: '[data-carouzelnext]',
-    prevArrowSelector: '[data-carouzelprev]',
-    rootAutoSelector: '[data-carouzelauto]',
-    rootCls: '__carouzel',
-    rootSelector: '[data-carouzel]',
+    rootElemClass: '__carouzel',
     showArrows: true,
     showNav: true,
-    slideSelector: '[data-carouzelslide]',
     slidesToScroll: 1,
     slidesToShow: 1,
     speed: 250,
     startAtIndex: 1,
     timingFunction: 'cubic-bezier(0.250, 0.100, 0.250, 1.000)',
-    titleSelector: '[data-carouzeltitle]',
-    trackInnerSelector: '[data-carouzeltrackinner]',
-    trackOuterSelector: '[data-carouzeltrackouter]',
-    trackSelector: '[data-carouzeltrack]'
   };
 
   /**
@@ -243,7 +242,7 @@ namespace Carouzel {
    * @param element - An HTML Element from which the events need to be removed
    *
    */
-  const carouzel_removeEventListeners = (core: any, element: Element | Document | Window) => {
+  const _RemoveEventListeners = (core: any, element: Element | Document | Window) => {
     if ((core.eventHandlers || []).length > 0) {
       let j = core.eventHandlers.length;
       while (j--) {
@@ -265,7 +264,7 @@ namespace Carouzel {
    * @returns The event handler object
    *
    */
-  const carouzel_eventHandler = (element: Element | Document | Window, type: string, listener: EventListenerOrEventListenerObject) => {
+  const _EventHandler = (element: Element | Document | Window, type: string, listener: EventListenerOrEventListenerObject) => {
     const eventHandler:IEventHandler = {
       element: element,
       remove: () => {
@@ -276,360 +275,18 @@ namespace Carouzel {
     return eventHandler;
   };
 
-  const carouzel_animateSlider = (core: any) => {
-    if (core.currentIndex + core.bpoptions.slidesToShow > core.allSlides.length) {
-      core.currentIndex = core.allSlides.length - core.bpoptions.slidesToShow;
+  const init = (core: any, rootElem: HTMLElement, settings: ICarouzelSettings) => {
+    let _core = core;
+    _core.rootElem = rootElem;
+    _core.settings = settings;
+    _core.track = rootElem.querySelector(`${settings.trackSelector}`);
+    _core.slides = _ArrayCall(rootElem.querySelectorAll(`${settings.slideSelector}`));
+    _core.currentIndex = core.settings.startAtIndex = core.settings.startAtIndex - 1;
+    _core.eventHandlers = [];
+    navIndex; _Selectors; _AddClass; _RemoveClass; _RemoveEventListeners; _EventHandler;
+    if (_core.trackInner && _core.allSlides.length > 0) {
+    
     }
-    for (let k=0; k<core.allSlides.length; k++) {
-      _AddClass(core.allSlides[k], '__carouzel-animating');
-      core.allSlides[k].style.transitionDuration = core.settings.speed + 'ms';
-    }
-    core.currentTransform = -1 * core.slideWidth * core.currentIndex;
-    setTimeout(() => {
-      core.trackInner.style.transform = `translate(${-1 * core.slideWidth * core.currentIndex}px, 0%)`;
-      carouzel_toggleArrowsAndNav(core);
-      carozuel_updateIndices(core);
-    }, core.bpoptions.animation === 'fade' ? core.settings.speed / 2 : 0);
-    setTimeout(() => {
-      for (let k=0; k<core.allSlides.length; k++) {
-        _RemoveClass(core.allSlides[k], '__carouzel-animating');
-      }
-    }, core.settings.speed / 2);
-  };
-
-  const carouzel_toggleArrowsAndNav = (core: any) => {
-    if (core.prevArrow && core.currentIndex === 0) {
-      _AddClass(core.prevArrow, core.settings.disableCls);
-      core.prevArrow.setAttribute('disabled', 'disabled');
-    }
-    if (core.prevArrow && core.currentIndex !== 0) {
-      _RemoveClass(core.prevArrow, core.settings.disableCls);
-      core.prevArrow.removeAttribute('disabled');
-    }
-    if (core.nextArrow && core.currentIndex + core.bpoptions.slidesToShow === core.allSlides.length) {
-      _AddClass(core.nextArrow, core.settings.disableCls);
-      core.nextArrow.setAttribute('disabled', 'disabled');
-    }
-    if (core.nextArrow && core.currentIndex + core.bpoptions.slidesToShow !== core.allSlides.length) {
-      _RemoveClass(core.nextArrow, core.settings.disableCls);
-      core.nextArrow.removeAttribute('disabled');
-    }
-    if (core.navInner && (core.navBtns || []).length > 0) {
-      for (let n = 0; n < core.navBtns.length; n++) {
-        _RemoveClass(core.navBtns[n], core.settings.activeCls);
-      }
-      navIndex = Math.ceil(core.currentIndex / core.bpoptions.slidesToScroll);
-      if (core.navBtns[navIndex]) {
-        _AddClass(core.navBtns[navIndex], core.settings.activeCls);
-      }
-    }
-    for (let k=0; k<core.allSlides.length; k++) {
-      _RemoveClass(core.allSlides[k], core.settings.activeSlideCls);
-    }
-    for (let k=core.currentIndex; k<core.bpoptions.slidesToShow + core.currentIndex; k++) {
-      _AddClass(core.allSlides[k], core.settings.activeSlideCls);
-    }
-  };
-
-  const carouzel_moveToRight = (core: any) => {
-    carouzel_moveSlider(core, 'next');
-  }
-  const carouzel_moveToLeft = (core: any) => {
-    carouzel_moveSlider(core, 'prev');
-  }
-
-  const carouzel_moveSlider = (core: any, prevOrNext: string) => {
-    core.isCarouzelStarted = true;
-    core.currentIndex = prevOrNext === 'prev' ? core.prevIndex : core.nextIndex;
-    carouzel_animateSlider(core);
-  }
-
-  const carouzel_toggleArrows = (core: any, shouldEnableArrows: boolean) => {
-    carouzel_toggleArrowsAndNav(core);
-    if (core.prevArrow) {
-      carouzel_removeEventListeners(core, core.prevArrow);
-      _AddClass(core.prevArrow, core.settings.hideCls);
-      if (shouldEnableArrows) {
-        core.eventHandlers.push(carouzel_eventHandler(core.prevArrow, 'click', function (event: Event) {
-          event.preventDefault();
-          carouzel_moveToLeft(core);
-        }));
-        if (core.bpoptions.showArrows) {
-          _RemoveClass(core.prevArrow, core.settings.hideCls);
-        }
-      }
-    }
-    if (core.nextArrow) {
-      carouzel_removeEventListeners(core, core.nextArrow);
-      _AddClass(core.nextArrow, core.settings.hideCls);
-      if (shouldEnableArrows) {
-        core.eventHandlers.push(carouzel_eventHandler(core.nextArrow, 'click', function (event: Event) {
-          event.preventDefault();
-          carouzel_moveToRight(core);
-        }));
-        if (core.bpoptions.showArrows) {
-          _RemoveClass(core.nextArrow, core.settings.hideCls);
-        }
-      }
-    }
-  };
-  const carozuel_updateIndices = (core: any) => {
-    let slidesLength = core.allSlides.length;
-    let onLeft = 0;
-    let onRight = 0;
-    core.nextIndex = core.currentIndex;
-    core.prevIndex = core.currentIndex;
-    for(let m=0; m<core.currentIndex; m++) {
-      onLeft++;
-    }
-    for(let m=core.currentIndex + core.bpoptions.slidesToShow; m<slidesLength; m++) {
-      onRight++;
-    }
-    if (onLeft >= core.bpoptions.slidesToScroll) {
-      core.prevIndex -= core.bpoptions.slidesToScroll;
-    } else {
-      core.prevIndex = 0;
-    }
-    if (onRight >= core.bpoptions.slidesToScroll) {
-      core.nextIndex += core.bpoptions.slidesToScroll;
-    } else {
-      core.nextIndex = slidesLength - core.bpoptions.slidesToScroll;
-    }
-  };
-  const carouzel_toggleSwipe = (core: any, shouldEnableSwipe: boolean) => {
-    let posX1 = 0;
-    let posX2 = 0;
-    let posFinal = 0;
-    let threshold = core.bpoptions.dragThreshold || 100;
-    let dragging = false;
-    const touchStart = (thisevent: Event) => {
-      thisevent.preventDefault();
-      dragging = true;
-      if (thisevent.type === 'touchstart') {
-        posX1 = (thisevent as TouchEvent).touches[0].clientX;
-      } else {
-        posX1 = (thisevent as MouseEvent).clientX;
-      }
-    };
-    const touchMove = (thisevent: Event) => {
-      if (dragging) {
-        if (thisevent.type == 'touchmove') {
-          posX2 = posX1 - (thisevent as TouchEvent).touches[0].clientX;
-        } else {
-          posX2 = posX1 - (thisevent as MouseEvent).clientX;
-        }
-        if (core.bpoptions.animation !== 'fade') {
-          core.trackInner.style.transform = `translate(${core.currentTransform - posX2}px, 0%)`;
-        }
-        posFinal = posX2;
-      }
-    };
-    const touchEnd = () => {
-      if (dragging) {
-        if (posFinal < -threshold) {
-          carouzel_moveToLeft(core);
-        } else if (posFinal > threshold) {
-          carouzel_moveToRight(core);
-        } else {
-          core.trackInner.style.transform = `translate(${core.currentTransform}px, 0%)`;
-        }
-      }
-      posX1 = posX2 = posFinal = 0;
-      dragging = false;
-    };
-    const toggleTouchEvents = (shouldAdd: boolean) => {
-      carouzel_removeEventListeners(core, core.trackInner);
-      if (shouldAdd) {
-        core.eventHandlers.push(carouzel_eventHandler(core.trackInner, 'touchstart', function(event: Event) {
-          touchStart(event);
-        }));
-        core.eventHandlers.push(carouzel_eventHandler(core.trackInner, 'touchmove', function(event: Event) {
-          touchMove(event);
-        }));
-        core.eventHandlers.push(carouzel_eventHandler(core.trackInner, 'touchend', function() {
-          touchEnd();
-        }));
-        core.eventHandlers.push(carouzel_eventHandler(core.trackInner, 'mousedown', function(event: Event) {
-          touchStart(event);
-        }));
-        core.eventHandlers.push(carouzel_eventHandler(core.trackInner, 'mouseup', function() {
-          touchEnd();
-        }));
-        core.eventHandlers.push(carouzel_eventHandler(core.trackInner, 'mouseleave', function() {
-          touchEnd();
-        }));
-        core.eventHandlers.push(carouzel_eventHandler(core.trackInner, 'mousemove', function(event: Event) {
-          touchMove(event);
-        }));
-      }
-    };
-    if (core.trackInner) {
-      toggleTouchEvents(shouldEnableSwipe);
-    }
-  };
-  const carouzel_toggleNav = (core: any, shouldEnableNav: boolean) => {
-    if (core.navInner && document) {
-      core.navInner.innerHTML = '';
-      core.navBtns = [];
-      if (shouldEnableNav) {
-        let pageLength = Math.ceil(core.allSlides.length / core.bpoptions.slidesToScroll) - (core.bpoptions.slidesToShow - core.bpoptions.slidesToScroll);
-        let navBtns = [];
-        
-        for (let p=0; p<pageLength; p++) {
-          let elem = document.createElement(core.settings.navBtnElem);
-          elem.setAttribute('data-carouzelnavbtn', '');
-          if (core.settings.navBtnElem.toLowerCase() === 'button') {
-            elem.setAttribute('type', 'button');
-          }
-          elem.innerHTML = p  + 1;
-          navBtns.push(elem);
-          core.navInner.appendChild(elem);
-        }
-        for (let p=0; p<navBtns.length; p++) {
-          core.eventHandlers.push(carouzel_eventHandler(navBtns[p], 'click', function (event: Event) {
-            event.preventDefault();
-            core.currentIndex = p * core.bpoptions.slidesToScroll;
-            carouzel_animateSlider(core);
-          }));
-          core.navBtns.push(navBtns[p]);
-        }
-      }
-    }
-  };
-  const carouzel_applyLayout = (core: any) => {
-    let viewportWidth = window.innerWidth;
-    let bpoptions = core.breakpoints[0];
-    let len = 0;
-    let slideWidth = '';
-    let trackWidth = '';
-    let centeredWidth = '';
-    while(len < core.breakpoints.length) {
-      if ((core.breakpoints[len + 1] && core.breakpoints[len + 1].breakpoint > viewportWidth) || typeof core.breakpoints[len + 1] === 'undefined') {
-        bpoptions = core.breakpoints[len];
-        break;
-      }
-      len++;
-    }
-    if (supportedAnimations.indexOf(bpoptions.animation) === -1) {
-      bpoptions.animation = 'scroll';
-    }
-    slideWidth = (core.trackOuter.clientWidth / bpoptions.slidesToShow).toFixed(4) || '1';
-    trackWidth = (parseFloat(slideWidth + '') * (core.allSlides.length > bpoptions.slidesToShow ? core.allSlides.length : bpoptions.slidesToShow)).toFixed(4);  
-    if (bpoptions.centerAmong > 0) {
-      bpoptions.slidesToScroll = 1;
-      bpoptions.slidesToShow = 1;
-      _AddClass(core.trackOuter, core.settings.centeredCls);
-      centeredWidth = (core.trackOuter.clientWidth / bpoptions.centerAmong).toFixed(4) || '1';
-      core.track.style.width = centeredWidth + 'px';
-      slideWidth = centeredWidth;
-      trackWidth = (parseFloat(slideWidth + '') * (core.allSlides.length > bpoptions.slidesToShow ? core.allSlides.length : bpoptions.slidesToShow)).toFixed(4);  
-    } else {
-      _RemoveClass(core.trackOuter, core.settings.centeredCls);
-      core.track.removeAttribute('style');
-    }
-    if ((core._bpoptions || {}).breakpoint !== bpoptions.breakpoint) {
-      core.bpoptions = bpoptions;
-      carouzel_toggleArrows(core, bpoptions.showArrows);
-      carouzel_toggleNav(core, bpoptions.showNav);
-      carouzel_toggleSwipe(core, bpoptions.enableSwipe);
-      core._bpoptions = bpoptions;
-    }
-    core.settings.isRTL ? _AddClass(core.trackInner, core.settings.rtlCls) : _RemoveClass(core.trackInner, core.settings.rtlCls);
-    core.slideWidth = slideWidth;
-    if (core.trackInner) {
-      core.trackInner.style.width = trackWidth + 'px';
-      core.trackInner.style.transitionDuration = core.settings.speed + 'ms';
-      core.trackInner.style.transitionTimingFunction = core.settings.timingFunction;
-      carouzel_animateSlider(core);
-      for (let a=0; a<supportedAnimations.length; a++) {
-        _RemoveClass(core.trackInner, `__carouzel-animation-${supportedAnimations[a]}`);
-      }
-      if (bpoptions.animation !== 'scroll') {
-        _AddClass(core.trackInner, `__carouzel-animation-${bpoptions.animation}`);
-      }
-    }
-    for (let k = 0; k < core.allSlides.length; k++) {
-      if (core.allSlides[k]) {
-        core.allSlides[k].style.width = slideWidth + 'px';
-      }
-    }
-  };
-  const carouzel_validateBreakpoints = (breakpoints: ICarouzelBreakpoint[]) => {
-    try {
-      let tempArr = [];
-      let len = breakpoints.length;
-      while(len--) {
-        if (tempArr.indexOf(breakpoints[len].breakpoint) === -1) {
-          tempArr.push(breakpoints[len].breakpoint);
-        }
-      }
-      if (tempArr.length === breakpoints.length) {
-        return {
-          isValid: true,
-          breakpoints: breakpoints.sort((a, b) => parseFloat(a.breakpoint as string) - parseFloat(b.breakpoint as string))
-        };
-      } else {
-        throw new TypeError('Duplicate breakpoints found');
-      }
-    } catch (e) {
-      throw new TypeError('Error parsing breakpoints');
-    }
-  };
-  const carouzel_updateBreakpoints = (settings: ICarouzelSettings) => {
-    const defaultBreakpoint: ICarouzelBreakpoint = {
-      animation: settings.animation,
-      breakpoint: 0,
-      enableSwipe: settings.enableSwipe,
-      showArrows: settings.showArrows,
-      showNav: settings.showNav,
-      slidesToScroll: settings.slidesToScroll,
-      slidesToShow: settings.slidesToShow,
-      centerAmong: settings.centerAmong,
-      centeredCls: settings.centeredCls
-    };
-    let tempArr = [];
-    if ((settings.responsive || []).length > 0) {
-      let i = settings.responsive.length;
-      while(i--) {
-        tempArr.push(settings.responsive[i]);
-      }
-    }
-    tempArr.push(defaultBreakpoint);
-    let updatedArr = carouzel_validateBreakpoints(tempArr);
-    if (updatedArr.isValid) {
-      let bpArr = [updatedArr.breakpoints[0]];
-      let bpLen = 1;
-      while(bpLen < updatedArr.breakpoints.length) {
-        bpArr.push((Object as any).assign({}, bpArr[bpLen-1], updatedArr.breakpoints[bpLen]));
-        bpLen++;
-      }
-      return bpArr;
-    }
-    return [];
-  };
-
-  const carouzel_init = (core: any, rootElem: HTMLElement, settings: ICarouzelSettings) => {
-    _AddClass(rootElem, settings.rootCls ? settings.rootCls : '');
-    core.rootElem = rootElem;
-    core.settings = settings;
-    core.track = rootElem.querySelector(`${settings.trackSelector}`);
-    core.trackOuter = rootElem.querySelector(`${settings.trackOuterSelector}`);
-    core.trackInner = rootElem.querySelector(`${settings.trackInnerSelector}`);
-    core.allSlides = _ArrayCall(rootElem.querySelectorAll(`${settings.slideSelector}`));
-    core.currentIndex = core.settings.startAtIndex = core.settings.startAtIndex - 1;
-    core.navInner = rootElem.querySelector(`${settings.navInnerSelector}`);
-    core.prevIndex = 0;
-    core.nextIndex = 0;
-    core.isCarouzelStarted = false;
-    core.prevArrow = rootElem.querySelector(`${settings.prevArrowSelector}`);
-    core.nextArrow = rootElem.querySelector(`${settings.nextArrowSelector}`);
-    core.slideWidth = 100;
-    core.eventHandlers = [];
-    if (core.trackInner && core.allSlides.length > 0) {
-      core.breakpoints = carouzel_updateBreakpoints(settings);
-      carouzel_applyLayout(core);
-    }
-    _AddClass(rootElem, settings.activeCls ? settings.activeCls : '');
     return core;
   };
 
@@ -648,7 +305,7 @@ namespace Carouzel {
     protected core: any = {};
 
     constructor(thisid: string, rootElem: HTMLElement, options?: ICarouzelSettings) {
-      this.core = carouzel_init(this.core, rootElem, (Object as any).assign({}, _Defaults, options));
+      this.core = init(this.core, rootElem, (Object as any).assign({}, _Defaults, options));
       AllCarouzelInstances[thisid] = this.core;
     }
     protected destroy = (thisid: string) => {
@@ -656,7 +313,7 @@ namespace Carouzel {
       console.log(thisid);
     };
     protected resize = () => {
-      carouzel_applyLayout(this.core);
+      // carouzel_applyLayout(this.core);
     }
   }
   /**
@@ -724,43 +381,43 @@ namespace Carouzel {
      */
     public init = (query: string, options?: ICarouzelSettings) => {
       const roots = _ArrayCall(document.querySelectorAll(query));
-      const rootsLen = roots.length;
-      let instancelen = 0;
+      const rootsLength = roots.length;
+      let instanceLength = 0;
       for (let i in this.instances) {
         if (this.instances.hasOwnProperty(i)) {
-          instancelen++;
+          instanceLength++;
         }
       }
-      if (rootsLen > 0) {
-        for (let i = 0; i < rootsLen; i++) {
+      if (rootsLength > 0) {
+        for (let i = 0; i < rootsLength; i++) {
           const id = roots[i].getAttribute('id');
-          let iselempresent = false;
+          let isElementPresent = false;
           if (id) {
-            for (let j = 0; j < instancelen; j++) {
+            for (let j = 0; j < instanceLength; j++) {
               if (this.instances[id]) {
-                iselempresent = true;
+                isElementPresent = true;
                 break;
               }
             }
           }
 
-          if (!iselempresent) {
-            let newoptions;
-            if (roots[i].getAttribute('data-carouzelauto')) {
+          if (!isElementPresent) {
+            let newOptions;
+            if (roots[i].getAttribute(_Selectors.rootAuto.slice(1, -1))) {
               try {
-                newoptions = JSON.parse(roots[i].getAttribute('data-carouzelauto'));
+                newOptions = JSON.parse(roots[i].getAttribute(_Selectors.rootAuto.slice(1, -1)));
               } catch (e) {
-                throw new TypeError('Unable to parse the options string');
+                throw new TypeError(_optionsParseTypeError);
               }
             } else {
-              newoptions = options;
+              newOptions = options;
             }
             if (id) {
-              this.instances[id] = new Core(id, roots[i], newoptions);
+              this.instances[id] = new Core(id, roots[i], newOptions);
             } else {
-              const thisid = id ? id : (Object as any).assign({}, _Defaults, newoptions).idPrefix + '_' + new Date().getTime() + '_root_' + (i + 1);
+              const thisid = id ? id : (Object as any).assign({}, _Defaults, newOptions).idPrefix + '_' + new Date().getTime() + '_root_' + (i + 1);
               roots[i].setAttribute('id', thisid);
-              this.instances[thisid] = new Core(thisid, roots[i], newoptions);
+              this.instances[thisid] = new Core(thisid, roots[i], newOptions);
             }
           }
         }
@@ -769,10 +426,14 @@ namespace Carouzel {
           window.addEventListener('resize', this.windowResize, true);
         }
       } else {
-        if (query !== '[data-carouzelauto]') {
-          throw new TypeError('Element(s) with the provided query do(es) not exist');
+        if (query !== _Selectors.rootAuto) {
+          throw new TypeError(_rootSelectorTypeError);
         }
       }
+    };
+
+    public globalInit = () => {
+      this.init(_Selectors.rootAuto);
     };
 
     /**
@@ -783,9 +444,9 @@ namespace Carouzel {
      */
     protected destroy = (query: string) => {
       const roots = _ArrayCall(document.querySelectorAll(query));
-      const rootsLen = roots.length;
-      if (rootsLen > 0) {
-        for (let i = 0; i < rootsLen; i++) {
+      const rootsLength = roots.length;
+      if (rootsLength > 0) {
+        for (let i = 0; i < rootsLength; i++) {
           const id = roots[i].getAttribute('id');
           if (id && this.instances[id]) {
             this.instances[id].destroy(id);
@@ -796,12 +457,12 @@ namespace Carouzel {
           window.removeEventListener('resize', this.windowResize, true);
         }
       } else {
-        throw new TypeError('Element(s) with the provided query do(es) not exist');
+        throw new TypeError(_rootSelectorTypeError);
       }
     };
   }
 }
-Carouzel.Root.getInstance().init('[data-carouzelauto]');
+Carouzel.Root.getInstance().globalInit();
 if (typeof exports === 'object' && typeof module !== 'undefined') {
   module.exports = Carouzel;
 }

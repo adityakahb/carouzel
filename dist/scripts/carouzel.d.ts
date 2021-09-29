@@ -20,17 +20,17 @@ declare namespace Carouzel {
         slidesToShow?: number;
     }
     interface ICarouzelSettings {
-        activeCls?: string;
-        activeSlideCls?: string;
+        activeClass?: string;
+        activeSlideClass?: string;
         animation?: string;
         arrowsSelector?: string;
         buttonSelector?: string;
         centerAmong?: number;
         centeredCls?: string;
-        disableCls?: string;
+        disableClass?: string;
         dragThreshold?: number;
         enableSwipe?: boolean;
-        hideCls?: string;
+        hiddenClass?: string;
         idPrefix?: string;
         innerSelector?: string;
         isRTL?: boolean;
@@ -41,9 +41,9 @@ declare namespace Carouzel {
         prevArrowSelector?: string;
         responsive: ICarouzelBreakpoint[];
         rootAutoSelector?: string;
-        rootCls?: string;
+        rootElemClass?: string;
         rootSelector?: string;
-        rtlCls?: string;
+        rtlClass?: string;
         showArrows?: boolean;
         showNav?: boolean;
         slideSelector?: string;
@@ -92,6 +92,7 @@ declare namespace Carouzel {
          *
          */
         init: (query: string, options?: ICarouzelSettings | undefined) => void;
+        globalInit: () => void;
         /**
          * Function to destroy the AMegMen plugin for provided query strings.
          *

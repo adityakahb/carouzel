@@ -11,48 +11,47 @@ var Carouzel;
 (function (Carouzel) {
     "use strict";
     var AllCarouzelInstances = {};
-    // let active_carouzel: any = {};
-    var supportedAnimations = ['scroll', 'fade'];
+    // const supportedEffects = ['scroll', 'fade'];
     var isWindowEventAttached = false;
     var winResize;
     var navIndex = 0;
+    var _rootSelectorTypeError = 'Element(s) with the provided query do(es) not exist';
+    var _optionsParseTypeError = 'Unable to parse the options string';
     var _useCapture = false;
+    var _Selectors = {
+        arrowN: '[data-carouzelnextarrow]',
+        arrowP: '[data-carouzelpreviousarrow]',
+        arrowsW: '[data-carouzelarrowswrapper]',
+        nav: '[data-carouzelnavigation]',
+        navW: '[data-carouzelnavigationwrapper]',
+        root: '[data-carouzel]',
+        rootAuto: '[data-carouzelauto]',
+        track: '[data-carouzeltrack]',
+        trackW: '[data-carouzeltrackwrapper]',
+        slide: 'carouzelslide'
+    };
     var _Defaults = {
         isRTL: false,
-        rtlCls: '__carouzel-rtl',
-        activeCls: '__carouzel-active',
-        activeSlideCls: '__carouzel-active',
+        rtlClass: '__carouzel-rtl',
+        activeClass: '__carouzel-active',
+        activeSlideClass: '__carouzel-active',
         animation: 'scroll',
-        arrowsSelector: '[data-carouzelarrows]',
-        buttonSelector: '[data-carouzelbutton]',
         centerAmong: 0,
         centeredCls: '__carouzel-centered',
-        disableCls: '__carouzel-disabled',
+        disableClass: '__carouzel-disabled',
         dragThreshold: 120,
         enableSwipe: true,
-        hideCls: '__carouzel-hidden',
+        hiddenClass: '__carouzel-hidden',
         idPrefix: '__carouzel_id',
-        innerSelector: '[data-carouzelinner]',
         navBtnElem: 'button',
-        navInnerSelector: '[data-carouzelnavinner]',
-        navSelector: '[data-carouzelnav]',
-        nextArrowSelector: '[data-carouzelnext]',
-        prevArrowSelector: '[data-carouzelprev]',
-        rootAutoSelector: '[data-carouzelauto]',
-        rootCls: '__carouzel',
-        rootSelector: '[data-carouzel]',
+        rootElemClass: '__carouzel',
         showArrows: true,
         showNav: true,
-        slideSelector: '[data-carouzelslide]',
         slidesToScroll: 1,
         slidesToShow: 1,
         speed: 250,
         startAtIndex: 1,
-        timingFunction: 'cubic-bezier(0.250, 0.100, 0.250, 1.000)',
-        titleSelector: '[data-carouzeltitle]',
-        trackInnerSelector: '[data-carouzeltrackinner]',
-        trackOuterSelector: '[data-carouzeltrackouter]',
-        trackSelector: '[data-carouzeltrack]'
+        timingFunction: 'cubic-bezier(0.250, 0.100, 0.250, 1.000)'
     };
     /**
      * Polyfill function for Object.assign
@@ -177,7 +176,7 @@ var Carouzel;
      * @param element - An HTML Element from which the events need to be removed
      *
      */
-    var carouzel_removeEventListeners = function (core, element) {
+    var _RemoveEventListeners = function (core, element) {
         if ((core.eventHandlers || []).length > 0) {
             var j = core.eventHandlers.length;
             while (j--) {
@@ -198,7 +197,7 @@ var Carouzel;
      * @returns The event handler object
      *
      */
-    var carouzel_eventHandler = function (element, type, listener) {
+    var _EventHandler = function (element, type, listener) {
         var eventHandler = {
             element: element,
             remove: function () {
@@ -208,366 +207,22 @@ var Carouzel;
         element.addEventListener(type, listener, _useCapture);
         return eventHandler;
     };
-    var carouzel_animateSlider = function (core) {
-        if (core.currentIndex + core.bpoptions.slidesToShow > core.allSlides.length) {
-            core.currentIndex = core.allSlides.length - core.bpoptions.slidesToShow;
+    var init = function (core, rootElem, settings) {
+        var _core = core;
+        _core.rootElem = rootElem;
+        _core.settings = settings;
+        _core.track = rootElem.querySelector("" + settings.trackSelector);
+        _core.slides = _ArrayCall(rootElem.querySelectorAll("" + settings.slideSelector));
+        _core.currentIndex = core.settings.startAtIndex = core.settings.startAtIndex - 1;
+        _core.eventHandlers = [];
+        navIndex;
+        _Selectors;
+        _AddClass;
+        _RemoveClass;
+        _RemoveEventListeners;
+        _EventHandler;
+        if (_core.trackInner && _core.allSlides.length > 0) {
         }
-        for (var k = 0; k < core.allSlides.length; k++) {
-            _AddClass(core.allSlides[k], '__carouzel-animating');
-            core.allSlides[k].style.transitionDuration = core.settings.speed + 'ms';
-        }
-        core.currentTransform = -1 * core.slideWidth * core.currentIndex;
-        setTimeout(function () {
-            core.trackInner.style.transform = "translate(" + -1 * core.slideWidth * core.currentIndex + "px, 0%)";
-            carouzel_toggleArrowsAndNav(core);
-            carozuel_updateIndices(core);
-        }, core.bpoptions.animation === 'fade' ? core.settings.speed / 2 : 0);
-        setTimeout(function () {
-            for (var k = 0; k < core.allSlides.length; k++) {
-                _RemoveClass(core.allSlides[k], '__carouzel-animating');
-            }
-        }, core.settings.speed / 2);
-    };
-    var carouzel_toggleArrowsAndNav = function (core) {
-        if (core.prevArrow && core.currentIndex === 0) {
-            _AddClass(core.prevArrow, core.settings.disableCls);
-            core.prevArrow.setAttribute('disabled', 'disabled');
-        }
-        if (core.prevArrow && core.currentIndex !== 0) {
-            _RemoveClass(core.prevArrow, core.settings.disableCls);
-            core.prevArrow.removeAttribute('disabled');
-        }
-        if (core.nextArrow && core.currentIndex + core.bpoptions.slidesToShow === core.allSlides.length) {
-            _AddClass(core.nextArrow, core.settings.disableCls);
-            core.nextArrow.setAttribute('disabled', 'disabled');
-        }
-        if (core.nextArrow && core.currentIndex + core.bpoptions.slidesToShow !== core.allSlides.length) {
-            _RemoveClass(core.nextArrow, core.settings.disableCls);
-            core.nextArrow.removeAttribute('disabled');
-        }
-        if (core.navInner && (core.navBtns || []).length > 0) {
-            for (var n = 0; n < core.navBtns.length; n++) {
-                _RemoveClass(core.navBtns[n], core.settings.activeCls);
-            }
-            navIndex = Math.ceil(core.currentIndex / core.bpoptions.slidesToScroll);
-            if (core.navBtns[navIndex]) {
-                _AddClass(core.navBtns[navIndex], core.settings.activeCls);
-            }
-        }
-        for (var k = 0; k < core.allSlides.length; k++) {
-            _RemoveClass(core.allSlides[k], core.settings.activeSlideCls);
-        }
-        for (var k = core.currentIndex; k < core.bpoptions.slidesToShow + core.currentIndex; k++) {
-            _AddClass(core.allSlides[k], core.settings.activeSlideCls);
-        }
-    };
-    var carouzel_moveToRight = function (core) {
-        carouzel_moveSlider(core, 'next');
-    };
-    var carouzel_moveToLeft = function (core) {
-        carouzel_moveSlider(core, 'prev');
-    };
-    var carouzel_moveSlider = function (core, prevOrNext) {
-        core.isCarouzelStarted = true;
-        core.currentIndex = prevOrNext === 'prev' ? core.prevIndex : core.nextIndex;
-        carouzel_animateSlider(core);
-    };
-    var carouzel_toggleArrows = function (core, shouldEnableArrows) {
-        carouzel_toggleArrowsAndNav(core);
-        if (core.prevArrow) {
-            carouzel_removeEventListeners(core, core.prevArrow);
-            _AddClass(core.prevArrow, core.settings.hideCls);
-            if (shouldEnableArrows) {
-                core.eventHandlers.push(carouzel_eventHandler(core.prevArrow, 'click', function (event) {
-                    event.preventDefault();
-                    carouzel_moveToLeft(core);
-                }));
-                if (core.bpoptions.showArrows) {
-                    _RemoveClass(core.prevArrow, core.settings.hideCls);
-                }
-            }
-        }
-        if (core.nextArrow) {
-            carouzel_removeEventListeners(core, core.nextArrow);
-            _AddClass(core.nextArrow, core.settings.hideCls);
-            if (shouldEnableArrows) {
-                core.eventHandlers.push(carouzel_eventHandler(core.nextArrow, 'click', function (event) {
-                    event.preventDefault();
-                    carouzel_moveToRight(core);
-                }));
-                if (core.bpoptions.showArrows) {
-                    _RemoveClass(core.nextArrow, core.settings.hideCls);
-                }
-            }
-        }
-    };
-    var carozuel_updateIndices = function (core) {
-        var slidesLength = core.allSlides.length;
-        var onLeft = 0;
-        var onRight = 0;
-        core.nextIndex = core.currentIndex;
-        core.prevIndex = core.currentIndex;
-        for (var m = 0; m < core.currentIndex; m++) {
-            onLeft++;
-        }
-        for (var m = core.currentIndex + core.bpoptions.slidesToShow; m < slidesLength; m++) {
-            onRight++;
-        }
-        if (onLeft >= core.bpoptions.slidesToScroll) {
-            core.prevIndex -= core.bpoptions.slidesToScroll;
-        }
-        else {
-            core.prevIndex = 0;
-        }
-        if (onRight >= core.bpoptions.slidesToScroll) {
-            core.nextIndex += core.bpoptions.slidesToScroll;
-        }
-        else {
-            core.nextIndex = slidesLength - core.bpoptions.slidesToScroll;
-        }
-    };
-    var carouzel_toggleSwipe = function (core, shouldEnableSwipe) {
-        var posX1 = 0;
-        var posX2 = 0;
-        var posFinal = 0;
-        var threshold = core.bpoptions.dragThreshold || 100;
-        var dragging = false;
-        var touchStart = function (thisevent) {
-            thisevent.preventDefault();
-            dragging = true;
-            if (thisevent.type === 'touchstart') {
-                posX1 = thisevent.touches[0].clientX;
-            }
-            else {
-                posX1 = thisevent.clientX;
-            }
-        };
-        var touchMove = function (thisevent) {
-            if (dragging) {
-                if (thisevent.type == 'touchmove') {
-                    posX2 = posX1 - thisevent.touches[0].clientX;
-                }
-                else {
-                    posX2 = posX1 - thisevent.clientX;
-                }
-                if (core.bpoptions.animation !== 'fade') {
-                    core.trackInner.style.transform = "translate(" + (core.currentTransform - posX2) + "px, 0%)";
-                }
-                posFinal = posX2;
-            }
-        };
-        var touchEnd = function () {
-            if (dragging) {
-                if (posFinal < -threshold) {
-                    carouzel_moveToLeft(core);
-                }
-                else if (posFinal > threshold) {
-                    carouzel_moveToRight(core);
-                }
-                else {
-                    core.trackInner.style.transform = "translate(" + core.currentTransform + "px, 0%)";
-                }
-            }
-            posX1 = posX2 = posFinal = 0;
-            dragging = false;
-        };
-        var toggleTouchEvents = function (shouldAdd) {
-            carouzel_removeEventListeners(core, core.trackInner);
-            if (shouldAdd) {
-                core.eventHandlers.push(carouzel_eventHandler(core.trackInner, 'touchstart', function (event) {
-                    touchStart(event);
-                }));
-                core.eventHandlers.push(carouzel_eventHandler(core.trackInner, 'touchmove', function (event) {
-                    touchMove(event);
-                }));
-                core.eventHandlers.push(carouzel_eventHandler(core.trackInner, 'touchend', function () {
-                    touchEnd();
-                }));
-                core.eventHandlers.push(carouzel_eventHandler(core.trackInner, 'mousedown', function (event) {
-                    touchStart(event);
-                }));
-                core.eventHandlers.push(carouzel_eventHandler(core.trackInner, 'mouseup', function () {
-                    touchEnd();
-                }));
-                core.eventHandlers.push(carouzel_eventHandler(core.trackInner, 'mouseleave', function () {
-                    touchEnd();
-                }));
-                core.eventHandlers.push(carouzel_eventHandler(core.trackInner, 'mousemove', function (event) {
-                    touchMove(event);
-                }));
-            }
-        };
-        if (core.trackInner) {
-            toggleTouchEvents(shouldEnableSwipe);
-        }
-    };
-    var carouzel_toggleNav = function (core, shouldEnableNav) {
-        if (core.navInner && document) {
-            core.navInner.innerHTML = '';
-            core.navBtns = [];
-            if (shouldEnableNav) {
-                var pageLength = Math.ceil(core.allSlides.length / core.bpoptions.slidesToScroll) - (core.bpoptions.slidesToShow - core.bpoptions.slidesToScroll);
-                var navBtns = [];
-                for (var p = 0; p < pageLength; p++) {
-                    var elem = document.createElement(core.settings.navBtnElem);
-                    elem.setAttribute('data-carouzelnavbtn', '');
-                    if (core.settings.navBtnElem.toLowerCase() === 'button') {
-                        elem.setAttribute('type', 'button');
-                    }
-                    elem.innerHTML = p + 1;
-                    navBtns.push(elem);
-                    core.navInner.appendChild(elem);
-                }
-                var _loop_1 = function (p) {
-                    core.eventHandlers.push(carouzel_eventHandler(navBtns[p], 'click', function (event) {
-                        event.preventDefault();
-                        core.currentIndex = p * core.bpoptions.slidesToScroll;
-                        carouzel_animateSlider(core);
-                    }));
-                    core.navBtns.push(navBtns[p]);
-                };
-                for (var p = 0; p < navBtns.length; p++) {
-                    _loop_1(p);
-                }
-            }
-        }
-    };
-    var carouzel_applyLayout = function (core) {
-        var viewportWidth = window.innerWidth;
-        var bpoptions = core.breakpoints[0];
-        var len = 0;
-        var slideWidth = '';
-        var trackWidth = '';
-        var centeredWidth = '';
-        while (len < core.breakpoints.length) {
-            if ((core.breakpoints[len + 1] && core.breakpoints[len + 1].breakpoint > viewportWidth) || typeof core.breakpoints[len + 1] === 'undefined') {
-                bpoptions = core.breakpoints[len];
-                break;
-            }
-            len++;
-        }
-        if (supportedAnimations.indexOf(bpoptions.animation) === -1) {
-            bpoptions.animation = 'scroll';
-        }
-        slideWidth = (core.trackOuter.clientWidth / bpoptions.slidesToShow).toFixed(4) || '1';
-        trackWidth = (parseFloat(slideWidth + '') * (core.allSlides.length > bpoptions.slidesToShow ? core.allSlides.length : bpoptions.slidesToShow)).toFixed(4);
-        if (bpoptions.centerAmong > 0) {
-            bpoptions.slidesToScroll = 1;
-            bpoptions.slidesToShow = 1;
-            _AddClass(core.trackOuter, core.settings.centeredCls);
-            centeredWidth = (core.trackOuter.clientWidth / bpoptions.centerAmong).toFixed(4) || '1';
-            core.track.style.width = centeredWidth + 'px';
-            slideWidth = centeredWidth;
-            trackWidth = (parseFloat(slideWidth + '') * (core.allSlides.length > bpoptions.slidesToShow ? core.allSlides.length : bpoptions.slidesToShow)).toFixed(4);
-        }
-        else {
-            _RemoveClass(core.trackOuter, core.settings.centeredCls);
-            core.track.removeAttribute('style');
-        }
-        if ((core._bpoptions || {}).breakpoint !== bpoptions.breakpoint) {
-            core.bpoptions = bpoptions;
-            carouzel_toggleArrows(core, bpoptions.showArrows);
-            carouzel_toggleNav(core, bpoptions.showNav);
-            carouzel_toggleSwipe(core, bpoptions.enableSwipe);
-            core._bpoptions = bpoptions;
-        }
-        core.settings.isRTL ? _AddClass(core.trackInner, core.settings.rtlCls) : _RemoveClass(core.trackInner, core.settings.rtlCls);
-        core.slideWidth = slideWidth;
-        if (core.trackInner) {
-            core.trackInner.style.width = trackWidth + 'px';
-            core.trackInner.style.transitionDuration = core.settings.speed + 'ms';
-            core.trackInner.style.transitionTimingFunction = core.settings.timingFunction;
-            carouzel_animateSlider(core);
-            for (var a = 0; a < supportedAnimations.length; a++) {
-                _RemoveClass(core.trackInner, "__carouzel-animation-" + supportedAnimations[a]);
-            }
-            if (bpoptions.animation !== 'scroll') {
-                _AddClass(core.trackInner, "__carouzel-animation-" + bpoptions.animation);
-            }
-        }
-        for (var k = 0; k < core.allSlides.length; k++) {
-            if (core.allSlides[k]) {
-                core.allSlides[k].style.width = slideWidth + 'px';
-            }
-        }
-    };
-    var carouzel_validateBreakpoints = function (breakpoints) {
-        try {
-            var tempArr = [];
-            var len = breakpoints.length;
-            while (len--) {
-                if (tempArr.indexOf(breakpoints[len].breakpoint) === -1) {
-                    tempArr.push(breakpoints[len].breakpoint);
-                }
-            }
-            if (tempArr.length === breakpoints.length) {
-                return {
-                    isValid: true,
-                    breakpoints: breakpoints.sort(function (a, b) { return parseFloat(a.breakpoint) - parseFloat(b.breakpoint); })
-                };
-            }
-            else {
-                throw new TypeError('Duplicate breakpoints found');
-            }
-        }
-        catch (e) {
-            throw new TypeError('Error parsing breakpoints');
-        }
-    };
-    var carouzel_updateBreakpoints = function (settings) {
-        var defaultBreakpoint = {
-            animation: settings.animation,
-            breakpoint: 0,
-            enableSwipe: settings.enableSwipe,
-            showArrows: settings.showArrows,
-            showNav: settings.showNav,
-            slidesToScroll: settings.slidesToScroll,
-            slidesToShow: settings.slidesToShow,
-            centerAmong: settings.centerAmong,
-            centeredCls: settings.centeredCls
-        };
-        var tempArr = [];
-        if ((settings.responsive || []).length > 0) {
-            var i = settings.responsive.length;
-            while (i--) {
-                tempArr.push(settings.responsive[i]);
-            }
-        }
-        tempArr.push(defaultBreakpoint);
-        var updatedArr = carouzel_validateBreakpoints(tempArr);
-        if (updatedArr.isValid) {
-            var bpArr = [updatedArr.breakpoints[0]];
-            var bpLen = 1;
-            while (bpLen < updatedArr.breakpoints.length) {
-                bpArr.push(Object.assign({}, bpArr[bpLen - 1], updatedArr.breakpoints[bpLen]));
-                bpLen++;
-            }
-            return bpArr;
-        }
-        return [];
-    };
-    var carouzel_init = function (core, rootElem, settings) {
-        _AddClass(rootElem, settings.rootCls ? settings.rootCls : '');
-        core.rootElem = rootElem;
-        core.settings = settings;
-        core.track = rootElem.querySelector("" + settings.trackSelector);
-        core.trackOuter = rootElem.querySelector("" + settings.trackOuterSelector);
-        core.trackInner = rootElem.querySelector("" + settings.trackInnerSelector);
-        core.allSlides = _ArrayCall(rootElem.querySelectorAll("" + settings.slideSelector));
-        core.currentIndex = core.settings.startAtIndex = core.settings.startAtIndex - 1;
-        core.navInner = rootElem.querySelector("" + settings.navInnerSelector);
-        core.prevIndex = 0;
-        core.nextIndex = 0;
-        core.isCarouzelStarted = false;
-        core.prevArrow = rootElem.querySelector("" + settings.prevArrowSelector);
-        core.nextArrow = rootElem.querySelector("" + settings.nextArrowSelector);
-        core.slideWidth = 100;
-        core.eventHandlers = [];
-        if (core.trackInner && core.allSlides.length > 0) {
-            core.breakpoints = carouzel_updateBreakpoints(settings);
-            carouzel_applyLayout(core);
-        }
-        _AddClass(rootElem, settings.activeCls ? settings.activeCls : '');
         return core;
     };
     /**
@@ -582,16 +237,15 @@ var Carouzel;
      */
     var Core = /** @class */ (function () {
         function Core(thisid, rootElem, options) {
-            var _this = this;
             this.core = {};
             this.destroy = function (thisid) {
                 // amm_destroy(thisid, this.core);
                 console.log(thisid);
             };
             this.resize = function () {
-                carouzel_applyLayout(_this.core);
+                // carouzel_applyLayout(this.core);
             };
-            this.core = carouzel_init(this.core, rootElem, Object.assign({}, _Defaults, options));
+            this.core = init(this.core, rootElem, Object.assign({}, _Defaults, options));
             AllCarouzelInstances[thisid] = this.core;
         }
         return Core;
@@ -644,45 +298,45 @@ var Carouzel;
              */
             this.init = function (query, options) {
                 var roots = _ArrayCall(document.querySelectorAll(query));
-                var rootsLen = roots.length;
-                var instancelen = 0;
+                var rootsLength = roots.length;
+                var instanceLength = 0;
                 for (var i in _this.instances) {
                     if (_this.instances.hasOwnProperty(i)) {
-                        instancelen++;
+                        instanceLength++;
                     }
                 }
-                if (rootsLen > 0) {
-                    for (var i = 0; i < rootsLen; i++) {
+                if (rootsLength > 0) {
+                    for (var i = 0; i < rootsLength; i++) {
                         var id = roots[i].getAttribute('id');
-                        var iselempresent = false;
+                        var isElementPresent = false;
                         if (id) {
-                            for (var j = 0; j < instancelen; j++) {
+                            for (var j = 0; j < instanceLength; j++) {
                                 if (_this.instances[id]) {
-                                    iselempresent = true;
+                                    isElementPresent = true;
                                     break;
                                 }
                             }
                         }
-                        if (!iselempresent) {
-                            var newoptions = void 0;
-                            if (roots[i].getAttribute('data-carouzelauto')) {
+                        if (!isElementPresent) {
+                            var newOptions = void 0;
+                            if (roots[i].getAttribute(_Selectors.rootAuto.slice(1, -1))) {
                                 try {
-                                    newoptions = JSON.parse(roots[i].getAttribute('data-carouzelauto'));
+                                    newOptions = JSON.parse(roots[i].getAttribute(_Selectors.rootAuto.slice(1, -1)));
                                 }
                                 catch (e) {
-                                    throw new TypeError('Unable to parse the options string');
+                                    throw new TypeError(_optionsParseTypeError);
                                 }
                             }
                             else {
-                                newoptions = options;
+                                newOptions = options;
                             }
                             if (id) {
-                                _this.instances[id] = new Core(id, roots[i], newoptions);
+                                _this.instances[id] = new Core(id, roots[i], newOptions);
                             }
                             else {
-                                var thisid = id ? id : Object.assign({}, _Defaults, newoptions).idPrefix + '_' + new Date().getTime() + '_root_' + (i + 1);
+                                var thisid = id ? id : Object.assign({}, _Defaults, newOptions).idPrefix + '_' + new Date().getTime() + '_root_' + (i + 1);
                                 roots[i].setAttribute('id', thisid);
-                                _this.instances[thisid] = new Core(thisid, roots[i], newoptions);
+                                _this.instances[thisid] = new Core(thisid, roots[i], newOptions);
                             }
                         }
                     }
@@ -692,10 +346,13 @@ var Carouzel;
                     }
                 }
                 else {
-                    if (query !== '[data-carouzelauto]') {
-                        throw new TypeError('Element(s) with the provided query do(es) not exist');
+                    if (query !== _Selectors.rootAuto) {
+                        throw new TypeError(_rootSelectorTypeError);
                     }
                 }
+            };
+            this.globalInit = function () {
+                _this.init(_Selectors.rootAuto);
             };
             /**
              * Function to destroy the AMegMen plugin for provided query strings.
@@ -705,9 +362,9 @@ var Carouzel;
              */
             this.destroy = function (query) {
                 var roots = _ArrayCall(document.querySelectorAll(query));
-                var rootsLen = roots.length;
-                if (rootsLen > 0) {
-                    for (var i = 0; i < rootsLen; i++) {
+                var rootsLength = roots.length;
+                if (rootsLength > 0) {
+                    for (var i = 0; i < rootsLength; i++) {
                         var id = roots[i].getAttribute('id');
                         if (id && _this.instances[id]) {
                             _this.instances[id].destroy(id);
@@ -719,7 +376,7 @@ var Carouzel;
                     }
                 }
                 else {
-                    throw new TypeError('Element(s) with the provided query do(es) not exist');
+                    throw new TypeError(_rootSelectorTypeError);
                 }
             };
             _EnableAssign();
@@ -741,7 +398,7 @@ var Carouzel;
     }());
     Carouzel.Root = Root;
 })(Carouzel || (Carouzel = {}));
-Carouzel.Root.getInstance().init('[data-carouzelauto]');
+Carouzel.Root.getInstance().globalInit();
 if (typeof exports === 'object' && typeof module !== 'undefined') {
     module.exports = Carouzel;
 }
