@@ -219,18 +219,20 @@ var Carouzel;
             duplicates[i].parentNode.removeChild(duplicates[i]);
         }
         for (var i = 0; i < core.bpo._toShow; i++) {
-            var elem = core.slides[i].cloneNode(true);
-            addClass(elem, core.settings.dupCls || '');
-            prevArr.push(elem);
-            nextArr.push(elem);
+            var elem1 = core.slides[i].cloneNode(true);
+            var elem2 = core.slides[i].cloneNode(true);
+            addClass(elem1, core.settings.dupCls || '');
+            addClass(elem2, core.settings.dupCls || '');
+            prevArr.push(elem1);
+            nextArr.push(elem2);
         }
         console.log('=====prevArr', prevArr);
         console.log('=====nextArr', nextArr);
-        for (var i = 0; i < nextArr.length; i++) {
-            (_b = core.track) === null || _b === void 0 ? void 0 : _b.append(nextArr[i]);
-        }
         for (var i = 0; i < prevArr.length; i++) {
-            (_c = core.track) === null || _c === void 0 ? void 0 : _c.prepend(prevArr[i]);
+            (_b = core.track) === null || _b === void 0 ? void 0 : _b.prepend(prevArr[i]);
+        }
+        for (var i = 0; i < nextArr.length; i++) {
+            (_c = core.track) === null || _c === void 0 ? void 0 : _c.append(nextArr[i]);
         }
     };
     var applyLayout = function (core) {

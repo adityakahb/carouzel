@@ -310,26 +310,28 @@ namespace Carouzel {
   };
 
   const manageDuplicates = (core: ICore) => {
-    let prevArr = [];
-    let nextArr = [];
+    let prevArr: Node[] = [];
+    let nextArr: Node[] = [];
     let duplicates = arrayCall(core.track?.querySelectorAll('.' + core.settings.dupCls));
     for (let i=0; i<duplicates.length; i++) {
       removeEventListeners(core, duplicates[i]);
       duplicates[i].parentNode.removeChild(duplicates[i]);
     }
     for (let i=0; i<core.bpo._toShow; i++) {
-      let elem = core.slides[i].cloneNode(true);
-      addClass(elem as HTMLElement, core.settings.dupCls || '');
-      prevArr.push(elem);
-      nextArr.push(elem);
+      let elem1 = core.slides[i].cloneNode(true);
+      let elem2 = core.slides[i].cloneNode(true);
+      addClass(elem1 as HTMLElement, core.settings.dupCls || '');
+      addClass(elem2 as HTMLElement, core.settings.dupCls || '');
+      prevArr.push(elem1);
+      nextArr.push(elem2);
     }
     console.log('=====prevArr', prevArr)
     console.log('=====nextArr', nextArr)
-    for (let i=0; i<nextArr.length; i++) {
-      core.track?.append(nextArr[i]);
-    }
     for (let i=0; i<prevArr.length; i++) {
       core.track?.prepend(prevArr[i]);
+    }
+    for (let i=0; i<nextArr.length; i++) {
+      core.track?.append(nextArr[i]);
     }
   };
 
