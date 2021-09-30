@@ -325,12 +325,13 @@ namespace Carouzel {
       prevArr.push(elem1);
       nextArr.push(elem2);
     }
-    for (let i=0; i<prevArr.length; i++) {
+    for (let i=prevArr.length - 1; i>=0; i--) {
       core.track?.prepend(prevArr[i]);
     }
     for (let i=0; i<nextArr.length; i++) {
       core.track?.append(nextArr[i]);
     }
+    return prevArr.length + nextArr.length;
   };
 
   const applyLayout = (core: ICore) => {
@@ -339,6 +340,7 @@ namespace Carouzel {
     let len = 0;
     let slideWidth = '';
     let trackWidth = '';
+    let extraLength = 0;
     while(len < core.bpall.length) {
       if ((core.bpall[len + 1] && core.bpall[len + 1].bp > viewportWidth) || typeof core.bpall[len + 1] === 'undefined') {
         bpoptions = core.bpall[len];
@@ -346,21 +348,24 @@ namespace Carouzel {
       }
       len++;
     }
-    if (core.trackW && core.track) {
-      slideWidth = (core.trackW.clientWidth / bpoptions._toShow).toFixed(4) || '1';
-      trackWidth = (parseFloat(slideWidth + '') * (core.sLength > bpoptions._toShow ? core.sLength : bpoptions._toShow)).toFixed(4);
-      core.track.style.width = trackWidth + 'px';
-      for (let i = 0; i < core.sLength; i++) {
-        core.slides[i].style.width = slideWidth + 'px';
-      }
+    if ((core.bpo_old || {})._toShow !== bpoptions._toShow) {
+      extraLength = manageDuplicates(core);
     }
     if ((core.bpo_old || {}).bp !== bpoptions.bp) {
       core.bpo = bpoptions;
-      manageDuplicates(core);
       // carouzel_toggleArrows(core, bpoptions.showArrows);
       // carouzel_toggleNav(core, bpoptions.showNav);
       // carouzel_toggleSwipe(core, bpoptions.enableSwipe);
       core.bpo_old = bpoptions;
+    }
+    if (core.trackW && core.track) {
+      slideWidth = (core.trackW.clientWidth / bpoptions._toShow).toFixed(4) || '1';
+      trackWidth = (parseFloat(slideWidth + '') * (core.sLength >= bpoptions._toShow ? core.sLength + extraLength : bpoptions._toShow)).toFixed(4);
+      core.track.style.width = trackWidth + 'px';
+      let updatedElements = arrayCall(core.trackW.querySelectorAll(_Selectors.slide));
+      for (let i = 0; i < updatedElements.length; i++) {
+        updatedElements[i].style.width = slideWidth + 'px';
+      }
     }
   };
 

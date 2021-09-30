@@ -226,12 +226,13 @@ var Carouzel;
             prevArr.push(elem1);
             nextArr.push(elem2);
         }
-        for (var i = 0; i < prevArr.length; i++) {
+        for (var i = prevArr.length - 1; i >= 0; i--) {
             (_b = core.track) === null || _b === void 0 ? void 0 : _b.prepend(prevArr[i]);
         }
         for (var i = 0; i < nextArr.length; i++) {
             (_c = core.track) === null || _c === void 0 ? void 0 : _c.append(nextArr[i]);
         }
+        return prevArr.length + nextArr.length;
     };
     var applyLayout = function (core) {
         var viewportWidth = window.innerWidth;
@@ -239,6 +240,7 @@ var Carouzel;
         var len = 0;
         var slideWidth = '';
         var trackWidth = '';
+        var extraLength = 0;
         while (len < core.bpall.length) {
             if ((core.bpall[len + 1] && core.bpall[len + 1].bp > viewportWidth) || typeof core.bpall[len + 1] === 'undefined') {
                 bpoptions = core.bpall[len];
@@ -246,21 +248,24 @@ var Carouzel;
             }
             len++;
         }
-        if (core.trackW && core.track) {
-            slideWidth = (core.trackW.clientWidth / bpoptions._toShow).toFixed(4) || '1';
-            trackWidth = (parseFloat(slideWidth + '') * (core.sLength > bpoptions._toShow ? core.sLength : bpoptions._toShow)).toFixed(4);
-            core.track.style.width = trackWidth + 'px';
-            for (var i = 0; i < core.sLength; i++) {
-                core.slides[i].style.width = slideWidth + 'px';
-            }
+        if ((core.bpo_old || {})._toShow !== bpoptions._toShow) {
+            extraLength = manageDuplicates(core);
         }
         if ((core.bpo_old || {}).bp !== bpoptions.bp) {
             core.bpo = bpoptions;
-            manageDuplicates(core);
             // carouzel_toggleArrows(core, bpoptions.showArrows);
             // carouzel_toggleNav(core, bpoptions.showNav);
             // carouzel_toggleSwipe(core, bpoptions.enableSwipe);
             core.bpo_old = bpoptions;
+        }
+        if (core.trackW && core.track) {
+            slideWidth = (core.trackW.clientWidth / bpoptions._toShow).toFixed(4) || '1';
+            trackWidth = (parseFloat(slideWidth + '') * (core.sLength >= bpoptions._toShow ? core.sLength + extraLength : bpoptions._toShow)).toFixed(4);
+            core.track.style.width = trackWidth + 'px';
+            var updatedElements = arrayCall(core.trackW.querySelectorAll(_Selectors.slide));
+            for (var i = 0; i < updatedElements.length; i++) {
+                updatedElements[i].style.width = slideWidth + 'px';
+            }
         }
     };
     var validateBreakpoints = function (breakpoints) {
