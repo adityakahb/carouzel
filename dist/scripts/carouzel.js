@@ -1,3 +1,14 @@
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 /***
  *     ██████  █████  ██████   ██████  ██    ██ ███████ ███████ ██
  *    ██      ██   ██ ██   ██ ██    ██ ██    ██    ███  ██      ██
@@ -20,7 +31,6 @@ var Carouzel;
     var _optionsParseTypeError = 'Unable to parse the options string';
     var _duplicateBreakpointsTypeError = 'Duplicate breakpoints found';
     var _breakpointsParseTypeError = 'Error parsing breakpoints';
-    var _objectAssignTypeError = 'Cannot convert undefined or null to object';
     var _useCapture = false;
     var _Selectors = {
         arrowN: '[data-carouzelnextarrow]',
@@ -54,37 +64,6 @@ var Carouzel;
         startAtIndex: 1,
         timeFunction: 'cubic-bezier(0.250, 0.100, 0.250, 1.000)',
         touchThreshold: 120
-    };
-    /**
-     * Polyfill function for Object.assign
-     *
-     */
-    var enableAssign = function () {
-        if (typeof Object.assign !== 'function') {
-            Object.defineProperty(Object, 'assign', {
-                value: function assign(target) {
-                    // function assign(target: any, varArgs: any)
-                    'use strict';
-                    if (target === null || target === undefined) {
-                        throw new TypeError(_objectAssignTypeError);
-                    }
-                    var to = Object(target);
-                    for (var index = 1; index < arguments.length; index++) {
-                        var nextSource = arguments[index];
-                        if (nextSource !== null && nextSource !== undefined) {
-                            for (var nextKey in nextSource) {
-                                if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
-                                    to[nextKey] = nextSource[nextKey];
-                                }
-                            }
-                        }
-                    }
-                    return to;
-                },
-                writable: true,
-                configurable: true
-            });
-        }
     };
     /**
      * Function to trim whitespaces from a string
@@ -209,30 +188,17 @@ var Carouzel;
         element.addEventListener(type, listener, _useCapture);
         return eventHandler;
     };
-    var manageDuplicates = function (core) {
-        var _a, _b, _c;
-        var prevArr = [];
-        var nextArr = [];
-        var duplicates = arrayCall((_a = core.track) === null || _a === void 0 ? void 0 : _a.querySelectorAll('.' + core.settings.dupCls));
+    var manageDuplicates = function (track, bpo, duplicateClass) {
+        var duplicates = arrayCall(track.querySelectorAll('.' + duplicateClass));
         for (var i = 0; i < duplicates.length; i++) {
-            removeEventListeners(core, duplicates[i]);
-            duplicates[i].parentNode.removeChild(duplicates[i]);
+            track.removeChild(duplicates[i]);
         }
-        for (var i = 0; i < core.bpo._toShow; i++) {
-            var elem1 = core.slides[i].cloneNode(true);
-            var elem2 = core.slides[i].cloneNode(true);
-            addClass(elem1, core.settings.dupCls || '');
-            addClass(elem2, core.settings.dupCls || '');
-            prevArr.push(elem1);
-            nextArr.push(elem2);
+        for (var i = bpo.prevDupes.length - 1; i >= 0; i--) {
+            track.prepend(bpo.prevDupes[i]);
         }
-        for (var i = prevArr.length - 1; i >= 0; i--) {
-            (_b = core.track) === null || _b === void 0 ? void 0 : _b.prepend(prevArr[i]);
+        for (var i = 0; i < bpo.nextDupes.length; i++) {
+            track.append(bpo.nextDupes[i]);
         }
-        for (var i = 0; i < nextArr.length; i++) {
-            (_c = core.track) === null || _c === void 0 ? void 0 : _c.append(nextArr[i]);
-        }
-        return prevArr.length + nextArr.length;
     };
     var applyLayout = function (core) {
         var viewportWidth = window.innerWidth;
@@ -240,7 +206,6 @@ var Carouzel;
         var len = 0;
         var slideWidth = '';
         var trackWidth = '';
-        var extraLength = 0;
         while (len < core.bpall.length) {
             if ((core.bpall[len + 1] && core.bpall[len + 1].bp > viewportWidth) || typeof core.bpall[len + 1] === 'undefined') {
                 bpoptions = core.bpall[len];
@@ -248,8 +213,8 @@ var Carouzel;
             }
             len++;
         }
-        if ((core.bpo_old || {})._toShow !== bpoptions._toShow) {
-            extraLength = manageDuplicates(core);
+        if ((core.bpo_old || {})._toShow !== bpoptions._toShow && core.track) {
+            manageDuplicates(core.track, bpoptions, core.settings.dupCls || '');
         }
         if ((core.bpo_old || {}).bp !== bpoptions.bp) {
             core.bpo = bpoptions;
@@ -259,12 +224,33 @@ var Carouzel;
             core.bpo_old = bpoptions;
         }
         if (core.trackW && core.track) {
+            core.__pts = [];
             slideWidth = (core.trackW.clientWidth / bpoptions._toShow).toFixed(4) || '1';
-            trackWidth = (parseFloat(slideWidth + '') * (core.sLength >= bpoptions._toShow ? core.sLength + extraLength : bpoptions._toShow)).toFixed(4);
+            trackWidth = (parseFloat(slideWidth + '') * (core.sLength >= bpoptions._toShow ? bpoptions.bpSLen : bpoptions._toShow)).toFixed(4);
             core.track.style.width = trackWidth + 'px';
             var updatedElements = arrayCall(core.trackW.querySelectorAll(_Selectors.slide));
             for (var i = 0; i < updatedElements.length; i++) {
                 updatedElements[i].style.width = slideWidth + 'px';
+                core.__pts.push(-i * parseFloat(slideWidth));
+            }
+            console.log('========core.__pts', core.__pts);
+            core.track.style.transform = "translate3d(" + -core.cIndex * parseFloat(slideWidth) + "px, 0, 0)";
+        }
+    };
+    var manageCore = function (core) {
+        for (var i = 0; i < core.bpall.length; i++) {
+            core.bpall[i].bpSLen = core.sLength;
+            for (var j = core.sLength - core.bpall[i]._toShow; j < core.sLength; j++) {
+                var elem = core.slides[j].cloneNode(true);
+                addClass(elem, core.settings.dupCls || '');
+                core.bpall[i].bpSLen++;
+                core.bpall[i].prevDupes.push(elem);
+            }
+            for (var j = 0; j < core.bpall[i]._toShow; j++) {
+                var elem = core.slides[j].cloneNode(true);
+                addClass(elem, core.settings.dupCls || '');
+                core.bpall[i].bpSLen++;
+                core.bpall[i].nextDupes.push(elem);
             }
         }
     };
@@ -298,8 +284,11 @@ var Carouzel;
             _toScroll: settings._toScroll ? settings._toScroll : _Defaults.slidesToScroll,
             _toShow: settings._toShow ? settings._toShow : _Defaults.slidesToShow,
             bp: 0,
+            bpSLen: 0,
             cntrAmong: settings.cntrAmong ? settings.cntrAmong : _Defaults.centerAmong,
-            hasSwipe: settings.hasSwipe ? settings.hasSwipe : _Defaults.hasTouchSwipe
+            hasSwipe: settings.hasSwipe ? settings.hasSwipe : _Defaults.hasTouchSwipe,
+            nextDupes: [],
+            prevDupes: []
         };
         var tempArr = [];
         if (settings.res && settings.res.length > 0) {
@@ -313,8 +302,30 @@ var Carouzel;
         if (updatedArr.val) {
             var bpArr = [updatedArr.bp[0]];
             var bpLen = 1;
+            var bp1 = void 0;
+            var bp2 = void 0;
             while (bpLen < updatedArr.bp.length) {
-                bpArr.push(Object.assign({}, bpArr[bpLen - 1], updatedArr.bp[bpLen]));
+                bp1 = bpArr[bpLen - 1];
+                bp2 = __assign(__assign({}, bp1), updatedArr.bp[bpLen]);
+                if (!bp2._arrows) {
+                    bp2._arrows = bp1._arrows;
+                }
+                if (!bp2._nav) {
+                    bp2._nav = bp1._nav;
+                }
+                if (!bp2._toShow) {
+                    bp2._toShow = bp1._toShow;
+                }
+                if (!bp2._toScroll) {
+                    bp2._toScroll = bp1._toScroll;
+                }
+                if (!bp2.cntrAmong) {
+                    bp2.cntrAmong = bp1.cntrAmong;
+                }
+                if (!bp2.hasSwipe) {
+                    bp2.hasSwipe = bp1.hasSwipe;
+                }
+                bpArr.push(bp2);
                 bpLen++;
             }
             return bpArr;
@@ -351,8 +362,11 @@ var Carouzel;
                     _toScroll: settings.responsive[i].slidesToScroll,
                     _toShow: settings.responsive[i].slidesToShow,
                     bp: settings.responsive[i].breakpoint,
+                    bpSLen: 0,
                     cntrAmong: settings.responsive[i].centerAmong,
-                    hasSwipe: settings.responsive[i].hasTouchSwipe
+                    hasSwipe: settings.responsive[i].hasTouchSwipe,
+                    nextDupes: [],
+                    prevDupes: []
                 };
                 if (settingsobj.res) {
                     settingsobj.res.push(obj);
@@ -376,6 +390,10 @@ var Carouzel;
         _core.track = rootElem.querySelector("" + _Selectors.track);
         _core.trackW = rootElem.querySelector("" + _Selectors.trackW);
         _core.sLength = _core.slides.length;
+        _core.__pts = [];
+        if (!_core.slides[_core.cIndex]) {
+            _core.cIndex = settings.startAtIndex = 0;
+        }
         navIndex;
         _Selectors;
         addClass;
@@ -384,6 +402,7 @@ var Carouzel;
         eventHandler;
         if (_core.track && _core.sLength > 0) {
             _core.bpall = updateBreakpoints(_core.settings);
+            manageCore(_core);
             applyLayout(_core);
         }
         return { global: core, local: _core };
@@ -408,7 +427,7 @@ var Carouzel;
             this.resize = function (thisid) {
                 applyLayout(allLocalInstances[thisid]);
             };
-            var initObj = init(this.core, rootElem, Object.assign({}, _Defaults, options));
+            var initObj = init(this.core, rootElem, __assign(__assign({}, _Defaults), options));
             this.core = initObj.global;
             allLocalInstances[thisid] = initObj.local;
         }
@@ -543,7 +562,6 @@ var Carouzel;
                     throw new TypeError(_rootSelectorTypeError);
                 }
             };
-            enableAssign();
         }
         /**
          * Function to return single instance

@@ -104,7 +104,7 @@
                     <div data-carouzelslide>
                       <div>04</div>
                     </div>
-                    <!-- <div data-carouzelslide>
+                    <div data-carouzelslide>
                       <div>05</div>
                     </div>
                     <div data-carouzelslide>
@@ -116,7 +116,7 @@
                     <div data-carouzelslide>
                       <div>08</div>
                     </div>
-                    <div data-carouzelslide>
+                    <!-- <div data-carouzelslide>
                       <div>09</div>
                     </div>
                     <div data-carouzelslide>
@@ -151,8 +151,18 @@
     <script type="text/javascript">
       var __carouzel_instance = Carouzel.Root.getInstance();
       __carouzel_instance.init('#__carouzel_1', {
-        slidesToShow: 4,
-        slidesToScroll: 4
+        slidesToShow: 1,
+        startAtIndex: 8,
+        responsive: [{
+          breakpoint: 1100,
+          slidesToScroll: 4,
+          slidesToShow: 4
+        },
+        {
+          breakpoint: 700,
+          slidesToScroll: 2,
+          slidesToShow: 2
+        }]
       });
       // __carouzel_instance.init('#__carouzel_2', {
       //   slidesToShow: 3,

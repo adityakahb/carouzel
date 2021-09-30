@@ -6,7 +6,8 @@
   "scripts": {
     "generatedata": "node ./scripts/generatedata.js && node ./scripts/generatedata-2.js",
     "compile:sass": "node-sass --source-map true src/carouzel/ -o dist/styles/carouzel",
-    "compile:ts": "tsc --target es3 --module commonjs --outDir ./dist/scripts --declaration true --declarationMap true --sourceMap true",
+    "compile:ts": "tsc",
+    "compile:tswatch": "tsc-watch --onFailure \"echo Beep! Compilation Failed\"",
     "uglify:js": "uglifyjs dist/scripts/carouzel.js -o dist/scripts/carouzel.min.js -c -m",
     "uglify:css": "uglifycss dist/styles/carouzel/carouzel.css --output dist/styles/carouzel/carouzel.min.css",
     "only:js": "npm run compile:ts && npm run uglify:js",
@@ -46,11 +47,12 @@
     "karma-ie-launcher": "^1.0.0",
     "karma-jasmine": "^4.0.1",
     "karma-jasmine-html-reporter": "^1.7.0",
-    "karma-spec-reporter": "0.0.32",
+    "karma-spec-reporter": "^0.0.32",
     "karma-viewport": "^1.0.8",
     "node-sass": "^6.0.1",
+    "tsc-watch": "^4.5.0",
     "typescript": "^4.4.3",
     "uglify-js": "^3.14.2",
-    "uglifycss": "0.0.29"
+    "uglifycss": "^0.0.29"
   }
 }
