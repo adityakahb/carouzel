@@ -340,7 +340,7 @@ namespace Carouzel {
   const manageCore = (core: ICore) => {
     for (let i=0; i<core.bpall.length; i++) {
       core.bpall[i].bpSLen = core.sLength;
-      for (let j=core.sLength - core.bpall[i]._toShow; j<core.sLength; j++) {
+      for (let j=core.sLength - core.bpall[i]._toShow + 1; j<core.sLength; j++) {
         let elem = core.slides[j].cloneNode(true);
         addClass(elem as HTMLElement, core.settings.dupCls || '');
         core.bpall[i].bpSLen++;
