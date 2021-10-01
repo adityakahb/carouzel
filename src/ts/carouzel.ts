@@ -17,6 +17,7 @@ namespace Carouzel {
   interface IRoot {
     [key: string]: any;
   }
+
   interface ICarouzelCoreBreakpoint {
     _arrows: boolean;
     _nav: boolean;
@@ -24,18 +25,17 @@ namespace Carouzel {
     _toShow: number;
     bp: number | string;
     bpSLen: number;
-    cntrAmong: number;
     hasSwipe: boolean;
     nextDupes: Node[];
     prevDupes: Node[];
   }
+  
   interface ICarouzelCoreSettings {
     _arrows: boolean;
     _nav: boolean;
     _toScroll: number;
     _toShow: number;
     activeCls?: string;
-    cntrAmong: number;
     cntrCls?: string;
     cntrMode?: boolean;
     disableCls?: string;
@@ -43,6 +43,7 @@ namespace Carouzel {
     effect?: string;
     hasSwipe: boolean;
     idPrefix?: string;
+    inf?: boolean;
     isRTL?: boolean;
     res?: ICarouzelCoreBreakpoint[];
     rtlCls?: string;
@@ -54,23 +55,23 @@ namespace Carouzel {
   
   interface ICarouzelBreakpoint {
     breakpoint: number | string;
-    centerAmong: number;
     hasTouchSwipe: boolean;
     showArrows: boolean;
     showNavigation: boolean;
     slidesToScroll: number;
     slidesToShow: number;
   }
+
   interface ICarouzelSettings {
     activeClass?: string;
     animationEffect?: string;
     animationSpeed?: number;
-    centerAmong: number;
     centeredClass?: string;
     centerMode?: boolean;
     disabledClass?: string;
     duplicateClass?: string;
     hasTouchSwipe: boolean;
+    isInfinite?: boolean;
     isRTL?: boolean;
     responsive?: ICarouzelBreakpoint[];
     rtlClass?: string;
@@ -138,12 +139,12 @@ namespace Carouzel {
     activeClass: '__carouzel-active',
     animationEffect: _animationEffects[0],
     animationSpeed: 400,
-    centerAmong: 3,
     centeredClass: '__carouzel-centered',
     centerMode: false,
     disabledClass: '__carouzel-disabled',
     duplicateClass: '__carouzel-duplicate',
     hasTouchSwipe: true,
+    isInfinite: true,
     isRTL: false,
     responsive: [],
     rtlClass: '__carouzel-rtl',
@@ -304,17 +305,18 @@ namespace Carouzel {
 
 
   const animateTrack = (core: ICore) => {
-    if (core.track) {
-      core.track.style.transform = `translate3d(${-core._pts[core._pi]}px, 0, 0)`;
-      core.track.style.transitionDuration = `${core.settings.speed}ms`;
-      // core.track.style.transitionDuration = '0ms';
-      core.track.style.transform = `translate3d(${-core._pts[core._ci]}px, 0, 0)`;
+    if (core.settings.inf) {
+      if (core.track) {
+        core.track.style.transitionDuration = '0ms';
+        core.track.style.transform = `translate3d(${-core._pts[core._pi]}px, 0, 0)`;
+      }
     }
     setTimeout(() => {
       if (core.track) {
-        core.track.style.transitionDuration = '0ms';
+        core.track.style.transitionDuration = `${core.settings.speed}ms`;
+        core.track.style.transform = `translate3d(${-core._pts[core._ci]}px, 0, 0)`;
       }
-    }, core.settings.speed);
+    }, 0);
   };
 
 
@@ -368,22 +370,34 @@ namespace Carouzel {
 
 
   const goToPreviousSet = (core: ICore) => {
-    core._ci -= core.bpo._toShow;
-    if (!core._pts[core._ci]) {
-      core._ci += core.sLength;
+    core._ci -= core.bpo._toScroll;
+    if (core.settings.inf) {
+      if (!core._pts[core._ci]) {
+        core._ci += core.sLength;
+      }
+      core._pi = core._ci + core.bpo._toScroll;
+    } else {
+      if (core._ci < 0) {
+        core._ci = 0;
+      }
     }
-    core._pi = core._ci + core.bpo._toShow;
     animateTrack(core);
   };
 
 
 
   const goToNextSet = (core: ICore) => {
-    core._ci += core.bpo._toShow;
-    if (!core._pts[core._ci + core.bpo._toShow]) {
-      core._ci -= core.sLength;
+    core._ci += core.bpo._toScroll;
+    if (core.settings.inf) {
+      if (!core._pts[core._ci + core.bpo._toShow]) {
+        core._ci -= core.sLength;
+      }
+      core._pi = core._ci - core.bpo._toScroll;
+    } else {
+      if (core._ci + core.bpo._toShow >= core.sLength) {
+        core._ci = core.sLength - core.bpo._toShow;
+      }
     }
-    core._pi = core._ci - core.bpo._toShow;
     animateTrack(core);
   };
 
@@ -409,17 +423,19 @@ namespace Carouzel {
   const manageCore = (core: ICore) => {
     for (let i=0; i<core.bpall.length; i++) {
       core.bpall[i].bpSLen = core.sLength;
-      for (let j=core.sLength - core.bpall[i]._toShow; j<core.sLength; j++) {
-        let elem = core._ds[j].cloneNode(true);
-        addClass(elem as HTMLElement, core.settings.dupCls || '');
-        core.bpall[i].bpSLen++;
-        core.bpall[i].prevDupes.push(elem);
-      }
-      for (let j=0; j<core.bpall[i]._toShow; j++) {
-        let elem = core._ds[j].cloneNode(true);
-        addClass(elem as HTMLElement, core.settings.dupCls || '');
-        core.bpall[i].bpSLen++;
-        core.bpall[i].nextDupes.push(elem);
+      if (core.settings.inf) {
+        for (let j=core.sLength - core.bpall[i]._toShow; j<core.sLength; j++) {
+          let elem = core._ds[j].cloneNode(true);
+          addClass(elem as HTMLElement, core.settings.dupCls || '');
+          core.bpall[i].bpSLen++;
+          core.bpall[i].prevDupes.push(elem);
+        }
+        for (let j=0; j<core.bpall[i]._toShow; j++) {
+          let elem = core._ds[j].cloneNode(true);
+          addClass(elem as HTMLElement, core.settings.dupCls || '');
+          core.bpall[i].bpSLen++;
+          core.bpall[i].nextDupes.push(elem);
+        }
       }
     }
     toggleArrows(core);
@@ -459,7 +475,6 @@ namespace Carouzel {
       _toShow: settings._toShow ? settings._toShow : _Defaults.slidesToShow,
       bp: 0,
       bpSLen: 0,
-      cntrAmong: settings.cntrAmong ? settings.cntrAmong : _Defaults.centerAmong,
       hasSwipe: settings.hasSwipe ? settings.hasSwipe : _Defaults.hasTouchSwipe,
       nextDupes: [],
       prevDupes: [],
@@ -493,9 +508,6 @@ namespace Carouzel {
         if (!bp2._toScroll) {
           bp2._toScroll = bp1._toScroll;
         }
-        if (!bp2.cntrAmong) {
-          bp2.cntrAmong = bp1.cntrAmong;
-        }
         if (!bp2.hasSwipe) {
           bp2.hasSwipe = bp1.hasSwipe;
         }
@@ -514,13 +526,13 @@ namespace Carouzel {
       _toScroll: settings.slidesToScroll,
       _toShow: settings.slidesToShow,
       activeCls: settings.activeClass,
-      cntrAmong: settings.centerAmong,
       cntrCls: settings.centeredClass,
       cntrMode: settings.centerMode,
       disableCls: settings.disabledClass,
       dupCls: settings.duplicateClass,
       effect: settings.animationEffect,
       hasSwipe: settings.hasTouchSwipe,
+      inf: settings.isInfinite,
       isRTL: settings.isRTL,
       res: [],
       rtlCls: settings.rtlClass,
@@ -539,7 +551,6 @@ namespace Carouzel {
           _toShow: settings.responsive[i].slidesToShow,
           bp: settings.responsive[i].breakpoint,
           bpSLen: 0,
-          cntrAmong: settings.responsive[i].centerAmong,
           hasSwipe: settings.responsive[i].hasTouchSwipe,
           nextDupes: [],
           prevDupes: [],
@@ -582,6 +593,9 @@ namespace Carouzel {
       manageCore(_core);
       applyLayout(_core);
     }
+
+    addClass(core.rootElem as HTMLElement, core.settings.activeCls || '');
+
     return { global: core, local: _core };
   };
 

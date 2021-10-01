@@ -10,7 +10,6 @@
 declare namespace Carouzel {
     interface ICarouzelBreakpoint {
         breakpoint: number | string;
-        centerAmong: number;
         hasTouchSwipe: boolean;
         showArrows: boolean;
         showNavigation: boolean;
@@ -21,12 +20,12 @@ declare namespace Carouzel {
         activeClass?: string;
         animationEffect?: string;
         animationSpeed?: number;
-        centerAmong: number;
         centeredClass?: string;
         centerMode?: boolean;
         disabledClass?: string;
         duplicateClass?: string;
         hasTouchSwipe: boolean;
+        isInfinite?: boolean;
         isRTL?: boolean;
         responsive?: ICarouzelBreakpoint[];
         rtlClass?: string;
