@@ -200,6 +200,19 @@ var Carouzel;
             track.append(bpo.nextDupes[i]);
         }
     };
+    var animateTrack = function (core) {
+        if (core.track) {
+            core.track.style.transform = "translate3d(" + -core._pts[core._pi] + "px, 0, 0)";
+            core.track.style.transitionDuration = core.settings.speed + "ms";
+            // core.track.style.transitionDuration = '0ms';
+            core.track.style.transform = "translate3d(" + -core._pts[core._ci] + "px, 0, 0)";
+        }
+        setTimeout(function () {
+            if (core.track) {
+                core.track.style.transitionDuration = '0ms';
+            }
+        }, core.settings.speed);
+    };
     var applyLayout = function (core) {
         var viewportWidth = window.innerWidth;
         var bpoptions = core.bpall[0];
@@ -218,41 +231,77 @@ var Carouzel;
         }
         if ((core.bpo_old || {}).bp !== bpoptions.bp) {
             core.bpo = bpoptions;
-            // carouzel_toggleArrows(core, bpoptions.showArrows);
-            // carouzel_toggleNav(core, bpoptions.showNav);
-            // carouzel_toggleSwipe(core, bpoptions.enableSwipe);
             core.bpo_old = bpoptions;
         }
         if (core.trackW && core.track) {
-            core.__pts = [];
+            core._pts = {};
             slideWidth = (core.trackW.clientWidth / bpoptions._toShow).toFixed(4) || '1';
+            core.sWidth = parseFloat(slideWidth);
             trackWidth = (parseFloat(slideWidth + '') * (core.sLength >= bpoptions._toShow ? bpoptions.bpSLen : bpoptions._toShow)).toFixed(4);
             core.track.style.width = trackWidth + 'px';
-            var updatedElements = arrayCall(core.trackW.querySelectorAll(_Selectors.slide));
-            for (var i = 0; i < updatedElements.length; i++) {
-                updatedElements[i].style.width = slideWidth + 'px';
-                core.__pts.push(-i * parseFloat(slideWidth));
+            core._as = arrayCall(core.trackW.querySelectorAll(_Selectors.slide));
+            for (var i = 0; i < core._as.length; i++) {
+                core._as[i].style.width = slideWidth + 'px';
             }
-            console.log('========core.__pts', core.__pts);
-            core.track.style.transform = "translate3d(" + -core.cIndex * parseFloat(slideWidth) + "px, 0, 0)";
+            for (var i = bpoptions.prevDupes.length; i > 0; i--) {
+                core._pts[-i] = (-i + bpoptions.prevDupes.length) * parseFloat(slideWidth);
+            }
+            for (var i = 0; i < core.sLength; i++) {
+                core._pts[i] = (i + bpoptions.prevDupes.length) * parseFloat(slideWidth);
+            }
+            for (var i = core.sLength; i < core.sLength + bpoptions.nextDupes.length; i++) {
+                core._pts[i] = (i + bpoptions.prevDupes.length) * parseFloat(slideWidth);
+            }
+            animateTrack(core);
+        }
+    };
+    var goToPreviousSet = function (core) {
+        core._ci -= core.bpo._toShow;
+        if (!core._pts[core._ci]) {
+            core._ci += core.sLength;
+        }
+        core._pi = core._ci + core.bpo._toShow;
+        animateTrack(core);
+    };
+    var goToNextSet = function (core) {
+        core._ci += core.bpo._toShow;
+        if (!core._pts[core._ci + core.bpo._toShow]) {
+            core._ci -= core.sLength;
+        }
+        core._pi = core._ci - core.bpo._toShow;
+        animateTrack(core);
+    };
+    var toggleArrows = function (core) {
+        if (core.arrowP) {
+            core.eHandlers.push(eventHandler(core.arrowP, 'click', function (event) {
+                event.preventDefault();
+                goToPreviousSet(core);
+            }));
+        }
+        if (core.arrowN) {
+            core.eHandlers.push(eventHandler(core.arrowN, 'click', function (event) {
+                event.preventDefault();
+                goToNextSet(core);
+            }));
         }
     };
     var manageCore = function (core) {
         for (var i = 0; i < core.bpall.length; i++) {
             core.bpall[i].bpSLen = core.sLength;
-            for (var j = core.sLength - core.bpall[i]._toShow + 1; j < core.sLength; j++) {
-                var elem = core.slides[j].cloneNode(true);
+            for (var j = core.sLength - core.bpall[i]._toShow; j < core.sLength; j++) {
+                var elem = core._ds[j].cloneNode(true);
                 addClass(elem, core.settings.dupCls || '');
                 core.bpall[i].bpSLen++;
                 core.bpall[i].prevDupes.push(elem);
             }
             for (var j = 0; j < core.bpall[i]._toShow; j++) {
-                var elem = core.slides[j].cloneNode(true);
+                var elem = core._ds[j].cloneNode(true);
                 addClass(elem, core.settings.dupCls || '');
                 core.bpall[i].bpSLen++;
                 core.bpall[i].nextDupes.push(elem);
             }
         }
+        toggleArrows(core);
     };
     var validateBreakpoints = function (breakpoints) {
         try {
@@ -379,20 +428,21 @@ var Carouzel;
         var _core = core;
         _core.rootElem = rootElem;
         _core.settings = mapSettings(settings);
-        _core.cIndex = settings.startAtIndex = (settings.startAtIndex || 0) - 1;
+        _core._ci = settings.startAtIndex = (settings.startAtIndex || 0) - 1;
         _core.eHandlers = [];
         _core.arrowN = rootElem.querySelector("" + _Selectors.arrowN);
         _core.arrowP = rootElem.querySelector("" + _Selectors.arrowP);
         _core.arrowsW = rootElem.querySelector("" + _Selectors.arrowsW);
         _core.nav = rootElem.querySelector("" + _Selectors.nav);
         _core.navW = rootElem.querySelector("" + _Selectors.navW);
-        _core.slides = arrayCall(rootElem.querySelectorAll("" + _Selectors.slide));
+        _core._ds = arrayCall(rootElem.querySelectorAll("" + _Selectors.slide));
         _core.track = rootElem.querySelector("" + _Selectors.track);
         _core.trackW = rootElem.querySelector("" + _Selectors.trackW);
-        _core.sLength = _core.slides.length;
-        _core.__pts = [];
-        if (!_core.slides[_core.cIndex]) {
-            _core.cIndex = settings.startAtIndex = 0;
+        _core.sLength = _core._ds.length;
+        _core._pts = [];
+        _core.isLeftAdded = false;
+        if (!_core._ds[_core._ci]) {
+            _core._ci = settings.startAtIndex = 0;
         }
         navIndex;
         _Selectors;

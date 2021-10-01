@@ -88,22 +88,30 @@ namespace Carouzel {
     remove: Function;
   }
 
+  interface IIndexHandler {
+    [key: number]: number;
+  }
+
   interface ICore {
-    __pts: number[];
+    _as: HTMLElement[];
+    _ci: number;
+    _ds: HTMLElement[];
+    _pi: number;
+    _pts: IIndexHandler;
     arrowN: HTMLElement | null;
     arrowP: HTMLElement | null;
     arrowsW: HTMLElement | null;
     bpall: ICarouzelCoreBreakpoint[];
-    bpo: ICarouzelCoreBreakpoint;
     bpo_old: ICarouzelCoreBreakpoint;
-    cIndex: number;
+    bpo: ICarouzelCoreBreakpoint;
     eHandlers: any[];
+    isLeftAdded: boolean;
     nav: HTMLElement | null;
     navW: HTMLElement | null;
     rootElem: HTMLElement | null;
     settings: ICarouzelCoreSettings;
     sLength: number;
-    slides: HTMLElement[];
+    sWidth: number;
     track: HTMLElement | null;
     trackW: HTMLElement | null;
   };
@@ -295,6 +303,22 @@ namespace Carouzel {
 
 
 
+  const animateTrack = (core: ICore) => {
+    if (core.track) {
+      core.track.style.transform = `translate3d(${-core._pts[core._pi]}px, 0, 0)`;
+      core.track.style.transitionDuration = `${core.settings.speed}ms`;
+      // core.track.style.transitionDuration = '0ms';
+      core.track.style.transform = `translate3d(${-core._pts[core._ci]}px, 0, 0)`;
+    }
+    setTimeout(() => {
+      if (core.track) {
+        core.track.style.transitionDuration = '0ms';
+      }
+    }, core.settings.speed);
+  };
+
+
+
   const applyLayout = (core: ICore) => {
     let viewportWidth = window.innerWidth;
     let bpoptions = core.bpall[0];
@@ -314,45 +338,91 @@ namespace Carouzel {
     }
     if ((core.bpo_old || {}).bp !== bpoptions.bp) {
       core.bpo = bpoptions;
-      // carouzel_toggleArrows(core, bpoptions.showArrows);
-      // carouzel_toggleNav(core, bpoptions.showNav);
-      // carouzel_toggleSwipe(core, bpoptions.enableSwipe);
       core.bpo_old = bpoptions;
     }
     if (core.trackW && core.track) {
-      core.__pts = [];
+      core._pts = {};
       slideWidth = (core.trackW.clientWidth / bpoptions._toShow).toFixed(4) || '1';
+      
+      core.sWidth = parseFloat(slideWidth);
+
       trackWidth = (parseFloat(slideWidth + '') * (core.sLength >= bpoptions._toShow ? bpoptions.bpSLen : bpoptions._toShow)).toFixed(4);
       core.track.style.width = trackWidth + 'px';
-      let updatedElements = arrayCall(core.trackW.querySelectorAll(_Selectors.slide));
-      for (let i = 0; i < updatedElements.length; i++) {
-        updatedElements[i].style.width = slideWidth + 'px';
-        core.__pts.push(-i * parseFloat(slideWidth));
+      core._as = arrayCall(core.trackW.querySelectorAll(_Selectors.slide));
+      for (let i = 0; i < core._as.length; i++) {
+        core._as[i].style.width = slideWidth + 'px';
       }
-      console.log('========core.__pts', core.__pts);
-      core.track.style.transform = `translate3d(${-core.cIndex * parseFloat(slideWidth)}px, 0, 0)`;
+      for (let i = bpoptions.prevDupes.length; i > 0; i--) {
+        core._pts[-i] = (-i + bpoptions.prevDupes.length) * parseFloat(slideWidth);
+      }
+      for (let i = 0; i < core.sLength; i++) {
+        core._pts[i] = (i + bpoptions.prevDupes.length) * parseFloat(slideWidth);
+      }
+      for (let i = core.sLength; i < core.sLength + bpoptions.nextDupes.length; i++) {
+        core._pts[i] = (i + bpoptions.prevDupes.length) * parseFloat(slideWidth);
+      }
+      animateTrack(core);
     }
   };
 
+
+
+  const goToPreviousSet = (core: ICore) => {
+    core._ci -= core.bpo._toShow;
+    if (!core._pts[core._ci]) {
+      core._ci += core.sLength;
+    }
+    core._pi = core._ci + core.bpo._toShow;
+    animateTrack(core);
+  };
+
+
+
+  const goToNextSet = (core: ICore) => {
+    core._ci += core.bpo._toShow;
+    if (!core._pts[core._ci + core.bpo._toShow]) {
+      core._ci -= core.sLength;
+    }
+    core._pi = core._ci - core.bpo._toShow;
+    animateTrack(core);
+  };
+
+
+
+  const toggleArrows = (core: ICore) => {
+    if (core.arrowP) {
+      core.eHandlers.push(eventHandler(core.arrowP, 'click', (event: Event) => {
+        event.preventDefault();
+        goToPreviousSet(core);
+      }));
+    }
+    if (core.arrowN) {
+      core.eHandlers.push(eventHandler(core.arrowN, 'click', (event: Event) => {
+        event.preventDefault();
+        goToNextSet(core);
+      }));
+    }
+  };
 
 
 
   const manageCore = (core: ICore) => {
     for (let i=0; i<core.bpall.length; i++) {
       core.bpall[i].bpSLen = core.sLength;
-      for (let j=core.sLength - core.bpall[i]._toShow + 1; j<core.sLength; j++) {
-        let elem = core.slides[j].cloneNode(true);
+      for (let j=core.sLength - core.bpall[i]._toShow; j<core.sLength; j++) {
+        let elem = core._ds[j].cloneNode(true);
         addClass(elem as HTMLElement, core.settings.dupCls || '');
         core.bpall[i].bpSLen++;
         core.bpall[i].prevDupes.push(elem);
       }
       for (let j=0; j<core.bpall[i]._toShow; j++) {
-        let elem = core.slides[j].cloneNode(true);
+        let elem = core._ds[j].cloneNode(true);
         addClass(elem as HTMLElement, core.settings.dupCls || '');
         core.bpall[i].bpSLen++;
         core.bpall[i].nextDupes.push(elem);
       }
     }
+    toggleArrows(core);
   };
 
 
@@ -488,21 +558,22 @@ namespace Carouzel {
     _core.rootElem = rootElem;
     _core.settings = mapSettings(settings);
     
-    _core.cIndex = settings.startAtIndex = (settings.startAtIndex || 0) - 1;
+    _core._ci = settings.startAtIndex = (settings.startAtIndex || 0) - 1;
     _core.eHandlers = [];
     _core.arrowN = rootElem.querySelector(`${_Selectors.arrowN}`);
     _core.arrowP = rootElem.querySelector(`${_Selectors.arrowP}`);
     _core.arrowsW = rootElem.querySelector(`${_Selectors.arrowsW}`);
     _core.nav = rootElem.querySelector(`${_Selectors.nav}`);
     _core.navW = rootElem.querySelector(`${_Selectors.navW}`);
-    _core.slides = arrayCall(rootElem.querySelectorAll(`${_Selectors.slide}`));
+    _core._ds = arrayCall(rootElem.querySelectorAll(`${_Selectors.slide}`));
     _core.track = rootElem.querySelector(`${_Selectors.track}`);
     _core.trackW = rootElem.querySelector(`${_Selectors.trackW}`);
-    _core.sLength = _core.slides.length;
-    _core.__pts = [];
+    _core.sLength = _core._ds.length;
+    _core._pts = [];
+    _core.isLeftAdded = false;
 
-    if (!_core.slides[_core.cIndex]) {
-      _core.cIndex = settings.startAtIndex = 0;
+    if (!_core._ds[_core._ci]) {
+      _core._ci = settings.startAtIndex = 0;
     }
 
     navIndex; _Selectors; addClass; removeClass; removeEventListeners; eventHandler;
