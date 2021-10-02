@@ -22,7 +22,7 @@
   .__carouzel-hidden {
     display: none !important;
   }
-  [data-carouzelprev], [data-carouzelnext] {
+  [data-carouzelpreviousarrow], [data-carouzelnextarrow] {
     background-color: rgba(#000, 0.25);
     border: 1px solid #000;
     color: transparent;
@@ -43,11 +43,11 @@
       pointer-events: none;
     }
   }
-  [data-carouzelprev] {
+  [data-carouzelpreviousarrow] {
     border-radius: 0 8px 8px 0;
     left: 0;
   }
-  [data-carouzelnext] {
+  [data-carouzelnextarrow] {
     border-radius: 8px 0 0 8px;
     right: 0;
   }
@@ -68,18 +68,18 @@
     border: 1px solid transparent;
     width: 100%;
   }
-  [data-carouzelnavinner] {
+  [data-carouzelnavigation] {
     align-items: center;
     display: flex;
     justify-content: center;
     list-style: none;
-    margin: 0;
+    margin: 0 0 1em 0;
     padding: 0;
   }
-  [data-carouzelnav] {
+  [data-carouzelnavigationwrapper] {
     margin-bottom: 1em;
   }
-  [data-carouzelnavbtn] {
+  [data-carouzelnavbutton] {
     background-color: rgba(#000, 0.15);
     border-radius: 100%;
     border: 1px solid #000;

@@ -36,13 +36,14 @@ var Carouzel;
         arrowN: '[data-carouzelnextarrow]',
         arrowP: '[data-carouzelpreviousarrow]',
         arrowsW: '[data-carouzelarrowswrapper]',
+        dot: '[data-carouzelnavbutton]',
         nav: '[data-carouzelnavigation]',
         navW: '[data-carouzelnavigationwrapper]',
         root: '[data-carouzel]',
         rootAuto: '[data-carouzelauto]',
+        slide: '[data-carouzelslide]',
         track: '[data-carouzeltrack]',
-        trackW: '[data-carouzeltrackwrapper]',
-        slide: '[data-carouzelslide]'
+        trackW: '[data-carouzeltrackwrapper]'
     };
     var _Defaults = {
         activeClass: '__carouzel-active',
@@ -234,6 +235,15 @@ var Carouzel;
             core.bpo = bpoptions;
             core.bpo_old = bpoptions;
         }
+        if (core.nav) {
+            var dots = core.nav.querySelectorAll(_Selectors.dot);
+            for (var i = 0; i < dots.length; i++) {
+                core.nav.removeChild(dots[i]);
+            }
+            for (var i = 0; i < bpoptions.dots.length; i++) {
+                core.nav.appendChild(bpoptions.dots[i]);
+            }
+        }
         if (core.trackW && core.track) {
             core._pts = {};
             slideWidth = (core.trackW.clientWidth / bpoptions._toShow).toFixed(4) || '1';
@@ -300,7 +310,7 @@ var Carouzel;
             }));
         }
     };
-    var manageCore = function (core) {
+    var generateElements = function (core) {
         for (var i = 0; i < core.bpall.length; i++) {
             core.bpall[i].bpSLen = core.sLength;
             if (core.settings.inf) {
@@ -317,6 +327,32 @@ var Carouzel;
                     core.bpall[i].nextDupes.push(elem);
                 }
             }
+        }
+        var _loop_1 = function (i) {
+            var pageLength = Math.ceil(core.sLength / core.bpall[i]._toScroll) - (core.bpall[i]._toShow - core.bpall[i]._toScroll);
+            var navBtns = [];
+            core.bpall[i].dots = [];
+            for (var j = 0; j < pageLength; j++) {
+                var elem = document.createElement('button');
+                elem.setAttribute(_Selectors.dot.slice(1, -1), '');
+                elem.setAttribute('type', 'button');
+                elem.innerHTML = (j + 1) + '';
+                navBtns.push(elem);
+            }
+            var _loop_2 = function (j) {
+                core.eHandlers.push(eventHandler(navBtns[j], 'click', function (event) {
+                    event.preventDefault();
+                    core._ci = j * core.bpall[i]._toScroll;
+                    animateTrack(core);
+                }));
+                core.bpall[i].dots.push(navBtns[j]);
+            };
+            for (var j = 0; j < pageLength; j++) {
+                _loop_2(j);
+            }
+        };
+        for (var i = 0; i < core.bpall.length; i++) {
+            _loop_1(i);
         }
         toggleArrows(core);
     };
@@ -351,6 +387,7 @@ var Carouzel;
             _toShow: settings._toShow ? settings._toShow : _Defaults.slidesToShow,
             bp: 0,
             bpSLen: 0,
+            dots: [],
             hasSwipe: settings.hasSwipe ? settings.hasSwipe : _Defaults.hasTouchSwipe,
             nextDupes: [],
             prevDupes: []
@@ -425,6 +462,7 @@ var Carouzel;
                     _toShow: settings.responsive[i].slidesToShow,
                     bp: settings.responsive[i].breakpoint,
                     bpSLen: 0,
+                    dots: [],
                     hasSwipe: settings.responsive[i].hasTouchSwipe,
                     nextDupes: [],
                     prevDupes: []
@@ -464,7 +502,7 @@ var Carouzel;
         eventHandler;
         if (_core.track && _core.sLength > 0) {
             _core.bpall = updateBreakpoints(_core.settings);
-            manageCore(_core);
+            generateElements(_core);
             applyLayout(_core);
         }
         addClass(core.rootElem, core.settings.activeCls || '');

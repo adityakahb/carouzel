@@ -25,6 +25,7 @@ namespace Carouzel {
     _toShow: number;
     bp: number | string;
     bpSLen: number;
+    dots: Node[];
     hasSwipe: boolean;
     nextDupes: Node[];
     prevDupes: Node[];
@@ -127,13 +128,14 @@ namespace Carouzel {
     arrowN: '[data-carouzelnextarrow]',
     arrowP: '[data-carouzelpreviousarrow]',
     arrowsW: '[data-carouzelarrowswrapper]',
+    dot: '[data-carouzelnavbutton]',
     nav: '[data-carouzelnavigation]',
     navW: '[data-carouzelnavigationwrapper]',
     root: '[data-carouzel]',
     rootAuto: '[data-carouzelauto]',
+    slide: '[data-carouzelslide]',
     track: '[data-carouzeltrack]',
     trackW: '[data-carouzeltrackwrapper]',
-    slide: '[data-carouzelslide]'
   };
   const _Defaults:ICarouzelSettings = {
     activeClass: '__carouzel-active',
@@ -342,6 +344,15 @@ namespace Carouzel {
       core.bpo = bpoptions;
       core.bpo_old = bpoptions;
     }
+    if (core.nav) {
+      let dots = core.nav.querySelectorAll(_Selectors.dot);
+      for (let i = 0; i < dots.length; i++) {
+        core.nav.removeChild(dots[i]);
+      }
+      for (let i = 0; i < bpoptions.dots.length; i++) {
+        core.nav.appendChild(bpoptions.dots[i]);
+      }
+    }
     if (core.trackW && core.track) {
       core._pts = {};
       slideWidth = (core.trackW.clientWidth / bpoptions._toShow).toFixed(4) || '1';
@@ -420,7 +431,7 @@ namespace Carouzel {
 
 
 
-  const manageCore = (core: ICore) => {
+  const generateElements = (core: ICore) => {
     for (let i=0; i<core.bpall.length; i++) {
       core.bpall[i].bpSLen = core.sLength;
       if (core.settings.inf) {
@@ -436,6 +447,26 @@ namespace Carouzel {
           core.bpall[i].bpSLen++;
           core.bpall[i].nextDupes.push(elem);
         }
+      }
+    }
+    for (let i=0; i < core.bpall.length; i++) {
+      let pageLength = Math.ceil(core.sLength / core.bpall[i]._toScroll) - (core.bpall[i]._toShow - core.bpall[i]._toScroll);
+      let navBtns: Node[] = [];
+      core.bpall[i].dots = [];
+      for (let j=0; j < pageLength; j++) {
+        let elem = document.createElement('button');
+        elem.setAttribute(_Selectors.dot.slice(1, -1), '');
+        elem.setAttribute('type', 'button');
+        elem.innerHTML = (j + 1) + '';
+        navBtns.push(elem);
+      }
+      for (let j=0; j < pageLength; j++) {
+        core.eHandlers.push(eventHandler(navBtns[j] as HTMLElement, 'click', function (event: Event) {
+          event.preventDefault();
+          core._ci = j * core.bpall[i]._toScroll;
+          animateTrack(core);
+        }));
+        core.bpall[i].dots.push(navBtns[j]);
       }
     }
     toggleArrows(core);
@@ -475,6 +506,7 @@ namespace Carouzel {
       _toShow: settings._toShow ? settings._toShow : _Defaults.slidesToShow,
       bp: 0,
       bpSLen: 0,
+      dots: [],
       hasSwipe: settings.hasSwipe ? settings.hasSwipe : _Defaults.hasTouchSwipe,
       nextDupes: [],
       prevDupes: [],
@@ -519,6 +551,8 @@ namespace Carouzel {
     return [];
   };
 
+
+
   const mapSettings = (settings: ICarouzelSettings) => {
     let settingsobj: ICarouzelCoreSettings = {
       _arrows: settings.showArrows,
@@ -551,6 +585,7 @@ namespace Carouzel {
           _toShow: settings.responsive[i].slidesToShow,
           bp: settings.responsive[i].breakpoint,
           bpSLen: 0,
+          dots: [],
           hasSwipe: settings.responsive[i].hasTouchSwipe,
           nextDupes: [],
           prevDupes: [],
@@ -563,6 +598,10 @@ namespace Carouzel {
 
     return settingsobj;
   };
+
+
+
+
 
   const init = (core: ICore, rootElem: HTMLElement, settings: ICarouzelSettings) => {
     let _core: ICore = core;
@@ -590,7 +629,7 @@ namespace Carouzel {
     navIndex; _Selectors; addClass; removeClass; removeEventListeners; eventHandler;
     if (_core.track && _core.sLength > 0) {
       _core.bpall = updateBreakpoints(_core.settings);
-      manageCore(_core);
+      generateElements(_core);
       applyLayout(_core);
     }
 
