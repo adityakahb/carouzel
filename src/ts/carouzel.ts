@@ -21,28 +21,28 @@ namespace Carouzel {
   interface ICarouzelCoreBreakpoint {
     _arrows: boolean;
     _nav: boolean;
-    _toScroll: number;
-    _toShow: number;
+    _2Scroll: number;
+    _2Show: number;
     bp: number | string;
     bpSLen: number;
     dots: Node[];
-    hasSwipe: boolean;
-    nextDupes: Node[];
-    prevDupes: Node[];
+    swipe: boolean;
+    nDups: Node[];
+    pDups: Node[];
   }
   
   interface ICarouzelCoreSettings {
     _arrows: boolean;
     _nav: boolean;
-    _toScroll: number;
-    _toShow: number;
+    _2Scroll: number;
+    _2Show: number;
     activeCls?: string;
     cntrCls?: string;
     cntrMode?: boolean;
     disableCls?: string;
     dupCls?: string;
     effect?: string;
-    hasSwipe: boolean;
+    swipe: boolean;
     idPrefix?: string;
     inf?: boolean;
     isRTL?: boolean;
@@ -168,7 +168,7 @@ namespace Carouzel {
    *
    */
   const stringTrim = (str: string) => {
-    return str.replace(/^\s+|\s+$/g, '');
+    return str.replace(/^\s+|\s+$|\s+(?=\s)/g, '');
   };
 
   /**
@@ -289,24 +289,34 @@ namespace Carouzel {
     return eventHandler;
   };
 
+
   
-
-  const manageDuplicates = (track: HTMLElement, bpo: ICarouzelCoreBreakpoint, duplicateClass: string) => {
-    let duplicates = arrayCall(track.querySelectorAll('.' + duplicateClass));
-    for (let i=0; i < duplicates.length; i++) {
-      track.removeChild(duplicates[i]);
-    }
-    for (let i=bpo.prevDupes.length - 1; i >= 0; i--) {
-      track.prepend(bpo.prevDupes[i]);
-    }
-    for (let i=0; i < bpo.nextDupes.length; i++) {
-      track.append(bpo.nextDupes[i]);
-    }
-  }
-
 
 
   const animateTrack = (core: ICore) => {
+    core._pi > core._ci ? (() => {
+      if (core.settings.inf) {
+        if (!core._pts[core._ci]) {
+          core._ci += core.sLength;
+        }
+        core._pi = core._ci + core.bpo._2Scroll;
+      } else {
+        if (core._ci < 0) {
+          core._ci = 0;
+        }
+      }
+    })() : (() => {
+      if (core.settings.inf) {
+        if (!core._pts[core._ci + core.bpo._2Show]) {
+          core._ci -= core.sLength;
+        }
+        core._pi = core._ci - core.bpo._2Scroll;
+      } else {
+        if (core._ci + core.bpo._2Show >= core.sLength) {
+          core._ci = core.sLength - core.bpo._2Show;
+        }
+      }
+    })();
     if (core.settings.inf) {
       if (core.track) {
         core.track.style.transitionDuration = '0ms';
@@ -320,6 +330,24 @@ namespace Carouzel {
       }
     }, 0);
   };
+
+  
+
+
+
+  const manageDuplicates = (track: HTMLElement, bpo: ICarouzelCoreBreakpoint, duplicateClass: string) => {
+    let duplicates = arrayCall(track.querySelectorAll('.' + duplicateClass));
+    for (let i=0; i < duplicates.length; i++) {
+      track.removeChild(duplicates[i]);
+    }
+    for (let i=bpo.pDups.length - 1; i >= 0; i--) {
+      track.prepend(bpo.pDups[i]);
+    }
+    for (let i=0; i < bpo.nDups.length; i++) {
+      track.append(bpo.nDups[i]);
+    }
+  }
+
 
 
 
@@ -337,7 +365,7 @@ namespace Carouzel {
       }
       len++;
     }
-    if ((core.bpo_old || {})._toShow !== bpoptions._toShow && core.track) {
+    if ((core.bpo_old || {})._2Show !== bpoptions._2Show && core.track) {
       manageDuplicates(core.track, bpoptions, core.settings.dupCls || '');
     }
     if ((core.bpo_old || {}).bp !== bpoptions.bp) {
@@ -355,24 +383,24 @@ namespace Carouzel {
     }
     if (core.trackW && core.track) {
       core._pts = {};
-      slideWidth = (core.trackW.clientWidth / bpoptions._toShow).toFixed(4) || '1';
+      slideWidth = (core.trackW.clientWidth / bpoptions._2Show).toFixed(4) || '1';
       
       core.sWidth = parseFloat(slideWidth);
 
-      trackWidth = (parseFloat(slideWidth + '') * (core.sLength >= bpoptions._toShow ? bpoptions.bpSLen : bpoptions._toShow)).toFixed(4);
+      trackWidth = (parseFloat(slideWidth + '') * (core.sLength >= bpoptions._2Show ? bpoptions.bpSLen : bpoptions._2Show)).toFixed(4);
       core.track.style.width = trackWidth + 'px';
       core._as = arrayCall(core.trackW.querySelectorAll(_Selectors.slide));
       for (let i = 0; i < core._as.length; i++) {
         core._as[i].style.width = slideWidth + 'px';
       }
-      for (let i = bpoptions.prevDupes.length; i > 0; i--) {
-        core._pts[-i] = (-i + bpoptions.prevDupes.length) * parseFloat(slideWidth);
+      for (let i = bpoptions.pDups.length; i > 0; i--) {
+        core._pts[-i] = (-i + bpoptions.pDups.length) * parseFloat(slideWidth);
       }
       for (let i = 0; i < core.sLength; i++) {
-        core._pts[i] = (i + bpoptions.prevDupes.length) * parseFloat(slideWidth);
+        core._pts[i] = (i + bpoptions.pDups.length) * parseFloat(slideWidth);
       }
-      for (let i = core.sLength; i < core.sLength + bpoptions.nextDupes.length; i++) {
-        core._pts[i] = (i + bpoptions.prevDupes.length) * parseFloat(slideWidth);
+      for (let i = core.sLength; i < core.sLength + bpoptions.nDups.length; i++) {
+        core._pts[i] = (i + bpoptions.pDups.length) * parseFloat(slideWidth);
       }
       animateTrack(core);
     }
@@ -380,37 +408,22 @@ namespace Carouzel {
 
 
 
-  const goToPreviousSet = (core: ICore) => {
-    core._ci -= core.bpo._toScroll;
-    if (core.settings.inf) {
-      if (!core._pts[core._ci]) {
-        core._ci += core.sLength;
-      }
-      core._pi = core._ci + core.bpo._toScroll;
-    } else {
-      if (core._ci < 0) {
-        core._ci = 0;
-      }
-    }
+
+  const goToPrev = (core: ICore) => {
+    core._pi = core._ci;
+    core._ci -= core.bpo._2Scroll;
     animateTrack(core);
   };
 
 
 
-  const goToNextSet = (core: ICore) => {
-    core._ci += core.bpo._toScroll;
-    if (core.settings.inf) {
-      if (!core._pts[core._ci + core.bpo._toShow]) {
-        core._ci -= core.sLength;
-      }
-      core._pi = core._ci - core.bpo._toScroll;
-    } else {
-      if (core._ci + core.bpo._toShow >= core.sLength) {
-        core._ci = core.sLength - core.bpo._toShow;
-      }
-    }
+
+  const goToNext = (core: ICore) => {
+    core._pi = core._ci;
+    core._ci += core.bpo._2Scroll;
     animateTrack(core);
   };
+
 
 
 
@@ -418,16 +431,17 @@ namespace Carouzel {
     if (core.arrowP) {
       core.eHandlers.push(eventHandler(core.arrowP, 'click', (event: Event) => {
         event.preventDefault();
-        goToPreviousSet(core);
+        goToPrev(core);
       }));
     }
     if (core.arrowN) {
       core.eHandlers.push(eventHandler(core.arrowN, 'click', (event: Event) => {
         event.preventDefault();
-        goToNextSet(core);
+        goToNext(core);
       }));
     }
   };
+
 
 
 
@@ -435,22 +449,22 @@ namespace Carouzel {
     for (let i=0; i<core.bpall.length; i++) {
       core.bpall[i].bpSLen = core.sLength;
       if (core.settings.inf) {
-        for (let j=core.sLength - core.bpall[i]._toShow; j<core.sLength; j++) {
+        for (let j=core.sLength - core.bpall[i]._2Show; j<core.sLength; j++) {
           let elem = core._ds[j].cloneNode(true);
           addClass(elem as HTMLElement, core.settings.dupCls || '');
           core.bpall[i].bpSLen++;
-          core.bpall[i].prevDupes.push(elem);
+          core.bpall[i].pDups.push(elem);
         }
-        for (let j=0; j<core.bpall[i]._toShow; j++) {
+        for (let j=0; j<core.bpall[i]._2Show; j++) {
           let elem = core._ds[j].cloneNode(true);
           addClass(elem as HTMLElement, core.settings.dupCls || '');
           core.bpall[i].bpSLen++;
-          core.bpall[i].nextDupes.push(elem);
+          core.bpall[i].nDups.push(elem);
         }
       }
     }
     for (let i=0; i < core.bpall.length; i++) {
-      let pageLength = Math.ceil(core.sLength / core.bpall[i]._toScroll) - (core.bpall[i]._toShow - core.bpall[i]._toScroll);
+      let pageLength = Math.ceil(core.sLength / core.bpall[i]._2Scroll);
       let navBtns: Node[] = [];
       core.bpall[i].dots = [];
       for (let j=0; j < pageLength; j++) {
@@ -463,7 +477,8 @@ namespace Carouzel {
       for (let j=0; j < pageLength; j++) {
         core.eHandlers.push(eventHandler(navBtns[j] as HTMLElement, 'click', function (event: Event) {
           event.preventDefault();
-          core._ci = j * core.bpall[i]._toScroll;
+          core._pi = core._ci;
+          core._ci = j * core.bpall[i]._2Scroll;
           animateTrack(core);
         }));
         core.bpall[i].dots.push(navBtns[j]);
@@ -471,6 +486,7 @@ namespace Carouzel {
     }
     toggleArrows(core);
   };
+
 
 
 
@@ -498,18 +514,19 @@ namespace Carouzel {
 
 
 
+
   const updateBreakpoints = (settings: ICarouzelCoreSettings) => {
     const defaultBreakpoint: ICarouzelCoreBreakpoint = {
       _arrows: settings._arrows ? settings._arrows : _Defaults.showArrows,
       _nav: settings._nav ? settings._nav : _Defaults.showNavigation,
-      _toScroll: settings._toScroll ? settings._toScroll : _Defaults.slidesToScroll,
-      _toShow: settings._toShow ? settings._toShow : _Defaults.slidesToShow,
+      _2Scroll: settings._2Scroll ? settings._2Scroll : _Defaults.slidesToScroll,
+      _2Show: settings._2Show ? settings._2Show : _Defaults.slidesToShow,
       bp: 0,
       bpSLen: 0,
       dots: [],
-      hasSwipe: settings.hasSwipe ? settings.hasSwipe : _Defaults.hasTouchSwipe,
-      nextDupes: [],
-      prevDupes: [],
+      swipe: settings.swipe ? settings.swipe : _Defaults.hasTouchSwipe,
+      nDups: [],
+      pDups: [],
     };
     let tempArr = [];
     if (settings.res && settings.res.length > 0) {
@@ -534,14 +551,14 @@ namespace Carouzel {
         if (!bp2._nav) {
           bp2._nav = bp1._nav;
         }
-        if (!bp2._toShow) {
-          bp2._toShow = bp1._toShow;
+        if (!bp2._2Show) {
+          bp2._2Show = bp1._2Show;
         }
-        if (!bp2._toScroll) {
-          bp2._toScroll = bp1._toScroll;
+        if (!bp2._2Scroll) {
+          bp2._2Scroll = bp1._2Scroll;
         }
-        if (!bp2.hasSwipe) {
-          bp2.hasSwipe = bp1.hasSwipe;
+        if (!bp2.swipe) {
+          bp2.swipe = bp1.swipe;
         }
         bpArr.push(bp2);
         bpLen++;
@@ -557,15 +574,15 @@ namespace Carouzel {
     let settingsobj: ICarouzelCoreSettings = {
       _arrows: settings.showArrows,
       _nav: settings.showNavigation,
-      _toScroll: settings.slidesToScroll,
-      _toShow: settings.slidesToShow,
+      _2Scroll: settings.slidesToScroll,
+      _2Show: settings.slidesToShow,
       activeCls: settings.activeClass,
       cntrCls: settings.centeredClass,
       cntrMode: settings.centerMode,
       disableCls: settings.disabledClass,
       dupCls: settings.duplicateClass,
       effect: settings.animationEffect,
-      hasSwipe: settings.hasTouchSwipe,
+      swipe: settings.hasTouchSwipe,
       inf: settings.isInfinite,
       isRTL: settings.isRTL,
       res: [],
@@ -581,14 +598,14 @@ namespace Carouzel {
         let obj: ICarouzelCoreBreakpoint = {
           _arrows: settings.responsive[i].showArrows,
           _nav: settings.responsive[i].showNavigation,
-          _toScroll: settings.responsive[i].slidesToScroll,
-          _toShow: settings.responsive[i].slidesToShow,
+          _2Scroll: settings.responsive[i].slidesToScroll,
+          _2Show: settings.responsive[i].slidesToShow,
           bp: settings.responsive[i].breakpoint,
           bpSLen: 0,
           dots: [],
-          hasSwipe: settings.responsive[i].hasTouchSwipe,
-          nextDupes: [],
-          prevDupes: [],
+          swipe: settings.responsive[i].hasTouchSwipe,
+          nDups: [],
+          pDups: [],
         }
         if (settingsobj.res) {
           settingsobj.res.push(obj);

@@ -75,7 +75,7 @@ var Carouzel;
      *
      */
     var stringTrim = function (str) {
-        return str.replace(/^\s+|\s+$/g, '');
+        return str.replace(/^\s+|\s+$|\s+(?=\s)/g, '');
     };
     /**
      * Function to convert NodeList and other lists to loopable Arrays
@@ -189,19 +189,32 @@ var Carouzel;
         element.addEventListener(type, listener, _useCapture);
         return eventHandler;
     };
-    var manageDuplicates = function (track, bpo, duplicateClass) {
-        var duplicates = arrayCall(track.querySelectorAll('.' + duplicateClass));
-        for (var i = 0; i < duplicates.length; i++) {
-            track.removeChild(duplicates[i]);
-        }
-        for (var i = bpo.prevDupes.length - 1; i >= 0; i--) {
-            track.prepend(bpo.prevDupes[i]);
-        }
-        for (var i = 0; i < bpo.nextDupes.length; i++) {
-            track.append(bpo.nextDupes[i]);
-        }
-    };
     var animateTrack = function (core) {
+        core._pi > core._ci ? (function () {
+            if (core.settings.inf) {
+                if (!core._pts[core._ci]) {
+                    core._ci += core.sLength;
+                }
+                core._pi = core._ci + core.bpo._2Scroll;
+            }
+            else {
+                if (core._ci < 0) {
+                    core._ci = 0;
+                }
+            }
+        })() : (function () {
+            if (core.settings.inf) {
+                if (!core._pts[core._ci + core.bpo._2Show]) {
+                    core._ci -= core.sLength;
+                }
+                core._pi = core._ci - core.bpo._2Scroll;
+            }
+            else {
+                if (core._ci + core.bpo._2Show >= core.sLength) {
+                    core._ci = core.sLength - core.bpo._2Show;
+                }
+            }
+        })();
         if (core.settings.inf) {
             if (core.track) {
                 core.track.style.transitionDuration = '0ms';
@@ -214,6 +227,18 @@ var Carouzel;
                 core.track.style.transform = "translate3d(" + -core._pts[core._ci] + "px, 0, 0)";
             }
         }, 0);
+    };
+    var manageDuplicates = function (track, bpo, duplicateClass) {
+        var duplicates = arrayCall(track.querySelectorAll('.' + duplicateClass));
+        for (var i = 0; i < duplicates.length; i++) {
+            track.removeChild(duplicates[i]);
+        }
+        for (var i = bpo.pDups.length - 1; i >= 0; i--) {
+            track.prepend(bpo.pDups[i]);
+        }
+        for (var i = 0; i < bpo.nDups.length; i++) {
+            track.append(bpo.nDups[i]);
+        }
     };
     var applyLayout = function (core) {
         var viewportWidth = window.innerWidth;
@@ -228,7 +253,7 @@ var Carouzel;
             }
             len++;
         }
-        if ((core.bpo_old || {})._toShow !== bpoptions._toShow && core.track) {
+        if ((core.bpo_old || {})._2Show !== bpoptions._2Show && core.track) {
             manageDuplicates(core.track, bpoptions, core.settings.dupCls || '');
         }
         if ((core.bpo_old || {}).bp !== bpoptions.bp) {
@@ -246,67 +271,47 @@ var Carouzel;
         }
         if (core.trackW && core.track) {
             core._pts = {};
-            slideWidth = (core.trackW.clientWidth / bpoptions._toShow).toFixed(4) || '1';
+            slideWidth = (core.trackW.clientWidth / bpoptions._2Show).toFixed(4) || '1';
             core.sWidth = parseFloat(slideWidth);
-            trackWidth = (parseFloat(slideWidth + '') * (core.sLength >= bpoptions._toShow ? bpoptions.bpSLen : bpoptions._toShow)).toFixed(4);
+            trackWidth = (parseFloat(slideWidth + '') * (core.sLength >= bpoptions._2Show ? bpoptions.bpSLen : bpoptions._2Show)).toFixed(4);
             core.track.style.width = trackWidth + 'px';
             core._as = arrayCall(core.trackW.querySelectorAll(_Selectors.slide));
             for (var i = 0; i < core._as.length; i++) {
                 core._as[i].style.width = slideWidth + 'px';
             }
-            for (var i = bpoptions.prevDupes.length; i > 0; i--) {
-                core._pts[-i] = (-i + bpoptions.prevDupes.length) * parseFloat(slideWidth);
+            for (var i = bpoptions.pDups.length; i > 0; i--) {
+                core._pts[-i] = (-i + bpoptions.pDups.length) * parseFloat(slideWidth);
             }
             for (var i = 0; i < core.sLength; i++) {
-                core._pts[i] = (i + bpoptions.prevDupes.length) * parseFloat(slideWidth);
+                core._pts[i] = (i + bpoptions.pDups.length) * parseFloat(slideWidth);
             }
-            for (var i = core.sLength; i < core.sLength + bpoptions.nextDupes.length; i++) {
-                core._pts[i] = (i + bpoptions.prevDupes.length) * parseFloat(slideWidth);
+            for (var i = core.sLength; i < core.sLength + bpoptions.nDups.length; i++) {
+                core._pts[i] = (i + bpoptions.pDups.length) * parseFloat(slideWidth);
             }
             animateTrack(core);
         }
     };
-    var goToPreviousSet = function (core) {
-        core._ci -= core.bpo._toScroll;
-        if (core.settings.inf) {
-            if (!core._pts[core._ci]) {
-                core._ci += core.sLength;
-            }
-            core._pi = core._ci + core.bpo._toScroll;
-        }
-        else {
-            if (core._ci < 0) {
-                core._ci = 0;
-            }
-        }
+    var goToPrev = function (core) {
+        core._pi = core._ci;
+        core._ci -= core.bpo._2Scroll;
         animateTrack(core);
     };
-    var goToNextSet = function (core) {
-        core._ci += core.bpo._toScroll;
-        if (core.settings.inf) {
-            if (!core._pts[core._ci + core.bpo._toShow]) {
-                core._ci -= core.sLength;
-            }
-            core._pi = core._ci - core.bpo._toScroll;
-        }
-        else {
-            if (core._ci + core.bpo._toShow >= core.sLength) {
-                core._ci = core.sLength - core.bpo._toShow;
-            }
-        }
+    var goToNext = function (core) {
+        core._pi = core._ci;
+        core._ci += core.bpo._2Scroll;
         animateTrack(core);
     };
     var toggleArrows = function (core) {
         if (core.arrowP) {
             core.eHandlers.push(eventHandler(core.arrowP, 'click', function (event) {
                 event.preventDefault();
-                goToPreviousSet(core);
+                goToPrev(core);
             }));
         }
         if (core.arrowN) {
             core.eHandlers.push(eventHandler(core.arrowN, 'click', function (event) {
                 event.preventDefault();
-                goToNextSet(core);
+                goToNext(core);
             }));
         }
     };
@@ -314,22 +319,22 @@ var Carouzel;
         for (var i = 0; i < core.bpall.length; i++) {
             core.bpall[i].bpSLen = core.sLength;
             if (core.settings.inf) {
-                for (var j = core.sLength - core.bpall[i]._toShow; j < core.sLength; j++) {
+                for (var j = core.sLength - core.bpall[i]._2Show; j < core.sLength; j++) {
                     var elem = core._ds[j].cloneNode(true);
                     addClass(elem, core.settings.dupCls || '');
                     core.bpall[i].bpSLen++;
-                    core.bpall[i].prevDupes.push(elem);
+                    core.bpall[i].pDups.push(elem);
                 }
-                for (var j = 0; j < core.bpall[i]._toShow; j++) {
+                for (var j = 0; j < core.bpall[i]._2Show; j++) {
                     var elem = core._ds[j].cloneNode(true);
                     addClass(elem, core.settings.dupCls || '');
                     core.bpall[i].bpSLen++;
-                    core.bpall[i].nextDupes.push(elem);
+                    core.bpall[i].nDups.push(elem);
                 }
             }
         }
         var _loop_1 = function (i) {
-            var pageLength = Math.ceil(core.sLength / core.bpall[i]._toScroll) - (core.bpall[i]._toShow - core.bpall[i]._toScroll);
+            var pageLength = Math.ceil(core.sLength / core.bpall[i]._2Scroll);
             var navBtns = [];
             core.bpall[i].dots = [];
             for (var j = 0; j < pageLength; j++) {
@@ -342,7 +347,8 @@ var Carouzel;
             var _loop_2 = function (j) {
                 core.eHandlers.push(eventHandler(navBtns[j], 'click', function (event) {
                     event.preventDefault();
-                    core._ci = j * core.bpall[i]._toScroll;
+                    core._pi = core._ci;
+                    core._ci = j * core.bpall[i]._2Scroll;
                     animateTrack(core);
                 }));
                 core.bpall[i].dots.push(navBtns[j]);
@@ -383,14 +389,14 @@ var Carouzel;
         var defaultBreakpoint = {
             _arrows: settings._arrows ? settings._arrows : _Defaults.showArrows,
             _nav: settings._nav ? settings._nav : _Defaults.showNavigation,
-            _toScroll: settings._toScroll ? settings._toScroll : _Defaults.slidesToScroll,
-            _toShow: settings._toShow ? settings._toShow : _Defaults.slidesToShow,
+            _2Scroll: settings._2Scroll ? settings._2Scroll : _Defaults.slidesToScroll,
+            _2Show: settings._2Show ? settings._2Show : _Defaults.slidesToShow,
             bp: 0,
             bpSLen: 0,
             dots: [],
-            hasSwipe: settings.hasSwipe ? settings.hasSwipe : _Defaults.hasTouchSwipe,
-            nextDupes: [],
-            prevDupes: []
+            swipe: settings.swipe ? settings.swipe : _Defaults.hasTouchSwipe,
+            nDups: [],
+            pDups: []
         };
         var tempArr = [];
         if (settings.res && settings.res.length > 0) {
@@ -415,14 +421,14 @@ var Carouzel;
                 if (!bp2._nav) {
                     bp2._nav = bp1._nav;
                 }
-                if (!bp2._toShow) {
-                    bp2._toShow = bp1._toShow;
+                if (!bp2._2Show) {
+                    bp2._2Show = bp1._2Show;
                 }
-                if (!bp2._toScroll) {
-                    bp2._toScroll = bp1._toScroll;
+                if (!bp2._2Scroll) {
+                    bp2._2Scroll = bp1._2Scroll;
                 }
-                if (!bp2.hasSwipe) {
-                    bp2.hasSwipe = bp1.hasSwipe;
+                if (!bp2.swipe) {
+                    bp2.swipe = bp1.swipe;
                 }
                 bpArr.push(bp2);
                 bpLen++;
@@ -435,15 +441,15 @@ var Carouzel;
         var settingsobj = {
             _arrows: settings.showArrows,
             _nav: settings.showNavigation,
-            _toScroll: settings.slidesToScroll,
-            _toShow: settings.slidesToShow,
+            _2Scroll: settings.slidesToScroll,
+            _2Show: settings.slidesToShow,
             activeCls: settings.activeClass,
             cntrCls: settings.centeredClass,
             cntrMode: settings.centerMode,
             disableCls: settings.disabledClass,
             dupCls: settings.duplicateClass,
             effect: settings.animationEffect,
-            hasSwipe: settings.hasTouchSwipe,
+            swipe: settings.hasTouchSwipe,
             inf: settings.isInfinite,
             isRTL: settings.isRTL,
             res: [],
@@ -458,14 +464,14 @@ var Carouzel;
                 var obj = {
                     _arrows: settings.responsive[i].showArrows,
                     _nav: settings.responsive[i].showNavigation,
-                    _toScroll: settings.responsive[i].slidesToScroll,
-                    _toShow: settings.responsive[i].slidesToShow,
+                    _2Scroll: settings.responsive[i].slidesToScroll,
+                    _2Show: settings.responsive[i].slidesToShow,
                     bp: settings.responsive[i].breakpoint,
                     bpSLen: 0,
                     dots: [],
-                    hasSwipe: settings.responsive[i].hasTouchSwipe,
-                    nextDupes: [],
-                    prevDupes: []
+                    swipe: settings.responsive[i].hasTouchSwipe,
+                    nDups: [],
+                    pDups: []
                 };
                 if (settingsobj.res) {
                     settingsobj.res.push(obj);
