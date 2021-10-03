@@ -149,10 +149,12 @@
     <script src="dist/scripts/carouzel.js" type="text/javascript"></script>
     
     <script type="text/javascript">
+      var isInit = '';
       var __carouzel_instance = Carouzel.Root.getInstance();
       __carouzel_instance.init('#__carouzel_1', {
         slidesToShow: 1,
         startAtIndex: 1,
+        timingFunction: 'ease-in-out',
         responsive: [{
           breakpoint: 1100,
           slidesToScroll: 3,
@@ -160,7 +162,7 @@
         },
         {
           breakpoint: 700,
-          slidesToScroll: 2,
+          slidesToScroll: 1,
           slidesToShow: 2
         }]
       });

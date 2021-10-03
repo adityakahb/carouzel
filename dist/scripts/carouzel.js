@@ -63,7 +63,7 @@ var Carouzel;
         slidesToScroll: 1,
         slidesToShow: 1,
         startAtIndex: 1,
-        timeFunction: 'cubic-bezier(0.250, 0.100, 0.250, 1.000)',
+        timingFunction: 'cubic-bezier(0.250, 0.100, 0.250, 1.000)',
         touchThreshold: 120
     };
     /**
@@ -190,43 +190,36 @@ var Carouzel;
         return eventHandler;
     };
     var animateTrack = function (core) {
-        core._pi > core._ci ? (function () {
-            if (core.settings.inf) {
-                if (!core._pts[core._ci]) {
-                    core._ci += core.sLength;
-                }
-                core._pi = core._ci + core.bpo._2Scroll;
-            }
-            else {
-                if (core._ci < 0) {
-                    core._ci = 0;
-                }
-            }
-        })() : (function () {
-            if (core.settings.inf) {
-                if (!core._pts[core._ci + core.bpo._2Show]) {
-                    core._ci -= core.sLength;
-                }
-                core._pi = core._ci - core.bpo._2Scroll;
-            }
-            else {
-                if (core._ci + core.bpo._2Show >= core.sLength) {
-                    core._ci = core.sLength - core.bpo._2Show;
-                }
-            }
-        })();
+        if (typeof core.settings.bFn === 'function') {
+            core.settings.bFn();
+        }
         if (core.settings.inf) {
             if (core.track) {
+                core.track.style.transitionTimingFunction = 'unset';
                 core.track.style.transitionDuration = '0ms';
                 core.track.style.transform = "translate3d(" + -core._pts[core._pi] + "px, 0, 0)";
             }
         }
+        else {
+            if (core._ci < 0) {
+                core._ci = 0;
+            }
+            if (core._ci + core.bpo._2Show >= core.sLength) {
+                core._ci = core.sLength - core.bpo._2Show;
+            }
+        }
         setTimeout(function () {
             if (core.track) {
+                core.track.style.transitionTimingFunction = core.settings.timeFn;
                 core.track.style.transitionDuration = core.settings.speed + "ms";
                 core.track.style.transform = "translate3d(" + -core._pts[core._ci] + "px, 0, 0)";
             }
         }, 0);
+        setTimeout(function () {
+            if (typeof core.settings.aFn === 'function') {
+                core.settings.aFn();
+            }
+        }, core.settings.speed);
     };
     var manageDuplicates = function (track, bpo, duplicateClass) {
         var duplicates = arrayCall(track.querySelectorAll('.' + duplicateClass));
@@ -294,11 +287,23 @@ var Carouzel;
     var goToPrev = function (core) {
         core._pi = core._ci;
         core._ci -= core.bpo._2Scroll;
+        if (core.settings.inf) {
+            if (!core._pts[core._ci]) {
+                core._ci += core.sLength;
+            }
+            core._pi = core._ci + core.bpo._2Scroll;
+        }
         animateTrack(core);
     };
     var goToNext = function (core) {
         core._pi = core._ci;
         core._ci += core.bpo._2Scroll;
+        if (core.settings.inf) {
+            if (!core._pts[core._ci + core.bpo._2Show]) {
+                core._ci -= core.sLength;
+            }
+            core._pi = core._ci - core.bpo._2Scroll;
+        }
         animateTrack(core);
     };
     var toggleArrows = function (core) {
@@ -334,8 +339,16 @@ var Carouzel;
             }
         }
         var _loop_1 = function (i) {
-            var pageLength = Math.ceil(core.sLength / core.bpall[i]._2Scroll);
+            var pageLength = Math.floor(core.sLength / core.bpall[i]._2Scroll);
             var navBtns = [];
+            var var1 = core.sLength % core.bpall[i]._2Scroll;
+            var var2 = core.bpall[i]._2Show - core.bpall[i]._2Scroll;
+            if (var2 > var1) {
+                pageLength--;
+            }
+            if (var2 < var1) {
+                pageLength++;
+            }
             core.bpall[i].dots = [];
             for (var j = 0; j < pageLength; j++) {
                 var elem = document.createElement('button');
@@ -347,7 +360,6 @@ var Carouzel;
             var _loop_2 = function (j) {
                 core.eHandlers.push(eventHandler(navBtns[j], 'click', function (event) {
                     event.preventDefault();
-                    core._pi = core._ci;
                     core._ci = j * core.bpall[i]._2Scroll;
                     animateTrack(core);
                 }));
@@ -444,6 +456,8 @@ var Carouzel;
             _2Scroll: settings.slidesToScroll,
             _2Show: settings.slidesToShow,
             activeCls: settings.activeClass,
+            aFn: settings.afterScroll,
+            bFn: settings.beforeScroll,
             cntrCls: settings.centeredClass,
             cntrMode: settings.centerMode,
             disableCls: settings.disabledClass,
@@ -457,7 +471,7 @@ var Carouzel;
             speed: settings.animationSpeed,
             startAt: settings.animationSpeed,
             threshold: settings.touchThreshold,
-            timeFn: settings.timeFunction
+            timeFn: settings.timingFunction
         };
         if (settings.responsive && settings.responsive.length > 0) {
             for (var i = 0; i < settings.responsive.length; i++) {
@@ -481,6 +495,9 @@ var Carouzel;
         return settingsobj;
     };
     var init = function (core, rootElem, settings) {
+        if (typeof settings.beforeInit === 'function') {
+            settings.beforeInit();
+        }
         var _core = core;
         _core.rootElem = rootElem;
         _core.settings = mapSettings(settings);
@@ -512,6 +529,9 @@ var Carouzel;
             applyLayout(_core);
         }
         addClass(core.rootElem, core.settings.activeCls || '');
+        if (typeof settings.onInit === 'function') {
+            settings.onInit();
+        }
         return { global: core, local: _core };
     };
     /**

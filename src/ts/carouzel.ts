@@ -37,6 +37,8 @@ namespace Carouzel {
     _2Scroll: number;
     _2Show: number;
     activeCls?: string;
+    aFn?: Function;
+    bFn?: Function;
     cntrCls?: string;
     cntrMode?: boolean;
     disableCls?: string;
@@ -51,7 +53,7 @@ namespace Carouzel {
     speed?: number;
     startAt?: number;
     threshold?: number;
-    timeFn?: string;
+    timeFn: string;
   }
   
   interface ICarouzelBreakpoint {
@@ -65,8 +67,11 @@ namespace Carouzel {
 
   interface ICarouzelSettings {
     activeClass?: string;
+    afterScroll?: Function;
     animationEffect?: string;
     animationSpeed?: number;
+    beforeInit?: Function;
+    beforeScroll?: Function;
     centeredClass?: string;
     centerMode?: boolean;
     disabledClass?: string;
@@ -74,6 +79,7 @@ namespace Carouzel {
     hasTouchSwipe: boolean;
     isInfinite?: boolean;
     isRTL?: boolean;
+    onInit?: Function;
     responsive?: ICarouzelBreakpoint[];
     rtlClass?: string;
     showArrows: boolean;
@@ -81,7 +87,7 @@ namespace Carouzel {
     slidesToScroll: number;
     slidesToShow: number;
     startAtIndex?: number;
-    timeFunction?: string
+    timingFunction: string
     touchThreshold?: number;
   }
 
@@ -147,7 +153,7 @@ namespace Carouzel {
     duplicateClass: '__carouzel-duplicate',
     hasTouchSwipe: true,
     isInfinite: true,
-    isRTL: false,
+    isRTL: false, 
     responsive: [],
     rtlClass: '__carouzel-rtl',
     showArrows: true,
@@ -155,7 +161,7 @@ namespace Carouzel {
     slidesToScroll: 1,
     slidesToShow: 1,
     startAtIndex: 1,
-    timeFunction: 'cubic-bezier(0.250, 0.100, 0.250, 1.000)',
+    timingFunction: 'cubic-bezier(0.250, 0.100, 0.250, 1.000)',
     touchThreshold: 120,
   };
 
@@ -294,41 +300,35 @@ namespace Carouzel {
 
 
   const animateTrack = (core: ICore) => {
-    core._pi > core._ci ? (() => {
-      if (core.settings.inf) {
-        if (!core._pts[core._ci]) {
-          core._ci += core.sLength;
-        }
-        core._pi = core._ci + core.bpo._2Scroll;
-      } else {
-        if (core._ci < 0) {
-          core._ci = 0;
-        }
-      }
-    })() : (() => {
-      if (core.settings.inf) {
-        if (!core._pts[core._ci + core.bpo._2Show]) {
-          core._ci -= core.sLength;
-        }
-        core._pi = core._ci - core.bpo._2Scroll;
-      } else {
-        if (core._ci + core.bpo._2Show >= core.sLength) {
-          core._ci = core.sLength - core.bpo._2Show;
-        }
-      }
-    })();
+    if (typeof core.settings.bFn === 'function') {
+      core.settings.bFn();
+    }
     if (core.settings.inf) {
       if (core.track) {
+        core.track.style.transitionTimingFunction = 'unset';
         core.track.style.transitionDuration = '0ms';
         core.track.style.transform = `translate3d(${-core._pts[core._pi]}px, 0, 0)`;
+      }
+    } else {
+      if (core._ci < 0) {
+        core._ci = 0;
+      }
+      if (core._ci + core.bpo._2Show >= core.sLength) {
+        core._ci = core.sLength - core.bpo._2Show;
       }
     }
     setTimeout(() => {
       if (core.track) {
+        core.track.style.transitionTimingFunction = core.settings.timeFn;
         core.track.style.transitionDuration = `${core.settings.speed}ms`;
         core.track.style.transform = `translate3d(${-core._pts[core._ci]}px, 0, 0)`;
       }
     }, 0);
+    setTimeout(() => {
+      if (typeof core.settings.aFn === 'function') {
+        core.settings.aFn();
+      }
+    }, core.settings.speed);
   };
 
   
@@ -412,6 +412,12 @@ namespace Carouzel {
   const goToPrev = (core: ICore) => {
     core._pi = core._ci;
     core._ci -= core.bpo._2Scroll;
+    if (core.settings.inf) {
+      if (!core._pts[core._ci]) {
+        core._ci += core.sLength;
+      }
+      core._pi = core._ci + core.bpo._2Scroll;
+    }
     animateTrack(core);
   };
 
@@ -421,6 +427,12 @@ namespace Carouzel {
   const goToNext = (core: ICore) => {
     core._pi = core._ci;
     core._ci += core.bpo._2Scroll;
+    if (core.settings.inf) {
+      if (!core._pts[core._ci + core.bpo._2Show]) {
+        core._ci -= core.sLength;
+      }
+      core._pi = core._ci - core.bpo._2Scroll;
+    }
     animateTrack(core);
   };
 
@@ -464,8 +476,16 @@ namespace Carouzel {
       }
     }
     for (let i=0; i < core.bpall.length; i++) {
-      let pageLength = Math.ceil(core.sLength / core.bpall[i]._2Scroll);
+      let pageLength = Math.floor(core.sLength / core.bpall[i]._2Scroll);
       let navBtns: Node[] = [];
+      let var1 = core.sLength % core.bpall[i]._2Scroll;
+      let var2 = core.bpall[i]._2Show - core.bpall[i]._2Scroll;
+      if (var2 > var1) {
+        pageLength--;
+      }
+      if (var2 < var1) {
+        pageLength++;
+      }
       core.bpall[i].dots = [];
       for (let j=0; j < pageLength; j++) {
         let elem = document.createElement('button');
@@ -477,7 +497,6 @@ namespace Carouzel {
       for (let j=0; j < pageLength; j++) {
         core.eHandlers.push(eventHandler(navBtns[j] as HTMLElement, 'click', function (event: Event) {
           event.preventDefault();
-          core._pi = core._ci;
           core._ci = j * core.bpall[i]._2Scroll;
           animateTrack(core);
         }));
@@ -577,6 +596,8 @@ namespace Carouzel {
       _2Scroll: settings.slidesToScroll,
       _2Show: settings.slidesToShow,
       activeCls: settings.activeClass,
+      aFn: settings.afterScroll,
+      bFn: settings.beforeScroll,
       cntrCls: settings.centeredClass,
       cntrMode: settings.centerMode,
       disableCls: settings.disabledClass,
@@ -590,7 +611,7 @@ namespace Carouzel {
       speed: settings.animationSpeed,
       startAt: settings.animationSpeed,
       threshold: settings.touchThreshold,
-      timeFn: settings.timeFunction,
+      timeFn: settings.timingFunction,
     }
 
     if (settings.responsive && settings.responsive.length > 0)  {
@@ -621,6 +642,9 @@ namespace Carouzel {
 
 
   const init = (core: ICore, rootElem: HTMLElement, settings: ICarouzelSettings) => {
+    if (typeof settings.beforeInit === 'function') {
+      settings.beforeInit();
+    }
     let _core: ICore = core;
     _core.rootElem = rootElem;
     _core.settings = mapSettings(settings);
@@ -651,7 +675,9 @@ namespace Carouzel {
     }
 
     addClass(core.rootElem as HTMLElement, core.settings.activeCls || '');
-
+    if (typeof settings.onInit === 'function') {
+      settings.onInit();
+    }
     return { global: core, local: _core };
   };
 

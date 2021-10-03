@@ -18,8 +18,11 @@ declare namespace Carouzel {
     }
     interface ICarouzelSettings {
         activeClass?: string;
+        afterScroll?: Function;
         animationEffect?: string;
         animationSpeed?: number;
+        beforeInit?: Function;
+        beforeScroll?: Function;
         centeredClass?: string;
         centerMode?: boolean;
         disabledClass?: string;
@@ -27,6 +30,7 @@ declare namespace Carouzel {
         hasTouchSwipe: boolean;
         isInfinite?: boolean;
         isRTL?: boolean;
+        onInit?: Function;
         responsive?: ICarouzelBreakpoint[];
         rtlClass?: string;
         showArrows: boolean;
@@ -34,7 +38,7 @@ declare namespace Carouzel {
         slidesToScroll: number;
         slidesToShow: number;
         startAtIndex?: number;
-        timeFunction?: string;
+        timingFunction: string;
         touchThreshold?: number;
     }
     /**

@@ -2,7 +2,9 @@
   opacity: 0;
   visibility: hidden;
   &, * {
-    box-sizing: border-box;
+    &, &:after, &:before {
+      box-sizing: border-box;
+    }
   }
   &.__carouzel-active {
     opacity: 1;
@@ -86,11 +88,12 @@
     color: transparent;
     display: block;
     font-size: 1px;
-    height: 16px;
-    margin: 0 5px;
+    font-weight: bold;
+    margin: 0 8px;
     padding: 0;
-    transition: background-color 250ms ease;
     width: 16px;
+    height: 16px;
+    transition: background-color 250ms ease;
     &:hover, &:focus {
       background-color: rgba(#000, 0.5);
     }

@@ -1,7 +1,7 @@
 [data-carouzel] {
   opacity: 0;
   visibility: hidden; }
-  [data-carouzel], [data-carouzel] * {
+  [data-carouzel], [data-carouzel]:after, [data-carouzel]:before, [data-carouzel] *, [data-carouzel] *:after, [data-carouzel] *:before {
     box-sizing: border-box; }
   [data-carouzel].__carouzel-active {
     opacity: 1;
@@ -70,11 +70,12 @@
     color: transparent;
     display: block;
     font-size: 1px;
-    height: 16px;
-    margin: 0 5px;
+    font-weight: bold;
+    margin: 0 8px;
     padding: 0;
-    transition: background-color 250ms ease;
-    width: 16px; }
+    width: 16px;
+    height: 16px;
+    transition: background-color 250ms ease; }
     [data-carouzel] [data-carouzelnavbutton]:hover, [data-carouzel] [data-carouzelnavbutton]:focus {
       background-color: rgba(0, 0, 0, 0.5); }
     [data-carouzel] [data-carouzelnavbutton].__carouzel-active {
