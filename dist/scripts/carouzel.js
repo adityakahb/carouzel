@@ -215,6 +215,7 @@ var Carouzel;
                 core.track.style.transitionTimingFunction = core.settings.timeFn;
                 core.track.style.transitionDuration = core.settings.speed + "ms";
                 core.track.style.transform = "translate3d(" + -core.pts[core.ci] + "px, 0, 0)";
+                core.ct = -core.pts[core.ci];
             }
         }, 0);
         setTimeout(function () {
@@ -239,8 +240,8 @@ var Carouzel;
         var viewportWidth = window.innerWidth;
         var bpoptions = core.bpall[0];
         var len = 0;
-        var slideWidth = '';
-        var trackWidth = '';
+        var slideWidth = 0;
+        var trackWidth = 0;
         while (len < core.bpall.length) {
             if ((core.bpall[len + 1] && core.bpall[len + 1].bp > viewportWidth) || typeof core.bpall[len + 1] === 'undefined') {
                 bpoptions = core.bpall[len];
@@ -266,22 +267,22 @@ var Carouzel;
         }
         if (core.trackW && core.track) {
             core.pts = {};
-            slideWidth = (core.trackW.clientWidth / bpoptions._2Show).toFixed(4) || '1';
-            core.sWidth = parseFloat(slideWidth);
-            trackWidth = (parseFloat(slideWidth + '') * (core.sLength >= bpoptions._2Show ? bpoptions.bpSLen : bpoptions._2Show)).toFixed(4);
+            slideWidth = core.trackW.clientWidth / bpoptions._2Show || 1;
+            core.sWidth = slideWidth;
+            trackWidth = parseFloat(slideWidth + '') * (core.sLength >= bpoptions._2Show ? bpoptions.bpSLen : bpoptions._2Show);
             core.track.style.width = trackWidth + 'px';
             core._as = arrayCall(core.trackW.querySelectorAll(_Selectors.slide));
             for (var i = 0; i < core._as.length; i++) {
                 core._as[i].style.width = slideWidth + 'px';
             }
             for (var i = bpoptions.pDups.length; i > 0; i--) {
-                core.pts[-i] = (-i + bpoptions.pDups.length) * parseFloat(slideWidth);
+                core.pts[-i] = (-i + bpoptions.pDups.length) * slideWidth;
             }
             for (var i = 0; i < core.sLength; i++) {
-                core.pts[i] = (i + bpoptions.pDups.length) * parseFloat(slideWidth);
+                core.pts[i] = (i + bpoptions.pDups.length) * slideWidth;
             }
             for (var i = core.sLength; i < core.sLength + bpoptions.nDups.length; i++) {
-                core.pts[i] = (i + bpoptions.pDups.length) * parseFloat(slideWidth);
+                core.pts[i] = (i + bpoptions.pDups.length) * slideWidth;
             }
             animateTrack(core);
         }
@@ -323,7 +324,79 @@ var Carouzel;
         }
     };
     var toggleTouchEvents = function (core) {
-        core;
+        var posX1 = 0;
+        var posX2 = 0;
+        var posFinal = 0;
+        var threshold = core.settings.threshold || 100;
+        var dragging = false;
+        var touchStart = function (thisevent) {
+            thisevent.preventDefault();
+            dragging = true;
+            if (thisevent.type === 'touchstart') {
+                posX1 = thisevent.touches[0].clientX;
+            }
+            else {
+                posX1 = thisevent.clientX;
+            }
+            if (core.track) {
+                core.track.style.transitionProperty = 'transform';
+                core.track.style.transitionTimingFunction = core.settings.timeFn;
+                core.track.style.transitionDuration = core.settings.speed + "ms";
+            }
+        };
+        var touchMove = function (thisevent) {
+            if (dragging && core.track) {
+                if (thisevent.type == 'touchmove') {
+                    posX2 = posX1 - thisevent.touches[0].clientX;
+                }
+                else {
+                    posX2 = posX1 - thisevent.clientX;
+                }
+                core.track.style.transform = "translate3d(" + (core.ct - posX2) + "px, 0, 0)";
+                posFinal = posX2;
+            }
+        };
+        var touchEnd = function () {
+            if (dragging && core.track) {
+                if (posFinal < -threshold) {
+                    goToPrev(core);
+                }
+                else if (posFinal > threshold) {
+                    goToNext(core);
+                }
+                else {
+                    core.track.style.transform = "translate3d(" + core.ct + "px, 0, 0)";
+                }
+            }
+            if (core.track) {
+                core.track.style.transitionProperty = 'none';
+                core.track.style.transitionTimingFunction = 'unset';
+                core.track.style.transitionDuration = '0ms';
+            }
+            posX1 = posX2 = posFinal = 0;
+            dragging = false;
+        };
+        core.eHandlers.push(eventHandler(core.track, 'touchstart', function (event) {
+            touchStart(event);
+        }));
+        core.eHandlers.push(eventHandler(core.track, 'touchmove', function (event) {
+            touchMove(event);
+        }));
+        core.eHandlers.push(eventHandler(core.track, 'touchend', function () {
+            touchEnd();
+        }));
+        core.eHandlers.push(eventHandler(core.track, 'mousedown', function (event) {
+            touchStart(event);
+        }));
+        core.eHandlers.push(eventHandler(core.track, 'mouseup', function () {
+            touchEnd();
+        }));
+        core.eHandlers.push(eventHandler(core.track, 'mouseleave', function () {
+            touchEnd();
+        }));
+        core.eHandlers.push(eventHandler(core.track, 'mousemove', function (event) {
+            touchMove(event);
+        }));
     };
     var generateElements = function (core) {
         for (var i = 0; i < core.bpall.length; i++) {

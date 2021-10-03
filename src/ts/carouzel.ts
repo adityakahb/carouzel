@@ -103,6 +103,7 @@ namespace Carouzel {
   interface ICore {
     _as: HTMLElement[];
     ci: number;
+    ct: number;
     _ds: HTMLElement[];
     pi: number;
     pts: IIndexHandler;
@@ -324,6 +325,7 @@ namespace Carouzel {
         core.track.style.transitionTimingFunction = core.settings.timeFn;
         core.track.style.transitionDuration = `${core.settings.speed}ms`;
         core.track.style.transform = `translate3d(${-core.pts[core.ci]}px, 0, 0)`;
+        core.ct = -core.pts[core.ci];
       }
     }, 0);
     setTimeout(() => {
@@ -357,8 +359,8 @@ namespace Carouzel {
     let viewportWidth = window.innerWidth;
     let bpoptions = core.bpall[0];
     let len = 0;
-    let slideWidth = '';
-    let trackWidth = '';
+    let slideWidth = 0;
+    let trackWidth = 0;
 
     while(len < core.bpall.length) {
       if ((core.bpall[len + 1] && core.bpall[len + 1].bp > viewportWidth) || typeof core.bpall[len + 1] === 'undefined') {
@@ -385,24 +387,24 @@ namespace Carouzel {
     }
     if (core.trackW && core.track) {
       core.pts = {};
-      slideWidth = (core.trackW.clientWidth / bpoptions._2Show).toFixed(4) || '1';
+      slideWidth = core.trackW.clientWidth / bpoptions._2Show || 1;
       
-      core.sWidth = parseFloat(slideWidth);
+      core.sWidth = slideWidth;
 
-      trackWidth = (parseFloat(slideWidth + '') * (core.sLength >= bpoptions._2Show ? bpoptions.bpSLen : bpoptions._2Show)).toFixed(4);
+      trackWidth = parseFloat(slideWidth + '') * (core.sLength >= bpoptions._2Show ? bpoptions.bpSLen : bpoptions._2Show);
       core.track.style.width = trackWidth + 'px';
       core._as = arrayCall(core.trackW.querySelectorAll(_Selectors.slide));
       for (let i = 0; i < core._as.length; i++) {
         core._as[i].style.width = slideWidth + 'px';
       }
       for (let i = bpoptions.pDups.length; i > 0; i--) {
-        core.pts[-i] = (-i + bpoptions.pDups.length) * parseFloat(slideWidth);
+        core.pts[-i] = (-i + bpoptions.pDups.length) * slideWidth;
       }
       for (let i = 0; i < core.sLength; i++) {
-        core.pts[i] = (i + bpoptions.pDups.length) * parseFloat(slideWidth);
+        core.pts[i] = (i + bpoptions.pDups.length) * slideWidth;
       }
       for (let i = core.sLength; i < core.sLength + bpoptions.nDups.length; i++) {
-        core.pts[i] = (i + bpoptions.pDups.length) * parseFloat(slideWidth);
+        core.pts[i] = (i + bpoptions.pDups.length) * slideWidth;
       }
       animateTrack(core);
     }
@@ -459,7 +461,76 @@ namespace Carouzel {
 
 
   const toggleTouchEvents = (core: ICore) => {
-    core;
+    let posX1 = 0;
+    let posX2 = 0;
+    let posFinal = 0;
+    let threshold = core.settings.threshold || 100;
+    let dragging = false;
+    const touchStart = (thisevent: Event) => {
+      thisevent.preventDefault();
+      dragging = true;
+      if (thisevent.type === 'touchstart') {
+        posX1 = (thisevent as TouchEvent).touches[0].clientX;
+      } else {
+        posX1 = (thisevent as MouseEvent).clientX;
+      }
+      if (core.track) {
+        core.track.style.transitionProperty = 'transform';
+        core.track.style.transitionTimingFunction = core.settings.timeFn;
+        core.track.style.transitionDuration = `${core.settings.speed}ms`;
+      }
+    };
+    const touchMove = (thisevent: Event) => {
+      if (dragging && core.track) {
+        if (thisevent.type == 'touchmove') {
+          posX2 = posX1 - (thisevent as TouchEvent).touches[0].clientX;
+        } else {
+          posX2 = posX1 - (thisevent as MouseEvent).clientX;
+        }
+        core.track.style.transform = `translate3d(${core.ct - posX2}px, 0, 0)`; 
+        posFinal = posX2;
+      }
+    };
+    const touchEnd = () => {
+      if (dragging && core.track) {
+        if (posFinal < -threshold) {
+          goToPrev(core);
+        } else if (posFinal > threshold) {
+          goToNext(core);
+        } else {
+          core.track.style.transform = `translate3d(${core.ct}px, 0, 0)`;
+        }
+      }
+      if (core.track) {
+        core.track.style.transitionProperty = 'none';
+        core.track.style.transitionTimingFunction = 'unset';
+        core.track.style.transitionDuration = '0ms';
+      }
+      posX1 = posX2 = posFinal = 0;
+      dragging = false;
+    };
+
+    core.eHandlers.push(eventHandler(core.track as HTMLElement, 'touchstart', function(event: Event) {
+      touchStart(event);
+    }));
+    core.eHandlers.push(eventHandler(core.track as HTMLElement, 'touchmove', function(event: Event) {
+      touchMove(event);
+    }));
+    core.eHandlers.push(eventHandler(core.track as HTMLElement, 'touchend', function() {
+      touchEnd();
+    }));
+    core.eHandlers.push(eventHandler(core.track as HTMLElement, 'mousedown', function(event: Event) {
+      touchStart(event);
+    }));
+    core.eHandlers.push(eventHandler(core.track as HTMLElement, 'mouseup', function() {
+      touchEnd();
+    }));
+    core.eHandlers.push(eventHandler(core.track as HTMLElement, 'mouseleave', function() {
+      touchEnd();
+    }));
+    core.eHandlers.push(eventHandler(core.track as HTMLElement, 'mousemove', function(event: Event) {
+      touchMove(event);
+    }));
   };
 
 
