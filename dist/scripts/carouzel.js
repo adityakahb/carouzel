@@ -195,24 +195,26 @@ var Carouzel;
         }
         if (core.settings.inf) {
             if (core.track) {
+                core.track.style.transitionProperty = 'none';
                 core.track.style.transitionTimingFunction = 'unset';
                 core.track.style.transitionDuration = '0ms';
-                core.track.style.transform = "translate3d(" + -core._pts[core._pi] + "px, 0, 0)";
+                core.track.style.transform = "translate3d(" + -core.pts[core.pi] + "px, 0, 0)";
             }
         }
         else {
-            if (core._ci < 0) {
-                core._ci = 0;
+            if (core.ci < 0) {
+                core.ci = 0;
             }
-            if (core._ci + core.bpo._2Show >= core.sLength) {
-                core._ci = core.sLength - core.bpo._2Show;
+            if (core.ci + core.bpo._2Show >= core.sLength) {
+                core.ci = core.sLength - core.bpo._2Show;
             }
         }
         setTimeout(function () {
             if (core.track) {
+                core.track.style.transitionProperty = 'transform';
                 core.track.style.transitionTimingFunction = core.settings.timeFn;
                 core.track.style.transitionDuration = core.settings.speed + "ms";
-                core.track.style.transform = "translate3d(" + -core._pts[core._ci] + "px, 0, 0)";
+                core.track.style.transform = "translate3d(" + -core.pts[core.ci] + "px, 0, 0)";
             }
         }, 0);
         setTimeout(function () {
@@ -263,7 +265,7 @@ var Carouzel;
             }
         }
         if (core.trackW && core.track) {
-            core._pts = {};
+            core.pts = {};
             slideWidth = (core.trackW.clientWidth / bpoptions._2Show).toFixed(4) || '1';
             core.sWidth = parseFloat(slideWidth);
             trackWidth = (parseFloat(slideWidth + '') * (core.sLength >= bpoptions._2Show ? bpoptions.bpSLen : bpoptions._2Show)).toFixed(4);
@@ -273,36 +275,36 @@ var Carouzel;
                 core._as[i].style.width = slideWidth + 'px';
             }
             for (var i = bpoptions.pDups.length; i > 0; i--) {
-                core._pts[-i] = (-i + bpoptions.pDups.length) * parseFloat(slideWidth);
+                core.pts[-i] = (-i + bpoptions.pDups.length) * parseFloat(slideWidth);
             }
             for (var i = 0; i < core.sLength; i++) {
-                core._pts[i] = (i + bpoptions.pDups.length) * parseFloat(slideWidth);
+                core.pts[i] = (i + bpoptions.pDups.length) * parseFloat(slideWidth);
             }
             for (var i = core.sLength; i < core.sLength + bpoptions.nDups.length; i++) {
-                core._pts[i] = (i + bpoptions.pDups.length) * parseFloat(slideWidth);
+                core.pts[i] = (i + bpoptions.pDups.length) * parseFloat(slideWidth);
             }
             animateTrack(core);
         }
     };
     var goToPrev = function (core) {
-        core._pi = core._ci;
-        core._ci -= core.bpo._2Scroll;
+        core.pi = core.ci;
+        core.ci -= core.bpo._2Scroll;
         if (core.settings.inf) {
-            if (!core._pts[core._ci]) {
-                core._ci += core.sLength;
+            if (!core.pts[core.ci]) {
+                core.ci += core.sLength;
             }
-            core._pi = core._ci + core.bpo._2Scroll;
+            core.pi = core.ci + core.bpo._2Scroll;
         }
         animateTrack(core);
     };
     var goToNext = function (core) {
-        core._pi = core._ci;
-        core._ci += core.bpo._2Scroll;
+        core.pi = core.ci;
+        core.ci += core.bpo._2Scroll;
         if (core.settings.inf) {
-            if (!core._pts[core._ci + core.bpo._2Show]) {
-                core._ci -= core.sLength;
+            if (!core.pts[core.ci + core.bpo._2Show]) {
+                core.ci -= core.sLength;
             }
-            core._pi = core._ci - core.bpo._2Scroll;
+            core.pi = core.ci - core.bpo._2Scroll;
         }
         animateTrack(core);
     };
@@ -360,7 +362,8 @@ var Carouzel;
             var _loop_2 = function (j) {
                 core.eHandlers.push(eventHandler(navBtns[j], 'click', function (event) {
                     event.preventDefault();
-                    core._ci = j * core.bpall[i]._2Scroll;
+                    core.pi = core.ci;
+                    core.ci = j * core.bpall[i]._2Scroll;
                     animateTrack(core);
                 }));
                 core.bpall[i].dots.push(navBtns[j]);
@@ -501,7 +504,7 @@ var Carouzel;
         var _core = core;
         _core.rootElem = rootElem;
         _core.settings = mapSettings(settings);
-        _core._ci = settings.startAtIndex = (settings.startAtIndex || 0) - 1;
+        _core.ci = settings.startAtIndex = (settings.startAtIndex || 0) - 1;
         _core.eHandlers = [];
         _core.arrowN = rootElem.querySelector("" + _Selectors.arrowN);
         _core.arrowP = rootElem.querySelector("" + _Selectors.arrowP);
@@ -512,10 +515,10 @@ var Carouzel;
         _core.track = rootElem.querySelector("" + _Selectors.track);
         _core.trackW = rootElem.querySelector("" + _Selectors.trackW);
         _core.sLength = _core._ds.length;
-        _core._pts = [];
+        _core.pts = [];
         _core.isLeftAdded = false;
-        if (!_core._ds[_core._ci]) {
-            _core._ci = settings.startAtIndex = 0;
+        if (!_core._ds[_core.ci]) {
+            _core.ci = settings.startAtIndex = 0;
         }
         navIndex;
         _Selectors;
