@@ -24,8 +24,6 @@ var Carouzel;
     var allLocalInstances = {};
     var isWindowEventAttached = false;
     var winResize;
-    var navIndex = 0;
-    ;
     var _animationEffects = ['scroll', 'fade'];
     var _rootSelectorTypeError = 'Element(s) with the provided query do(es) not exist';
     var _optionsParseTypeError = 'Unable to parse the options string';
@@ -49,6 +47,7 @@ var Carouzel;
         activeClass: '__carouzel-active',
         animationEffect: _animationEffects[0],
         animationSpeed: 400,
+        autoplay: false,
         centeredClass: '__carouzel-centered',
         centerMode: false,
         disabledClass: '__carouzel-disabled',
@@ -56,6 +55,7 @@ var Carouzel;
         hasTouchSwipe: true,
         isInfinite: true,
         isRTL: false,
+        pauseOnHover: false,
         responsive: [],
         rtlClass: '__carouzel-rtl',
         showArrows: true,
@@ -189,6 +189,26 @@ var Carouzel;
         element.addEventListener(type, listener, _useCapture);
         return eventHandler;
     };
+    var updateCSSClasses = function (core) {
+        for (var i = 0; i < core._as.length; i++) {
+            removeClass(core._as[i], core.settings.activeCls || '');
+        }
+        for (var i = core.ci; i < core.ci + core.bpo._2Show; i++) {
+            addClass(core._as[i], core.settings.activeCls || '');
+        }
+        if (!core.settings.inf && core.ci === 0) {
+            addClass(core.arrowP, core.settings.disableCls || '');
+        }
+        else {
+            removeClass(core.arrowP, core.settings.disableCls || '');
+        }
+        if (!core.settings.inf && core.ci === core.sLength - core.bpo._2Show) {
+            addClass(core.arrowN, core.settings.disableCls || '');
+        }
+        else {
+            removeClass(core.arrowN, core.settings.disableCls || '');
+        }
+    };
     var animateTrack = function (core) {
         if (typeof core.settings.bFn === 'function') {
             core.settings.bFn();
@@ -217,6 +237,7 @@ var Carouzel;
                 core.track.style.transform = "translate3d(" + -core.pts[core.ci] + "px, 0, 0)";
                 core.ct = -core.pts[core.ci];
             }
+            updateCSSClasses(core);
         }, 0);
         setTimeout(function () {
             if (typeof core.settings.aFn === 'function') {
@@ -529,25 +550,27 @@ var Carouzel;
     };
     var mapSettings = function (settings) {
         var settingsobj = {
-            _arrows: settings.showArrows,
-            _nav: settings.showNavigation,
             _2Scroll: settings.slidesToScroll,
             _2Show: settings.slidesToShow,
+            _arrows: settings.showArrows,
+            _nav: settings.showNavigation,
             activeCls: settings.activeClass,
             aFn: settings.afterScroll,
+            auto: settings.autoplay,
             bFn: settings.beforeScroll,
             cntrCls: settings.centeredClass,
             cntrMode: settings.centerMode,
             disableCls: settings.disabledClass,
             dupCls: settings.duplicateClass,
             effect: settings.animationEffect,
-            swipe: settings.hasTouchSwipe,
             inf: settings.isInfinite,
             isRTL: settings.isRTL,
+            pauseHov: settings.pauseOnHover,
             res: [],
             rtlCls: settings.rtlClass,
             speed: settings.animationSpeed,
             startAt: settings.animationSpeed,
+            swipe: settings.hasTouchSwipe,
             threshold: settings.touchThreshold,
             timeFn: settings.timingFunction
         };
@@ -572,6 +595,32 @@ var Carouzel;
         }
         return settingsobj;
     };
+    var disableAutoplay = function (core) {
+        if (core.trackW) {
+            removeEventListeners(core, core.trackW);
+        }
+        if (core.autoTimer) {
+            clearInterval(core.autoTimer);
+        }
+    };
+    var enableAutoplay = function (core) {
+        if (core.trackW && core.settings.pauseHov) {
+            core.eHandlers.push(eventHandler(core.trackW, 'mouseenter', function () {
+                core.paused = true;
+            }));
+            core.eHandlers.push(eventHandler(core.trackW, 'mouseleave', function () {
+                core.paused = false;
+            }));
+        }
+        if (!core.settings.pauseHov) {
+            core.paused = false;
+        }
+        core.autoTimer = setInterval(function () {
+            if (!core.paused) {
+                goToNext(core);
+            }
+        }, 1000);
+    };
     var init = function (core, rootElem, settings) {
         if (typeof settings.beforeInit === 'function') {
             settings.beforeInit();
@@ -595,13 +644,12 @@ var Carouzel;
         if (!_core._ds[_core.ci]) {
             _core.ci = settings.startAtIndex = 0;
         }
-        navIndex;
-        _Selectors;
-        addClass;
-        removeClass;
-        removeEventListeners;
-        eventHandler;
         if (_core.track && _core.sLength > 0) {
+            if (_core.settings.auto) {
+                _core.settings.inf = true;
+                enableAutoplay(_core);
+                disableAutoplay;
+            }
             _core.bpall = updateBreakpoints(_core.settings);
             generateElements(_core);
             toggleArrows(_core);
@@ -628,8 +676,19 @@ var Carouzel;
         function Core(thisid, rootElem, options) {
             this.core = {};
             this.destroy = function (thisid) {
-                // amm_destroy(thisid, this.core);
-                console.log(thisid);
+                var allElems = document.querySelectorAll("#" + thisid + " *");
+                var core = allLocalInstances[thisid];
+                for (var i = 0; i < allElems.length; i++) {
+                    removeEventListeners(core, allElems[i]);
+                    if (core.track && hasClass(allElems[i], core.settings.dupCls)) {
+                        core.track.removeChild(allElems[i]);
+                    }
+                    if (core.nav && allElems[i].hasAttribute(_Selectors.dot.slice(1, -1))) {
+                        core.nav.removeChild(allElems[i]);
+                    }
+                    removeClass(allElems[i], core.settings.activeCls + " " + core.settings.cntrCls + " " + core.settings.disableCls + " " + core.settings.dupCls + " " + core.settings.rtlCls);
+                }
+                delete allLocalInstances[thisid];
             };
             this.resize = function (thisid) {
                 applyLayout(allLocalInstances[thisid]);
