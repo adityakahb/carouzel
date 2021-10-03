@@ -458,6 +458,10 @@ namespace Carouzel {
 
 
 
+  const toggleTouchEvents = (core: ICore) => {
+    core;
+  };
+
 
   const generateElements = (core: ICore) => {
     for (let i=0; i<core.bpall.length; i++) {
@@ -506,7 +510,6 @@ namespace Carouzel {
         core.bpall[i].dots.push(navBtns[j]);
       }
     }
-    toggleArrows(core);
   };
 
 
@@ -674,6 +677,8 @@ namespace Carouzel {
     if (_core.track && _core.sLength > 0) {
       _core.bpall = updateBreakpoints(_core.settings);
       generateElements(_core);
+      toggleArrows(_core);
+      toggleTouchEvents(_core);
       applyLayout(_core);
     }
 

@@ -322,6 +322,9 @@ var Carouzel;
             }));
         }
     };
+    var toggleTouchEvents = function (core) {
+        core;
+    };
     var generateElements = function (core) {
         for (var i = 0; i < core.bpall.length; i++) {
             core.bpall[i].bpSLen = core.sLength;
@@ -375,7 +378,6 @@ var Carouzel;
         for (var i = 0; i < core.bpall.length; i++) {
             _loop_1(i);
         }
-        toggleArrows(core);
     };
     var validateBreakpoints = function (breakpoints) {
         try {
@@ -529,6 +531,8 @@ var Carouzel;
         if (_core.track && _core.sLength > 0) {
             _core.bpall = updateBreakpoints(_core.settings);
             generateElements(_core);
+            toggleArrows(_core);
+            toggleTouchEvents(_core);
             applyLayout(_core);
         }
         addClass(core.rootElem, core.settings.activeCls || '');
