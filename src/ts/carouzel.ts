@@ -327,6 +327,14 @@ namespace Carouzel {
     } else {
       removeClass(core.arrowN as Element, core.settings.disableCls || '');
     }
+    if (core.bpo.dots.length > 0) {
+      for (let i=0; i<core.bpo.dots.length; i++) {
+        removeClass(core.bpo.dots[i] as Element, core.settings.activeCls || '');
+      }
+      if (core.bpo.dots[Math.floor(core.ci % core.bpo._2Scroll)]) {
+        addClass(core.bpo.dots[Math.floor(core.ci / core.bpo._2Scroll)] as Element, core.settings.activeCls || '');
+      }
+    }
   };
 
 
@@ -358,8 +366,8 @@ namespace Carouzel {
         core.track.style.transitionDuration = `${core.settings.speed}ms`;
         core.track.style.transform = `translate3d(${-core.pts[core.ci]}px, 0, 0)`;
         core.ct = -core.pts[core.ci];
+        updateCSSClasses(core);
       }
-      updateCSSClasses(core);
     }, 0);
     setTimeout(() => {
       if (typeof core.settings.aFn === 'function') {
