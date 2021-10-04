@@ -8423,7 +8423,7 @@ h4, .h4, .h4 {
       h4, .h4, .h4 {
         font-size: 18px; } }
 
-[data-carouzel] [data-carouzelslide] {
+[data-carouzel] [data-carouzelslide], [data-carouzelauto] [data-carouzelslide] {
   display: flex;
   justify-content: center;
   align-items: center;

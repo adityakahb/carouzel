@@ -35,6 +35,7 @@ namespace Carouzel {
     activeCls: string;
     aFn?: Function;
     auto: boolean;
+    autoS: number;
     bFn?: Function;
     cntrCls?: string;
     cntrMode?: boolean;
@@ -69,6 +70,7 @@ namespace Carouzel {
     animationEffect: string;
     animationSpeed: number;
     autoplay: boolean;
+    autoplaySpeed: number;
     beforeInit?: Function;
     beforeScroll?: Function;
     centeredClass?: string;
@@ -158,6 +160,7 @@ namespace Carouzel {
     animationEffect: _animationEffects[0],
     animationSpeed: 400,
     autoplay: false,
+    autoplaySpeed: 3000,
     centeredClass: '__carouzel-centered',
     centerMode: false,
     disabledClass: '__carouzel-disabled',
@@ -741,6 +744,7 @@ namespace Carouzel {
       activeCls: settings.activeClass,
       aFn: settings.afterScroll,
       auto: settings.autoplay,
+      autoS: settings.autoplaySpeed,
       bFn: settings.beforeScroll,
       cntrCls: settings.centeredClass,
       cntrMode: settings.centerMode,
@@ -812,7 +816,7 @@ namespace Carouzel {
       if (!core.paused) {
         goToNext(core);
       }
-    }, 1000);
+    }, core.settings.autoS);
   };
 
 

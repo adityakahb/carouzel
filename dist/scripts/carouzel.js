@@ -48,6 +48,7 @@ var Carouzel;
         animationEffect: _animationEffects[0],
         animationSpeed: 400,
         autoplay: false,
+        autoplaySpeed: 3000,
         centeredClass: '__carouzel-centered',
         centerMode: false,
         disabledClass: '__carouzel-disabled',
@@ -590,6 +591,7 @@ var Carouzel;
             activeCls: settings.activeClass,
             aFn: settings.afterScroll,
             auto: settings.autoplay,
+            autoS: settings.autoplaySpeed,
             bFn: settings.beforeScroll,
             cntrCls: settings.centeredClass,
             cntrMode: settings.centerMode,
@@ -652,7 +654,7 @@ var Carouzel;
             if (!core.paused) {
                 goToNext(core);
             }
-        }, 1000);
+        }, core.settings.autoS);
     };
     var init = function (core, rootElem, settings) {
         if (typeof settings.beforeInit === 'function') {

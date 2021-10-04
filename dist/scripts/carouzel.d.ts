@@ -22,6 +22,7 @@ declare namespace Carouzel {
         animationEffect: string;
         animationSpeed: number;
         autoplay: boolean;
+        autoplaySpeed: number;
         beforeInit?: Function;
         beforeScroll?: Function;
         centeredClass?: string;

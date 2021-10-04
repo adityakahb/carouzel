@@ -4,7 +4,7 @@
 @import './config/base';
 @import './config/typography';
 
-[data-carouzel] {
+[data-carouzel], [data-carouzelauto] {
   [data-carouzelslide] {
     display: flex;
     justify-content: center;
