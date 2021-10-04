@@ -32,7 +32,7 @@ namespace Carouzel {
     _nav: boolean;
     _2Scroll: number;
     _2Show: number;
-    activeCls?: string;
+    activeCls: string;
     aFn?: Function;
     auto: boolean;
     bFn?: Function;
@@ -40,17 +40,17 @@ namespace Carouzel {
     cntrMode?: boolean;
     disableCls?: string;
     dupCls: string;
-    effect?: string;
+    effect: string;
     swipe: boolean;
     idPrefix?: string;
-    inf?: boolean;
+    inf: boolean;
     isRTL?: boolean;
     pauseHov: boolean;
     res?: ICarouzelCoreBreakpoint[];
     rtlCls?: string;
-    speed?: number;
-    startAt?: number;
-    threshold?: number;
+    speed: number;
+    startAt: number;
+    threshold: number;
     timeFn: string;
   }
   
@@ -64,19 +64,19 @@ namespace Carouzel {
   }
 
   interface ICarouzelSettings {
-    activeClass?: string;
+    activeClass: string;
     afterScroll?: Function;
-    animationEffect?: string;
-    animationSpeed?: number;
+    animationEffect: string;
+    animationSpeed: number;
     autoplay: boolean;
     beforeInit?: Function;
     beforeScroll?: Function;
     centeredClass?: string;
     centerMode?: boolean;
-    disabledClass?: string;
+    disabledClass: string;
     duplicateClass: string;
     hasTouchSwipe: boolean;
-    isInfinite?: boolean;
+    isInfinite: boolean;
     isRTL?: boolean;
     onInit?: Function;
     pauseOnHover: boolean;
@@ -86,9 +86,9 @@ namespace Carouzel {
     showNavigation: boolean;
     slidesToScroll: number;
     slidesToShow: number;
-    startAtIndex?: number;
+    startAtIndex: number;
     timingFunction: string
-    touchThreshold?: number;
+    touchThreshold: number;
   }
 
   interface IEventHandler {
@@ -312,10 +312,10 @@ namespace Carouzel {
 
   const updateCSSClasses = (core: ICore) => {
     for (let i=0; i<core._as.length; i++) {
-      removeClass(core._as[i] as Element, core.settings.activeCls || '');
+      removeClass(core._as[i] as Element, core.settings.activeCls);
     }
-    for (let i=core.ci; i<core.ci + core.bpo._2Show; i++) {
-      addClass(core._as[i] as Element, core.settings.activeCls || '');
+    for (let i=core.ci + core.bpo.pDups.length; i<core.ci + core.bpo.pDups.length + core.bpo._2Show; i++) {
+      addClass(core._as[i] as Element, core.settings.activeCls);
     }
     if (!core.settings.inf && core.ci === 0) {
       addClass(core.arrowP as Element, core.settings.disableCls || '');
@@ -329,10 +329,10 @@ namespace Carouzel {
     }
     if (core.bpo.dots.length > 0) {
       for (let i=0; i<core.bpo.dots.length; i++) {
-        removeClass(core.bpo.dots[i] as Element, core.settings.activeCls || '');
+        removeClass(core.bpo.dots[i] as Element, core.settings.activeCls);
       }
       if (core.bpo.dots[Math.floor(core.ci % core.bpo._2Scroll)]) {
-        addClass(core.bpo.dots[Math.floor(core.ci / core.bpo._2Scroll)] as Element, core.settings.activeCls || '');
+        addClass(core.bpo.dots[Math.floor(core.ci / core.bpo._2Scroll)] as Element, core.settings.activeCls);
       }
     }
   };
@@ -359,16 +359,39 @@ namespace Carouzel {
         core.ci = core.sLength - core.bpo._2Show;
       }
     }
-    setTimeout(() => {
-      if (core.track) {
-        core.track.style.transitionProperty = 'transform';
-        core.track.style.transitionTimingFunction = core.settings.timeFn;
-        core.track.style.transitionDuration = `${core.settings.speed}ms`;
-        core.track.style.transform = `translate3d(${-core.pts[core.ci]}px, 0, 0)`;
-        core.ct = -core.pts[core.ci];
-        updateCSSClasses(core);
-      }
-    }, 0);
+    if (core.settings.effect === _animationEffects[0]) {
+      setTimeout(() => {
+        if (core.track) {
+          core.track.style.transitionProperty = 'transform';
+          core.track.style.transitionTimingFunction = core.settings.timeFn;
+          core.track.style.transitionDuration = `${core.settings.speed}ms`;
+          core.track.style.transform = `translate3d(${-core.pts[core.ci]}px, 0, 0)`;
+          core.ct = -core.pts[core.ci];
+          updateCSSClasses(core);
+        }
+      }, 0);
+    }
+    if (core.settings.effect === _animationEffects[1]) {
+      const postOpacity = () => {
+        setTimeout(() => {
+          if (core.track) {
+            core.track.style.transform = `translate3d(${-core.pts[core.ci]}px, 0, 0)`;
+            core.track.style.opacity = '1';
+          }
+        }, core.settings.speed);
+      };
+      setTimeout(() => {
+        if (core.track) {
+          core.track.style.transitionProperty = 'opacity';
+          core.track.style.transitionTimingFunction = core.settings.timeFn;
+          core.track.style.transitionDuration = `${core.settings.speed}ms`;
+          core.track.style.opacity = '0';
+          core.ct = -core.pts[core.ci];
+          updateCSSClasses(core);
+          postOpacity();
+        }
+      }, 0);
+    }
     setTimeout(() => {
       if (typeof core.settings.aFn === 'function') {
         core.settings.aFn();
@@ -516,7 +539,7 @@ namespace Carouzel {
         posX1 = (thisevent as MouseEvent).clientX;
       }
       if (core.track) {
-        core.track.style.transitionProperty = 'transform';
+        core.track.style.transitionProperty = core.settings.effect;
         core.track.style.transitionTimingFunction = core.settings.timeFn;
         core.track.style.transitionDuration = `${core.settings.speed}ms`;
       }
@@ -528,7 +551,9 @@ namespace Carouzel {
         } else {
           posX2 = posX1 - (thisevent as MouseEvent).clientX;
         }
-        core.track.style.transform = `translate3d(${core.ct - posX2}px, 0, 0)`; 
+        if (core.settings.effect === _animationEffects[0]) {
+          core.track.style.transform = `translate3d(${core.ct - posX2}px, 0, 0)`; 
+        }
         posFinal = posX2;
       }
     };
@@ -832,7 +857,7 @@ namespace Carouzel {
       applyLayout(_core);
     }
 
-    addClass(core.rootElem as Element, core.settings.activeCls || '');
+    addClass(core.rootElem as Element, core.settings.activeCls);
     if (typeof settings.onInit === 'function') {
       settings.onInit();
     }

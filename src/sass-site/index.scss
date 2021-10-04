@@ -4,23 +4,17 @@
 @import './config/base';
 @import './config/typography';
 
-[data-carouzelslide] {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 70px;
-  font-weight: bold;
-  border: 1px solid transparent;
-  background-color: #fff;
-  width: 100%;
-  &:nth-child(odd) {
+[data-carouzel] {
+  [data-carouzelslide] {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 70px;
+    font-weight: bold;
     border-left: 1px solid red;
     border-right: 1px solid red;
-    color: red;
-  }
-  &:nth-child(even) {
-    border-left: 1px solid black;
-    border-right: 1px solid black;
     color: black;
+    background-color: #fff;
+    width: 100%;
   }
 }

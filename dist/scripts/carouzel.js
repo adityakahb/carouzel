@@ -191,10 +191,10 @@ var Carouzel;
     };
     var updateCSSClasses = function (core) {
         for (var i = 0; i < core._as.length; i++) {
-            removeClass(core._as[i], core.settings.activeCls || '');
+            removeClass(core._as[i], core.settings.activeCls);
         }
-        for (var i = core.ci; i < core.ci + core.bpo._2Show; i++) {
-            addClass(core._as[i], core.settings.activeCls || '');
+        for (var i = core.ci + core.bpo.pDups.length; i < core.ci + core.bpo.pDups.length + core.bpo._2Show; i++) {
+            addClass(core._as[i], core.settings.activeCls);
         }
         if (!core.settings.inf && core.ci === 0) {
             addClass(core.arrowP, core.settings.disableCls || '');
@@ -210,10 +210,10 @@ var Carouzel;
         }
         if (core.bpo.dots.length > 0) {
             for (var i = 0; i < core.bpo.dots.length; i++) {
-                removeClass(core.bpo.dots[i], core.settings.activeCls || '');
+                removeClass(core.bpo.dots[i], core.settings.activeCls);
             }
             if (core.bpo.dots[Math.floor(core.ci % core.bpo._2Scroll)]) {
-                addClass(core.bpo.dots[Math.floor(core.ci / core.bpo._2Scroll)], core.settings.activeCls || '');
+                addClass(core.bpo.dots[Math.floor(core.ci / core.bpo._2Scroll)], core.settings.activeCls);
             }
         }
     };
@@ -237,16 +237,39 @@ var Carouzel;
                 core.ci = core.sLength - core.bpo._2Show;
             }
         }
-        setTimeout(function () {
-            if (core.track) {
-                core.track.style.transitionProperty = 'transform';
-                core.track.style.transitionTimingFunction = core.settings.timeFn;
-                core.track.style.transitionDuration = core.settings.speed + "ms";
-                core.track.style.transform = "translate3d(" + -core.pts[core.ci] + "px, 0, 0)";
-                core.ct = -core.pts[core.ci];
-                updateCSSClasses(core);
-            }
-        }, 0);
+        if (core.settings.effect === _animationEffects[0]) {
+            setTimeout(function () {
+                if (core.track) {
+                    core.track.style.transitionProperty = 'transform';
+                    core.track.style.transitionTimingFunction = core.settings.timeFn;
+                    core.track.style.transitionDuration = core.settings.speed + "ms";
+                    core.track.style.transform = "translate3d(" + -core.pts[core.ci] + "px, 0, 0)";
+                    core.ct = -core.pts[core.ci];
+                    updateCSSClasses(core);
+                }
+            }, 0);
+        }
+        if (core.settings.effect === _animationEffects[1]) {
+            var postOpacity_1 = function () {
+                setTimeout(function () {
+                    if (core.track) {
+                        core.track.style.transform = "translate3d(" + -core.pts[core.ci] + "px, 0, 0)";
+                        core.track.style.opacity = '1';
+                    }
+                }, core.settings.speed);
+            };
+            setTimeout(function () {
+                if (core.track) {
+                    core.track.style.transitionProperty = 'opacity';
+                    core.track.style.transitionTimingFunction = core.settings.timeFn;
+                    core.track.style.transitionDuration = core.settings.speed + "ms";
+                    core.track.style.opacity = '0';
+                    core.ct = -core.pts[core.ci];
+                    updateCSSClasses(core);
+                    postOpacity_1();
+                }
+            }, 0);
+        }
         setTimeout(function () {
             if (typeof core.settings.aFn === 'function') {
                 core.settings.aFn();
@@ -368,7 +391,7 @@ var Carouzel;
                 posX1 = thisevent.clientX;
             }
             if (core.track) {
-                core.track.style.transitionProperty = 'transform';
+                core.track.style.transitionProperty = core.settings.effect;
                 core.track.style.transitionTimingFunction = core.settings.timeFn;
                 core.track.style.transitionDuration = core.settings.speed + "ms";
             }
@@ -381,7 +404,9 @@ var Carouzel;
                 else {
                     posX2 = posX1 - thisevent.clientX;
                 }
-                core.track.style.transform = "translate3d(" + (core.ct - posX2) + "px, 0, 0)";
+                if (core.settings.effect === _animationEffects[0]) {
+                    core.track.style.transform = "translate3d(" + (core.ct - posX2) + "px, 0, 0)";
+                }
                 posFinal = posX2;
             }
         };
@@ -664,7 +689,7 @@ var Carouzel;
             toggleTouchEvents(_core);
             applyLayout(_core);
         }
-        addClass(core.rootElem, core.settings.activeCls || '');
+        addClass(core.rootElem, core.settings.activeCls);
         if (typeof settings.onInit === 'function') {
             settings.onInit();
         }

@@ -8423,20 +8423,14 @@ h4, .h4, .h4 {
       h4, .h4, .h4 {
         font-size: 18px; } }
 
-[data-carouzelslide] {
+[data-carouzel] [data-carouzelslide] {
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 70px;
   font-weight: bold;
-  border: 1px solid transparent;
+  border-left: 1px solid red;
+  border-right: 1px solid red;
+  color: black;
   background-color: #fff;
   width: 100%; }
-  [data-carouzelslide]:nth-child(odd) {
-    border-left: 1px solid red;
-    border-right: 1px solid red;
-    color: red; }
-  [data-carouzelslide]:nth-child(even) {
-    border-left: 1px solid black;
-    border-right: 1px solid black;
-    color: black; }
