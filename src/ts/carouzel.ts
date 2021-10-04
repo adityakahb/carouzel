@@ -37,9 +37,9 @@ namespace Carouzel {
     auto: boolean;
     autoS: number;
     bFn?: Function;
-    cntrCls?: string;
-    cntrMode?: boolean;
-    disableCls?: string;
+    cntrCls: string;
+    cntrMode: boolean;
+    disableCls: string;
     dupCls: string;
     effect: string;
     swipe: boolean;
@@ -73,8 +73,8 @@ namespace Carouzel {
     autoplaySpeed: number;
     beforeInit?: Function;
     beforeScroll?: Function;
-    centeredClass?: string;
-    centerMode?: boolean;
+    centeredClass: string;
+    centerMode: boolean;
     disabledClass: string;
     duplicateClass: string;
     hasTouchSwipe: boolean;
@@ -800,12 +800,12 @@ namespace Carouzel {
 
 
 
-  const enableAutoplay = (core: ICore) => {
-    if (core.trackW && core.settings.pauseHov) {
-      core.eHandlers.push(eventHandler(core.trackW, 'mouseenter', function () {
+  const toggleAutoplay = (core: ICore) => {
+    if (core.rootElem && core.settings.pauseHov) {
+      core.eHandlers.push(eventHandler(core.rootElem, 'mouseenter', function () {
         core.paused = true;
       }));
-      core.eHandlers.push(eventHandler(core.trackW, 'mouseleave', function () {
+      core.eHandlers.push(eventHandler(core.rootElem, 'mouseleave', function () {
         core.paused = false;
       }));
     }
@@ -817,6 +817,25 @@ namespace Carouzel {
         goToNext(core);
       }
     }, core.settings.autoS);
+  };
+
+
+
+
+  const toggleKeyboard = (core: ICore) => {
+    if (core.rootElem) {
+      core.rootElem.setAttribute('tabindex', '-1');
+      let keyCode = '';
+      core.eHandlers.push(eventHandler(core.rootElem, 'keydown', function (event: Event) {
+        event = event || window.event;
+        keyCode = (event as KeyboardEvent).key.toLowerCase();
+        switch (keyCode) {
+          case 'arrowleft': goToPrev(core); break;
+          case 'arrowright': goToNext(core); break;
+          default: keyCode = ''; break;
+        }
+      }));
+    }
   };
 
 
@@ -851,10 +870,11 @@ namespace Carouzel {
     if (_core.track && _core.sLength > 0) {
       if (_core.settings.auto) {
         _core.settings.inf = true;
-        enableAutoplay(_core);
+        toggleAutoplay(_core);
         disableAutoplay;
       }
       _core.bpall = updateBreakpoints(_core.settings);
+      toggleKeyboard(_core);
       generateElements(_core);
       toggleArrows(_core);
       toggleTouchEvents(_core);

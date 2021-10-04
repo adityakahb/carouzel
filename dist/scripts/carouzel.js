@@ -638,12 +638,12 @@ var Carouzel;
             clearInterval(core.autoTimer);
         }
     };
-    var enableAutoplay = function (core) {
-        if (core.trackW && core.settings.pauseHov) {
-            core.eHandlers.push(eventHandler(core.trackW, 'mouseenter', function () {
+    var toggleAutoplay = function (core) {
+        if (core.rootElem && core.settings.pauseHov) {
+            core.eHandlers.push(eventHandler(core.rootElem, 'mouseenter', function () {
                 core.paused = true;
             }));
-            core.eHandlers.push(eventHandler(core.trackW, 'mouseleave', function () {
+            core.eHandlers.push(eventHandler(core.rootElem, 'mouseleave', function () {
                 core.paused = false;
             }));
         }
@@ -655,6 +655,27 @@ var Carouzel;
                 goToNext(core);
             }
         }, core.settings.autoS);
+    };
+    var toggleKeyboard = function (core) {
+        if (core.rootElem) {
+            core.rootElem.setAttribute('tabindex', '-1');
+            var keyCode_1 = '';
+            core.eHandlers.push(eventHandler(core.rootElem, 'keydown', function (event) {
+                event = event || window.event;
+                keyCode_1 = event.key.toLowerCase();
+                switch (keyCode_1) {
+                    case 'arrowleft':
+                        goToPrev(core);
+                        break;
+                    case 'arrowright':
+                        goToNext(core);
+                        break;
+                    default:
+                        keyCode_1 = '';
+                        break;
+                }
+            }));
+        }
     };
     var init = function (core, rootElem, settings) {
         if (typeof settings.beforeInit === 'function') {
@@ -682,10 +703,11 @@ var Carouzel;
         if (_core.track && _core.sLength > 0) {
             if (_core.settings.auto) {
                 _core.settings.inf = true;
-                enableAutoplay(_core);
+                toggleAutoplay(_core);
                 disableAutoplay;
             }
             _core.bpall = updateBreakpoints(_core.settings);
+            toggleKeyboard(_core);
             generateElements(_core);
             toggleArrows(_core);
             toggleTouchEvents(_core);

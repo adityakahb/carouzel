@@ -25,8 +25,8 @@ declare namespace Carouzel {
         autoplaySpeed: number;
         beforeInit?: Function;
         beforeScroll?: Function;
-        centeredClass?: string;
-        centerMode?: boolean;
+        centeredClass: string;
+        centerMode: boolean;
         disabledClass: string;
         duplicateClass: string;
         hasTouchSwipe: boolean;
