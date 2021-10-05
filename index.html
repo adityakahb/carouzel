@@ -461,6 +461,87 @@
 
 
 
+          <div class="row my-5">
+            <div class="col text-center">
+              <hr/>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col text-center">
+              <h2>GoToPrevious, GoToNext, GoToSlide</h2>
+            </div>
+          </div>
+          <div class="row py-5">
+            <div class="col text-right">
+              <button type="button" id="gotoprevbtn" class="btn btn-primary ms-3">Go to Previous</button>
+              <button type="button" id="gotonextbtn" class="btn btn-primary ms-3">Go to Next</button>
+            </div>
+            <div class="col text-left">
+              <div class="input-group w-50">
+                <span class="input-group-text" id="basic-addon1">Go to Slide</span>
+                <input type="number" value="1" id="gotoslideinput" class="form-control" aria-describedby="basic-addon1" min="1" max="12">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div data-carouzel id="__carouzel_8">
+                <div data-carouzeltrackwrapper>
+                  <div data-carouzeltrack>
+                    <div data-carouzelslide>
+                      <div>01</div>
+                    </div>
+                    <div data-carouzelslide>
+                      <div>02</div>
+                    </div>
+                    <div data-carouzelslide>
+                      <div>03</div>
+                    </div>
+                    <div data-carouzelslide>
+                      <div>04</div>
+                    </div>
+                    <div data-carouzelslide>
+                      <div>05</div>
+                    </div>
+                    <div data-carouzelslide>
+                      <div>06</div>
+                    </div>
+                    <div data-carouzelslide>
+                      <div>07</div>
+                    </div>
+                    <div data-carouzelslide>
+                      <div>08</div>
+                    </div>
+                    <div data-carouzelslide>
+                      <div>09</div>
+                    </div>
+                    <div data-carouzelslide>
+                      <div>10</div>
+                    </div>
+                    <div data-carouzelslide>
+                      <div>11</div>
+                    </div>
+                    <div data-carouzelslide>
+                      <div>12</div>
+                    </div>
+                  </div>
+                  <div data-carouzelarrowswrapper>
+                    <button type="button" data-carouzelpreviousarrow aria-label="Previous">
+                      <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z"/></svg>
+                    </button>
+                    <button type="button" data-carouzelnextarrow aria-label="Next">
+                      <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6z"/></svg>
+                    </button>
+                  </div>
+                </div>
+                <div data-carouzelnavigationwrapper>
+                  <div data-carouzelnavigation></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
         </div>
       </div>
     </section>
@@ -525,6 +606,33 @@
           slidesToShow: 3
         }]
       });
+      __carouzel_instance.init('#__carouzel_8', {
+        showNav: false,
+        responsive: [{
+          breakpoint: 700,
+          showNav: true
+        }]
+      });
+      var gotoslideinput = document.getElementById('gotoslideinput');
+      var gotonextbtn = document.getElementById('gotonextbtn');
+      var gotoprevbtn = document.getElementById('gotoprevbtn');
+      var instance8 = __carouzel_instance.instances['__carouzel_8'];
+      gotonextbtn.addEventListener('click', function() {
+        if (instance8) {
+          instance8.core.goToNext();
+        }
+      });
+      gotoprevbtn.addEventListener('click', function() {
+        if (instance8) {
+          instance8.core.goToPrevious();
+        }
+      });
+      gotoslideinput.addEventListener('change', function(event) {
+        if (instance8) {
+          instance8.core.goToSlide(event.target.value);
+        }
+      });
+      // gotoslideinput gotonextbtn gotoprevbtn
     </script>
   </body>
 </html>

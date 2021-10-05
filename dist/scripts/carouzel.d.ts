@@ -29,6 +29,7 @@ declare namespace Carouzel {
         centerMode: boolean;
         disabledClass: string;
         duplicateClass: string;
+        enableKeyboard: boolean;
         hasTouchSwipe: boolean;
         isInfinite: boolean;
         isRTL?: boolean;
@@ -62,28 +63,28 @@ declare namespace Carouzel {
          *
          */
         constructor();
-        private getInsLen;
+        private getInstancesLength;
         private winResize;
         /**
          * Function to return single instance
          *
-         * @returns Single AMegMen Instance
+         * @returns Single Carouzel Instance
          *
          */
         static getInstance(): Root;
         /**
-         * Function to initialize the AMegMen plugin for provided query strings.
+         * Function to initialize the Carouzel plugin for provided query strings.
          *
-         * @param query - The CSS selector for which the AMegMen needs to be initialized.
-         * @param options - The optional object to customize every AMegMen instance.
+         * @param query - The CSS selector for which the Carouzel needs to be initialized.
+         * @param options - The optional object to customize every Carouzel instance.
          *
          */
         init: (query: string, options?: ICarouzelSettings | undefined) => void;
         globalInit: () => void;
         /**
-         * Function to destroy the AMegMen plugin for provided query strings.
+         * Function to destroy the Carouzel plugin for provided query strings.
          *
-         * @param query - The CSS selector for which the AMegMen needs to be initialized.
+         * @param query - The CSS selector for which the Carouzel needs to be initialized.
          *
          */
         protected destroy: (query: string) => void;

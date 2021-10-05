@@ -53,6 +53,7 @@ var Carouzel;
         centerMode: false,
         disabledClass: '__carouzel-disabled',
         duplicateClass: '__carouzel-duplicate',
+        enableKeyboard: true,
         hasTouchSwipe: true,
         isInfinite: true,
         isRTL: false,
@@ -77,22 +78,6 @@ var Carouzel;
      */
     var stringTrim = function (str) {
         return str.replace(/^\s+|\s+$|\s+(?=\s)/g, '');
-    };
-    /**
-     * Function to convert NodeList and other lists to loopable Arrays
-     *
-     * @param arr - Either Nodelist of any type of array
-     *
-     * @returns A loopable Array.
-     *
-     */
-    var arrayCall = function (arr) {
-        try {
-            return Array.prototype.slice.call(arr);
-        }
-        catch (e) {
-            return [];
-        }
     };
     /**
      * Function to check wheather an element has a string in its class attribute
@@ -155,7 +140,7 @@ var Carouzel;
     /**
      * Function to remove all local events assigned to the navigation elements.
      *
-     * @param core - AMegMen instance core object
+     * @param core - Carouzel instance core object
      * @param element - An HTML Element from which the events need to be removed
      *
      */
@@ -190,6 +175,12 @@ var Carouzel;
         element.addEventListener(type, listener, _useCapture);
         return eventHandler;
     };
+    /**
+     * Function to update CSS classes on all respective elements
+     *
+     * @param core - Carouzel instance core object
+     *
+     */
     var updateCSSClasses = function (core) {
         for (var i = 0; i < core._as.length; i++) {
             removeClass(core._as[i], core.settings.activeCls);
@@ -218,6 +209,12 @@ var Carouzel;
             }
         }
     };
+    /**
+     * Function to animate the track element based on the calculations
+     *
+     * @param core - Carouzel instance core object
+     *
+     */
     var animateTrack = function (core) {
         if (typeof core.settings.bFn === 'function') {
             core.settings.bFn();
@@ -277,18 +274,45 @@ var Carouzel;
             }
         }, core.settings.speed);
     };
+    /**
+     * Function to prepend the duplicate elements in the track
+     *
+     * @param parent - Track element in which duplicates need to be prepended
+     * @param child - The child element to be prepended
+     *
+     */
+    var doInsertBefore = function (parent, child) {
+        var first = parent.querySelectorAll(_Selectors.slide)[0];
+        if (first) {
+            parent.insertBefore(child, first);
+        }
+    };
+    /**
+     * Function to manage the duplicate slides in the track based on the breakpoint
+     *
+     * @param track - Track element in which duplicates need to be deleted and inserted
+     * @param bpo - The appropriate breakpoint based on the device width
+     * @param duplicateClass - the class name associated with duplicate elements
+     *
+     */
     var manageDuplicates = function (track, bpo, duplicateClass) {
-        var duplicates = arrayCall(track.querySelectorAll('.' + duplicateClass));
+        var duplicates = track.querySelectorAll('.' + duplicateClass);
         for (var i = 0; i < duplicates.length; i++) {
             track.removeChild(duplicates[i]);
         }
         for (var i = bpo.pDups.length - 1; i >= 0; i--) {
-            track.prepend(bpo.pDups[i]);
+            doInsertBefore(track, bpo.pDups[i]);
         }
         for (var i = 0; i < bpo.nDups.length; i++) {
-            track.append(bpo.nDups[i]);
+            track.appendChild(bpo.nDups[i]);
         }
     };
+    /**
+     * Function to find and apply the appropriate breakpoint settings based on the viewport
+     *
+     * @param core - Carouzel instance core object
+     *
+     */
     var applyLayout = function (core) {
         var viewportWidth = window.innerWidth;
         var bpoptions = core.bpall[0];
@@ -324,7 +348,7 @@ var Carouzel;
             core.sWidth = slideWidth;
             trackWidth = parseFloat(slideWidth + '') * (core.sLength >= bpoptions._2Show ? bpoptions.bpSLen : bpoptions._2Show);
             core.track.style.width = trackWidth + 'px';
-            core._as = arrayCall(core.trackW.querySelectorAll(_Selectors.slide));
+            core._as = core.trackW.querySelectorAll(_Selectors.slide);
             for (var i = 0; i < core._as.length; i++) {
                 core._as[i].style.width = slideWidth + 'px';
             }
@@ -340,6 +364,26 @@ var Carouzel;
             animateTrack(core);
         }
     };
+    /**
+     * Function to go to the specific slide number
+     *
+     * @param core - Carouzel instance core object
+     * @param slidenumber - Slide index to which the carouzel should be scrolled to
+     *
+     */
+    var goToSlide = function (core, slidenumber) {
+        if (core.ci !== slidenumber) {
+            core.pi = core.ci;
+            core.ci = slidenumber * core.bpo._2Scroll;
+            animateTrack(core);
+        }
+    };
+    /**
+     * Function to go to the previous set of slides
+     *
+     * @param core - Carouzel instance core object
+     *
+     */
     var goToPrev = function (core) {
         core.pi = core.ci;
         core.ci -= core.bpo._2Scroll;
@@ -351,6 +395,12 @@ var Carouzel;
         }
         animateTrack(core);
     };
+    /**
+     * Function to go to the next set of slides
+     *
+     * @param core - Carouzel instance core object
+     *
+     */
     var goToNext = function (core) {
         core.pi = core.ci;
         core.ci += core.bpo._2Scroll;
@@ -362,6 +412,12 @@ var Carouzel;
         }
         animateTrack(core);
     };
+    /**
+     * Function to add click events to the arrows
+     *
+     * @param core - Carouzel instance core object
+     *
+     */
     var toggleArrows = function (core) {
         if (core.arrowP) {
             core.eHandlers.push(eventHandler(core.arrowP, 'click', function (event) {
@@ -376,12 +432,22 @@ var Carouzel;
             }));
         }
     };
+    /**
+     * Function to add touch events to the track
+     *
+     * @param core - Carouzel instance core object
+     *
+     */
     var toggleTouchEvents = function (core) {
         var posX1 = 0;
         var posX2 = 0;
         var posFinal = 0;
         var threshold = core.settings.threshold || 100;
         var dragging = false;
+        /**
+         * Local function for Touch Start event
+         *
+         */
         var touchStart = function (thisevent) {
             thisevent.preventDefault();
             dragging = true;
@@ -397,6 +463,10 @@ var Carouzel;
                 core.track.style.transitionDuration = core.settings.speed + "ms";
             }
         };
+        /**
+         * Local function for Touch Move event
+         *
+         */
         var touchMove = function (thisevent) {
             if (dragging && core.track) {
                 if (thisevent.type == 'touchmove') {
@@ -411,6 +481,10 @@ var Carouzel;
                 posFinal = posX2;
             }
         };
+        /**
+         * Local function for Touch End event
+         *
+         */
         var touchEnd = function () {
             if (dragging && core.track) {
                 if (posFinal < -threshold) {
@@ -453,6 +527,12 @@ var Carouzel;
             touchMove(event);
         }));
     };
+    /**
+     * Function to generate duplicate elements and dot navigation before hand for all breakpoints
+     *
+     * @param core - Carouzel instance core object
+     *
+     */
     var generateElements = function (core) {
         for (var i = 0; i < core.bpall.length; i++) {
             core.bpall[i].bpSLen = core.sLength;
@@ -507,6 +587,12 @@ var Carouzel;
             _loop_1(i);
         }
     };
+    /**
+     * Function to validate all breakpoints to check duplicates
+     *
+     * @param breakpoints - Breakpoint settings array
+     *
+     */
     var validateBreakpoints = function (breakpoints) {
         try {
             var tempArr = [];
@@ -530,6 +616,12 @@ var Carouzel;
             throw new TypeError(_breakpointsParseTypeError);
         }
     };
+    /**
+     * Function to update breakpoints to override missing settings from previous breakpoint
+     *
+     * @param settings - Core settings object containing merge of default and custom settings
+     *
+     */
     var updateBreakpoints = function (settings) {
         var defaultBreakpoint = {
             _arrows: settings._arrows ? settings._arrows : _Defaults.showArrows,
@@ -582,6 +674,12 @@ var Carouzel;
         }
         return [];
     };
+    /**
+     * Function to map default and custom settings to Core settings with shorter names
+     *
+     * @param settings - Settings object containing merge of default and custom settings
+     *
+     */
     var mapSettings = function (settings) {
         var settingsobj = {
             _2Scroll: settings.slidesToScroll,
@@ -600,6 +698,7 @@ var Carouzel;
             effect: settings.animationEffect,
             inf: settings.isInfinite,
             isRTL: settings.isRTL,
+            kb: settings.enableKeyboard,
             pauseHov: settings.pauseOnHover,
             res: [],
             rtlCls: settings.rtlClass,
@@ -630,14 +729,12 @@ var Carouzel;
         }
         return settingsobj;
     };
-    var disableAutoplay = function (core) {
-        if (core.trackW) {
-            removeEventListeners(core, core.trackW);
-        }
-        if (core.autoTimer) {
-            clearInterval(core.autoTimer);
-        }
-    };
+    /**
+     * Function to toggle Autoplay and pause on hover functionalities for the carouzel
+     *
+     * @param core - Carouzel instance core object
+     *
+     */
     var toggleAutoplay = function (core) {
         if (core.rootElem && core.settings.pauseHov) {
             core.eHandlers.push(eventHandler(core.rootElem, 'mouseenter', function () {
@@ -656,8 +753,14 @@ var Carouzel;
             }
         }, core.settings.autoS);
     };
+    /**
+     * Function to toggle keyboard navigation with left and right arrows
+     *
+     * @param core - Carouzel instance core object
+     *
+     */
     var toggleKeyboard = function (core) {
-        if (core.rootElem) {
+        if (core.rootElem && core.settings.kb) {
             core.rootElem.setAttribute('tabindex', '-1');
             var keyCode_1 = '';
             core.eHandlers.push(eventHandler(core.rootElem, 'keydown', function (event) {
@@ -677,12 +780,18 @@ var Carouzel;
             }));
         }
     };
+    /**
+     * Function to initialize the carouzel core object and assign respective events
+     *
+     * @param core - Carouzel instance core object
+     *
+     */
     var init = function (core, rootElem, settings) {
         if (typeof settings.beforeInit === 'function') {
             settings.beforeInit();
         }
-        var _core = core;
-        _core.rootElem = rootElem;
+        var _core = __assign({}, core);
+        _core.rootElem = core.rootElem = rootElem;
         _core.settings = mapSettings(settings);
         _core.ci = settings.startAtIndex = (settings.startAtIndex || 0) - 1;
         _core.eHandlers = [];
@@ -691,12 +800,23 @@ var Carouzel;
         _core.arrowsW = rootElem.querySelector("" + _Selectors.arrowsW);
         _core.nav = rootElem.querySelector("" + _Selectors.nav);
         _core.navW = rootElem.querySelector("" + _Selectors.navW);
-        _core._ds = arrayCall(rootElem.querySelectorAll("" + _Selectors.slide));
+        _core._ds = rootElem.querySelectorAll("" + _Selectors.slide);
         _core.track = rootElem.querySelector("" + _Selectors.track);
         _core.trackW = rootElem.querySelector("" + _Selectors.trackW);
         _core.sLength = _core._ds.length;
         _core.pts = [];
         _core.isLeftAdded = false;
+        core.goToNext = function () {
+            goToNext(_core);
+        };
+        core.goToPrevious = function () {
+            goToPrev(_core);
+        };
+        core.goToSlide = function (slidenumber) {
+            if (!isNaN(slidenumber)) {
+                goToSlide(_core, slidenumber - 1);
+            }
+        };
         if (!_core._ds[_core.ci]) {
             _core.ci = settings.startAtIndex = 0;
         }
@@ -704,7 +824,6 @@ var Carouzel;
             if (_core.settings.auto) {
                 _core.settings.inf = true;
                 toggleAutoplay(_core);
-                disableAutoplay;
             }
             _core.bpall = updateBreakpoints(_core.settings);
             toggleKeyboard(_core);
@@ -713,7 +832,7 @@ var Carouzel;
             toggleTouchEvents(_core);
             applyLayout(_core);
         }
-        addClass(core.rootElem, core.settings.activeCls);
+        addClass(core.rootElem, _core.settings.activeCls);
         if (typeof settings.onInit === 'function') {
             settings.onInit();
         }
@@ -726,7 +845,7 @@ var Carouzel;
      * ██      ██    ██ ██   ██ ██
      *  ██████  ██████  ██   ██ ███████
      *
-     * Class for every AMegMen instance.
+     * Class for every Carouzel instance.
      *
      */
     var Core = /** @class */ (function () {
@@ -743,6 +862,7 @@ var Carouzel;
                     if (core.nav && allElems[i].hasAttribute(_Selectors.dot.slice(1, -1))) {
                         core.nav.removeChild(allElems[i]);
                     }
+                    allElems[i].removeAttribute('style');
                     removeClass(allElems[i], core.settings.activeCls + " " + core.settings.cntrCls + " " + core.settings.disableCls + " " + core.settings.dupCls + " " + core.settings.rtlCls);
                 }
                 delete allLocalInstances[thisid];
@@ -774,7 +894,7 @@ var Carouzel;
         function Root() {
             var _this = this;
             this.instances = {};
-            this.getInsLen = function () {
+            this.getInstancesLength = function () {
                 var instanceCount = 0;
                 for (var e in _this.instances) {
                     if (_this.instances.hasOwnProperty(e)) {
@@ -796,14 +916,14 @@ var Carouzel;
                 }, 100);
             };
             /**
-             * Function to initialize the AMegMen plugin for provided query strings.
+             * Function to initialize the Carouzel plugin for provided query strings.
              *
-             * @param query - The CSS selector for which the AMegMen needs to be initialized.
-             * @param options - The optional object to customize every AMegMen instance.
+             * @param query - The CSS selector for which the Carouzel needs to be initialized.
+             * @param options - The optional object to customize every Carouzel instance.
              *
              */
             this.init = function (query, options) {
-                var roots = arrayCall(document.querySelectorAll(query));
+                var roots = document.querySelectorAll(query);
                 var rootsLength = roots.length;
                 var instanceLength = 0;
                 for (var i in _this.instances) {
@@ -827,7 +947,7 @@ var Carouzel;
                             var newOptions = void 0;
                             if (roots[i].getAttribute(_Selectors.rootAuto.slice(1, -1))) {
                                 try {
-                                    newOptions = JSON.parse(roots[i].getAttribute(_Selectors.rootAuto.slice(1, -1)));
+                                    newOptions = JSON.parse(roots[i].getAttribute(_Selectors.rootAuto.slice(1, -1)) || '');
                                 }
                                 catch (e) {
                                     throw new TypeError(_optionsParseTypeError);
@@ -846,7 +966,7 @@ var Carouzel;
                             }
                         }
                     }
-                    if (window && _this.getInsLen() > 0 && !isWindowEventAttached) {
+                    if (window && _this.getInstancesLength() > 0 && !isWindowEventAttached) {
                         isWindowEventAttached = true;
                         window.addEventListener('resize', _this.winResize, true);
                     }
@@ -861,13 +981,13 @@ var Carouzel;
                 _this.init(_Selectors.rootAuto);
             };
             /**
-             * Function to destroy the AMegMen plugin for provided query strings.
+             * Function to destroy the Carouzel plugin for provided query strings.
              *
-             * @param query - The CSS selector for which the AMegMen needs to be initialized.
+             * @param query - The CSS selector for which the Carouzel needs to be initialized.
              *
              */
             this.destroy = function (query) {
-                var roots = arrayCall(document.querySelectorAll(query));
+                var roots = document.querySelectorAll(query);
                 var rootsLength = roots.length;
                 if (rootsLength > 0) {
                     for (var i = 0; i < rootsLength; i++) {
@@ -877,7 +997,7 @@ var Carouzel;
                             delete _this.instances[id];
                         }
                     }
-                    if (window && _this.getInsLen() === 0) {
+                    if (window && _this.getInstancesLength() === 0) {
                         window.removeEventListener('resize', _this.winResize, true);
                     }
                 }
@@ -889,7 +1009,7 @@ var Carouzel;
         /**
          * Function to return single instance
          *
-         * @returns Single AMegMen Instance
+         * @returns Single Carouzel Instance
          *
          */
         Root.getInstance = function () {

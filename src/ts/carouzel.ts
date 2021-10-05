@@ -29,9 +29,9 @@ namespace Carouzel {
   
   interface ICarouzelCoreSettings {
     _arrows: boolean;
-    _nav: boolean;
     _2Scroll: number;
     _2Show: number;
+    _nav: boolean;
     activeCls: string;
     aFn?: Function;
     auto: boolean;
@@ -42,15 +42,16 @@ namespace Carouzel {
     disableCls: string;
     dupCls: string;
     effect: string;
-    swipe: boolean;
     idPrefix?: string;
     inf: boolean;
     isRTL?: boolean;
+    kb: boolean;
     pauseHov: boolean;
     res?: ICarouzelCoreBreakpoint[];
     rtlCls?: string;
     speed: number;
     startAt: number;
+    swipe: boolean;
     threshold: number;
     timeFn: string;
   }
@@ -77,6 +78,7 @@ namespace Carouzel {
     centerMode: boolean;
     disabledClass: string;
     duplicateClass: string;
+    enableKeyboard: boolean;
     hasTouchSwipe: boolean;
     isInfinite: boolean;
     isRTL?: boolean;
@@ -103,12 +105,8 @@ namespace Carouzel {
   }
 
   interface ICore {
-    _as: HTMLElement[];
-    ci: number;
-    ct: number;
-    _ds: HTMLElement[];
-    pi: number;
-    pts: IIndexHandler;
+    _as: NodeListOf<Element>;
+    _ds: NodeListOf<Element>;
     arrowN: HTMLElement | null;
     arrowP: HTMLElement | null;
     arrowsW: HTMLElement | null;
@@ -116,11 +114,18 @@ namespace Carouzel {
     bpall: ICarouzelCoreBreakpoint[];
     bpo_old: ICarouzelCoreBreakpoint;
     bpo: ICarouzelCoreBreakpoint;
+    ci: number;
+    ct: number;
     eHandlers: any[];
+    goToNext: Function;
+    goToPrevious: Function;
+    goToSlide: Function;
     isLeftAdded: boolean;
     nav: HTMLElement | null;
     navW: HTMLElement | null;
     paused: boolean;
+    pi: number;
+    pts: IIndexHandler;
     rootElem: HTMLElement | null;
     settings: ICarouzelCoreSettings;
     sLength: number;
@@ -165,6 +170,7 @@ namespace Carouzel {
     centerMode: false,
     disabledClass: '__carouzel-disabled',
     duplicateClass: '__carouzel-duplicate',
+    enableKeyboard: true,
     hasTouchSwipe: true,
     isInfinite: true,
     isRTL: false,
@@ -190,22 +196,6 @@ namespace Carouzel {
    */
   const stringTrim = (str: string) => {
     return str.replace(/^\s+|\s+$|\s+(?=\s)/g, '');
-  };
-
-  /**
-   * Function to convert NodeList and other lists to loopable Arrays
-   * 
-   * @param arr - Either Nodelist of any type of array
-   * 
-   * @returns A loopable Array.
-   *
-   */
-  const arrayCall = (arr: NodeListOf<Element> | undefined) => {
-    try {
-      return Array.prototype.slice.call(arr);
-    } catch (e) {
-      return [];
-    }
   };
 
   /**
@@ -273,7 +263,7 @@ namespace Carouzel {
   /**
    * Function to remove all local events assigned to the navigation elements.
    * 
-   * @param core - AMegMen instance core object
+   * @param core - Carouzel instance core object
    * @param element - An HTML Element from which the events need to be removed
    *
    */
@@ -310,9 +300,12 @@ namespace Carouzel {
     return eventHandler;
   };
 
-
-  
-
+  /**
+   * Function to update CSS classes on all respective elements
+   * 
+   * @param core - Carouzel instance core object
+   *
+   */
   const updateCSSClasses = (core: ICore) => {
     for (let i=0; i<core._as.length; i++) {
       removeClass(core._as[i] as Element, core.settings.activeCls);
@@ -340,9 +333,12 @@ namespace Carouzel {
     }
   };
 
-
-
-
+  /**
+   * Function to animate the track element based on the calculations
+   * 
+   * @param core - Carouzel instance core object
+   *
+   */
   const animateTrack = (core: ICore) => {
     if (typeof core.settings.bFn === 'function') {
       core.settings.bFn();
@@ -402,26 +398,49 @@ namespace Carouzel {
     }, core.settings.speed);
   };
 
-  
+  /**
+   * Function to prepend the duplicate elements in the track
+   * 
+   * @param parent - Track element in which duplicates need to be prepended
+   * @param child - The child element to be prepended
+   *
+   */
+  const doInsertBefore = (parent: Element, child: Node) => {
+    const first = parent.querySelectorAll(_Selectors.slide)[0];
+    if (first) {
+      parent.insertBefore(child, first);
+    }
+  };
 
-
-
+  /**
+   * Function to manage the duplicate slides in the track based on the breakpoint
+   * 
+   * @param track - Track element in which duplicates need to be deleted and inserted
+   * @param bpo - The appropriate breakpoint based on the device width
+   * @param duplicateClass - the class name associated with duplicate elements
+   *
+   */
   const manageDuplicates = (track: HTMLElement, bpo: ICarouzelCoreBreakpoint, duplicateClass: string) => {
-    let duplicates = arrayCall(track.querySelectorAll('.' + duplicateClass));
+    let duplicates = track.querySelectorAll('.' + duplicateClass);
     for (let i=0; i < duplicates.length; i++) {
       track.removeChild(duplicates[i]);
     }
     for (let i=bpo.pDups.length - 1; i >= 0; i--) {
-      track.prepend(bpo.pDups[i]);
+      doInsertBefore(track, bpo.pDups[i]);
     }
     for (let i=0; i < bpo.nDups.length; i++) {
-      track.append(bpo.nDups[i]);
+      track.appendChild(bpo.nDups[i]);
     }
   }
 
 
 
-
+  /**
+   * Function to find and apply the appropriate breakpoint settings based on the viewport
+   * 
+   * @param core - Carouzel instance core object
+   *
+   */
   const applyLayout = (core: ICore) => {
     let viewportWidth = window.innerWidth;
     let bpoptions = core.bpall[0];
@@ -460,9 +479,9 @@ namespace Carouzel {
 
       trackWidth = parseFloat(slideWidth + '') * (core.sLength >= bpoptions._2Show ? bpoptions.bpSLen : bpoptions._2Show);
       core.track.style.width = trackWidth + 'px';
-      core._as = arrayCall(core.trackW.querySelectorAll(_Selectors.slide));
+      core._as = core.trackW.querySelectorAll(_Selectors.slide);
       for (let i = 0; i < core._as.length; i++) {
-        core._as[i].style.width = slideWidth + 'px';
+        (core._as[i] as HTMLElement).style.width = slideWidth + 'px';
       }
       for (let i = bpoptions.pDups.length; i > 0; i--) {
         core.pts[-i] = (-i + bpoptions.pDups.length) * slideWidth;
@@ -477,9 +496,27 @@ namespace Carouzel {
     }
   };
 
+  /**
+   * Function to go to the specific slide number
+   * 
+   * @param core - Carouzel instance core object
+   * @param slidenumber - Slide index to which the carouzel should be scrolled to
+   *
+   */
+  const goToSlide = (core: ICore, slidenumber:number) => {
+    if (core.ci !== slidenumber) {
+      core.pi = core.ci;
+      core.ci = slidenumber * core.bpo._2Scroll;
+      animateTrack(core);
+    }
+  };
 
-
-
+  /**
+   * Function to go to the previous set of slides
+   * 
+   * @param core - Carouzel instance core object
+   *
+   */
   const goToPrev = (core: ICore) => {
     core.pi = core.ci;
     core.ci -= core.bpo._2Scroll;
@@ -492,9 +529,12 @@ namespace Carouzel {
     animateTrack(core);
   };
 
-
-
-
+  /**
+   * Function to go to the next set of slides
+   * 
+   * @param core - Carouzel instance core object
+   *
+   */
   const goToNext = (core: ICore) => {
     core.pi = core.ci;
     core.ci += core.bpo._2Scroll;
@@ -507,9 +547,12 @@ namespace Carouzel {
     animateTrack(core);
   };
 
-
-
-
+  /**
+   * Function to add click events to the arrows
+   * 
+   * @param core - Carouzel instance core object
+   *
+   */
   const toggleArrows = (core: ICore) => {
     if (core.arrowP) {
       core.eHandlers.push(eventHandler(core.arrowP, 'click', (event: Event) => {
@@ -524,15 +567,24 @@ namespace Carouzel {
       }));
     }
   };
-
-
-
+  
+  /**
+   * Function to add touch events to the track
+   * 
+   * @param core - Carouzel instance core object
+   *
+   */
   const toggleTouchEvents = (core: ICore) => {
     let posX1 = 0;
     let posX2 = 0;
     let posFinal = 0;
     let threshold = core.settings.threshold || 100;
     let dragging = false;
+
+    /**
+     * Local function for Touch Start event
+     * 
+     */
     const touchStart = (thisevent: Event) => {
       thisevent.preventDefault();
       dragging = true;
@@ -547,6 +599,11 @@ namespace Carouzel {
         core.track.style.transitionDuration = `${core.settings.speed}ms`;
       }
     };
+
+    /**
+     * Local function for Touch Move event
+     *
+     */
     const touchMove = (thisevent: Event) => {
       if (dragging && core.track) {
         if (thisevent.type == 'touchmove') {
@@ -560,6 +617,11 @@ namespace Carouzel {
         posFinal = posX2;
       }
     };
+
+    /**
+     * Local function for Touch End event
+     *
+     */
     const touchEnd = () => {
       if (dragging && core.track) {
         if (posFinal < -threshold) {
@@ -602,7 +664,12 @@ namespace Carouzel {
     }));
   };
 
-
+  /**
+   * Function to generate duplicate elements and dot navigation before hand for all breakpoints
+   * 
+   * @param core - Carouzel instance core object
+   *
+   */
   const generateElements = (core: ICore) => {
     for (let i=0; i<core.bpall.length; i++) {
       core.bpall[i].bpSLen = core.sLength;
@@ -652,9 +719,12 @@ namespace Carouzel {
     }
   };
 
-
-
-
+  /**
+   * Function to validate all breakpoints to check duplicates
+   * 
+   * @param breakpoints - Breakpoint settings array
+   *
+   */
   const validateBreakpoints = (breakpoints: ICarouzelCoreBreakpoint[]) => {
     try {
       let tempArr = [];
@@ -677,9 +747,12 @@ namespace Carouzel {
     }
   }
 
-
-
-
+  /**
+   * Function to update breakpoints to override missing settings from previous breakpoint
+   * 
+   * @param settings - Core settings object containing merge of default and custom settings
+   *
+   */
   const updateBreakpoints = (settings: ICarouzelCoreSettings) => {
     const defaultBreakpoint: ICarouzelCoreBreakpoint = {
       _arrows: settings._arrows ? settings._arrows : _Defaults.showArrows,
@@ -734,7 +807,12 @@ namespace Carouzel {
   };
 
 
-
+  /**
+   * Function to map default and custom settings to Core settings with shorter names
+   * 
+   * @param settings - Settings object containing merge of default and custom settings
+   *
+   */
   const mapSettings = (settings: ICarouzelSettings) => {
     let settingsobj: ICarouzelCoreSettings = {
       _2Scroll: settings.slidesToScroll,
@@ -753,6 +831,7 @@ namespace Carouzel {
       effect: settings.animationEffect,
       inf: settings.isInfinite,
       isRTL: settings.isRTL,
+      kb: settings.enableKeyboard,
       pauseHov: settings.pauseOnHover,
       res: [],
       rtlCls: settings.rtlClass,
@@ -785,21 +864,13 @@ namespace Carouzel {
 
     return settingsobj;
   };
-
-
-
   
-  const disableAutoplay = (core: ICore) => {
-    if (core.trackW) {
-      removeEventListeners(core, core.trackW);
-    }
-    if (core.autoTimer) {
-      clearInterval(core.autoTimer);
-    }
-  }
-
-
-
+  /**
+   * Function to toggle Autoplay and pause on hover functionalities for the carouzel
+   * 
+   * @param core - Carouzel instance core object
+   *
+   */
   const toggleAutoplay = (core: ICore) => {
     if (core.rootElem && core.settings.pauseHov) {
       core.eHandlers.push(eventHandler(core.rootElem, 'mouseenter', function () {
@@ -819,11 +890,14 @@ namespace Carouzel {
     }, core.settings.autoS);
   };
 
-
-
-
+  /**
+   * Function to toggle keyboard navigation with left and right arrows
+   * 
+   * @param core - Carouzel instance core object
+   *
+   */
   const toggleKeyboard = (core: ICore) => {
-    if (core.rootElem) {
+    if (core.rootElem && core.settings.kb) {
       core.rootElem.setAttribute('tabindex', '-1');
       let keyCode = '';
       core.eHandlers.push(eventHandler(core.rootElem, 'keydown', function (event: Event) {
@@ -838,15 +912,18 @@ namespace Carouzel {
     }
   };
 
-
-
-
+  /**
+   * Function to initialize the carouzel core object and assign respective events
+   * 
+   * @param core - Carouzel instance core object
+   *
+   */
   const init = (core: ICore, rootElem: HTMLElement, settings: ICarouzelSettings) => {
     if (typeof settings.beforeInit === 'function') {
       settings.beforeInit();
     }
-    let _core: ICore = core;
-    _core.rootElem = rootElem;
+    let _core: ICore = {...core};
+    _core.rootElem = core.rootElem = rootElem;
     _core.settings = mapSettings(settings);
     
     _core.ci = settings.startAtIndex = (settings.startAtIndex || 0) - 1;
@@ -856,12 +933,24 @@ namespace Carouzel {
     _core.arrowsW = rootElem.querySelector(`${_Selectors.arrowsW}`);
     _core.nav = rootElem.querySelector(`${_Selectors.nav}`);
     _core.navW = rootElem.querySelector(`${_Selectors.navW}`);
-    _core._ds = arrayCall(rootElem.querySelectorAll(`${_Selectors.slide}`));
+    _core._ds = rootElem.querySelectorAll(`${_Selectors.slide}`);
     _core.track = rootElem.querySelector(`${_Selectors.track}`);
     _core.trackW = rootElem.querySelector(`${_Selectors.trackW}`);
     _core.sLength = _core._ds.length;
     _core.pts = [];
     _core.isLeftAdded = false;
+
+    core.goToNext = () => {
+      goToNext(_core);
+    };
+    core.goToPrevious = () => {
+      goToPrev(_core);
+    };
+    core.goToSlide = (slidenumber: number) => {
+      if (!isNaN(slidenumber)) {
+        goToSlide(_core, slidenumber - 1);
+      }
+    };
 
     if (!_core._ds[_core.ci]) {
       _core.ci = settings.startAtIndex = 0;
@@ -871,7 +960,6 @@ namespace Carouzel {
       if (_core.settings.auto) {
         _core.settings.inf = true;
         toggleAutoplay(_core);
-        disableAutoplay;
       }
       _core.bpall = updateBreakpoints(_core.settings);
       toggleKeyboard(_core);
@@ -881,7 +969,7 @@ namespace Carouzel {
       applyLayout(_core);
     }
 
-    addClass(core.rootElem as Element, core.settings.activeCls);
+    addClass(core.rootElem as Element, _core.settings.activeCls);
     if (typeof settings.onInit === 'function') {
       settings.onInit();
     }
@@ -895,7 +983,7 @@ namespace Carouzel {
    * ██      ██    ██ ██   ██ ██      
    *  ██████  ██████  ██   ██ ███████    
    * 
-   * Class for every AMegMen instance.
+   * Class for every Carouzel instance.
    *
    */
 
@@ -917,6 +1005,7 @@ namespace Carouzel {
         if (core.nav && allElems[i].hasAttribute(_Selectors.dot.slice(1, -1))) {
           core.nav.removeChild(allElems[i]);
         }
+        allElems[i].removeAttribute('style');
         removeClass(allElems[i] as HTMLElement, `${core.settings.activeCls} ${core.settings.cntrCls} ${core.settings.disableCls} ${core.settings.dupCls} ${core.settings.rtlCls}`)
       }
       delete allLocalInstances[thisid];
@@ -945,7 +1034,7 @@ namespace Carouzel {
      *
      */
     constructor() {}
-    private getInsLen = () => {
+    private getInstancesLength = () => {
       let instanceCount = 0;
       for (let e in this.instances) {
         if (this.instances.hasOwnProperty(e)) {
@@ -969,7 +1058,7 @@ namespace Carouzel {
     /**
      * Function to return single instance
      * 
-     * @returns Single AMegMen Instance
+     * @returns Single Carouzel Instance
      *
      */
     public static getInstance(): Root {
@@ -980,14 +1069,14 @@ namespace Carouzel {
     }
 
     /**
-     * Function to initialize the AMegMen plugin for provided query strings.
+     * Function to initialize the Carouzel plugin for provided query strings.
      * 
-     * @param query - The CSS selector for which the AMegMen needs to be initialized.
-     * @param options - The optional object to customize every AMegMen instance.
+     * @param query - The CSS selector for which the Carouzel needs to be initialized.
+     * @param options - The optional object to customize every Carouzel instance.
      *
      */
     public init = (query: string, options?: ICarouzelSettings) => {
-      const roots = arrayCall(document.querySelectorAll(query));
+      const roots = document.querySelectorAll(query);
       const rootsLength = roots.length;
       let instanceLength = 0;
       for (let i in this.instances) {
@@ -1012,7 +1101,7 @@ namespace Carouzel {
             let newOptions;
             if (roots[i].getAttribute(_Selectors.rootAuto.slice(1, -1))) {
               try {
-                newOptions = JSON.parse(roots[i].getAttribute(_Selectors.rootAuto.slice(1, -1)));
+                newOptions = JSON.parse((roots[i] as HTMLElement).getAttribute(_Selectors.rootAuto.slice(1, -1)) || '');
               } catch (e) {
                 throw new TypeError(_optionsParseTypeError);
               }
@@ -1020,15 +1109,15 @@ namespace Carouzel {
               newOptions = options;
             }
             if (id) {
-              this.instances[id] = new Core(id, roots[i], newOptions);
+              this.instances[id] = new Core(id, roots[i] as HTMLElement, newOptions);
             } else {
               const thisid = id ? id : (Object as any).assign({}, _Defaults, newOptions).idPrefix + '_' + new Date().getTime() + '_root_' + (i + 1);
               roots[i].setAttribute('id', thisid);
-              this.instances[thisid] = new Core(thisid, roots[i], newOptions);
+              this.instances[thisid] = new Core(thisid, roots[i] as HTMLElement, newOptions);
             }
           }
         }
-        if (window && this.getInsLen() > 0 && !isWindowEventAttached) {
+        if (window && this.getInstancesLength() > 0 && !isWindowEventAttached) {
           isWindowEventAttached = true;
           window.addEventListener('resize', this.winResize, true);
         }
@@ -1044,13 +1133,13 @@ namespace Carouzel {
     };
 
     /**
-     * Function to destroy the AMegMen plugin for provided query strings.
+     * Function to destroy the Carouzel plugin for provided query strings.
      * 
-     * @param query - The CSS selector for which the AMegMen needs to be initialized.
+     * @param query - The CSS selector for which the Carouzel needs to be initialized.
      *
      */
     protected destroy = (query: string) => {
-      const roots = arrayCall(document.querySelectorAll(query));
+      const roots = document.querySelectorAll(query);
       const rootsLength = roots.length;
       if (rootsLength > 0) {
         for (let i = 0; i < rootsLength; i++) {
@@ -1060,7 +1149,7 @@ namespace Carouzel {
             delete this.instances[id];
           }
         }
-        if (window && this.getInsLen() === 0) {
+        if (window && this.getInstancesLength() === 0) {
           window.removeEventListener('resize', this.winResize, true);
         }
       } else {
