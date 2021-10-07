@@ -31,6 +31,8 @@ declare namespace Carouzel {
         duplicateClass: string;
         enableKeyboard: boolean;
         hasTouchSwipe: boolean;
+        hiddenClass: string;
+        idPrefix: string;
         isInfinite: boolean;
         isRTL?: boolean;
         onInit?: Function;

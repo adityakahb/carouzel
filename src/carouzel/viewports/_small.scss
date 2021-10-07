@@ -36,6 +36,10 @@
     transform: translate(0, -50%);
     transition: opacity 250ms ease;
     width: 48px;
+    svg {
+      height: 100%;
+      width: 100%;
+    }
     &:hover, &:focus {
       opacity: 1;
     }

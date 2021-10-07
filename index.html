@@ -301,19 +301,21 @@
           </div>
           <div class="row">
             <div class="col">
-              <div id="__carouzel_5" data-carouzelauto='{
-                "slidesToShow": 1,
-                "startAtIndex": 1,
-                "responsive": [{
-                  "breakpoint": 700,
-                  "slidesToScroll": 2,
-                  "slidesToShow": 2
-                }, {
-                  "breakpoint": 1100,
-                  "slidesToScroll": 3,
-                  "slidesToShow": 3
-                }]
-              }'>
+              <div data-carouzelauto="{
+                  'isInfinite': false,
+                  'autoplay': false,
+                  'autoplaySpeed': 5000,
+                  'pauseOnHover': false,
+                  'slidesToScroll': 1,
+                  'slidesToShow': 1,
+                  'showNavigation': false,
+                  'responsive': [{
+                    'breakpoint': 1280,
+                    'slidesToScroll': 3,
+                    'slidesToShow': 3,
+                    'showNavigation': true
+                  }]
+                }">
                 <div data-carouzeltrackwrapper>
                   <div data-carouzeltrack>
                     <div data-carouzelslide>
@@ -472,12 +474,12 @@
             </div>
           </div>
           <div class="row py-5">
-            <div class="col text-right">
-              <button type="button" id="gotoprevbtn" class="btn btn-primary ms-3">Go to Previous</button>
-              <button type="button" id="gotonextbtn" class="btn btn-primary ms-3">Go to Next</button>
+            <div class="col-12 col-md-6 text-center text-md-end">
+              <button type="button" id="gotoprevbtn" class="btn btn-primary mx-1">Go to Previous</button>
+              <button type="button" id="gotonextbtn" class="btn btn-primary mx-1">Go to Next</button>
             </div>
-            <div class="col text-left">
-              <div class="input-group w-50">
+            <div class="col-12 col-md-6 text-center text-md-start">
+              <div class="input-group my-3 my-md-0 w-50 d-inline-flex">
                 <span class="input-group-text" id="basic-addon1">Go to Slide</span>
                 <input type="number" value="1" id="gotoslideinput" class="form-control" aria-describedby="basic-addon1" min="1" max="12">
               </div>

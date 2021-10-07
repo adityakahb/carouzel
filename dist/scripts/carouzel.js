@@ -55,6 +55,8 @@ var Carouzel;
         duplicateClass: '__carouzel-duplicate',
         enableKeyboard: true,
         hasTouchSwipe: true,
+        hiddenClass: '__carouzel-hidden',
+        idPrefix: '__carouzel',
         isInfinite: true,
         isRTL: false,
         pauseOnHover: false,
@@ -342,6 +344,18 @@ var Carouzel;
                 core.nav.appendChild(bpoptions.dots[i]);
             }
         }
+        if (!bpoptions._arrows && core.arrowsW) {
+            addClass(core.arrowsW, core.settings.hidCls);
+        }
+        else if (core.arrowsW) {
+            removeClass(core.arrowsW, core.settings.hidCls);
+        }
+        if (!bpoptions._nav && core.navW) {
+            addClass(core.navW, core.settings.hidCls);
+        }
+        else if (core.navW) {
+            removeClass(core.navW, core.settings.hidCls);
+        }
         if (core.trackW && core.track) {
             core.pts = {};
             slideWidth = core.trackW.clientWidth / bpoptions._2Show || 1;
@@ -624,14 +638,14 @@ var Carouzel;
      */
     var updateBreakpoints = function (settings) {
         var defaultBreakpoint = {
-            _arrows: settings._arrows ? settings._arrows : _Defaults.showArrows,
-            _nav: settings._nav ? settings._nav : _Defaults.showNavigation,
-            _2Scroll: settings._2Scroll ? settings._2Scroll : _Defaults.slidesToScroll,
-            _2Show: settings._2Show ? settings._2Show : _Defaults.slidesToShow,
+            _arrows: settings._arrows,
+            _nav: settings._nav,
+            _2Scroll: settings._2Scroll,
+            _2Show: settings._2Show,
             bp: 0,
             bpSLen: 0,
             dots: [],
-            swipe: settings.swipe ? settings.swipe : _Defaults.hasTouchSwipe,
+            swipe: settings.swipe,
             nDups: [],
             pDups: []
         };
@@ -696,6 +710,7 @@ var Carouzel;
             disableCls: settings.disabledClass,
             dupCls: settings.duplicateClass,
             effect: settings.animationEffect,
+            hidCls: settings.hiddenClass,
             inf: settings.isInfinite,
             isRTL: settings.isRTL,
             kb: settings.enableKeyboard,
@@ -945,9 +960,10 @@ var Carouzel;
                         }
                         if (!isElementPresent) {
                             var newOptions = void 0;
-                            if (roots[i].getAttribute(_Selectors.rootAuto.slice(1, -1))) {
+                            var autoDataAttr = roots[i].getAttribute(_Selectors.rootAuto.slice(1, -1)) || '';
+                            if (autoDataAttr) {
                                 try {
-                                    newOptions = JSON.parse(roots[i].getAttribute(_Selectors.rootAuto.slice(1, -1)) || '');
+                                    newOptions = JSON.parse(autoDataAttr.split(' ').join('').split('\n').join('').replace(/'/g, '"'));
                                 }
                                 catch (e) {
                                     throw new TypeError(_optionsParseTypeError);
@@ -960,7 +976,7 @@ var Carouzel;
                                 _this.instances[id] = new Core(id, roots[i], newOptions);
                             }
                             else {
-                                var thisid = id ? id : Object.assign({}, _Defaults, newOptions).idPrefix + '_' + new Date().getTime() + '_root_' + (i + 1);
+                                var thisid = id ? id : __assign(__assign({}, newOptions), _Defaults).idPrefix + '_' + new Date().getTime() + '_root_' + (i + 1);
                                 roots[i].setAttribute('id', thisid);
                                 _this.instances[thisid] = new Core(thisid, roots[i], newOptions);
                             }
