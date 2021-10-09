@@ -31,6 +31,7 @@ declare namespace Carouzel {
         disabledClass: string;
         duplicateClass: string;
         enableKeyboard: boolean;
+        fadingClass: string;
         hasTouchSwipe: boolean;
         hiddenClass: string;
         idPrefix: string;
@@ -38,6 +39,7 @@ declare namespace Carouzel {
         isRTL?: boolean;
         afterInit?: Function;
         pauseOnHover: boolean;
+        pauseOnFocus: boolean;
         responsive?: ICarouzelBreakpoint[];
         rtlClass?: string;
         showArrows: boolean;

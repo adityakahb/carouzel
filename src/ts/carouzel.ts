@@ -43,12 +43,14 @@ namespace Carouzel {
     disableCls: string;
     dupCls: string;
     effect: string;
+    fadCls: string;
     hidCls: string;
     idPrefix?: string;
     inf: boolean;
     isRTL?: boolean;
     kb: boolean;
     pauseHov: boolean;
+    pauseFoc: boolean;
     res?: ICarouzelCoreBreakpoint[];
     rtlCls?: string;
     speed: number;
@@ -82,6 +84,7 @@ namespace Carouzel {
     disabledClass: string;
     duplicateClass: string;
     enableKeyboard: boolean;
+    fadingClass: string;
     hasTouchSwipe: boolean;
     hiddenClass: string;
     idPrefix: string,
@@ -89,6 +92,7 @@ namespace Carouzel {
     isRTL?: boolean;
     afterInit?: Function;
     pauseOnHover: boolean;
+    pauseOnFocus: boolean;
     responsive?: ICarouzelBreakpoint[];
     rtlClass?: string;
     showArrows: boolean;
@@ -112,6 +116,7 @@ namespace Carouzel {
   interface ICore {
     _as: NodeListOf<Element>;
     _ds: NodeListOf<Element>;
+    appendSlide: Function;
     arrowN: HTMLElement | null;
     arrowP: HTMLElement | null;
     arrowsW: HTMLElement | null;
@@ -130,6 +135,7 @@ namespace Carouzel {
     navW: HTMLElement | null;
     paused: boolean;
     pi: number;
+    prependSlide: Function;
     pts: IIndexHandler;
     rootElem: HTMLElement | null;
     settings: ICarouzelCoreSettings;
@@ -178,12 +184,14 @@ namespace Carouzel {
     disabledClass: '__carouzel-disabled',
     duplicateClass: '__carouzel-duplicate',
     enableKeyboard: true,
+    fadingClass: '__carouzel-fade',
     hasTouchSwipe: true,
     hiddenClass: '__carouzel-hidden',
     idPrefix: '__carouzel',
     isInfinite: true,
     isRTL: false,
     pauseOnHover: false,
+    pauseOnFocus: false,
     responsive: [],
     rtlClass: '__carouzel-rtl',
     showArrows: true,
@@ -191,7 +199,7 @@ namespace Carouzel {
     slidesToScroll: 1,
     slidesToShow: 1,
     startAtIndex: 1,
-    timingFunction: 'cubic-bezier(0.250, 0.100, 0.250, 1.000)',
+    timingFunction: 'ease-in-out',
     touchThreshold: 120,
   };
 
@@ -408,7 +416,7 @@ namespace Carouzel {
   };
 
   /**
-   * Function to prepend the duplicate elements in the track
+   * Function to prepend the duplicate or new elements in the track
    * 
    * @param parent - Track element in which duplicates need to be prepended
    * @param child - The child element to be prepended
@@ -419,6 +427,17 @@ namespace Carouzel {
     if (first) {
       parent.insertBefore(child, first);
     }
+  };
+
+  /**
+   * Function to append the duplicate or new elements in the track
+   * 
+   * @param parent - Track element in which duplicates need to be prepended
+   * @param child - The child element to be prepended
+   *
+   */
+  const doInsertAfter = (parent: Element, child: Node) => {
+    parent.appendChild(child);
   };
 
   /**
@@ -438,7 +457,7 @@ namespace Carouzel {
       doInsertBefore(track, bpo.pDups[i]);
     }
     for (let i=0; i < bpo.nDups.length; i++) {
-      track.appendChild(bpo.nDups[i]);
+      doInsertAfter(track, bpo.nDups[i]);
     }
   }
 
@@ -858,11 +877,13 @@ namespace Carouzel {
       disableCls: settings.disabledClass,
       dupCls: settings.duplicateClass,
       effect: settings.animationEffect,
+      fadCls: settings.fadingClass,
       hidCls: settings.hiddenClass,
       inf: settings.isInfinite,
       isRTL: settings.isRTL,
       kb: settings.enableKeyboard,
       pauseHov: settings.pauseOnHover,
+      pauseFoc: settings.pauseOnFocus,
       res: [],
       rtlCls: settings.rtlClass,
       speed: settings.animationSpeed,
@@ -908,6 +929,14 @@ namespace Carouzel {
         core.paused = true;
       }));
       core.eHandlers.push(eventHandler(core.rootElem, 'mouseleave', function () {
+        core.paused = false;
+      }));
+    }
+    if (core.rootElem && core.settings.pauseFoc) {
+      core.eHandlers.push(eventHandler(core.rootElem, 'focus', function () {
+        core.paused = true;
+      }));
+      core.eHandlers.push(eventHandler(core.rootElem, 'blur', function () {
         core.paused = false;
       }));
     }
@@ -983,7 +1012,21 @@ namespace Carouzel {
         goToSlide(_core, slidenumber - 1);
       }
     };
-
+    core.prependSlide = (slideElem: Node) => {
+      if (_core.trackW) {
+        doInsertBefore(_core.trackW, slideElem);
+      }
+    };
+    core.appendSlide = (slideElem: Node) => {
+      if (_core.trackW) {
+        doInsertAfter(_core.trackW, slideElem);
+      }
+    };
+    if (_core.settings.effect === _animationEffects[1]) {
+      addClass(core.rootElem as Element, _core.settings.fadCls);
+    } else {
+      removeClass(core.rootElem as Element, _core.settings.fadCls);
+    }
     if (!_core._ds[_core.ci]) {
       _core.ci = settings.startAtIndex = 0;
     }

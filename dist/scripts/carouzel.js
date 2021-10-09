@@ -55,12 +55,14 @@ var Carouzel;
         disabledClass: '__carouzel-disabled',
         duplicateClass: '__carouzel-duplicate',
         enableKeyboard: true,
+        fadingClass: '__carouzel-fade',
         hasTouchSwipe: true,
         hiddenClass: '__carouzel-hidden',
         idPrefix: '__carouzel',
         isInfinite: true,
         isRTL: false,
         pauseOnHover: false,
+        pauseOnFocus: false,
         responsive: [],
         rtlClass: '__carouzel-rtl',
         showArrows: true,
@@ -68,7 +70,7 @@ var Carouzel;
         slidesToScroll: 1,
         slidesToShow: 1,
         startAtIndex: 1,
-        timingFunction: 'cubic-bezier(0.250, 0.100, 0.250, 1.000)',
+        timingFunction: 'ease-in-out',
         touchThreshold: 120
     };
     /**
@@ -278,7 +280,7 @@ var Carouzel;
         }, core.settings.speed);
     };
     /**
-     * Function to prepend the duplicate elements in the track
+     * Function to prepend the duplicate or new elements in the track
      *
      * @param parent - Track element in which duplicates need to be prepended
      * @param child - The child element to be prepended
@@ -289,6 +291,16 @@ var Carouzel;
         if (first) {
             parent.insertBefore(child, first);
         }
+    };
+    /**
+     * Function to append the duplicate or new elements in the track
+     *
+     * @param parent - Track element in which duplicates need to be prepended
+     * @param child - The child element to be prepended
+     *
+     */
+    var doInsertAfter = function (parent, child) {
+        parent.appendChild(child);
     };
     /**
      * Function to manage the duplicate slides in the track based on the breakpoint
@@ -307,7 +319,7 @@ var Carouzel;
             doInsertBefore(track, bpo.pDups[i]);
         }
         for (var i = 0; i < bpo.nDups.length; i++) {
-            track.appendChild(bpo.nDups[i]);
+            doInsertAfter(track, bpo.nDups[i]);
         }
     };
     /**
@@ -722,11 +734,13 @@ var Carouzel;
             disableCls: settings.disabledClass,
             dupCls: settings.duplicateClass,
             effect: settings.animationEffect,
+            fadCls: settings.fadingClass,
             hidCls: settings.hiddenClass,
             inf: settings.isInfinite,
             isRTL: settings.isRTL,
             kb: settings.enableKeyboard,
             pauseHov: settings.pauseOnHover,
+            pauseFoc: settings.pauseOnFocus,
             res: [],
             rtlCls: settings.rtlClass,
             speed: settings.animationSpeed,
@@ -769,6 +783,14 @@ var Carouzel;
                 core.paused = true;
             }));
             core.eHandlers.push(eventHandler(core.rootElem, 'mouseleave', function () {
+                core.paused = false;
+            }));
+        }
+        if (core.rootElem && core.settings.pauseFoc) {
+            core.eHandlers.push(eventHandler(core.rootElem, 'focus', function () {
+                core.paused = true;
+            }));
+            core.eHandlers.push(eventHandler(core.rootElem, 'blur', function () {
                 core.paused = false;
             }));
         }
@@ -846,6 +868,22 @@ var Carouzel;
                 goToSlide(_core, slidenumber - 1);
             }
         };
+        core.prependSlide = function (slideElem) {
+            if (_core.trackW) {
+                doInsertBefore(_core.trackW, slideElem);
+            }
+        };
+        core.appendSlide = function (slideElem) {
+            if (_core.trackW) {
+                doInsertAfter(_core.trackW, slideElem);
+            }
+        };
+        if (_core.settings.effect === _animationEffects[1]) {
+            addClass(core.rootElem, _core.settings.fadCls);
+        }
+        else {
+            removeClass(core.rootElem, _core.settings.fadCls);
+        }
         if (!_core._ds[_core.ci]) {
             _core.ci = settings.startAtIndex = 0;
         }

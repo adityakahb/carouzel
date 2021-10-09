@@ -8424,13 +8424,14 @@ h4, .h4, .h4 {
         font-size: 18px; } }
 
 [data-carouzel] [data-carouzelslide], [data-carouzelauto] [data-carouzelslide] {
-  display: flex;
-  justify-content: center;
   align-items: center;
-  font-size: 70px;
-  font-weight: bold;
+  background-color: #fff;
   border-left: 1px solid red;
   border-right: 1px solid red;
   color: black;
-  background-color: #fff;
+  display: flex;
+  font-size: 40px;
+  font-weight: bold;
+  justify-content: center;
+  line-height: 160px;
   width: 100%; }
