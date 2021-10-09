@@ -6,14 +6,17 @@
   [data-carouzel].__carouzel-active, [data-carouzelauto].__carouzel-active {
     opacity: 1;
     visibility: visible; }
-  [data-carouzel] [data-carouzeltrackwrapper], [data-carouzelauto] [data-carouzeltrackwrapper] {
+  [data-carouzel] [data-carouzeltrackouter], [data-carouzelauto] [data-carouzeltrackouter] {
     margin-bottom: 1em;
     overflow: hidden;
-    position: relative; }
-    [data-carouzel] [data-carouzeltrackwrapper].__carouzel-centered, [data-carouzelauto] [data-carouzeltrackwrapper].__carouzel-centered {
+    position: relative;
+    width: 100%; }
+    [data-carouzel] [data-carouzeltrackouter].__carouzel-centered, [data-carouzelauto] [data-carouzeltrackouter].__carouzel-centered {
       align-items: center;
       display: flex;
       justify-content: center; }
+  [data-carouzel] [data-carouzeltrackwrapper], [data-carouzelauto] [data-carouzeltrackwrapper] {
+    width: 100%; }
   [data-carouzel] .__carouzel-hidden, [data-carouzelauto] .__carouzel-hidden {
     display: none !important; }
   [data-carouzel] [data-carouzelpreviousarrow], [data-carouzel] [data-carouzelnextarrow], [data-carouzelauto] [data-carouzelpreviousarrow], [data-carouzelauto] [data-carouzelnextarrow] {

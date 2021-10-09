@@ -41,6 +41,7 @@ var Carouzel;
         rootAuto: '[data-carouzelauto]',
         slide: '[data-carouzelslide]',
         track: '[data-carouzeltrack]',
+        trackO: '[data-carouzeltrackouter]',
         trackW: '[data-carouzeltrackwrapper]'
     };
     var _Defaults = {
@@ -49,8 +50,8 @@ var Carouzel;
         animationSpeed: 400,
         autoplay: false,
         autoplaySpeed: 3000,
+        centerBetween: 0,
         centeredClass: '__carouzel-centered',
-        centerMode: false,
         disabledClass: '__carouzel-disabled',
         duplicateClass: '__carouzel-duplicate',
         enableKeyboard: true,
@@ -356,12 +357,19 @@ var Carouzel;
         else if (core.navW) {
             removeClass(core.navW, core.settings.hidCls);
         }
-        if (core.trackW && core.track) {
+        if (core.trackO && core.trackW && core.track) {
             core.pts = {};
-            slideWidth = core.trackW.clientWidth / bpoptions._2Show || 1;
+            if (bpoptions.cntr > 0) {
+                addClass(core.trackO, core.settings.cntrCls);
+            }
+            else {
+                removeClass(core.trackO, core.settings.cntrCls);
+            }
+            slideWidth = core.trackO.clientWidth / (bpoptions._2Show + bpoptions.cntr);
             core.sWidth = slideWidth;
             trackWidth = parseFloat(slideWidth + '') * (core.sLength >= bpoptions._2Show ? bpoptions.bpSLen : bpoptions._2Show);
             core.track.style.width = trackWidth + 'px';
+            core.trackW.style.width = (bpoptions._2Show * slideWidth) + 'px';
             core._as = core.trackW.querySelectorAll(_Selectors.slide);
             for (var i = 0; i < core._as.length; i++) {
                 core._as[i].style.width = slideWidth + 'px';
@@ -638,16 +646,17 @@ var Carouzel;
      */
     var updateBreakpoints = function (settings) {
         var defaultBreakpoint = {
-            _arrows: settings._arrows,
-            _nav: settings._nav,
             _2Scroll: settings._2Scroll,
             _2Show: settings._2Show,
+            _arrows: settings._arrows,
+            _nav: settings._nav,
             bp: 0,
             bpSLen: 0,
+            cntr: settings.cntr,
             dots: [],
-            swipe: settings.swipe,
             nDups: [],
-            pDups: []
+            pDups: [],
+            swipe: settings.swipe
         };
         var tempArr = [];
         if (settings.res && settings.res.length > 0) {
@@ -681,6 +690,9 @@ var Carouzel;
                 if (!bp2.swipe) {
                     bp2.swipe = bp1.swipe;
                 }
+                if (!bp2.cntr) {
+                    bp2.cntr = bp1.cntr;
+                }
                 bpArr.push(bp2);
                 bpLen++;
             }
@@ -705,8 +717,8 @@ var Carouzel;
             auto: settings.autoplay,
             autoS: settings.autoplaySpeed,
             bFn: settings.beforeScroll,
+            cntr: settings.centerBetween,
             cntrCls: settings.centeredClass,
-            cntrMode: settings.centerMode,
             disableCls: settings.disabledClass,
             dupCls: settings.duplicateClass,
             effect: settings.animationEffect,
@@ -726,16 +738,17 @@ var Carouzel;
         if (settings.responsive && settings.responsive.length > 0) {
             for (var i = 0; i < settings.responsive.length; i++) {
                 var obj = {
-                    _arrows: settings.responsive[i].showArrows,
-                    _nav: settings.responsive[i].showNavigation,
                     _2Scroll: settings.responsive[i].slidesToScroll,
                     _2Show: settings.responsive[i].slidesToShow,
+                    _arrows: settings.responsive[i].showArrows,
+                    _nav: settings.responsive[i].showNavigation,
                     bp: settings.responsive[i].breakpoint,
                     bpSLen: 0,
+                    cntr: settings.responsive[i].centerBetween,
                     dots: [],
-                    swipe: settings.responsive[i].hasTouchSwipe,
                     nDups: [],
-                    pDups: []
+                    pDups: [],
+                    swipe: settings.responsive[i].hasTouchSwipe
                 };
                 if (settingsobj.res) {
                     settingsobj.res.push(obj);
@@ -818,6 +831,7 @@ var Carouzel;
         _core._ds = rootElem.querySelectorAll("" + _Selectors.slide);
         _core.track = rootElem.querySelector("" + _Selectors.track);
         _core.trackW = rootElem.querySelector("" + _Selectors.trackW);
+        _core.trackO = rootElem.querySelector("" + _Selectors.trackO);
         _core.sLength = _core._ds.length;
         _core.pts = [];
         _core.isLeftAdded = false;
@@ -878,7 +892,7 @@ var Carouzel;
                         core.nav.removeChild(allElems[i]);
                     }
                     allElems[i].removeAttribute('style');
-                    removeClass(allElems[i], core.settings.activeCls + " " + core.settings.cntrCls + " " + core.settings.disableCls + " " + core.settings.dupCls + " " + core.settings.rtlCls);
+                    removeClass(allElems[i], core.settings.activeCls + " " + core.settings.disableCls + " " + core.settings.dupCls + " " + core.settings.rtlCls);
                 }
                 delete allLocalInstances[thisid];
             };
@@ -963,7 +977,7 @@ var Carouzel;
                             var autoDataAttr = roots[i].getAttribute(_Selectors.rootAuto.slice(1, -1)) || '';
                             if (autoDataAttr) {
                                 try {
-                                    newOptions = JSON.parse(autoDataAttr.split(' ').join('').split('\n').join('').replace(/'/g, '"'));
+                                    newOptions = JSON.parse(stringTrim(autoDataAttr).replace(/'/g, '"'));
                                 }
                                 catch (e) {
                                     throw new TypeError(_optionsParseTypeError);

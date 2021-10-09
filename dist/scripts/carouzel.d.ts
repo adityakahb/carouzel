@@ -10,6 +10,7 @@
 declare namespace Carouzel {
     interface ICarouzelBreakpoint {
         breakpoint: number | string;
+        centerBetween: number;
         hasTouchSwipe: boolean;
         showArrows: boolean;
         showNavigation: boolean;
@@ -25,8 +26,8 @@ declare namespace Carouzel {
         autoplaySpeed: number;
         beforeInit?: Function;
         beforeScroll?: Function;
+        centerBetween: number;
         centeredClass: string;
-        centerMode: boolean;
         disabledClass: string;
         duplicateClass: string;
         enableKeyboard: boolean;
