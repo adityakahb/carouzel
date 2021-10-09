@@ -87,7 +87,7 @@ namespace Carouzel {
     idPrefix: string,
     isInfinite: boolean;
     isRTL?: boolean;
-    onInit?: Function;
+    afterInit?: Function;
     pauseOnHover: boolean;
     responsive?: ICarouzelBreakpoint[];
     rtlClass?: string;
@@ -1002,8 +1002,8 @@ namespace Carouzel {
     }
 
     addClass(core.rootElem as Element, _core.settings.activeCls);
-    if (typeof settings.onInit === 'function') {
-      settings.onInit();
+    if (typeof settings.afterInit === 'function') {
+      settings.afterInit();
     }
     return { global: core, local: _core };
   };

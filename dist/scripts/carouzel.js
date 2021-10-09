@@ -862,8 +862,8 @@ var Carouzel;
             applyLayout(_core);
         }
         addClass(core.rootElem, _core.settings.activeCls);
-        if (typeof settings.onInit === 'function') {
-            settings.onInit();
+        if (typeof settings.afterInit === 'function') {
+            settings.afterInit();
         }
         return { global: core, local: _core };
     };

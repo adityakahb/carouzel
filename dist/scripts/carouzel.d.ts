@@ -36,7 +36,7 @@ declare namespace Carouzel {
         idPrefix: string;
         isInfinite: boolean;
         isRTL?: boolean;
-        onInit?: Function;
+        afterInit?: Function;
         pauseOnHover: boolean;
         responsive?: ICarouzelBreakpoint[];
         rtlClass?: string;
