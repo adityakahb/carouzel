@@ -4,8 +4,10 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Carouzel - Not just another carousel slider</title>
-    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Kumar+One&display=swap" rel="stylesheet" />
+    <title>Carouzel - !(Just Another Carousel)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Ubuntu:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <link href="dist/styles/carouzel/carouzel.css" rel="stylesheet" />
     <link href="dist/styles/site/index.css" rel="stylesheet" />
@@ -42,7 +44,7 @@
             <div class="col-12 col-md-6 d-flex justify-content-center align-items-center flex-column text-center">
               <header>
                 <h1>Carouzel</h1>
-                <p class="lead text-uppercase">Accessible MegaMenu</p>
+                <p class="lead text-uppercase">!(Just Another Carousel)</p>
               </header>
             </div>
             <div class="col-12 col-md-6 d-flex justify-content-center align-items-center flex-column text-center">
@@ -52,12 +54,11 @@
                 <li class="my-2">Framework-free.</li>
                 <li class="my-2">Can be used as ES6 module import OR direct source.</li>
                 <li class="my-2">Fully responsive.</li>
-                <li class="my-2">With bare minimum css (with no icons, reset, normalize, custom fonts or images).</li>
+                <li class="my-2">With bare minimum css</li>
                 <li class="my-2">Can have multiple instances with multiple configurations.</li>
                 <li class="my-2">Compiled through Typescript.</li>
-                <li class="my-2">Styled through SASS (Mobile first and with one breakpoint) - Source included for customization.</li>
-                <li class="my-2">Tested through Karma and Jasmine.</li>
-                <li class="my-2">Polyfills for `Object.assign`, `querySelector:scope`, `querySelectorAll:scope` and `Element.closest` included, no other polyfill required.</li>
+                <li class="my-2">Styled through SASS - Source included for customization.</li>
+                <li class="my-2">Object.assign polyfill is added by Typescript! No other polyfills required.</li>
               </ul>
             </div>
           </div>
@@ -311,20 +312,19 @@
             <div class="col">
               <div data-carouzelauto="{
                 'isInfinite': true,
-                'autoplay': true,
-                'autoplaySpeed': 5000,
-                'pauseOnHover': true,
                 'slidesToScroll': 1,
                 'slidesToShow': 1,
-                'showArrows': true,
-                    'showNavigation': true,
-                    'responsive': [{
-                      'breakpoint': 1024,
-                      'slidesToScroll': 1,
-                      'slidesToShow': 1,
-                      'showArrows': true,
-                      'showNavigation': true
-                    }]
+                'showNavigation': false,
+                'responsive': [{
+                    'breakpoint': 700,
+                    'slidesToScroll': 2,
+                    'slidesToShow': 2,
+                    'showNavigation': true
+                  }, {
+                    'breakpoint': 1200,
+                    'slidesToScroll': 4,
+                    'slidesToShow': 4
+                  }]
                 }">
                 <div data-carouzeltrackouter>
                   <div data-carouzeltrackwrapper>
@@ -346,6 +346,12 @@
                       </div>
                       <div data-carouzelslide>
                         <div>06</div>
+                      </div>
+                      <div data-carouzelslide>
+                        <div>07</div>
+                      </div>
+                      <div data-carouzelslide>
+                        <div>08</div>
                       </div>
                     </div>
                   </div>

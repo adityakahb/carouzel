@@ -48,7 +48,7 @@
   --bs-black-rgb: 0, 0, 0;
   --bs-body-color-rgb: 33, 37, 41;
   --bs-body-bg-rgb: 255, 255, 255;
-  --bs-font-sans-serif: "Josefin Sans", sans-serif;
+  --bs-font-sans-serif: "Ubuntu", sans-serif;
   --bs-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --bs-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
   --bs-body-font-family: var(--bs-font-sans-serif);
@@ -8348,7 +8348,7 @@ h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6,
 .display-2,
 .display-3,
 .display-4 {
-  font-family: 'Kumar One', cursive; }
+  font-family: 'Black Ops One', cursive; }
 
 .github-corner:hover .octo-arm {
   animation: octocat-wave 560ms ease-in-out; }
