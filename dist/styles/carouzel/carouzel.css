@@ -17,6 +17,22 @@
       justify-content: center; }
   [data-carouzel] [data-carouzeltrackwrapper], [data-carouzelauto] [data-carouzeltrackwrapper] {
     width: 100%; }
+  [data-carouzel] [data-carouzeltrack], [data-carouzelauto] [data-carouzeltrack] {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    min-height: 1px;
+    position: relative;
+    transform-style: preserve-3d;
+    width: 100%; }
+    [data-carouzel] [data-carouzeltrack].__carouzel-rtl, [data-carouzelauto] [data-carouzeltrack].__carouzel-rtl {
+      flex-direction: row-reverse; }
+  [data-carouzel].__carouzel-editmode [data-carouzeltrack], [data-carouzelauto].__carouzel-editmode [data-carouzeltrack] {
+    transform: translate3d(0, 0, 0) !important; }
+  [data-carouzel] [data-carouzelslide], [data-carouzelauto] [data-carouzelslide] {
+    border: 1px solid transparent;
+    width: 100%; }
   [data-carouzel] .__carouzel-hidden, [data-carouzelauto] .__carouzel-hidden {
     display: none !important; }
   [data-carouzel] [data-carouzelpreviousarrow], [data-carouzel] [data-carouzelnextarrow], [data-carouzelauto] [data-carouzelpreviousarrow], [data-carouzelauto] [data-carouzelnextarrow] {
@@ -31,7 +47,8 @@
     top: 50%;
     transform: translate(0, -50%);
     transition: opacity 250ms ease;
-    width: 48px; }
+    width: 48px;
+    z-index: 12; }
     [data-carouzel] [data-carouzelpreviousarrow] svg, [data-carouzel] [data-carouzelnextarrow] svg, [data-carouzelauto] [data-carouzelpreviousarrow] svg, [data-carouzelauto] [data-carouzelnextarrow] svg {
       height: 100%;
       width: 100%; }
@@ -47,20 +64,6 @@
   [data-carouzel] [data-carouzelnextarrow], [data-carouzelauto] [data-carouzelnextarrow] {
     border-radius: 8px 0 0 8px;
     right: 0; }
-  [data-carouzel] [data-carouzeltrack], [data-carouzelauto] [data-carouzeltrack] {
-    align-items: flex-start;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    min-height: 1px;
-    position: relative;
-    transform-style: preserve-3d;
-    width: 100%; }
-    [data-carouzel] [data-carouzeltrack].__carouzel-rtl, [data-carouzelauto] [data-carouzeltrack].__carouzel-rtl {
-      flex-direction: row-reverse; }
-  [data-carouzel] [data-carouzelslide], [data-carouzelauto] [data-carouzelslide] {
-    border: 1px solid transparent;
-    width: 100%; }
   [data-carouzel] [data-carouzelnavigation], [data-carouzelauto] [data-carouzelnavigation] {
     align-items: center;
     display: flex;

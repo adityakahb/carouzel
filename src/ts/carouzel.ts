@@ -29,9 +29,9 @@ namespace Carouzel {
   }
   
   interface ICarouzelCoreSettings {
-    _arrows: boolean;
     _2Scroll: number;
     _2Show: number;
+    _arrows: boolean;
     _nav: boolean;
     activeCls: string;
     aFn?: Function;
@@ -42,6 +42,7 @@ namespace Carouzel {
     cntrCls: string;
     disableCls: string;
     dupCls: string;
+    editCls: string;
     effect: string;
     fadCls: string;
     hidCls: string;
@@ -49,8 +50,8 @@ namespace Carouzel {
     inf: boolean;
     isRTL?: boolean;
     kb: boolean;
-    pauseHov: boolean;
     pauseFoc: boolean;
+    pauseHov: boolean;
     res?: ICarouzelCoreBreakpoint[];
     rtlCls?: string;
     speed: number;
@@ -72,6 +73,7 @@ namespace Carouzel {
 
   interface ICarouzelSettings {
     activeClass: string;
+    afterInit?: Function;
     afterScroll?: Function;
     animationEffect: string;
     animationSpeed: number;
@@ -83,6 +85,7 @@ namespace Carouzel {
     centeredClass: string;
     disabledClass: string;
     duplicateClass: string;
+    editClass: string;
     enableKeyboard: boolean;
     fadingClass: string;
     hasTouchSwipe: boolean;
@@ -90,9 +93,8 @@ namespace Carouzel {
     idPrefix: string,
     isInfinite: boolean;
     isRTL?: boolean;
-    afterInit?: Function;
-    pauseOnHover: boolean;
     pauseOnFocus: boolean;
+    pauseOnHover: boolean;
     responsive?: ICarouzelBreakpoint[];
     rtlClass?: string;
     showArrows: boolean;
@@ -183,6 +185,7 @@ namespace Carouzel {
     centeredClass: '__carouzel-centered',
     disabledClass: '__carouzel-disabled',
     duplicateClass: '__carouzel-duplicate',
+    editClass: '__carouzel-editmode',
     enableKeyboard: true,
     fadingClass: '__carouzel-fade',
     hasTouchSwipe: true,
@@ -483,7 +486,7 @@ namespace Carouzel {
       }
       len++;
     }
-    if ((core.bpo_old || {})._2Show !== bpoptions._2Show && core.track) {
+    if (core.rootElem && !hasClass(core.rootElem, core.settings.editCls) && (core.bpo_old || {})._2Show !== bpoptions._2Show && core.track) {
       manageDuplicates(core.track, bpoptions, core.settings.dupCls || '');
     }
     if ((core.bpo_old || {}).bp !== bpoptions.bp) {
@@ -876,14 +879,15 @@ namespace Carouzel {
       cntrCls: settings.centeredClass,
       disableCls: settings.disabledClass,
       dupCls: settings.duplicateClass,
+      editCls: settings.editClass,
       effect: settings.animationEffect,
       fadCls: settings.fadingClass,
       hidCls: settings.hiddenClass,
       inf: settings.isInfinite,
       isRTL: settings.isRTL,
       kb: settings.enableKeyboard,
-      pauseHov: settings.pauseOnHover,
       pauseFoc: settings.pauseOnFocus,
+      pauseHov: settings.pauseOnHover,
       res: [],
       rtlCls: settings.rtlClass,
       speed: settings.animationSpeed,
@@ -1081,7 +1085,7 @@ namespace Carouzel {
           core.nav.removeChild(allElems[i]);
         }
         allElems[i].removeAttribute('style');
-        removeClass(allElems[i] as HTMLElement, `${core.settings.activeCls} ${core.settings.disableCls} ${core.settings.dupCls} ${core.settings.rtlCls}`)
+        removeClass(allElems[i] as HTMLElement, `${core.settings.activeCls} ${core.settings.editCls} ${core.settings.disableCls} ${core.settings.dupCls} ${core.settings.rtlCls}`)
       }
       delete allLocalInstances[thisid];
     };

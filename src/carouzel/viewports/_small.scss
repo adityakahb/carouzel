@@ -25,6 +25,27 @@
   [data-carouzeltrackwrapper] {
     width: 100%;
   }
+  [data-carouzeltrack] {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    min-height: 1px;
+    position: relative;
+    transform-style: preserve-3d;
+    width: 100%;
+    &.__carouzel-rtl {
+      flex-direction: row-reverse;
+    }
+  }
+  &.__carouzel-editmode [data-carouzeltrack] {
+    transform: translate3d(0, 0, 0) !important;
+    // display: block;
+  }
+  [data-carouzelslide] {
+    border: 1px solid transparent;
+    width: 100%;
+  }
   .__carouzel-hidden {
     display: none !important;
   }
@@ -41,6 +62,7 @@
     transform: translate(0, -50%);
     transition: opacity 250ms ease;
     width: 48px;
+    z-index: 12;
     svg {
       height: 100%;
       width: 100%;
@@ -61,23 +83,6 @@
   [data-carouzelnextarrow] {
     border-radius: 8px 0 0 8px;
     right: 0;
-  }
-  [data-carouzeltrack] {
-    align-items: flex-start;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    min-height: 1px;
-    position: relative;
-    transform-style: preserve-3d;
-    width: 100%;
-    &.__carouzel-rtl {
-      flex-direction: row-reverse;
-    }
-  }
-  [data-carouzelslide] {
-    border: 1px solid transparent;
-    width: 100%;
   }
   [data-carouzelnavigation] {
     align-items: center;

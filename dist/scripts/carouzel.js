@@ -54,6 +54,7 @@ var Carouzel;
         centeredClass: '__carouzel-centered',
         disabledClass: '__carouzel-disabled',
         duplicateClass: '__carouzel-duplicate',
+        editClass: '__carouzel-editmode',
         enableKeyboard: true,
         fadingClass: '__carouzel-fade',
         hasTouchSwipe: true,
@@ -341,7 +342,7 @@ var Carouzel;
             }
             len++;
         }
-        if ((core.bpo_old || {})._2Show !== bpoptions._2Show && core.track) {
+        if (core.rootElem && !hasClass(core.rootElem, core.settings.editCls) && (core.bpo_old || {})._2Show !== bpoptions._2Show && core.track) {
             manageDuplicates(core.track, bpoptions, core.settings.dupCls || '');
         }
         if ((core.bpo_old || {}).bp !== bpoptions.bp) {
@@ -733,14 +734,15 @@ var Carouzel;
             cntrCls: settings.centeredClass,
             disableCls: settings.disabledClass,
             dupCls: settings.duplicateClass,
+            editCls: settings.editClass,
             effect: settings.animationEffect,
             fadCls: settings.fadingClass,
             hidCls: settings.hiddenClass,
             inf: settings.isInfinite,
             isRTL: settings.isRTL,
             kb: settings.enableKeyboard,
-            pauseHov: settings.pauseOnHover,
             pauseFoc: settings.pauseOnFocus,
+            pauseHov: settings.pauseOnHover,
             res: [],
             rtlCls: settings.rtlClass,
             speed: settings.animationSpeed,
@@ -930,7 +932,7 @@ var Carouzel;
                         core.nav.removeChild(allElems[i]);
                     }
                     allElems[i].removeAttribute('style');
-                    removeClass(allElems[i], core.settings.activeCls + " " + core.settings.disableCls + " " + core.settings.dupCls + " " + core.settings.rtlCls);
+                    removeClass(allElems[i], core.settings.activeCls + " " + core.settings.editCls + " " + core.settings.disableCls + " " + core.settings.dupCls + " " + core.settings.rtlCls);
                 }
                 delete allLocalInstances[thisid];
             };

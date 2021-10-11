@@ -39,7 +39,28 @@ import Carouzel from 'carouzel';
 
 ```html
 <!-- Root Element -->
-
+<div data-carouzel id="__carouzel_1">
+  <div data-carouzeltrackouter>
+    <div data-carouzeltrackwrapper>
+      <div data-carouzeltrack>
+        <div data-carouzelslide>
+          <div>01</div>
+        </div>
+        <div data-carouzelslide>
+          <div>02</div>
+        </div>
+        
+      </div>
+    </div>
+    <div data-carouzelarrowswrapper>
+      <button type="button" data-carouzelpreviousarrow aria-label="Previous"></button>
+      <button type="button" data-carouzelnextarrow aria-label="Next"></button>
+    </div>
+  </div>
+  <div data-carouzelnavigationwrapper>
+    <div data-carouzelnavigation></div>
+  </div>
+</div>
 ```
 
 ### JavaScript

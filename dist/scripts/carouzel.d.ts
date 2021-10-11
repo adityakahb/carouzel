@@ -19,6 +19,7 @@ declare namespace Carouzel {
     }
     interface ICarouzelSettings {
         activeClass: string;
+        afterInit?: Function;
         afterScroll?: Function;
         animationEffect: string;
         animationSpeed: number;
@@ -30,6 +31,7 @@ declare namespace Carouzel {
         centeredClass: string;
         disabledClass: string;
         duplicateClass: string;
+        editClass: string;
         enableKeyboard: boolean;
         fadingClass: string;
         hasTouchSwipe: boolean;
@@ -37,9 +39,8 @@ declare namespace Carouzel {
         idPrefix: string;
         isInfinite: boolean;
         isRTL?: boolean;
-        afterInit?: Function;
-        pauseOnHover: boolean;
         pauseOnFocus: boolean;
+        pauseOnHover: boolean;
         responsive?: ICarouzelBreakpoint[];
         rtlClass?: string;
         showArrows: boolean;
