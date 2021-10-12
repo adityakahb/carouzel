@@ -40,7 +40,11 @@
   }
   &.__carouzel-editmode [data-carouzeltrack] {
     transform: translate3d(0, 0, 0) !important;
-    // display: block;
+    display: block;
+    width: 100% !important;
+    [data-carouzelslide] {
+      width: 100% !important;
+    }
   }
   [data-carouzelslide] {
     border: 1px solid transparent;

@@ -831,22 +831,22 @@ namespace Carouzel {
       while(bpLen < updatedArr.bp.length) {
         bp1 = bpArr[bpLen-1];
         bp2 = {...bp1, ...updatedArr.bp[bpLen]};
-        if (!bp2._arrows) {
+        if (typeof bp2._arrows === 'undefined') {
           bp2._arrows = bp1._arrows;
         }
-        if (!bp2._nav) {
+        if (typeof bp2._nav === 'undefined') {
           bp2._nav = bp1._nav;
         }
-        if (!bp2._2Show) {
+        if (typeof bp2._2Show === 'undefined') {
           bp2._2Show = bp1._2Show;
         }
-        if (!bp2._2Scroll) {
+        if (typeof bp2._2Scroll === 'undefined') {
           bp2._2Scroll = bp1._2Scroll;
         }
-        if (!bp2.swipe) {
+        if (typeof bp2.swipe === 'undefined') {
           bp2.swipe = bp1.swipe;
         }
-        if (!bp2.cntr) {
+        if (typeof bp2.cntr === 'undefined') {
           bp2.cntr = bp1.cntr;
         }
         bpArr.push(bp2);

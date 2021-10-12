@@ -29,7 +29,11 @@
     [data-carouzel] [data-carouzeltrack].__carouzel-rtl, [data-carouzelauto] [data-carouzeltrack].__carouzel-rtl {
       flex-direction: row-reverse; }
   [data-carouzel].__carouzel-editmode [data-carouzeltrack], [data-carouzelauto].__carouzel-editmode [data-carouzeltrack] {
-    transform: translate3d(0, 0, 0) !important; }
+    transform: translate3d(0, 0, 0) !important;
+    display: block;
+    width: 100% !important; }
+    [data-carouzel].__carouzel-editmode [data-carouzeltrack] [data-carouzelslide], [data-carouzelauto].__carouzel-editmode [data-carouzeltrack] [data-carouzelslide] {
+      width: 100% !important; }
   [data-carouzel] [data-carouzelslide], [data-carouzelauto] [data-carouzelslide] {
     border: 1px solid transparent;
     width: 100%; }
