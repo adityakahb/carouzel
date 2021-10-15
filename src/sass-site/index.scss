@@ -19,3 +19,11 @@
     width: 100%;
   }
 }
+#__carouzel_10[data-carouzel] {
+  [data-carouzelnavigation] {
+    flex-direction: column;
+    @media (min-width: 1024px) {
+      flex-direction: row;
+    }
+  }
+}

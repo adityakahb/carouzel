@@ -41,6 +41,8 @@ namespace Carouzel {
     cntr: number;
     cntrCls: string;
     disableCls: string;
+    dotCls: string;
+    dotNcls: string;
     dupCls: string;
     editCls: string;
     effect: string;
@@ -84,6 +86,8 @@ namespace Carouzel {
     centerBetween: number;
     centeredClass: string;
     disabledClass: string;
+    dotTitleClass: string;
+    dotIndexClass: string;
     duplicateClass: string;
     editClass: string;
     enableKeyboard: boolean;
@@ -171,6 +175,7 @@ namespace Carouzel {
     root: '[data-carouzel]',
     rootAuto: '[data-carouzelauto]',
     slide: '[data-carouzelslide]',
+    stitle: '[data-carouzeltitle]',
     track: '[data-carouzeltrack]',
     trackO: '[data-carouzeltrackouter]',
     trackW: '[data-carouzeltrackwrapper]',
@@ -184,6 +189,8 @@ namespace Carouzel {
     centerBetween: 0,
     centeredClass: '__carouzel-centered',
     disabledClass: '__carouzel-disabled',
+    dotTitleClass: '__carouzel-pagetitle',
+    dotIndexClass: '__carouzel-pageindex',
     duplicateClass: '__carouzel-duplicate',
     editClass: '__carouzel-editmode',
     enableKeyboard: true,
@@ -193,8 +200,8 @@ namespace Carouzel {
     idPrefix: '__carouzel',
     isInfinite: true,
     isRTL: false,
-    pauseOnHover: false,
     pauseOnFocus: false,
+    pauseOnHover: false,
     responsive: [],
     rtlClass: '__carouzel-rtl',
     showArrows: true,
@@ -326,12 +333,14 @@ namespace Carouzel {
    * @param core - Carouzel instance core object
    *
    */
-  const updateCSSClasses = (core: ICore) => {
+  const updateAttributes = (core: ICore) => {
     for (let i=0; i<core._as.length; i++) {
       removeClass(core._as[i] as Element, core.settings.activeCls);
+      core._as[i].setAttribute('aria-hidden', 'true');
     }
     for (let i=core.ci + core.bpo.pDups.length; i<core.ci + core.bpo.pDups.length + core.bpo._2Show; i++) {
       addClass(core._as[i] as Element, core.settings.activeCls);
+      core._as[i].removeAttribute('aria-hidden');
     }
     if (!core.settings.inf && core.ci === 0) {
       addClass(core.arrowP as Element, core.settings.disableCls || '');
@@ -386,7 +395,7 @@ namespace Carouzel {
           core.track.style.transitionDuration = `${core.settings.speed}ms`;
           core.track.style.transform = `translate3d(${-core.pts[core.ci]}px, 0, 0)`;
           core.ct = -core.pts[core.ci];
-          updateCSSClasses(core);
+          updateAttributes(core);
         }
       }, 0);
     }
@@ -406,7 +415,7 @@ namespace Carouzel {
           core.track.style.transitionDuration = `${core.settings.speed}ms`;
           core.track.style.opacity = '0';
           core.ct = -core.pts[core.ci];
-          updateCSSClasses(core);
+          updateAttributes(core);
           postOpacity();
         }
       }, 0);
@@ -747,11 +756,17 @@ namespace Carouzel {
         pageLength++;
       }
       core.bpall[i].dots = [];
+      let btnStr = '';
       for (let j=0; j < pageLength; j++) {
         let elem = document.createElement('button');
         elem.setAttribute(_Selectors.dot.slice(1, -1), '');
         elem.setAttribute('type', 'button');
-        elem.innerHTML = (j + 1) + '';
+        btnStr = `<div class="${core.settings.dotNcls}">${(j + 1)}</div>`;
+        if (core.bpall[i]._2Show === 1 && core._ds[i].getAttribute(_Selectors.stitle.slice(1, -1))) {
+          btnStr += core._ds[i].getAttribute(_Selectors.stitle.slice(1, -1));
+          addClass(elem, core.settings.dotCls);
+        }
+        elem.innerHTML = btnStr;
         navBtns.push(elem);
       }
       for (let j=0; j < pageLength; j++) {
@@ -878,6 +893,8 @@ namespace Carouzel {
       cntr: settings.centerBetween,
       cntrCls: settings.centeredClass,
       disableCls: settings.disabledClass,
+      dotCls: settings.dotTitleClass,
+      dotNcls: settings.dotIndexClass,
       dupCls: settings.duplicateClass,
       editCls: settings.editClass,
       effect: settings.animationEffect,
