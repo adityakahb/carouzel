@@ -52,7 +52,6 @@ namespace Carouzel {
     inf: boolean;
     isRTL?: boolean;
     kb: boolean;
-    pauseFoc: boolean;
     pauseHov: boolean;
     res?: ICarouzelCoreBreakpoint[];
     rtlCls?: string;
@@ -97,7 +96,6 @@ namespace Carouzel {
     idPrefix: string,
     isInfinite: boolean;
     isRTL?: boolean;
-    pauseOnFocus: boolean;
     pauseOnHover: boolean;
     responsive?: ICarouzelBreakpoint[];
     rtlClass?: string;
@@ -200,7 +198,6 @@ namespace Carouzel {
     idPrefix: '__carouzel',
     isInfinite: true,
     isRTL: false,
-    pauseOnFocus: false,
     pauseOnHover: false,
     responsive: [],
     rtlClass: '__carouzel-rtl',
@@ -356,6 +353,7 @@ namespace Carouzel {
       for (let i=0; i<core.bpo.dots.length; i++) {
         removeClass(core.bpo.dots[i] as Element, core.settings.activeCls);
       }
+      console.log('==========core.ci / core.bpo._2Scroll', core.ci / core.bpo._2Scroll);
       if (core.bpo.dots[Math.floor(core.ci % core.bpo._2Scroll)]) {
         addClass(core.bpo.dots[Math.floor(core.ci / core.bpo._2Scroll)] as Element, core.settings.activeCls);
       }
@@ -368,17 +366,15 @@ namespace Carouzel {
    * @param core - Carouzel instance core object
    *
    */
-  const animateTrack = (core: ICore) => {
+  const animateTrack = (core: ICore, isSmooth: boolean) => {
     if (typeof core.settings.bFn === 'function') {
       core.settings.bFn();
     }
-    if (core.settings.inf) {
-      if (core.track) {
-        core.track.style.transitionProperty = 'none';
-        core.track.style.transitionTimingFunction = 'unset';
-        core.track.style.transitionDuration = '0ms';
-        core.track.style.transform = `translate3d(${-core.pts[core.pi]}px, 0, 0)`;
-      }
+    if (core.settings.inf && core.track) {
+      core.track.style.transitionProperty = 'none';
+      core.track.style.transitionTimingFunction = 'unset';
+      core.track.style.transitionDuration = '0ms';
+      core.track.style.transform = `translate3d(${-core.pts[core.pi]}px, 0, 0)`;
     } else {
       if (core.ci < 0) {
         core.ci = 0;
@@ -391,8 +387,10 @@ namespace Carouzel {
       setTimeout(() => {
         if (core.track) {
           core.track.style.transitionProperty = 'transform';
-          core.track.style.transitionTimingFunction = core.settings.timeFn;
-          core.track.style.transitionDuration = `${core.settings.speed}ms`;
+          if (isSmooth) {
+            core.track.style.transitionTimingFunction = core.settings.timeFn;
+            core.track.style.transitionDuration = `${core.settings.speed}ms`;
+          }
           core.track.style.transform = `translate3d(${-core.pts[core.ci]}px, 0, 0)`;
           core.ct = -core.pts[core.ci];
           updateAttributes(core);
@@ -533,11 +531,11 @@ namespace Carouzel {
       core.sWidth = slideWidth;
 
       trackWidth = parseFloat(slideWidth + '') * (core.sLength >= bpoptions._2Show ? bpoptions.bpSLen : bpoptions._2Show);
-      core.track.style.width = trackWidth + 'px';
-      core.trackW.style.width = (bpoptions._2Show * slideWidth) + 'px';
+      core.track.style.width = trackWidth.toFixed(4) + 'px';
+      core.trackW.style.width = (bpoptions._2Show * slideWidth).toFixed(4) + 'px';
       core._as = core.trackW.querySelectorAll(_Selectors.slide);
       for (let i = 0; i < core._as.length; i++) {
-        (core._as[i] as HTMLElement).style.width = slideWidth + 'px';
+        (core._as[i] as HTMLElement).style.width = slideWidth.toFixed(4) + 'px';
       }
       for (let i = bpoptions.pDups.length; i > 0; i--) {
         core.pts[-i] = (-i + bpoptions.pDups.length) * slideWidth;
@@ -548,7 +546,7 @@ namespace Carouzel {
       for (let i = core.sLength; i < core.sLength + bpoptions.nDups.length; i++) {
         core.pts[i] = (i + bpoptions.pDups.length) * slideWidth;
       }
-      animateTrack(core);
+      animateTrack(core, false);
     }
   };
 
@@ -563,7 +561,7 @@ namespace Carouzel {
     if (core.ci !== slidenumber) {
       core.pi = core.ci;
       core.ci = slidenumber * core.bpo._2Scroll;
-      animateTrack(core);
+      animateTrack(core, true);
     }
   };
 
@@ -577,12 +575,14 @@ namespace Carouzel {
     core.pi = core.ci;
     core.ci -= core.bpo._2Scroll;
     if (core.settings.inf) {
-      if (!core.pts[core.ci]) {
-        core.ci += core.sLength;
+      if (typeof core.pts[core.ci] === 'undefined') {
+        core.pi = core.sLength + core.pi;
+        core.ci = 0;
+      } else {
+        core.pi = core.ci + core.bpo._2Scroll;
       }
-      core.pi = core.ci + core.bpo._2Scroll;
     }
-    animateTrack(core);
+    animateTrack(core, true);
   };
 
   /**
@@ -595,12 +595,14 @@ namespace Carouzel {
     core.pi = core.ci;
     core.ci += core.bpo._2Scroll;
     if (core.settings.inf) {
-      if (!core.pts[core.ci + core.bpo._2Show]) {
-        core.ci -= core.sLength;
+      if (typeof core.pts[core.ci + core.bpo._2Show] === 'undefined') {
+        core.pi = core.pi - core.sLength;
+        core.ci = 0;
+      } else {
+        core.pi = core.ci - core.bpo._2Scroll;
       }
-      core.pi = core.ci - core.bpo._2Scroll;
     }
-    animateTrack(core);
+    animateTrack(core, true);
   };
 
   /**
@@ -774,7 +776,7 @@ namespace Carouzel {
           event.preventDefault();
           core.pi = core.ci;
           core.ci = j * core.bpall[i]._2Scroll;
-          animateTrack(core);
+          animateTrack(core, true);
         }));
         core.bpall[i].dots.push(navBtns[j]);
       }
@@ -903,7 +905,6 @@ namespace Carouzel {
       inf: settings.isInfinite,
       isRTL: settings.isRTL,
       kb: settings.enableKeyboard,
-      pauseFoc: settings.pauseOnFocus,
       pauseHov: settings.pauseOnHover,
       res: [],
       rtlCls: settings.rtlClass,
@@ -950,14 +951,6 @@ namespace Carouzel {
         core.paused = true;
       }));
       core.eHandlers.push(eventHandler(core.rootElem, 'mouseleave', function () {
-        core.paused = false;
-      }));
-    }
-    if (core.rootElem && core.settings.pauseFoc) {
-      core.eHandlers.push(eventHandler(core.rootElem, 'focus', function () {
-        core.paused = true;
-      }));
-      core.eHandlers.push(eventHandler(core.rootElem, 'blur', function () {
         core.paused = false;
       }));
     }

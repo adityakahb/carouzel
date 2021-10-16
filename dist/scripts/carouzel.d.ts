@@ -41,7 +41,6 @@ declare namespace Carouzel {
         idPrefix: string;
         isInfinite: boolean;
         isRTL?: boolean;
-        pauseOnFocus: boolean;
         pauseOnHover: boolean;
         responsive?: ICarouzelBreakpoint[];
         rtlClass?: string;

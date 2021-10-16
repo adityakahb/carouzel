@@ -65,7 +65,6 @@ var Carouzel;
         idPrefix: '__carouzel',
         isInfinite: true,
         isRTL: false,
-        pauseOnFocus: false,
         pauseOnHover: false,
         responsive: [],
         rtlClass: '__carouzel-rtl',
@@ -215,6 +214,7 @@ var Carouzel;
             for (var i = 0; i < core.bpo.dots.length; i++) {
                 removeClass(core.bpo.dots[i], core.settings.activeCls);
             }
+            console.log('==========core.ci / core.bpo._2Scroll', core.ci / core.bpo._2Scroll);
             if (core.bpo.dots[Math.floor(core.ci % core.bpo._2Scroll)]) {
                 addClass(core.bpo.dots[Math.floor(core.ci / core.bpo._2Scroll)], core.settings.activeCls);
             }
@@ -226,17 +226,15 @@ var Carouzel;
      * @param core - Carouzel instance core object
      *
      */
-    var animateTrack = function (core) {
+    var animateTrack = function (core, isSmooth) {
         if (typeof core.settings.bFn === 'function') {
             core.settings.bFn();
         }
-        if (core.settings.inf) {
-            if (core.track) {
-                core.track.style.transitionProperty = 'none';
-                core.track.style.transitionTimingFunction = 'unset';
-                core.track.style.transitionDuration = '0ms';
-                core.track.style.transform = "translate3d(" + -core.pts[core.pi] + "px, 0, 0)";
-            }
+        if (core.settings.inf && core.track) {
+            core.track.style.transitionProperty = 'none';
+            core.track.style.transitionTimingFunction = 'unset';
+            core.track.style.transitionDuration = '0ms';
+            core.track.style.transform = "translate3d(" + -core.pts[core.pi] + "px, 0, 0)";
         }
         else {
             if (core.ci < 0) {
@@ -250,8 +248,10 @@ var Carouzel;
             setTimeout(function () {
                 if (core.track) {
                     core.track.style.transitionProperty = 'transform';
-                    core.track.style.transitionTimingFunction = core.settings.timeFn;
-                    core.track.style.transitionDuration = core.settings.speed + "ms";
+                    if (isSmooth) {
+                        core.track.style.transitionTimingFunction = core.settings.timeFn;
+                        core.track.style.transitionDuration = core.settings.speed + "ms";
+                    }
                     core.track.style.transform = "translate3d(" + -core.pts[core.ci] + "px, 0, 0)";
                     core.ct = -core.pts[core.ci];
                     updateAttributes(core);
@@ -386,11 +386,11 @@ var Carouzel;
             slideWidth = core.trackO.clientWidth / (bpoptions._2Show + bpoptions.cntr);
             core.sWidth = slideWidth;
             trackWidth = parseFloat(slideWidth + '') * (core.sLength >= bpoptions._2Show ? bpoptions.bpSLen : bpoptions._2Show);
-            core.track.style.width = trackWidth + 'px';
-            core.trackW.style.width = (bpoptions._2Show * slideWidth) + 'px';
+            core.track.style.width = trackWidth.toFixed(4) + 'px';
+            core.trackW.style.width = (bpoptions._2Show * slideWidth).toFixed(4) + 'px';
             core._as = core.trackW.querySelectorAll(_Selectors.slide);
             for (var i = 0; i < core._as.length; i++) {
-                core._as[i].style.width = slideWidth + 'px';
+                core._as[i].style.width = slideWidth.toFixed(4) + 'px';
             }
             for (var i = bpoptions.pDups.length; i > 0; i--) {
                 core.pts[-i] = (-i + bpoptions.pDups.length) * slideWidth;
@@ -401,7 +401,7 @@ var Carouzel;
             for (var i = core.sLength; i < core.sLength + bpoptions.nDups.length; i++) {
                 core.pts[i] = (i + bpoptions.pDups.length) * slideWidth;
             }
-            animateTrack(core);
+            animateTrack(core, false);
         }
     };
     /**
@@ -415,7 +415,7 @@ var Carouzel;
         if (core.ci !== slidenumber) {
             core.pi = core.ci;
             core.ci = slidenumber * core.bpo._2Scroll;
-            animateTrack(core);
+            animateTrack(core, true);
         }
     };
     /**
@@ -428,12 +428,15 @@ var Carouzel;
         core.pi = core.ci;
         core.ci -= core.bpo._2Scroll;
         if (core.settings.inf) {
-            if (!core.pts[core.ci]) {
-                core.ci += core.sLength;
+            if (typeof core.pts[core.ci] === 'undefined') {
+                core.pi = core.sLength + core.pi;
+                core.ci = 0;
             }
-            core.pi = core.ci + core.bpo._2Scroll;
+            else {
+                core.pi = core.ci + core.bpo._2Scroll;
+            }
         }
-        animateTrack(core);
+        animateTrack(core, true);
     };
     /**
      * Function to go to the next set of slides
@@ -445,12 +448,15 @@ var Carouzel;
         core.pi = core.ci;
         core.ci += core.bpo._2Scroll;
         if (core.settings.inf) {
-            if (!core.pts[core.ci + core.bpo._2Show]) {
-                core.ci -= core.sLength;
+            if (typeof core.pts[core.ci + core.bpo._2Show] === 'undefined') {
+                core.pi = core.pi - core.sLength;
+                core.ci = 0;
             }
-            core.pi = core.ci - core.bpo._2Scroll;
+            else {
+                core.pi = core.ci - core.bpo._2Scroll;
+            }
         }
-        animateTrack(core);
+        animateTrack(core, true);
     };
     /**
      * Function to add click events to the arrows
@@ -621,7 +627,7 @@ var Carouzel;
                     event.preventDefault();
                     core.pi = core.ci;
                     core.ci = j * core.bpall[i]._2Scroll;
-                    animateTrack(core);
+                    animateTrack(core, true);
                 }));
                 core.bpall[i].dots.push(navBtns[j]);
             };
@@ -754,7 +760,6 @@ var Carouzel;
             inf: settings.isInfinite,
             isRTL: settings.isRTL,
             kb: settings.enableKeyboard,
-            pauseFoc: settings.pauseOnFocus,
             pauseHov: settings.pauseOnHover,
             res: [],
             rtlCls: settings.rtlClass,
@@ -798,14 +803,6 @@ var Carouzel;
                 core.paused = true;
             }));
             core.eHandlers.push(eventHandler(core.rootElem, 'mouseleave', function () {
-                core.paused = false;
-            }));
-        }
-        if (core.rootElem && core.settings.pauseFoc) {
-            core.eHandlers.push(eventHandler(core.rootElem, 'focus', function () {
-                core.paused = true;
-            }));
-            core.eHandlers.push(eventHandler(core.rootElem, 'blur', function () {
                 core.paused = false;
             }));
         }
