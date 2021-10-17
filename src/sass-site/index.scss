@@ -4,8 +4,8 @@
 @import './config/base';
 @import './config/typography';
 
-[data-carouzel], [data-carouzelauto] {
-  [data-carouzelslide] {
+[data-carouzel], [data-carouzel-auto] {
+  [data-carouzel-slide] {
     align-items: center;
     background-color: #fff;
     border-left: 1px solid red;
@@ -20,7 +20,7 @@
   }
 }
 #__carouzel_10[data-carouzel] {
-  [data-carouzelnavigation] {
+  [data-carouzel-navigation] {
     flex-direction: column;
     @media (min-width: 1024px) {
       flex-direction: row;

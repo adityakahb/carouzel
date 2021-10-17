@@ -123,7 +123,7 @@ namespace Carouzel {
     appendSlide: Function;
     arrowN: HTMLElement | null;
     arrowP: HTMLElement | null;
-    arrowsW: HTMLElement | null;
+    controlsW: HTMLElement | null;
     autoTimer: any;
     bpall: ICarouzelCoreBreakpoint[];
     bpo_old: ICarouzelCoreBreakpoint;
@@ -164,19 +164,19 @@ namespace Carouzel {
   const _breakpointsParseTypeError = 'Error parsing breakpoints';
   const _useCapture = false;
   const _Selectors = {
-    arrowN: '[data-carouzelnextarrow]',
-    arrowP: '[data-carouzelpreviousarrow]',
-    arrowsW: '[data-carouzelarrowswrapper]',
-    dot: '[data-carouzelnavbutton]',
-    nav: '[data-carouzelnavigation]',
-    navW: '[data-carouzelnavigationwrapper]',
+    arrowN: '[data-carouzel-nextarrow]',
+    arrowP: '[data-carouzel-previousarrow]',
+    controlsW: '[data-carouzel-controlswrapper]',
+    dot: '[data-carouzel-navbutton]',
+    nav: '[data-carouzel-navigation]',
+    navW: '[data-carouzel-navigationwrapper]',
     root: '[data-carouzel]',
-    rootAuto: '[data-carouzelauto]',
-    slide: '[data-carouzelslide]',
-    stitle: '[data-carouzeltitle]',
-    track: '[data-carouzeltrack]',
-    trackO: '[data-carouzeltrackouter]',
-    trackW: '[data-carouzeltrackwrapper]',
+    rootAuto: '[data-carouzel-auto]',
+    slide: '[data-carouzel-slide]',
+    stitle: '[data-carouzel-title]',
+    track: '[data-carouzel-track]',
+    trackO: '[data-carouzel-trackouter]',
+    trackW: '[data-carouzel-trackwrapper]',
   };
   const _Defaults:ICarouzelSettings = {
     activeClass: '__carouzel-active',
@@ -331,6 +331,7 @@ namespace Carouzel {
    *
    */
   const updateAttributes = (core: ICore) => {
+    let x;
     for (let i=0; i<core._as.length; i++) {
       removeClass(core._as[i] as Element, core.settings.activeCls);
       core._as[i].setAttribute('aria-hidden', 'true');
@@ -353,9 +354,12 @@ namespace Carouzel {
       for (let i=0; i<core.bpo.dots.length; i++) {
         removeClass(core.bpo.dots[i] as Element, core.settings.activeCls);
       }
-      console.log('==========core.ci / core.bpo._2Scroll', core.ci / core.bpo._2Scroll);
-      if (core.bpo.dots[Math.floor(core.ci % core.bpo._2Scroll)]) {
-        addClass(core.bpo.dots[Math.floor(core.ci / core.bpo._2Scroll)] as Element, core.settings.activeCls);
+      x = Math.floor(core.ci / core.bpo._2Scroll);
+      if (x < 0) {
+        x = core.bpo.dots.length - 1;
+      }
+      if (core.bpo.dots[x]) {
+        addClass(core.bpo.dots[x] as Element, core.settings.activeCls);
       }
     }
   };
@@ -510,10 +514,10 @@ namespace Carouzel {
         core.nav.appendChild(bpoptions.dots[i]);
       }
     }
-    if (!bpoptions._arrows && core.arrowsW) {
-      addClass(core.arrowsW, core.settings.hidCls);
-    } else if (core.arrowsW) {
-      removeClass(core.arrowsW, core.settings.hidCls);
+    if (!bpoptions._arrows && core.controlsW) {
+      addClass(core.controlsW, core.settings.hidCls);
+    } else if (core.controlsW) {
+      removeClass(core.controlsW, core.settings.hidCls);
     }
     if (!bpoptions._nav && core.navW) {
       addClass(core.navW, core.settings.hidCls);
@@ -576,8 +580,8 @@ namespace Carouzel {
     core.ci -= core.bpo._2Scroll;
     if (core.settings.inf) {
       if (typeof core.pts[core.ci] === 'undefined') {
-        core.pi = core.sLength + core.pi;
-        core.ci = 0;
+        core.pi = core.sLength - 1;
+        core.ci = core.pi - core.bpo._2Show;        
       } else {
         core.pi = core.ci + core.bpo._2Scroll;
       }
@@ -1004,7 +1008,7 @@ namespace Carouzel {
     _core.eHandlers = [];
     _core.arrowN = rootElem.querySelector(`${_Selectors.arrowN}`);
     _core.arrowP = rootElem.querySelector(`${_Selectors.arrowP}`);
-    _core.arrowsW = rootElem.querySelector(`${_Selectors.arrowsW}`);
+    _core.controlsW = rootElem.querySelector(`${_Selectors.controlsW}`);
     _core.nav = rootElem.querySelector(`${_Selectors.nav}`);
     _core.navW = rootElem.querySelector(`${_Selectors.navW}`);
     _core._ds = rootElem.querySelectorAll(`${_Selectors.slide}`);
