@@ -30,8 +30,8 @@ declare namespace Carouzel {
         centerBetween: number;
         centeredClass: string;
         disabledClass: string;
-        dotTitleClass: string;
         dotIndexClass: string;
+        dotTitleClass: string;
         duplicateClass: string;
         editClass: string;
         enableKeyboard: boolean;

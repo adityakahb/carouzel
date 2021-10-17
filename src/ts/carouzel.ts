@@ -85,8 +85,8 @@ namespace Carouzel {
     centerBetween: number;
     centeredClass: string;
     disabledClass: string;
-    dotTitleClass: string;
     dotIndexClass: string;
+    dotTitleClass: string;
     duplicateClass: string;
     editClass: string;
     enableKeyboard: boolean;
@@ -123,12 +123,14 @@ namespace Carouzel {
     appendSlide: Function;
     arrowN: HTMLElement | null;
     arrowP: HTMLElement | null;
-    controlsW: HTMLElement | null;
     autoTimer: any;
     bpall: ICarouzelCoreBreakpoint[];
     bpo_old: ICarouzelCoreBreakpoint;
     bpo: ICarouzelCoreBreakpoint;
+    btnPause: HTMLElement | null;
+    btnPlay: HTMLElement | null;
     ci: number;
+    controlsW: HTMLElement | null;
     ct: number;
     eHandlers: any[];
     goToNext: Function;
@@ -138,6 +140,7 @@ namespace Carouzel {
     nav: HTMLElement | null;
     navW: HTMLElement | null;
     paused: boolean;
+    pauseClk: boolean;
     pi: number;
     prependSlide: Function;
     pts: IIndexHandler;
@@ -170,6 +173,8 @@ namespace Carouzel {
     dot: '[data-carouzel-navbutton]',
     nav: '[data-carouzel-navigation]',
     navW: '[data-carouzel-navigationwrapper]',
+    pauseBtn: '[data-carouzel-pause]',
+    playBtn: '[data-carouzel-play]',
     root: '[data-carouzel]',
     rootAuto: '[data-carouzel-auto]',
     slide: '[data-carouzel-slide]',
@@ -187,8 +192,8 @@ namespace Carouzel {
     centerBetween: 0,
     centeredClass: '__carouzel-centered',
     disabledClass: '__carouzel-disabled',
-    dotTitleClass: '__carouzel-pagetitle',
     dotIndexClass: '__carouzel-pageindex',
+    dotTitleClass: '__carouzel-pagetitle',
     duplicateClass: '__carouzel-duplicate',
     editClass: '__carouzel-editmode',
     enableKeyboard: true,
@@ -610,12 +615,59 @@ namespace Carouzel {
   };
 
   /**
+   * Function to toggle Autoplay and pause on hover functionalities for the carouzel
+   * 
+   * @param core - Carouzel instance core object
+   *
+   */
+  const toggleAutoplay = (core: ICore) => {
+    if (core.rootElem && core.settings.pauseHov) {
+      core.eHandlers.push(eventHandler(core.rootElem, 'mouseenter', function () {
+        core.paused = true;
+      }));
+      core.eHandlers.push(eventHandler(core.rootElem, 'mouseleave', function () {
+        core.paused = false;
+      }));
+    }
+    if (!core.settings.pauseHov) {
+      core.paused = false;
+    }
+    core.autoTimer = setInterval(() => {
+      if (!core.paused && !core.pauseClk) {
+        goToNext(core);
+      }
+    }, core.settings.autoS);
+  };
+
+  /**
+   * Function to toggle keyboard navigation with left and right arrows
+   * 
+   * @param core - Carouzel instance core object
+   *
+   */
+  const toggleKeyboard = (core: ICore) => {
+    if (core.rootElem && core.settings.kb) {
+      core.rootElem.setAttribute('tabindex', '-1');
+      let keyCode = '';
+      core.eHandlers.push(eventHandler(core.rootElem, 'keydown', function (event: Event) {
+        event = event || window.event;
+        keyCode = (event as KeyboardEvent).key.toLowerCase();
+        switch (keyCode) {
+          case 'arrowleft': goToPrev(core); break;
+          case 'arrowright': goToNext(core); break;
+          default: keyCode = ''; break;
+        }
+      }));
+    }
+  };
+
+  /**
    * Function to add click events to the arrows
    * 
    * @param core - Carouzel instance core object
    *
    */
-  const toggleArrows = (core: ICore) => {
+  const toggleControlButtons = (core: ICore) => {
     if (core.arrowP) {
       core.eHandlers.push(eventHandler(core.arrowP, 'click', (event: Event) => {
         event.preventDefault();
@@ -626,6 +678,26 @@ namespace Carouzel {
       core.eHandlers.push(eventHandler(core.arrowN, 'click', (event: Event) => {
         event.preventDefault();
         goToNext(core);
+      }));
+    }
+    if (core.settings.inf && core.btnPause) {
+      core.eHandlers.push(eventHandler(core.btnPause, 'click', (event: Event) => {
+        event.preventDefault();
+        core.pauseClk = true;
+        addClass(core.btnPause as Element, core.settings.hidCls);
+        if (core.btnPlay) {
+          removeClass(core.btnPlay as Element, core.settings.hidCls);
+        }
+      }));
+    }
+    if (core.settings.inf && core.btnPlay) {
+      core.eHandlers.push(eventHandler(core.btnPlay, 'click', (event: Event) => {
+        event.preventDefault();
+        core.pauseClk = false;
+        addClass(core.btnPlay as Element, core.settings.hidCls);
+        if (core.btnPause) {
+          removeClass(core.btnPause as Element, core.settings.hidCls);
+        }
       }));
     }
   };
@@ -768,8 +840,8 @@ namespace Carouzel {
         elem.setAttribute(_Selectors.dot.slice(1, -1), '');
         elem.setAttribute('type', 'button');
         btnStr = `<div class="${core.settings.dotNcls}">${(j + 1)}</div>`;
-        if (core.bpall[i]._2Show === 1 && core._ds[i].getAttribute(_Selectors.stitle.slice(1, -1))) {
-          btnStr += core._ds[i].getAttribute(_Selectors.stitle.slice(1, -1));
+        if (core.bpall[i]._2Show === 1 && core._ds[j].getAttribute(_Selectors.stitle.slice(1, -1))) {
+          btnStr += core._ds[j].getAttribute(_Selectors.stitle.slice(1, -1));
           addClass(elem, core.settings.dotCls);
         }
         elem.innerHTML = btnStr;
@@ -942,53 +1014,6 @@ namespace Carouzel {
 
     return settingsobj;
   };
-  
-  /**
-   * Function to toggle Autoplay and pause on hover functionalities for the carouzel
-   * 
-   * @param core - Carouzel instance core object
-   *
-   */
-  const toggleAutoplay = (core: ICore) => {
-    if (core.rootElem && core.settings.pauseHov) {
-      core.eHandlers.push(eventHandler(core.rootElem, 'mouseenter', function () {
-        core.paused = true;
-      }));
-      core.eHandlers.push(eventHandler(core.rootElem, 'mouseleave', function () {
-        core.paused = false;
-      }));
-    }
-    if (!core.settings.pauseHov) {
-      core.paused = false;
-    }
-    core.autoTimer = setInterval(() => {
-      if (!core.paused) {
-        goToNext(core);
-      }
-    }, core.settings.autoS);
-  };
-
-  /**
-   * Function to toggle keyboard navigation with left and right arrows
-   * 
-   * @param core - Carouzel instance core object
-   *
-   */
-  const toggleKeyboard = (core: ICore) => {
-    if (core.rootElem && core.settings.kb) {
-      core.rootElem.setAttribute('tabindex', '-1');
-      let keyCode = '';
-      core.eHandlers.push(eventHandler(core.rootElem, 'keydown', function (event: Event) {
-        event = event || window.event;
-        keyCode = (event as KeyboardEvent).key.toLowerCase();
-        switch (keyCode) {
-          case 'arrowleft': goToPrev(core); break;
-          case 'arrowright': goToNext(core); break;
-          default: keyCode = ''; break;
-        }
-      }));
-    }
-  };
 
   /**
    * Function to initialize the carouzel core object and assign respective events
@@ -1004,20 +1029,22 @@ namespace Carouzel {
     _core.rootElem = core.rootElem = rootElem;
     _core.settings = mapSettings(settings);
     
-    _core.ci = settings.startAtIndex = (settings.startAtIndex || 0) - 1;
-    _core.eHandlers = [];
+    _core._ds = rootElem.querySelectorAll(`${_Selectors.slide}`);
     _core.arrowN = rootElem.querySelector(`${_Selectors.arrowN}`);
     _core.arrowP = rootElem.querySelector(`${_Selectors.arrowP}`);
+    _core.btnPause = rootElem.querySelector(`${_Selectors.pauseBtn}`);
+    _core.btnPlay = rootElem.querySelector(`${_Selectors.playBtn}`);
+    _core.ci = settings.startAtIndex = (settings.startAtIndex || 0) - 1;
     _core.controlsW = rootElem.querySelector(`${_Selectors.controlsW}`);
+    _core.eHandlers = [];
+    _core.isLeftAdded = false;
     _core.nav = rootElem.querySelector(`${_Selectors.nav}`);
     _core.navW = rootElem.querySelector(`${_Selectors.navW}`);
-    _core._ds = rootElem.querySelectorAll(`${_Selectors.slide}`);
-    _core.track = rootElem.querySelector(`${_Selectors.track}`);
-    _core.trackW = rootElem.querySelector(`${_Selectors.trackW}`);
-    _core.trackO = rootElem.querySelector(`${_Selectors.trackO}`);
-    _core.sLength = _core._ds.length;
     _core.pts = [];
-    _core.isLeftAdded = false;
+    _core.sLength = _core._ds.length;
+    _core.track = rootElem.querySelector(`${_Selectors.track}`);
+    _core.trackO = rootElem.querySelector(`${_Selectors.trackO}`);
+    _core.trackW = rootElem.querySelector(`${_Selectors.trackW}`);
 
     core.goToNext = () => {
       goToNext(_core);
@@ -1057,7 +1084,7 @@ namespace Carouzel {
       _core.bpall = updateBreakpoints(_core.settings);
       toggleKeyboard(_core);
       generateElements(_core);
-      toggleArrows(_core);
+      toggleControlButtons(_core);
       toggleTouchEvents(_core);
       applyLayout(_core);
     }

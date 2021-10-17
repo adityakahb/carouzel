@@ -39,8 +39,8 @@
     }
   }
   &.__carouzel-editmode [data-carouzel-track] {
-    transform: translate3d(0, 0, 0) !important;
     display: block;
+    transform: translate3d(0, 0, 0) !important;
     width: 100% !important;
     [data-carouzel-slide] {
       width: 100% !important;
@@ -54,11 +54,11 @@
     display: none !important;
   }
   [data-carouzel-controlswrapper] {
-    position: absolute;
     bottom: 10px;
-    left: 50%;
-    transform: translate3d(-50%, 0, 0);
     display: flex;
+    left: 50%;
+    position: absolute;
+    transform: translate3d(-50%, 0, 0);
   }
   [data-carouzel-previousarrow], [data-carouzel-nextarrow], [data-carouzel-pause], [data-carouzel-play] {
     background-color: rgba(#000, 0.15);
@@ -72,6 +72,7 @@
     width: 48px;
     z-index: 12;
     svg {
+      cursor: pointer;
       height: 100%;
       width: 100%;
     }
@@ -83,6 +84,9 @@
       cursor: not-allowed;
       opacity: 0.25;
       pointer-events: none;
+      svg {
+        cursor: not-allowed;
+      }
     }
   }
   [data-carouzel-pause], [data-carouzel-play] {
@@ -108,8 +112,8 @@
   }
   [data-carouzel-navbutton] {
     background-color: rgba(#000, 0.5);
-    border: 1px solid #000;
     border-radius: 100%;
+    border: 1px solid #000;
     color: #fff;
     display: block;
     font-size: 14px;
