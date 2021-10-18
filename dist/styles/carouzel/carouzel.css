@@ -1,5 +1,6 @@
 [data-carouzel], [data-carouzel-auto] {
   opacity: 0;
+  position: relative;
   visibility: hidden; }
   [data-carouzel], [data-carouzel]:after, [data-carouzel]:before, [data-carouzel] *, [data-carouzel] *:after, [data-carouzel] *:before, [data-carouzel-auto], [data-carouzel-auto]:after, [data-carouzel-auto]:before, [data-carouzel-auto] *, [data-carouzel-auto] *:after, [data-carouzel-auto] *:before {
     box-sizing: border-box; }
@@ -8,15 +9,24 @@
     visibility: visible; }
   [data-carouzel] [data-carouzel-trackouter], [data-carouzel-auto] [data-carouzel-trackouter] {
     margin-bottom: 1em;
-    overflow: hidden;
     position: relative;
     width: 100%; }
-    [data-carouzel] [data-carouzel-trackouter].__carouzel-centered, [data-carouzel-auto] [data-carouzel-trackouter].__carouzel-centered {
-      align-items: center;
-      display: flex;
-      justify-content: center; }
   [data-carouzel] [data-carouzel-trackwrapper], [data-carouzel-auto] [data-carouzel-trackwrapper] {
+    overflow: hidden;
     width: 100%; }
+  [data-carouzel].__carouzel-centered [data-carouzel-trackouter], [data-carouzel-auto].__carouzel-centered [data-carouzel-trackouter] {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    overflow: hidden; }
+  [data-carouzel].__carouzel-centered [data-carouzel-trackwrapper], [data-carouzel-auto].__carouzel-centered [data-carouzel-trackwrapper] {
+    overflow: visible; }
+  [data-carouzel].__carouzel-centered [data-carouzel-previousarrow], [data-carouzel-auto].__carouzel-centered [data-carouzel-previousarrow] {
+    border-radius: 0 50% 50% 0;
+    left: 0; }
+  [data-carouzel].__carouzel-centered [data-carouzel-nextarrow], [data-carouzel-auto].__carouzel-centered [data-carouzel-nextarrow] {
+    border-radius: 50% 0 0 50%;
+    right: 0; }
   [data-carouzel] [data-carouzel-track], [data-carouzel-auto] [data-carouzel-track] {
     align-items: flex-start;
     display: flex;
@@ -39,12 +49,6 @@
     width: 100%; }
   [data-carouzel] .__carouzel-hidden, [data-carouzel-auto] .__carouzel-hidden {
     display: none !important; }
-  [data-carouzel] [data-carouzel-controlswrapper], [data-carouzel-auto] [data-carouzel-controlswrapper] {
-    bottom: 10px;
-    display: flex;
-    left: 50%;
-    position: absolute;
-    transform: translate3d(-50%, 0, 0); }
   [data-carouzel] [data-carouzel-previousarrow], [data-carouzel] [data-carouzel-nextarrow], [data-carouzel] [data-carouzel-pause], [data-carouzel] [data-carouzel-play], [data-carouzel-auto] [data-carouzel-previousarrow], [data-carouzel-auto] [data-carouzel-nextarrow], [data-carouzel-auto] [data-carouzel-pause], [data-carouzel-auto] [data-carouzel-play] {
     background-color: rgba(0, 0, 0, 0.15);
     border: 1px solid #000;
@@ -70,12 +74,21 @@
       [data-carouzel] [data-carouzel-previousarrow].__carouzel-disabled svg, [data-carouzel] [data-carouzel-nextarrow].__carouzel-disabled svg, [data-carouzel] [data-carouzel-pause].__carouzel-disabled svg, [data-carouzel] [data-carouzel-play].__carouzel-disabled svg, [data-carouzel-auto] [data-carouzel-previousarrow].__carouzel-disabled svg, [data-carouzel-auto] [data-carouzel-nextarrow].__carouzel-disabled svg, [data-carouzel-auto] [data-carouzel-pause].__carouzel-disabled svg, [data-carouzel-auto] [data-carouzel-play].__carouzel-disabled svg {
         cursor: not-allowed; }
   [data-carouzel] [data-carouzel-pause], [data-carouzel] [data-carouzel-play], [data-carouzel-auto] [data-carouzel-pause], [data-carouzel-auto] [data-carouzel-play] {
-    margin-right: 10px;
-    border-radius: 100%; }
+    border-radius: 100%;
+    bottom: 10px;
+    left: 50%;
+    position: absolute;
+    transform: translate(-50%, 0); }
+  [data-carouzel] [data-carouzel-previousarrow], [data-carouzel] [data-carouzel-nextarrow], [data-carouzel-auto] [data-carouzel-previousarrow], [data-carouzel-auto] [data-carouzel-nextarrow] {
+    position: absolute;
+    top: 50%;
+    transform: translate(0, -50%); }
   [data-carouzel] [data-carouzel-previousarrow], [data-carouzel-auto] [data-carouzel-previousarrow] {
-    border-radius: 50% 0 0 50%; }
+    border-radius: 50% 0 0 50%;
+    left: -48px; }
   [data-carouzel] [data-carouzel-nextarrow], [data-carouzel-auto] [data-carouzel-nextarrow] {
-    border-radius: 0 50% 50% 0; }
+    border-radius: 0 50% 50% 0;
+    right: -48px; }
   [data-carouzel] [data-carouzel-navigation], [data-carouzel-auto] [data-carouzel-navigation] {
     align-items: center;
     display: flex;

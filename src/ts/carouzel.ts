@@ -23,6 +23,7 @@ namespace Carouzel {
     bpSLen: number;
     cntr: number;
     dots: Node[];
+    gutr: number;
     nDups: Node[];
     pDups: Node[];
     swipe: boolean;
@@ -47,6 +48,7 @@ namespace Carouzel {
     editCls: string;
     effect: string;
     fadCls: string;
+    gutr: number;
     hidCls: string;
     idPrefix?: string;
     inf: boolean;
@@ -70,6 +72,7 @@ namespace Carouzel {
     showNavigation: boolean;
     slidesToScroll: number;
     slidesToShow: number;
+    spaceBetween: number;
   }
 
   interface ICarouzelSettings {
@@ -103,6 +106,7 @@ namespace Carouzel {
     showNavigation: boolean;
     slidesToScroll: number;
     slidesToShow: number;
+    spaceBetween: number;
     startAtIndex: number;
     timingFunction: string
     touchThreshold: number;
@@ -210,6 +214,7 @@ namespace Carouzel {
     showNavigation: true,
     slidesToScroll: 1,
     slidesToShow: 1,
+    spaceBetween: 0,
     startAtIndex: 1,
     timingFunction: 'ease-in-out',
     touchThreshold: 120,
@@ -287,6 +292,10 @@ namespace Carouzel {
       }
       element.className = stringTrim(curclass.join(' '));
     }
+  };
+
+  const toFixed4 = (num: number) => {
+    return num.toFixed(4);
   };
 
   /**
@@ -529,22 +538,35 @@ namespace Carouzel {
     } else if (core.navW) {
       removeClass(core.navW, core.settings.hidCls);
     }
-    if (core.trackO && core.trackW && core.track) {
+    if (core.rootElem && core.trackO && core.trackW && core.track) {
       core.pts = {};
       if (bpoptions.cntr > 0) {
-        addClass(core.trackO, core.settings.cntrCls);
+        addClass(core.rootElem, core.settings.cntrCls);
       } else {
-        removeClass(core.trackO, core.settings.cntrCls);
+        removeClass(core.rootElem, core.settings.cntrCls);
       }
-      slideWidth = core.trackO.clientWidth / (bpoptions._2Show + bpoptions.cntr);
+      slideWidth = (core.trackO.clientWidth / (bpoptions._2Show + bpoptions.cntr));
+      console.log('==slideWidth', slideWidth);
       core.sWidth = slideWidth;
 
       trackWidth = parseFloat(slideWidth + '') * (core.sLength >= bpoptions._2Show ? bpoptions.bpSLen : bpoptions._2Show);
-      core.track.style.width = trackWidth.toFixed(4) + 'px';
-      core.trackW.style.width = (bpoptions._2Show * slideWidth).toFixed(4) + 'px';
+      core.track.style.width = toFixed4(trackWidth) + 'px';
+      core.trackW.style.width = toFixed4((bpoptions._2Show * slideWidth) + (bpoptions.gutr * 2)) + 'px';
+      core.trackW.style.marginLeft = toFixed4(-bpoptions.gutr) + 'px';
+      core.trackW.style.marginRight = toFixed4(-bpoptions.gutr) + 'px';
       core._as = core.trackW.querySelectorAll(_Selectors.slide);
       for (let i = 0; i < core._as.length; i++) {
-        (core._as[i] as HTMLElement).style.width = slideWidth.toFixed(4) + 'px';
+        (core._as[i] as HTMLElement).style.width = toFixed4(slideWidth) + 'px';
+        if (i === 0) {
+          (core._as[i] as HTMLElement).style.marginLeft = toFixed4(bpoptions.gutr) + 'px';
+          (core._as[i] as HTMLElement).style.marginRight = toFixed4(bpoptions.gutr / 2) + 'px';
+        } else if (i === core._as.length - 1) {
+          (core._as[i] as HTMLElement).style.marginLeft = toFixed4(bpoptions.gutr / 2) + 'px';
+          (core._as[i] as HTMLElement).style.marginRight = toFixed4(bpoptions.gutr) + 'px';
+        } else {
+          (core._as[i] as HTMLElement).style.marginLeft = toFixed4(bpoptions.gutr / 2) + 'px';
+          (core._as[i] as HTMLElement).style.marginRight = toFixed4(bpoptions.gutr / 2) + 'px';
+        }
       }
       for (let i = bpoptions.pDups.length; i > 0; i--) {
         core.pts[-i] = (-i + bpoptions.pDups.length) * slideWidth;
@@ -615,31 +637,6 @@ namespace Carouzel {
   };
 
   /**
-   * Function to toggle Autoplay and pause on hover functionalities for the carouzel
-   * 
-   * @param core - Carouzel instance core object
-   *
-   */
-  const toggleAutoplay = (core: ICore) => {
-    if (core.rootElem && core.settings.pauseHov) {
-      core.eHandlers.push(eventHandler(core.rootElem, 'mouseenter', function () {
-        core.paused = true;
-      }));
-      core.eHandlers.push(eventHandler(core.rootElem, 'mouseleave', function () {
-        core.paused = false;
-      }));
-    }
-    if (!core.settings.pauseHov) {
-      core.paused = false;
-    }
-    core.autoTimer = setInterval(() => {
-      if (!core.paused && !core.pauseClk) {
-        goToNext(core);
-      }
-    }, core.settings.autoS);
-  };
-
-  /**
    * Function to toggle keyboard navigation with left and right arrows
    * 
    * @param core - Carouzel instance core object
@@ -659,6 +656,52 @@ namespace Carouzel {
         }
       }));
     }
+  };
+
+  /**
+   * Function to toggle Play and Pause buttons when autoplaying carouzel is played or paused
+   * 
+   * @param core - Carouzel instance core object
+   * @param shouldPlay - A boolean value determining if the carouzel is being played or is paused
+   *
+   */
+  const togglePlayPause = (core: ICore, shouldPlay: boolean) => {
+    if (core && core.btnPause && core.btnPlay) {
+      if (shouldPlay) {
+        addClass(core.btnPlay, core.settings.hidCls);
+        removeClass(core.btnPause, core.settings.hidCls);
+      } else {
+        addClass(core.btnPause, core.settings.hidCls);
+        removeClass(core.btnPlay, core.settings.hidCls);
+      }
+    }
+  };
+
+  /**
+   * Function to toggle Autoplay and pause on hover functionalities for the carouzel
+   * 
+   * @param core - Carouzel instance core object
+   *
+   */
+  const toggleAutoplay = (core: ICore) => {
+    if (core.rootElem && core.settings.pauseHov) {
+      core.eHandlers.push(eventHandler(core.rootElem, 'mouseenter', function () {
+        core.paused = true;
+        togglePlayPause(core, false);
+      }));
+      core.eHandlers.push(eventHandler(core.rootElem, 'mouseleave', function () {
+        core.paused = false;
+        togglePlayPause(core, true);
+      }));
+    }
+    if (!core.settings.pauseHov) {
+      core.paused = false;
+    }
+    core.autoTimer = setInterval(() => {
+      if (!core.paused && !core.pauseClk) {
+        goToNext(core);
+      }
+    }, core.settings.autoS);
   };
 
   /**
@@ -684,20 +727,14 @@ namespace Carouzel {
       core.eHandlers.push(eventHandler(core.btnPause, 'click', (event: Event) => {
         event.preventDefault();
         core.pauseClk = true;
-        addClass(core.btnPause as Element, core.settings.hidCls);
-        if (core.btnPlay) {
-          removeClass(core.btnPlay as Element, core.settings.hidCls);
-        }
+        togglePlayPause(core, false);
       }));
     }
     if (core.settings.inf && core.btnPlay) {
       core.eHandlers.push(eventHandler(core.btnPlay, 'click', (event: Event) => {
         event.preventDefault();
         core.pauseClk = false;
-        addClass(core.btnPlay as Element, core.settings.hidCls);
-        if (core.btnPause) {
-          removeClass(core.btnPause as Element, core.settings.hidCls);
-        }
+        togglePlayPause(core, true);
       }));
     }
   };
@@ -903,6 +940,7 @@ namespace Carouzel {
       bpSLen: 0,
       cntr: settings.cntr,
       dots: [],
+      gutr: settings.gutr,
       nDups: [],
       pDups: [],
       swipe: settings.swipe,
@@ -942,6 +980,9 @@ namespace Carouzel {
         if (typeof bp2.cntr === 'undefined') {
           bp2.cntr = bp1.cntr;
         }
+        if (typeof bp2.gutr === 'undefined') {
+          bp2.gutr = bp1.gutr;
+        }
         bpArr.push(bp2);
         bpLen++;
       }
@@ -977,6 +1018,7 @@ namespace Carouzel {
       editCls: settings.editClass,
       effect: settings.animationEffect,
       fadCls: settings.fadingClass,
+      gutr: settings.spaceBetween,
       hidCls: settings.hiddenClass,
       inf: settings.isInfinite,
       isRTL: settings.isRTL,
@@ -1002,6 +1044,7 @@ namespace Carouzel {
           bpSLen: 0,
           cntr: settings.responsive[i].centerBetween,
           dots: [],
+          gutr: settings.responsive[i].spaceBetween,
           nDups: [],
           pDups: [],
           swipe: settings.responsive[i].hasTouchSwipe,

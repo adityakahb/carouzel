@@ -73,12 +73,12 @@
       </svg>
     </a>
     <section>
-      <div class="max-wrap text-center">
+      <div class="max-wrap text-center px-5">
         <div class="container-fluid">
 
 
 
-          <div class="row my-5">
+          <!-- <div class="row my-5">
             <div class="col text-center">
               <hr/>
             </div>
@@ -182,7 +182,7 @@
                 </div>
               </section>
             </div>
-          </div>
+          </div> -->
 
 
 
@@ -215,12 +215,30 @@
                       <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="4 of 6">
                         <div>04</div>
                       </div>
-                      <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="5 of 6">
+                      <!-- <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="5 of 6">
                         <div>05</div>
                       </div>
                       <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="6 of 6">
                         <div>06</div>
                       </div>
+                      <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="1 of 6">
+                        <div>01</div>
+                      </div>
+                      <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="2 of 6">
+                        <div>02</div>
+                      </div>
+                      <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="3 of 6">
+                        <div>03</div>
+                      </div>
+                      <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="4 of 6">
+                        <div>04</div>
+                      </div>
+                      <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="5 of 6">
+                        <div>05</div>
+                      </div>
+                      <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="6 of 6">
+                        <div>06</div>
+                      </div> -->
                     </div>
                   </div>
                   <div data-carouzel-controlswrapper>
@@ -242,7 +260,7 @@
 
 
 
-          <div class="row my-5">
+          <!-- <div class="row my-5">
             <div class="col text-center">
               <hr/>
             </div>
@@ -697,7 +715,7 @@
                 </div>
               </section>
             </div>
-          </div>
+          </div> -->
 
 
 
@@ -765,42 +783,46 @@
       var toastBeforeScroll = new bootstrap.Toast(beforeScrollElem);
       var toastAfterScroll = new bootstrap.Toast(afterScrollElem);
 
-      btnbeforeinit.addEventListener('click', function(event) {
-        event.preventDefault();
-        toastBeforeInit.show();
-      });
-      btnafterinit.addEventListener('click', function(event) {
-        event.preventDefault();
-        toastAfterInit.show();
-      });
-      btnbeforescroll.addEventListener('click', function(event) {
-        event.preventDefault();
-        toastBeforeScroll.show();
-      });
-      btnafterscroll.addEventListener('click', function(event) {
-        event.preventDefault();
-        toastAfterScroll.show();
-      });
+      // btnbeforeinit.addEventListener('click', function(event) {
+      //   event.preventDefault();
+      //   toastBeforeInit.show();
+      // });
+      // btnafterinit.addEventListener('click', function(event) {
+      //   event.preventDefault();
+      //   toastAfterInit.show();
+      // });
+      // btnbeforescroll.addEventListener('click', function(event) {
+      //   event.preventDefault();
+      //   toastBeforeScroll.show();
+      // });
+      // btnafterscroll.addEventListener('click', function(event) {
+      //   event.preventDefault();
+      //   toastAfterScroll.show();
+      // });
 
       var isInit = '';
       var __carouzel_instance = Carouzel.Root.getInstance();
-      __carouzel_instance.init('#__carouzel_1');
-      __carouzel_instance.init('#__carouzel_2', {
-        slidesToShow: 3,
-        slidesToScroll: 3
-      });
+      // __carouzel_instance.init('#__carouzel_1');
+      // __carouzel_instance.init('#__carouzel_2', {
+      //   slidesToShow: 3,
+      //   slidesToScroll: 3
+      // });
       __carouzel_instance.init('#__carouzel_3', {
         slidesToShow: 1,
         showNav: false,
+        spaceBetween: 20,
+        isInfinite: false,
         responsive: [{
           breakpoint: 700,
           slidesToScroll: 2,
           slidesToShow: 2,
-          showNav: true
+          showNav: true,
+          spaceBetween: 30
         }, {
           breakpoint: 1100,
-          slidesToScroll: 3,
-          slidesToShow: 3
+          slidesToScroll: 4,
+          slidesToShow: 4,
+          spaceBetween: 50
         }]
       });
       __carouzel_instance.init('#__carouzel_4', {
@@ -887,7 +909,6 @@
           instance8.core.goToSlide(event.target.value);
         }
       });
-      // gotoslideinput gotonextbtn gotoprevbtn
     </script>
   </body>
 </html>

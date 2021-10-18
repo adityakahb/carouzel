@@ -16,6 +16,7 @@ declare namespace Carouzel {
         showNavigation: boolean;
         slidesToScroll: number;
         slidesToShow: number;
+        spaceBetween: number;
     }
     interface ICarouzelSettings {
         activeClass: string;
@@ -48,6 +49,7 @@ declare namespace Carouzel {
         showNavigation: boolean;
         slidesToScroll: number;
         slidesToShow: number;
+        spaceBetween: number;
         startAtIndex: number;
         timingFunction: string;
         touchThreshold: number;
