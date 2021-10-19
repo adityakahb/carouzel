@@ -515,7 +515,7 @@
               <button type="button" id="gotonextbtn" class="btn btn-primary mx-1">Go to Next</button>
             </div>
             <div class="col-12 col-md-6 text-center text-md-start">
-              <div class="input-group my-3 my-md-0 w-50 d-inline-flex">
+              <div class="input-group my-3 my-md-0 w-75 w-md-50 d-inline-flex">
                 <span class="input-group-text" id="basic-addon1">Go to Slide</span>
                 <input type="number" value="1" id="gotoslideinput" class="form-control" aria-describedby="basic-addon1" min="1" max="12">
               </div>
@@ -822,6 +822,9 @@
     
     <script type="text/javascript">
 
+      var isInit = '';
+      var __carouzel_instance = Carouzel.Root.getInstance();
+
       var btnbeforeinit = document.getElementById('btnbeforeinit');
       var btnafterinit = document.getElementById('btnafterinit');
       var btnbeforescroll = document.getElementById('btnbeforescroll');
@@ -854,8 +857,6 @@
         toastAfterScroll.show();
       });
 
-      var isInit = '';
-      var __carouzel_instance = Carouzel.Root.getInstance();
       __carouzel_instance.init('#__carouzel_1');
       __carouzel_instance.init('#__carouzel_2', {
         slidesToShow: 3,
@@ -960,7 +961,7 @@
       var gotoslideinput = document.getElementById('gotoslideinput');
       var gotonextbtn = document.getElementById('gotonextbtn');
       var gotoprevbtn = document.getElementById('gotoprevbtn');
-      var instance8 = __carouzel_instance.instances['__carouzel_8'];
+      var instance8 = __carouzel_instance.getInstance('#__carouzel_8');
       gotonextbtn.addEventListener('click', function() {
         if (instance8) {
           instance8.core.goToNext();

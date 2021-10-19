@@ -65,15 +65,12 @@ declare namespace Carouzel {
      *
      */
     export class Root {
-        private instances;
         protected static instance: Root | null;
         /**
          * Constructor to initiate polyfills
          *
          */
         constructor();
-        private getInstancesLength;
-        private winResize;
         /**
          * Function to return single instance
          *
@@ -90,6 +87,13 @@ declare namespace Carouzel {
          */
         init: (query: string, options?: ICarouzelSettings | undefined) => void;
         globalInit: () => void;
+        /**
+         * Function to get the Carouzel based on the query string provided.
+         *
+         * @param query - The CSS selector for which the Carouzel needs to be initialized.
+         *
+         */
+        protected getInstance: (query: string) => any;
         /**
          * Function to destroy the Carouzel plugin for provided query strings.
          *

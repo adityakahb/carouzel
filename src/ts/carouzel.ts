@@ -162,8 +162,9 @@ namespace Carouzel {
   }
 
   let allLocalInstances: ICoreInstance = {};
+  let allGlobalInstances: IRoot = {};
   let isWindowEventAttached = false;
-  let winResize: any;
+
   const _animationEffects = ['scroll', 'fade'];
   const _rootSelectorTypeError = 'Element(s) with the provided query do(es) not exist';
   const _optionsParseTypeError = 'Unable to parse the options string';
@@ -294,10 +295,46 @@ namespace Carouzel {
     }
   };
 
+  /**
+   * Function to fix the decimal places to 4
+   * 
+   * @param num - A number
+   * 
+   * @returns A string converted by applying toFixed function with decimal places 4
+   *
+   */
   const toFixed4 = (num: number) => {
     return num.toFixed(4);
   };
 
+  /**
+   * Function to apply the settings to all the instances w.r.t. applicable breakpoint
+   *
+   */
+  const winResizeFn = () => {
+    setTimeout(() => {
+      for (let e in allLocalInstances) {
+        if (allLocalInstances.hasOwnProperty(e)) {
+          applyLayout(allLocalInstances[e]);
+        }
+      }
+    }, 0);
+  };
+
+  /**
+   * Function to return the number of Instances created
+   *
+   */
+  const getInstancesLength = () => {
+    let instanceCount = 0;
+    for (let e in allGlobalInstances) {
+      if (allGlobalInstances.hasOwnProperty(e)) {
+        instanceCount++;
+      }
+    }
+    return instanceCount;
+  }
+  
   /**
    * Function to remove all local events assigned to the navigation elements.
    * 
@@ -504,7 +541,7 @@ namespace Carouzel {
     let slideWidth = 0;
     let trackWidth = 0;
     let temp = 0;
-
+    
     while(len < core.bpall.length) {
       if ((core.bpall[len + 1] && core.bpall[len + 1].bp > viewportWidth) || typeof core.bpall[len + 1] === 'undefined') {
         bpoptions = core.bpall[len];
@@ -512,6 +549,7 @@ namespace Carouzel {
       }
       len++;
     }
+    
     if (core.rootElem && !hasClass(core.rootElem, core.settings.editCls) && (core.bpo_old || {})._2Show !== bpoptions._2Show && core.track) {
       manageDuplicates(core.track, bpoptions, core.settings.dupCls || '');
     }
@@ -1171,9 +1209,6 @@ namespace Carouzel {
       }
       delete allLocalInstances[thisid];
     };
-    protected resize = (thisid: string) => {
-      applyLayout(allLocalInstances[thisid]);
-    }
   }
   /**
    * ██████   ██████   ██████  ████████ 
@@ -1187,7 +1222,6 @@ namespace Carouzel {
    */
 
   export class Root {
-    private instances: IRoot = {};
     protected static instance: Root | null = null;
 
     /**
@@ -1195,27 +1229,6 @@ namespace Carouzel {
      *
      */
     constructor() {}
-    private getInstancesLength = () => {
-      let instanceCount = 0;
-      for (let e in this.instances) {
-        if (this.instances.hasOwnProperty(e)) {
-          instanceCount++;
-        }
-      }
-      return instanceCount;
-    }
-    private winResize = () => {
-      if (winResize) {
-        clearTimeout(winResize);
-      }
-      winResize = setTimeout(() => {
-        for (let e in this.instances) {
-          if (this.instances.hasOwnProperty(e)) {
-            this.instances[e].resize(e);
-          }
-        }
-      }, 100);
-    }
     /**
      * Function to return single instance
      * 
@@ -1240,8 +1253,9 @@ namespace Carouzel {
       const roots = document.querySelectorAll(query);
       const rootsLength = roots.length;
       let instanceLength = 0;
-      for (let i in this.instances) {
-        if (this.instances.hasOwnProperty(i)) {
+
+      for (let i in allGlobalInstances) {
+        if (allGlobalInstances.hasOwnProperty(i)) {
           instanceLength++;
         }
       }
@@ -1251,7 +1265,7 @@ namespace Carouzel {
           let isElementPresent = false;
           if (id) {
             for (let j = 0; j < instanceLength; j++) {
-              if (this.instances[id]) {
+              if (allGlobalInstances[id]) {
                 isElementPresent = true;
                 break;
               }
@@ -1271,17 +1285,17 @@ namespace Carouzel {
               newOptions = options;
             }
             if (id) {
-              this.instances[id] = new Core(id, roots[i] as HTMLElement, newOptions);
+              allGlobalInstances[id] = new Core(id, roots[i] as HTMLElement, newOptions);
             } else {
               const thisid = id ? id : {...newOptions, ..._Defaults}.idPrefix + '_' + new Date().getTime() + '_root_' + (i + 1);
               roots[i].setAttribute('id', thisid);
-              this.instances[thisid] = new Core(thisid, roots[i] as HTMLElement, newOptions);
+              allGlobalInstances[thisid] = new Core(thisid, roots[i] as HTMLElement, newOptions);
             }
           }
         }
-        if (window && this.getInstancesLength() > 0 && !isWindowEventAttached) {
+        if (window && getInstancesLength() > 0 && !isWindowEventAttached) {
           isWindowEventAttached = true;
-          window.addEventListener('resize', this.winResize, true);
+          window.addEventListener('resize', winResizeFn, false);
         }
       } else {
         if (query !== _Selectors.rootAuto) {
@@ -1292,6 +1306,16 @@ namespace Carouzel {
 
     public globalInit = () => {
       this.init(_Selectors.rootAuto);
+    };
+
+    /**
+     * Function to get the Carouzel based on the query string provided.
+     * 
+     * @param query - The CSS selector for which the Carouzel needs to be initialized.
+     *
+     */
+    protected getInstance = (query: string) => {
+      return allGlobalInstances[query.slice(1)];
     };
 
     /**
@@ -1306,13 +1330,13 @@ namespace Carouzel {
       if (rootsLength > 0) {
         for (let i = 0; i < rootsLength; i++) {
           const id = roots[i].getAttribute('id');
-          if (id && this.instances[id]) {
-            this.instances[id].destroy(id);
-            delete this.instances[id];
+          if (id && allGlobalInstances[id]) {
+            allGlobalInstances[id].destroy(id);
+            delete allGlobalInstances[id];
           }
         }
-        if (window && this.getInstancesLength() === 0) {
-          window.removeEventListener('resize', this.winResize, true);
+        if (window && getInstancesLength() === 0) {
+          window.removeEventListener('resize', winResizeFn, false);
         }
       } else {
         throw new TypeError(_rootSelectorTypeError);

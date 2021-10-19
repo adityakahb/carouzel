@@ -22,8 +22,8 @@ var Carouzel;
 (function (Carouzel) {
     "use strict";
     var allLocalInstances = {};
+    var allGlobalInstances = {};
     var isWindowEventAttached = false;
-    var winResize;
     var _animationEffects = ['scroll', 'fade'];
     var _rootSelectorTypeError = 'Element(s) with the provided query do(es) not exist';
     var _optionsParseTypeError = 'Unable to parse the options string';
@@ -148,8 +148,42 @@ var Carouzel;
             element.className = stringTrim(curclass.join(' '));
         }
     };
+    /**
+     * Function to fix the decimal places to 4
+     *
+     * @param num - A number
+     *
+     * @returns A string converted by applying toFixed function with decimal places 4
+     *
+     */
     var toFixed4 = function (num) {
         return num.toFixed(4);
+    };
+    /**
+     * Function to apply the settings to all the instances w.r.t. applicable breakpoint
+     *
+     */
+    var winResizeFn = function () {
+        setTimeout(function () {
+            for (var e in allLocalInstances) {
+                if (allLocalInstances.hasOwnProperty(e)) {
+                    applyLayout(allLocalInstances[e]);
+                }
+            }
+        }, 0);
+    };
+    /**
+     * Function to return the number of Instances created
+     *
+     */
+    var getInstancesLength = function () {
+        var instanceCount = 0;
+        for (var e in allGlobalInstances) {
+            if (allGlobalInstances.hasOwnProperty(e)) {
+                instanceCount++;
+            }
+        }
+        return instanceCount;
     };
     /**
      * Function to remove all local events assigned to the navigation elements.
@@ -1013,9 +1047,6 @@ var Carouzel;
                 }
                 delete allLocalInstances[thisid];
             };
-            this.resize = function (thisid) {
-                applyLayout(allLocalInstances[thisid]);
-            };
             var initObj = init(this.core, rootElem, __assign(__assign({}, _Defaults), options));
             this.core = initObj.global;
             allLocalInstances[thisid] = initObj.local;
@@ -1039,28 +1070,6 @@ var Carouzel;
          */
         function Root() {
             var _this = this;
-            this.instances = {};
-            this.getInstancesLength = function () {
-                var instanceCount = 0;
-                for (var e in _this.instances) {
-                    if (_this.instances.hasOwnProperty(e)) {
-                        instanceCount++;
-                    }
-                }
-                return instanceCount;
-            };
-            this.winResize = function () {
-                if (winResize) {
-                    clearTimeout(winResize);
-                }
-                winResize = setTimeout(function () {
-                    for (var e in _this.instances) {
-                        if (_this.instances.hasOwnProperty(e)) {
-                            _this.instances[e].resize(e);
-                        }
-                    }
-                }, 100);
-            };
             /**
              * Function to initialize the Carouzel plugin for provided query strings.
              *
@@ -1072,8 +1081,8 @@ var Carouzel;
                 var roots = document.querySelectorAll(query);
                 var rootsLength = roots.length;
                 var instanceLength = 0;
-                for (var i in _this.instances) {
-                    if (_this.instances.hasOwnProperty(i)) {
+                for (var i in allGlobalInstances) {
+                    if (allGlobalInstances.hasOwnProperty(i)) {
                         instanceLength++;
                     }
                 }
@@ -1083,7 +1092,7 @@ var Carouzel;
                         var isElementPresent = false;
                         if (id) {
                             for (var j = 0; j < instanceLength; j++) {
-                                if (_this.instances[id]) {
+                                if (allGlobalInstances[id]) {
                                     isElementPresent = true;
                                     break;
                                 }
@@ -1104,18 +1113,18 @@ var Carouzel;
                                 newOptions = options;
                             }
                             if (id) {
-                                _this.instances[id] = new Core(id, roots[i], newOptions);
+                                allGlobalInstances[id] = new Core(id, roots[i], newOptions);
                             }
                             else {
                                 var thisid = id ? id : __assign(__assign({}, newOptions), _Defaults).idPrefix + '_' + new Date().getTime() + '_root_' + (i + 1);
                                 roots[i].setAttribute('id', thisid);
-                                _this.instances[thisid] = new Core(thisid, roots[i], newOptions);
+                                allGlobalInstances[thisid] = new Core(thisid, roots[i], newOptions);
                             }
                         }
                     }
-                    if (window && _this.getInstancesLength() > 0 && !isWindowEventAttached) {
+                    if (window && getInstancesLength() > 0 && !isWindowEventAttached) {
                         isWindowEventAttached = true;
-                        window.addEventListener('resize', _this.winResize, true);
+                        window.addEventListener('resize', winResizeFn, false);
                     }
                 }
                 else {
@@ -1126,6 +1135,15 @@ var Carouzel;
             };
             this.globalInit = function () {
                 _this.init(_Selectors.rootAuto);
+            };
+            /**
+             * Function to get the Carouzel based on the query string provided.
+             *
+             * @param query - The CSS selector for which the Carouzel needs to be initialized.
+             *
+             */
+            this.getInstance = function (query) {
+                return allGlobalInstances[query.slice(1)];
             };
             /**
              * Function to destroy the Carouzel plugin for provided query strings.
@@ -1139,13 +1157,13 @@ var Carouzel;
                 if (rootsLength > 0) {
                     for (var i = 0; i < rootsLength; i++) {
                         var id = roots[i].getAttribute('id');
-                        if (id && _this.instances[id]) {
-                            _this.instances[id].destroy(id);
-                            delete _this.instances[id];
+                        if (id && allGlobalInstances[id]) {
+                            allGlobalInstances[id].destroy(id);
+                            delete allGlobalInstances[id];
                         }
                     }
-                    if (window && _this.getInstancesLength() === 0) {
-                        window.removeEventListener('resize', _this.winResize, true);
+                    if (window && getInstancesLength() === 0) {
+                        window.removeEventListener('resize', winResizeFn, false);
                     }
                 }
                 else {
