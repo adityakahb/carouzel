@@ -270,7 +270,7 @@ var Carouzel;
      * @param core - Carouzel instance core object
      *
      */
-    var animateTrack = function (core, isSmooth) {
+    var animateTrack = function (core, isSmooth, isTouched) {
         if (typeof core.settings.bFn === 'function') {
             core.settings.bFn();
         }
@@ -278,7 +278,9 @@ var Carouzel;
             core.track.style.transitionProperty = 'none';
             core.track.style.transitionTimingFunction = 'unset';
             core.track.style.transitionDuration = '0ms';
-            core.track.style.transform = "translate3d(" + -core.pts[core.pi] + "px, 0, 0)";
+            if (!isTouched) {
+                core.track.style.transform = "translate3d(" + -core.pts[core.pi] + "px, 0, 0)";
+            }
         }
         else {
             if (core.ci < 0) {
@@ -459,7 +461,7 @@ var Carouzel;
             for (var i = core.sLength; i < core.sLength + bpoptions.nDups.length; i++) {
                 core.pts[i] = ((i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr)) + bpoptions.gutr;
             }
-            animateTrack(core, false);
+            animateTrack(core, false, false);
         }
     };
     /**
@@ -473,7 +475,7 @@ var Carouzel;
         if (core.ci !== slidenumber) {
             core.pi = core.ci;
             core.ci = slidenumber * core.bpo._2Scroll;
-            animateTrack(core, true);
+            animateTrack(core, true, false);
         }
     };
     /**
@@ -482,7 +484,8 @@ var Carouzel;
      * @param core - Carouzel instance core object
      *
      */
-    var goToPrev = function (core) {
+    var goToPrev = function (core, isTouched) {
+        isTouched;
         core.pi = core.ci;
         core.ci -= core.bpo._2Scroll;
         if (core.settings.inf) {
@@ -494,7 +497,7 @@ var Carouzel;
                 core.pi = core.ci + core.bpo._2Scroll;
             }
         }
-        animateTrack(core, true);
+        animateTrack(core, true, isTouched);
     };
     /**
      * Function to go to the next set of slides
@@ -502,7 +505,8 @@ var Carouzel;
      * @param core - Carouzel instance core object
      *
      */
-    var goToNext = function (core) {
+    var goToNext = function (core, isTouched) {
+        isTouched;
         core.pi = core.ci;
         core.ci += core.bpo._2Scroll;
         if (core.settings.inf) {
@@ -514,7 +518,7 @@ var Carouzel;
                 core.pi = core.ci - core.bpo._2Scroll;
             }
         }
-        animateTrack(core, true);
+        animateTrack(core, true, isTouched);
     };
     /**
      * Function to toggle keyboard navigation with left and right arrows
@@ -531,10 +535,10 @@ var Carouzel;
                 keyCode_1 = event.key.toLowerCase();
                 switch (keyCode_1) {
                     case 'arrowleft':
-                        goToPrev(core);
+                        goToPrev(core, false);
                         break;
                     case 'arrowright':
-                        goToNext(core);
+                        goToNext(core, false);
                         break;
                     default:
                         keyCode_1 = '';
@@ -584,7 +588,7 @@ var Carouzel;
         }
         core.autoTimer = setInterval(function () {
             if (!core.paused && !core.pauseClk) {
-                goToNext(core);
+                goToNext(core, false);
             }
         }, core.settings.autoS);
     };
@@ -598,13 +602,13 @@ var Carouzel;
         if (core.arrowP) {
             core.eHandlers.push(eventHandler(core.arrowP, 'click', function (event) {
                 event.preventDefault();
-                goToPrev(core);
+                goToPrev(core, false);
             }));
         }
         if (core.arrowN) {
             core.eHandlers.push(eventHandler(core.arrowN, 'click', function (event) {
                 event.preventDefault();
-                goToNext(core);
+                goToNext(core, false);
             }));
         }
         if (core.settings.inf && core.btnPause) {
@@ -678,10 +682,10 @@ var Carouzel;
         var touchEnd = function () {
             if (dragging && core.track) {
                 if (posFinal < -threshold) {
-                    goToPrev(core);
+                    goToPrev(core, false);
                 }
                 else if (posFinal > threshold) {
-                    goToNext(core);
+                    goToNext(core, false);
                 }
                 else {
                     core.track.style.transform = "translate3d(" + core.ct + "px, 0, 0)";
@@ -771,7 +775,7 @@ var Carouzel;
                     event.preventDefault();
                     core.pi = core.ci;
                     core.ci = j * core.bpall[i]._2Scroll;
-                    animateTrack(core, true);
+                    animateTrack(core, true, false);
                 }));
                 core.bpall[i].dots.push(navBtns[j]);
             };
@@ -971,10 +975,10 @@ var Carouzel;
         _core.trackO = rootElem.querySelector("" + _Selectors.trackO);
         _core.trackW = rootElem.querySelector("" + _Selectors.trackW);
         core.goToNext = function () {
-            goToNext(_core);
+            goToNext(_core, false);
         };
         core.goToPrevious = function () {
-            goToPrev(_core);
+            goToPrev(_core, false);
         };
         core.goToSlide = function (slidenumber) {
             if (!isNaN(slidenumber)) {

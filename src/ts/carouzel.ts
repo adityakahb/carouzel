@@ -421,7 +421,7 @@ namespace Carouzel {
    * @param core - Carouzel instance core object
    *
    */
-  const animateTrack = (core: ICore, isSmooth: boolean) => {
+  const animateTrack = (core: ICore, isSmooth: boolean, isTouched: boolean) => {
     if (typeof core.settings.bFn === 'function') {
       core.settings.bFn();
     }
@@ -429,7 +429,9 @@ namespace Carouzel {
       core.track.style.transitionProperty = 'none';
       core.track.style.transitionTimingFunction = 'unset';
       core.track.style.transitionDuration = '0ms';
-      core.track.style.transform = `translate3d(${-core.pts[core.pi]}px, 0, 0)`;
+      if (!isTouched) {
+        core.track.style.transform = `translate3d(${-core.pts[core.pi]}px, 0, 0)`;
+      }
     } else {
       if (core.ci < 0) {
         core.ci = 0;
@@ -613,7 +615,7 @@ namespace Carouzel {
       for (let i = core.sLength; i < core.sLength + bpoptions.nDups.length; i++) {
         core.pts[i] = ((i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr)) + bpoptions.gutr ;
       }
-      animateTrack(core, false);
+      animateTrack(core, false, false);
     }
   };
 
@@ -628,7 +630,7 @@ namespace Carouzel {
     if (core.ci !== slidenumber) {
       core.pi = core.ci;
       core.ci = slidenumber * core.bpo._2Scroll;
-      animateTrack(core, true);
+      animateTrack(core, true, false);
     }
   };
 
@@ -638,7 +640,8 @@ namespace Carouzel {
    * @param core - Carouzel instance core object
    *
    */
-  const goToPrev = (core: ICore) => {
+  const goToPrev = (core: ICore, isTouched: boolean) => {
+    isTouched;
     core.pi = core.ci;
     core.ci -= core.bpo._2Scroll;
     if (core.settings.inf) {
@@ -649,7 +652,7 @@ namespace Carouzel {
         core.pi = core.ci + core.bpo._2Scroll;
       }
     }
-    animateTrack(core, true);
+    animateTrack(core, true, isTouched);
   };
 
   /**
@@ -658,7 +661,8 @@ namespace Carouzel {
    * @param core - Carouzel instance core object
    *
    */
-  const goToNext = (core: ICore) => {
+  const goToNext = (core: ICore, isTouched: boolean) => {
+    isTouched;
     core.pi = core.ci;
     core.ci += core.bpo._2Scroll;
     if (core.settings.inf) {
@@ -669,7 +673,7 @@ namespace Carouzel {
         core.pi = core.ci - core.bpo._2Scroll;
       }
     }
-    animateTrack(core, true);
+    animateTrack(core, true, isTouched);
   };
 
   /**
@@ -686,8 +690,8 @@ namespace Carouzel {
         event = event || window.event;
         keyCode = (event as KeyboardEvent).key.toLowerCase();
         switch (keyCode) {
-          case 'arrowleft': goToPrev(core); break;
-          case 'arrowright': goToNext(core); break;
+          case 'arrowleft': goToPrev(core, false); break;
+          case 'arrowright': goToNext(core, false); break;
           default: keyCode = ''; break;
         }
       }));
@@ -735,7 +739,7 @@ namespace Carouzel {
     }
     core.autoTimer = setInterval(() => {
       if (!core.paused && !core.pauseClk) {
-        goToNext(core);
+        goToNext(core, false);
       }
     }, core.settings.autoS);
   };
@@ -750,13 +754,13 @@ namespace Carouzel {
     if (core.arrowP) {
       core.eHandlers.push(eventHandler(core.arrowP, 'click', (event: Event) => {
         event.preventDefault();
-        goToPrev(core);
+        goToPrev(core, false);
       }));
     }
     if (core.arrowN) {
       core.eHandlers.push(eventHandler(core.arrowN, 'click', (event: Event) => {
         event.preventDefault();
-        goToNext(core);
+        goToNext(core, false);
       }));
     }
     if (core.settings.inf && core.btnPause) {
@@ -832,9 +836,9 @@ namespace Carouzel {
     const touchEnd = () => {
       if (dragging && core.track) {
         if (posFinal < -threshold) {
-          goToPrev(core);
+          goToPrev(core, false);
         } else if (posFinal > threshold) {
-          goToNext(core);
+          goToNext(core, false);
         } else {
           core.track.style.transform = `translate3d(${core.ct}px, 0, 0)`;
         }
@@ -925,7 +929,7 @@ namespace Carouzel {
           event.preventDefault();
           core.pi = core.ci;
           core.ci = j * core.bpall[i]._2Scroll;
-          animateTrack(core, true);
+          animateTrack(core, true, false);
         }));
         core.bpall[i].dots.push(navBtns[j]);
       }
@@ -1126,10 +1130,10 @@ namespace Carouzel {
     _core.trackW = rootElem.querySelector(`${_Selectors.trackW}`);
 
     core.goToNext = () => {
-      goToNext(_core);
+      goToNext(_core, false);
     };
     core.goToPrevious = () => {
-      goToPrev(_core);
+      goToPrev(_core, false);
     };
     core.goToSlide = (slidenumber: number) => {
       if (!isNaN(slidenumber)) {
