@@ -350,6 +350,7 @@ var Carouzel;
         var len = 0;
         var slideWidth = 0;
         var trackWidth = 0;
+        var temp = 0;
         while (len < core.bpall.length) {
             if ((core.bpall[len + 1] && core.bpall[len + 1].bp > viewportWidth) || typeof core.bpall[len + 1] === 'undefined') {
                 bpoptions = core.bpall[len];
@@ -393,14 +394,12 @@ var Carouzel;
             else {
                 removeClass(core.rootElem, core.settings.cntrCls);
             }
-            slideWidth = (core.trackO.clientWidth / (bpoptions._2Show + bpoptions.cntr));
-            console.log('==slideWidth', slideWidth);
+            slideWidth = ((core.trackO.clientWidth - ((bpoptions._2Show - 1) * bpoptions.gutr)) / (bpoptions._2Show + bpoptions.cntr));
             core.sWidth = slideWidth;
-            trackWidth = parseFloat(slideWidth + '') * (core.sLength >= bpoptions._2Show ? bpoptions.bpSLen : bpoptions._2Show);
+            temp = core.sLength >= bpoptions._2Show ? bpoptions.bpSLen : bpoptions._2Show;
+            trackWidth = (slideWidth * temp) + (bpoptions.gutr * (temp + 1));
             core.track.style.width = toFixed4(trackWidth) + 'px';
-            core.trackW.style.width = toFixed4((bpoptions._2Show * slideWidth) + (bpoptions.gutr * 2)) + 'px';
-            core.trackW.style.marginLeft = toFixed4(-bpoptions.gutr) + 'px';
-            core.trackW.style.marginRight = toFixed4(-bpoptions.gutr) + 'px';
+            core.trackW.style.width = toFixed4((bpoptions._2Show * slideWidth) + (bpoptions.gutr * (bpoptions._2Show - 1))) + 'px';
             core._as = core.trackW.querySelectorAll(_Selectors.slide);
             for (var i = 0; i < core._as.length; i++) {
                 core._as[i].style.width = toFixed4(slideWidth) + 'px';
@@ -418,13 +417,13 @@ var Carouzel;
                 }
             }
             for (var i = bpoptions.pDups.length; i > 0; i--) {
-                core.pts[-i] = (-i + bpoptions.pDups.length) * slideWidth;
+                core.pts[-i] = ((-i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr)) + bpoptions.gutr;
             }
             for (var i = 0; i < core.sLength; i++) {
-                core.pts[i] = (i + bpoptions.pDups.length) * slideWidth;
+                core.pts[i] = ((i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr)) + bpoptions.gutr;
             }
             for (var i = core.sLength; i < core.sLength + bpoptions.nDups.length; i++) {
-                core.pts[i] = (i + bpoptions.pDups.length) * slideWidth;
+                core.pts[i] = ((i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr)) + bpoptions.gutr;
             }
             animateTrack(core, false);
         }
