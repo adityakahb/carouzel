@@ -1,32 +1,23 @@
 [data-carouzel], [data-carouzel-auto] {
   opacity: 0;
-  position: relative;
   visibility: hidden; }
   [data-carouzel], [data-carouzel]:after, [data-carouzel]:before, [data-carouzel] *, [data-carouzel] *:after, [data-carouzel] *:before, [data-carouzel-auto], [data-carouzel-auto]:after, [data-carouzel-auto]:before, [data-carouzel-auto] *, [data-carouzel-auto] *:after, [data-carouzel-auto] *:before {
     box-sizing: border-box; }
   [data-carouzel].__carouzel-active, [data-carouzel-auto].__carouzel-active {
     opacity: 1;
     visibility: visible; }
-  [data-carouzel] [data-carouzel-trackouter], [data-carouzel-auto] [data-carouzel-trackouter] {
-    margin-bottom: 1em;
-    position: relative;
-    width: 100%; }
   [data-carouzel] [data-carouzel-trackwrapper], [data-carouzel-auto] [data-carouzel-trackwrapper] {
+    position: relative;
+    margin-bottom: 10px; }
+  [data-carouzel] [data-carouzel-trackouter], [data-carouzel-auto] [data-carouzel-trackouter] {
+    width: 100%; }
+  [data-carouzel] [data-carouzel-trackmask], [data-carouzel-auto] [data-carouzel-trackmask] {
     overflow: hidden;
     width: 100%; }
-  [data-carouzel].__carouzel-centered [data-carouzel-trackouter], [data-carouzel-auto].__carouzel-centered [data-carouzel-trackouter] {
-    align-items: center;
+  [data-carouzel].__carouzel-centered [data-carouzel-trackmask], [data-carouzel-auto].__carouzel-centered [data-carouzel-trackmask] {
     display: flex;
     justify-content: center;
-    overflow: hidden; }
-  [data-carouzel].__carouzel-centered [data-carouzel-trackwrapper], [data-carouzel-auto].__carouzel-centered [data-carouzel-trackwrapper] {
-    overflow: visible; }
-  [data-carouzel].__carouzel-centered [data-carouzel-previousarrow], [data-carouzel-auto].__carouzel-centered [data-carouzel-previousarrow] {
-    border-radius: 0 50% 50% 0;
-    left: 0; }
-  [data-carouzel].__carouzel-centered [data-carouzel-nextarrow], [data-carouzel-auto].__carouzel-centered [data-carouzel-nextarrow] {
-    border-radius: 50% 0 0 50%;
-    right: 0; }
+    align-items: center; }
   [data-carouzel] [data-carouzel-track], [data-carouzel-auto] [data-carouzel-track] {
     align-items: flex-start;
     display: flex;

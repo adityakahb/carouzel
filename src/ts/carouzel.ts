@@ -153,6 +153,7 @@ namespace Carouzel {
     sLength: number;
     sWidth: number;
     track: HTMLElement | null;
+    trackM: HTMLElement | null;
     trackO: HTMLElement | null;
     trackW: HTMLElement | null;
   }
@@ -164,6 +165,7 @@ namespace Carouzel {
   let allLocalInstances: ICoreInstance = {};
   let allGlobalInstances: IRoot = {};
   let isWindowEventAttached = false;
+  let windowResizeAny: any;
 
   const _animationEffects = ['scroll', 'fade'];
   const _rootSelectorTypeError = 'Element(s) with the provided query do(es) not exist';
@@ -185,6 +187,7 @@ namespace Carouzel {
     slide: '[data-carouzel-slide]',
     stitle: '[data-carouzel-title]',
     track: '[data-carouzel-track]',
+    trackM: '[data-carouzel-trackmask]',
     trackO: '[data-carouzel-trackouter]',
     trackW: '[data-carouzel-trackwrapper]',
   };
@@ -312,7 +315,10 @@ namespace Carouzel {
    *
    */
   const winResizeFn = () => {
-    setTimeout(() => {
+    if (typeof windowResizeAny !== 'undefined') {
+      clearTimeout(windowResizeAny);
+    }
+    windowResizeAny = setTimeout(() => {
       for (let e in allLocalInstances) {
         if (allLocalInstances.hasOwnProperty(e)) {
           applyLayout(allLocalInstances[e]);
@@ -448,7 +454,10 @@ namespace Carouzel {
     }
     const postAnimation = () => {
       setTimeout(() => {
-        if (core.ci < 0 || core.ci >= core.sLength) {
+        if (core.ci >= core.sLength) {
+          core.ci = core.sLength - core.ci;
+        }
+        if (core.ci < 0) {
           core.ci = core.sLength + core.ci;
         }
         if (core.track) {
@@ -554,7 +563,7 @@ namespace Carouzel {
    *
    */
   const applyLayout = (core: ICore) => {
-    let viewportWidth = window.innerWidth;
+    let viewportWidth = window.outerWidth;
     let bpoptions = core.bpall[0];
     let len = 0;
     let slideWidth = 0;
@@ -596,20 +605,20 @@ namespace Carouzel {
     } else if (core.navW) {
       removeClass(core.navW, core.settings.hidCls);
     }
-    if (core.rootElem && core.trackO && core.trackW && core.track) {
+    if (core.rootElem && core.trackW && core.trackO && core.track) {
       core.pts = {};
       if (bpoptions.cntr > 0) {
         addClass(core.rootElem, core.settings.cntrCls);
       } else {
         removeClass(core.rootElem, core.settings.cntrCls);
       }
-      slideWidth = ((core.trackO.clientWidth - ((bpoptions._2Show - 1) * bpoptions.gutr)) / (bpoptions._2Show + bpoptions.cntr));
+      slideWidth = ((core.trackW.clientWidth - ((bpoptions._2Show - 1) * bpoptions.gutr)) / (bpoptions._2Show + bpoptions.cntr));
       core.sWidth = slideWidth;
       temp = core.sLength >= bpoptions._2Show ? bpoptions.bpSLen : bpoptions._2Show;
       trackWidth = (slideWidth * temp) + (bpoptions.gutr * (temp + 1));
       core.track.style.width = toFixed4(trackWidth) + 'px';
-      core.trackW.style.width = toFixed4((bpoptions._2Show * slideWidth) + (bpoptions.gutr * (bpoptions._2Show - 1))) + 'px';
-      core._as = core.trackW.querySelectorAll(_Selectors.slide);
+      core.trackO.style.width = toFixed4((bpoptions._2Show * slideWidth) + (bpoptions.gutr * (bpoptions._2Show - 1))) + 'px';
+      core._as = core.trackO.querySelectorAll(_Selectors.slide);
       for (let i = 0; i < core._as.length; i++) {
         (core._as[i] as HTMLElement).style.width = toFixed4(slideWidth) + 'px';
         if (i === 0) {
@@ -901,13 +910,13 @@ namespace Carouzel {
     for (let i=0; i<core.bpall.length; i++) {
       core.bpall[i].bpSLen = core.sLength;
       if (core.settings.inf) {
-        for (let j=core.sLength - core.bpall[i]._2Show; j<core.sLength; j++) {
+        for (let j=core.sLength - core.bpall[i]._2Show - Math.ceil(core.bpall[i].cntr / 2); j<core.sLength; j++) {
           let elem = core._ds[j].cloneNode(true);
           addClass(elem as Element, core.settings.dupCls || '');
           core.bpall[i].bpSLen++;
           core.bpall[i].pDups.push(elem);
         }
-        for (let j=0; j<core.bpall[i]._2Show; j++) {
+        for (let j=0; j<core.bpall[i]._2Show + Math.ceil(core.bpall[i].cntr / 2); j++) {
           let elem = core._ds[j].cloneNode(true);
           addClass(elem as Element, core.settings.dupCls || '');
           core.bpall[i].bpSLen++;
@@ -1142,6 +1151,7 @@ namespace Carouzel {
     _core.pts = [];
     _core.sLength = _core._ds.length;
     _core.track = rootElem.querySelector(`${_Selectors.track}`);
+    _core.trackM = rootElem.querySelector(`${_Selectors.trackM}`);
     _core.trackO = rootElem.querySelector(`${_Selectors.trackO}`);
     _core.trackW = rootElem.querySelector(`${_Selectors.trackW}`);
 
@@ -1157,13 +1167,13 @@ namespace Carouzel {
       }
     };
     core.prependSlide = (slideElem: Node) => {
-      if (_core.trackW) {
-        doInsertBefore(_core.trackW, slideElem);
+      if (_core.track) {
+        doInsertBefore(_core.track, slideElem);
       }
     };
     core.appendSlide = (slideElem: Node) => {
-      if (_core.trackW) {
-        doInsertAfter(_core.trackW, slideElem);
+      if (_core.track) {
+        doInsertAfter(_core.track, slideElem);
       }
     };
     if (_core.settings.effect === _animationEffects[1]) {
@@ -1315,7 +1325,7 @@ namespace Carouzel {
         }
         if (window && getInstancesLength() > 0 && !isWindowEventAttached) {
           isWindowEventAttached = true;
-          window.addEventListener('resize', winResizeFn, false);
+          window.addEventListener('resize', winResizeFn);
         }
       } else {
         if (query !== _Selectors.rootAuto) {
@@ -1356,7 +1366,7 @@ namespace Carouzel {
           }
         }
         if (window && getInstancesLength() === 0) {
-          window.removeEventListener('resize', winResizeFn, false);
+          window.removeEventListener('resize', winResizeFn);
         }
       } else {
         throw new TypeError(_rootSelectorTypeError);

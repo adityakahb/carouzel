@@ -24,6 +24,7 @@ var Carouzel;
     var allLocalInstances = {};
     var allGlobalInstances = {};
     var isWindowEventAttached = false;
+    var windowResizeAny;
     var _animationEffects = ['scroll', 'fade'];
     var _rootSelectorTypeError = 'Element(s) with the provided query do(es) not exist';
     var _optionsParseTypeError = 'Unable to parse the options string';
@@ -44,6 +45,7 @@ var Carouzel;
         slide: '[data-carouzel-slide]',
         stitle: '[data-carouzel-title]',
         track: '[data-carouzel-track]',
+        trackM: '[data-carouzel-trackmask]',
         trackO: '[data-carouzel-trackouter]',
         trackW: '[data-carouzel-trackwrapper]'
     };
@@ -164,7 +166,10 @@ var Carouzel;
      *
      */
     var winResizeFn = function () {
-        setTimeout(function () {
+        if (typeof windowResizeAny !== 'undefined') {
+            clearTimeout(windowResizeAny);
+        }
+        windowResizeAny = setTimeout(function () {
             for (var e in allLocalInstances) {
                 if (allLocalInstances.hasOwnProperty(e)) {
                     applyLayout(allLocalInstances[e]);
@@ -295,7 +300,10 @@ var Carouzel;
         }
         var postAnimation = function () {
             setTimeout(function () {
-                if (core.ci < 0 || core.ci >= core.sLength) {
+                if (core.ci >= core.sLength) {
+                    core.ci = core.sLength - core.ci;
+                }
+                if (core.ci < 0) {
                     core.ci = core.sLength + core.ci;
                 }
                 if (core.track) {
@@ -393,7 +401,7 @@ var Carouzel;
      *
      */
     var applyLayout = function (core) {
-        var viewportWidth = window.innerWidth;
+        var viewportWidth = window.outerWidth;
         var bpoptions = core.bpall[0];
         var len = 0;
         var slideWidth = 0;
@@ -434,7 +442,7 @@ var Carouzel;
         else if (core.navW) {
             removeClass(core.navW, core.settings.hidCls);
         }
-        if (core.rootElem && core.trackO && core.trackW && core.track) {
+        if (core.rootElem && core.trackW && core.trackO && core.track) {
             core.pts = {};
             if (bpoptions.cntr > 0) {
                 addClass(core.rootElem, core.settings.cntrCls);
@@ -442,13 +450,13 @@ var Carouzel;
             else {
                 removeClass(core.rootElem, core.settings.cntrCls);
             }
-            slideWidth = ((core.trackO.clientWidth - ((bpoptions._2Show - 1) * bpoptions.gutr)) / (bpoptions._2Show + bpoptions.cntr));
+            slideWidth = ((core.trackW.clientWidth - ((bpoptions._2Show - 1) * bpoptions.gutr)) / (bpoptions._2Show + bpoptions.cntr));
             core.sWidth = slideWidth;
             temp = core.sLength >= bpoptions._2Show ? bpoptions.bpSLen : bpoptions._2Show;
             trackWidth = (slideWidth * temp) + (bpoptions.gutr * (temp + 1));
             core.track.style.width = toFixed4(trackWidth) + 'px';
-            core.trackW.style.width = toFixed4((bpoptions._2Show * slideWidth) + (bpoptions.gutr * (bpoptions._2Show - 1))) + 'px';
-            core._as = core.trackW.querySelectorAll(_Selectors.slide);
+            core.trackO.style.width = toFixed4((bpoptions._2Show * slideWidth) + (bpoptions.gutr * (bpoptions._2Show - 1))) + 'px';
+            core._as = core.trackO.querySelectorAll(_Selectors.slide);
             for (var i = 0; i < core._as.length; i++) {
                 core._as[i].style.width = toFixed4(slideWidth) + 'px';
                 if (i === 0) {
@@ -742,13 +750,13 @@ var Carouzel;
         for (var i = 0; i < core.bpall.length; i++) {
             core.bpall[i].bpSLen = core.sLength;
             if (core.settings.inf) {
-                for (var j = core.sLength - core.bpall[i]._2Show; j < core.sLength; j++) {
+                for (var j = core.sLength - core.bpall[i]._2Show - Math.ceil(core.bpall[i].cntr / 2); j < core.sLength; j++) {
                     var elem = core._ds[j].cloneNode(true);
                     addClass(elem, core.settings.dupCls || '');
                     core.bpall[i].bpSLen++;
                     core.bpall[i].pDups.push(elem);
                 }
-                for (var j = 0; j < core.bpall[i]._2Show; j++) {
+                for (var j = 0; j < core.bpall[i]._2Show + Math.ceil(core.bpall[i].cntr / 2); j++) {
                     var elem = core._ds[j].cloneNode(true);
                     addClass(elem, core.settings.dupCls || '');
                     core.bpall[i].bpSLen++;
@@ -983,6 +991,7 @@ var Carouzel;
         _core.pts = [];
         _core.sLength = _core._ds.length;
         _core.track = rootElem.querySelector("" + _Selectors.track);
+        _core.trackM = rootElem.querySelector("" + _Selectors.trackM);
         _core.trackO = rootElem.querySelector("" + _Selectors.trackO);
         _core.trackW = rootElem.querySelector("" + _Selectors.trackW);
         core.goToNext = function () {
@@ -997,13 +1006,13 @@ var Carouzel;
             }
         };
         core.prependSlide = function (slideElem) {
-            if (_core.trackW) {
-                doInsertBefore(_core.trackW, slideElem);
+            if (_core.track) {
+                doInsertBefore(_core.track, slideElem);
             }
         };
         core.appendSlide = function (slideElem) {
-            if (_core.trackW) {
-                doInsertAfter(_core.trackW, slideElem);
+            if (_core.track) {
+                doInsertAfter(_core.track, slideElem);
             }
         };
         if (_core.settings.effect === _animationEffects[1]) {
@@ -1139,7 +1148,7 @@ var Carouzel;
                     }
                     if (window && getInstancesLength() > 0 && !isWindowEventAttached) {
                         isWindowEventAttached = true;
-                        window.addEventListener('resize', winResizeFn, false);
+                        window.addEventListener('resize', winResizeFn);
                     }
                 }
                 else {
@@ -1178,7 +1187,7 @@ var Carouzel;
                         }
                     }
                     if (window && getInstancesLength() === 0) {
-                        window.removeEventListener('resize', winResizeFn, false);
+                        window.removeEventListener('resize', winResizeFn);
                     }
                 }
                 else {
