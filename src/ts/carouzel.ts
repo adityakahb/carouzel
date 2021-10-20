@@ -415,6 +415,14 @@ namespace Carouzel {
     }
   };
 
+
+  const setTransitionProperties = (element: HTMLElement, transitionProperty: string, transitionTimingFunction: string, transitionDuration: string) => {
+    element.style.transitionProperty = transitionProperty;
+    element.style.transitionTimingFunction = transitionTimingFunction;
+    element.style.transitionDuration = transitionDuration;
+  };
+
+
   /**
    * Function to animate the track element based on the calculations
    * 
@@ -426,9 +434,7 @@ namespace Carouzel {
       core.settings.bFn();
     }
     if (core.settings.inf && core.track) {
-      core.track.style.transitionProperty = 'none';
-      core.track.style.transitionTimingFunction = 'unset';
-      core.track.style.transitionDuration = '0ms';
+      setTransitionProperties(core.track, 'none', 'unset', '0ms');
       if (!isTouched) {
         core.track.style.transform = `translate3d(${-core.pts[core.pi]}px, 0, 0)`;
       }
@@ -440,6 +446,20 @@ namespace Carouzel {
         core.ci = core.sLength - core.bpo._2Show;
       }
     }
+    const postAnimation = () => {
+      setTimeout(() => {
+        if (core.ci < 0 || core.ci >= core.sLength) {
+          core.ci = core.sLength + core.ci;
+        }
+        if (core.track) {
+          setTransitionProperties(core.track, 'none', 'unset', '0ms');
+          core.track.style.transform = `translate3d(${-core.pts[core.ci]}px, 0, 0)`;
+        }
+        core.ct = -core.pts[core.ci];
+        updateAttributes(core);
+      }, core.settings.speed);
+    }
+
     if (core.settings.effect === _animationEffects[0]) {
       setTimeout(() => {
         if (core.track) {
@@ -449,11 +469,11 @@ namespace Carouzel {
             core.track.style.transitionDuration = `${core.settings.speed}ms`;
           }
           core.track.style.transform = `translate3d(${-core.pts[core.ci]}px, 0, 0)`;
-          core.ct = -core.pts[core.ci];
-          updateAttributes(core);
+          postAnimation();
         }
       }, 0);
     }
+
     if (core.settings.effect === _animationEffects[1]) {
       const postOpacity = () => {
         setTimeout(() => {
@@ -461,16 +481,13 @@ namespace Carouzel {
             core.track.style.transform = `translate3d(${-core.pts[core.ci]}px, 0, 0)`;
             core.track.style.opacity = '1';
           }
+          postAnimation();
         }, core.settings.speed);
       };
       setTimeout(() => {
         if (core.track) {
-          core.track.style.transitionProperty = 'opacity';
-          core.track.style.transitionTimingFunction = core.settings.timeFn;
-          core.track.style.transitionDuration = `${core.settings.speed}ms`;
+          setTransitionProperties(core.track, 'opacity', core.settings.timeFn, `${core.settings.speed}ms`);
           core.track.style.opacity = '0';
-          core.ct = -core.pts[core.ci];
-          updateAttributes(core);
           postOpacity();
         }
       }, 0);
@@ -641,13 +658,12 @@ namespace Carouzel {
    *
    */
   const goToPrev = (core: ICore, isTouched: boolean) => {
-    isTouched;
     core.pi = core.ci;
     core.ci -= core.bpo._2Scroll;
     if (core.settings.inf) {
       if (typeof core.pts[core.ci] === 'undefined') {
-        core.pi = core.sLength - 1;
-        core.ci = core.pi - core.bpo._2Show;        
+        core.pi = core.sLength - (core.sLength % core.bpo._2Scroll > 0 ? core.sLength % core.bpo._2Scroll : core.bpo._2Scroll);
+        core.ci = core.pi - core.bpo._2Scroll;        
       } else {
         core.pi = core.ci + core.bpo._2Scroll;
       }
