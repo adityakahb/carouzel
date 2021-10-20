@@ -52,11 +52,11 @@ namespace Carouzel {
     hidCls: string;
     idPrefix?: string;
     inf: boolean;
-    isRTL?: boolean;
     kb: boolean;
     pauseHov: boolean;
     res?: ICarouzelCoreBreakpoint[];
-    rtlCls?: string;
+    rtl: boolean;
+    rtlCls: string;
     speed: number;
     startAt: number;
     swipe: boolean;
@@ -98,10 +98,10 @@ namespace Carouzel {
     hiddenClass: string;
     idPrefix: string,
     isInfinite: boolean;
-    isRTL?: boolean;
+    isRTL: boolean;
     pauseOnHover: boolean;
     responsive?: ICarouzelBreakpoint[];
-    rtlClass?: string;
+    rtlClass: string;
     showArrows: boolean;
     showNavigation: boolean;
     slidesToScroll: number;
@@ -321,7 +321,7 @@ namespace Carouzel {
     windowResizeAny = setTimeout(() => {
       for (let e in allLocalInstances) {
         if (allLocalInstances.hasOwnProperty(e)) {
-          applyLayout(allLocalInstances[e]);
+          applyLayout(allLocalInstances[e], false);
         }
       }
     }, 0);
@@ -562,7 +562,7 @@ namespace Carouzel {
    * @param core - Carouzel instance core object
    *
    */
-  const applyLayout = (core: ICore) => {
+  const applyLayout = (core: ICore, isRTLFirstLoad: boolean) => {
     let viewportWidth = window.outerWidth;
     let bpoptions = core.bpall[0];
     let len = 0;
@@ -604,6 +604,9 @@ namespace Carouzel {
       addClass(core.navW, core.settings.hidCls);
     } else if (core.navW) {
       removeClass(core.navW, core.settings.hidCls);
+    }
+    if (isRTLFirstLoad) {
+      core.ci = core.settings.startAt = core.sLength - bpoptions._2Scroll;
     }
     if (core.rootElem && core.trackW && core.trackO && core.track) {
       core.pts = {};
@@ -911,16 +914,20 @@ namespace Carouzel {
       core.bpall[i].bpSLen = core.sLength;
       if (core.settings.inf) {
         for (let j=core.sLength - core.bpall[i]._2Show - Math.ceil(core.bpall[i].cntr / 2); j<core.sLength; j++) {
-          let elem = core._ds[j].cloneNode(true);
-          addClass(elem as Element, core.settings.dupCls || '');
-          core.bpall[i].bpSLen++;
-          core.bpall[i].pDups.push(elem);
+          if (core._ds[j]) {
+            let elem = core._ds[j].cloneNode(true);
+            addClass(elem as Element, core.settings.dupCls || '');
+            core.bpall[i].bpSLen++;
+            core.bpall[i].pDups.push(elem);
+          }
         }
         for (let j=0; j<core.bpall[i]._2Show + Math.ceil(core.bpall[i].cntr / 2); j++) {
-          let elem = core._ds[j].cloneNode(true);
-          addClass(elem as Element, core.settings.dupCls || '');
-          core.bpall[i].bpSLen++;
-          core.bpall[i].nDups.push(elem);
+          if (core._ds[j]) {
+            let elem = core._ds[j].cloneNode(true);
+            addClass(elem as Element, core.settings.dupCls || '');
+            core.bpall[i].bpSLen++;
+            core.bpall[i].nDups.push(elem);
+          }
         }
       }
     }
@@ -1086,7 +1093,7 @@ namespace Carouzel {
       gutr: settings.spaceBetween,
       hidCls: settings.hiddenClass,
       inf: settings.isInfinite,
-      isRTL: settings.isRTL,
+      rtl: settings.isRTL,
       kb: settings.enableKeyboard,
       pauseHov: settings.pauseOnHover,
       res: [],
@@ -1176,11 +1183,15 @@ namespace Carouzel {
         doInsertAfter(_core.track, slideElem);
       }
     };
+    
     if (_core.settings.effect === _animationEffects[1]) {
       addClass(core.rootElem as Element, _core.settings.fadCls);
-    } else {
-      removeClass(core.rootElem as Element, _core.settings.fadCls);
     }
+
+    if (_core.settings.rtl) {
+      addClass(core.rootElem as Element, _core.settings.rtlCls);
+    }
+
     if (!_core._ds[_core.ci]) {
       _core.ci = settings.startAtIndex = 0;
     }
@@ -1195,7 +1206,7 @@ namespace Carouzel {
       generateElements(_core);
       toggleControlButtons(_core);
       toggleTouchEvents(_core);
-      applyLayout(_core);
+      applyLayout(_core, _core.settings.rtl);
     }
 
     addClass(core.rootElem as Element, _core.settings.activeCls);

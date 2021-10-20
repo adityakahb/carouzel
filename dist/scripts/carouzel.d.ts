@@ -41,10 +41,10 @@ declare namespace Carouzel {
         hiddenClass: string;
         idPrefix: string;
         isInfinite: boolean;
-        isRTL?: boolean;
+        isRTL: boolean;
         pauseOnHover: boolean;
         responsive?: ICarouzelBreakpoint[];
-        rtlClass?: string;
+        rtlClass: string;
         showArrows: boolean;
         showNavigation: boolean;
         slidesToScroll: number;

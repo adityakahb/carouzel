@@ -172,7 +172,7 @@ var Carouzel;
         windowResizeAny = setTimeout(function () {
             for (var e in allLocalInstances) {
                 if (allLocalInstances.hasOwnProperty(e)) {
-                    applyLayout(allLocalInstances[e]);
+                    applyLayout(allLocalInstances[e], false);
                 }
             }
         }, 0);
@@ -400,7 +400,7 @@ var Carouzel;
      * @param core - Carouzel instance core object
      *
      */
-    var applyLayout = function (core) {
+    var applyLayout = function (core, isRTLFirstLoad) {
         var viewportWidth = window.outerWidth;
         var bpoptions = core.bpall[0];
         var len = 0;
@@ -441,6 +441,9 @@ var Carouzel;
         }
         else if (core.navW) {
             removeClass(core.navW, core.settings.hidCls);
+        }
+        if (isRTLFirstLoad) {
+            core.ci = core.settings.startAt = core.sLength - bpoptions._2Scroll;
         }
         if (core.rootElem && core.trackW && core.trackO && core.track) {
             core.pts = {};
@@ -751,16 +754,20 @@ var Carouzel;
             core.bpall[i].bpSLen = core.sLength;
             if (core.settings.inf) {
                 for (var j = core.sLength - core.bpall[i]._2Show - Math.ceil(core.bpall[i].cntr / 2); j < core.sLength; j++) {
-                    var elem = core._ds[j].cloneNode(true);
-                    addClass(elem, core.settings.dupCls || '');
-                    core.bpall[i].bpSLen++;
-                    core.bpall[i].pDups.push(elem);
+                    if (core._ds[j]) {
+                        var elem = core._ds[j].cloneNode(true);
+                        addClass(elem, core.settings.dupCls || '');
+                        core.bpall[i].bpSLen++;
+                        core.bpall[i].pDups.push(elem);
+                    }
                 }
                 for (var j = 0; j < core.bpall[i]._2Show + Math.ceil(core.bpall[i].cntr / 2); j++) {
-                    var elem = core._ds[j].cloneNode(true);
-                    addClass(elem, core.settings.dupCls || '');
-                    core.bpall[i].bpSLen++;
-                    core.bpall[i].nDups.push(elem);
+                    if (core._ds[j]) {
+                        var elem = core._ds[j].cloneNode(true);
+                        addClass(elem, core.settings.dupCls || '');
+                        core.bpall[i].bpSLen++;
+                        core.bpall[i].nDups.push(elem);
+                    }
                 }
             }
         }
@@ -930,7 +937,7 @@ var Carouzel;
             gutr: settings.spaceBetween,
             hidCls: settings.hiddenClass,
             inf: settings.isInfinite,
-            isRTL: settings.isRTL,
+            rtl: settings.isRTL,
             kb: settings.enableKeyboard,
             pauseHov: settings.pauseOnHover,
             res: [],
@@ -1018,8 +1025,8 @@ var Carouzel;
         if (_core.settings.effect === _animationEffects[1]) {
             addClass(core.rootElem, _core.settings.fadCls);
         }
-        else {
-            removeClass(core.rootElem, _core.settings.fadCls);
+        if (_core.settings.rtl) {
+            addClass(core.rootElem, _core.settings.rtlCls);
         }
         if (!_core._ds[_core.ci]) {
             _core.ci = settings.startAtIndex = 0;
@@ -1034,7 +1041,7 @@ var Carouzel;
             generateElements(_core);
             toggleControlButtons(_core);
             toggleTouchEvents(_core);
-            applyLayout(_core);
+            applyLayout(_core, _core.settings.rtl);
         }
         addClass(core.rootElem, _core.settings.activeCls);
         if (typeof settings.afterInit === 'function') {

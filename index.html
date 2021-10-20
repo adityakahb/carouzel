@@ -319,28 +319,39 @@
           <div class="row">
             <div class="col">
               <section data-carouzel-auto="{
-                'autoplay': true,
+                'isInfinite': true,
+                'autoplay': false,
                 'autoplaySpeed': 5000,
-                'animationSpeed': 200,
+                'animationSpeed': 300,
+                'animationEffect': 'scroll',
                 'pauseOnHover': true,
                 'slidesToScroll': 1,
                 'slidesToShow': 1,
                 'showArrows': true,
                 'showNavigation': false,
+                'centerBetween': 1,
+                'spaceBetween': 10,
                 'responsive': [
                     {
                       'breakpoint': 768,
                       'slidesToScroll': 2,
                       'slidesToShow': 2,
-                      'showNavigation': true
+                      'showArrows': true,
+                      'showNavigation': true,
+                      'centerBetween':  1,
+                      'spaceBetween': 20
                     },
                     {
                       'breakpoint': 1024,
                       'slidesToScroll': 3,
-                      'slidesToShow': 3
+                      'slidesToShow': 3,
+                      'showArrows': true,
+                      'showNavigation': true,
+                      'centerBetween':  3,
+                      'spaceBetween': 30
                     }
                 ]
-              }" aria-roledescription="carousel" aria-label="Implementation of Carouzel through `data-attribute`">
+             }" aria-roledescription="carousel" aria-label="Implementation of Carouzel through `data-attribute`">
               <div data-carouzel-trackwrapper>
                 <div data-carouzel-trackmask>
                   <div data-carouzel-trackouter>
@@ -801,7 +812,68 @@
               <hr/>
             </div>
           </div>
+          <div class="row">
+            <div class="col text-center">
+              <h2>Right To Left</h2>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <section data-carouzel id="__carouzel_12" aria-roledescription="carousel" aria-label="Carouzel showing different settings at different breakpoints">
+                <div data-carouzel-trackwrapper>
+                  <div data-carouzel-trackmask>
+                    <div data-carouzel-trackouter>
+                      <div data-carouzel-track aria-live="polite">
+                        <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="1 of 8">
+                          <div>01</div>
+                        </div>
+                        <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="2 of 8">
+                          <div>02</div>
+                        </div>
+                        <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="3 of 8">
+                          <div>03</div>
+                        </div>
+                        <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="4 of 8">
+                          <div>04</div>
+                        </div>
+                        <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="5 of 8">
+                          <div>05</div>
+                        </div>
+                        <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="6 of 8">
+                          <div>06</div>
+                        </div>
+                        <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="7 of 8">
+                          <div>07</div>
+                        </div>
+                        <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="8 of 8">
+                          <div>08</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div data-carouzel-controlswrapper>
+                    <button type="button" data-carouzel-previousarrow aria-label="Previous">
+                      <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z"/></svg>
+                    </button>
+                    <button type="button" data-carouzel-nextarrow aria-label="Next">
+                      <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6z"/></svg>
+                    </button>
+                  </div>
+                </div>
+                <div data-carouzel-navigationwrapper>
+                  <div data-carouzel-navigation></div>
+                </div>
+              </section>
+            </div>
+          </div>
 
+
+
+          <div class="row my-5">
+            <div class="col text-center">
+              <hr/>
+            </div>
+          </div>
 
         </div>
       </div>
@@ -981,6 +1053,22 @@
           slidesToScroll: 4,
           slidesToShow: 4,
           spaceBetween: 50
+        }]
+      });
+      __carouzel_instance.init('#__carouzel_12', {
+        isRTL: true,
+        slidesToShow: 1,
+        showNav: false,
+        isInfinite: false,
+        responsive: [{
+          breakpoint: 700,
+          slidesToScroll: 2,
+          slidesToShow: 2,
+          showNav: true
+        }, {
+          breakpoint: 1100,
+          slidesToScroll: 4,
+          slidesToShow: 4
         }]
       });
       var gotoslideinput = document.getElementById('gotoslideinput');
