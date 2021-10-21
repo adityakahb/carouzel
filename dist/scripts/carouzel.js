@@ -79,7 +79,7 @@ var Carouzel;
         spaceBetween: 0,
         startAtIndex: 1,
         timingFunction: 'ease-in-out',
-        touchThreshold: 120
+        touchThreshold: 100
     };
     /**
      * Function to trim whitespaces from a string

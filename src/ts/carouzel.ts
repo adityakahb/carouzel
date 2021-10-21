@@ -156,6 +156,7 @@ namespace Carouzel {
     trackM: HTMLElement | null;
     trackO: HTMLElement | null;
     trackW: HTMLElement | null;
+    aframe: any;
   }
 
   interface ICoreInstance {
@@ -221,7 +222,7 @@ namespace Carouzel {
     spaceBetween: 0,
     startAtIndex: 1,
     timingFunction: 'ease-in-out',
-    touchThreshold: 120,
+    touchThreshold: 100,
   };
 
   /**
@@ -452,6 +453,7 @@ namespace Carouzel {
         core.ci = core.sLength - core.bpo._2Show;
       }
     }
+
     const postAnimation = () => {
       setTimeout(() => {
         if (core.ci >= core.sLength) {
