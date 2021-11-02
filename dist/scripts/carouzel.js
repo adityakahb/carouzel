@@ -269,6 +269,15 @@ var Carouzel;
             }
         }
     };
+    /**
+     * Function to set CSS transition properties in style attribute of the element
+     *
+     * @param element - HTML element on which CSS transition properties are to be set
+     * @param transitionProperty - The property which needs to be transitioned
+     * @param transitionTimingFunction - The timing function to be followed during transition
+     * @param transitionDuration - The duration followed for the transition
+     *
+     */
     var setTransitionProperties = function (element, transitionProperty, transitionTimingFunction, transitionDuration) {
         element.style.transitionProperty = transitionProperty;
         element.style.transitionTimingFunction = transitionTimingFunction;
@@ -1164,6 +1173,10 @@ var Carouzel;
                     }
                 }
             };
+            /**
+             * Function to initialize all the carouzel which have 'data-carouzelauto' set
+             *
+             */
             this.globalInit = function () {
                 _this.init(_Selectors.rootAuto);
             };

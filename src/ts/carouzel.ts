@@ -422,13 +422,20 @@ namespace Carouzel {
     }
   };
 
-
+  /**
+   * Function to set CSS transition properties in style attribute of the element
+   * 
+   * @param element - HTML element on which CSS transition properties are to be set
+   * @param transitionProperty - The property which needs to be transitioned
+   * @param transitionTimingFunction - The timing function to be followed during transition
+   * @param transitionDuration - The duration followed for the transition
+   *
+   */
   const setTransitionProperties = (element: HTMLElement, transitionProperty: string, transitionTimingFunction: string, transitionDuration: string) => {
     element.style.transitionProperty = transitionProperty;
     element.style.transitionTimingFunction = transitionTimingFunction;
     element.style.transitionDuration = transitionDuration;
   };
-
 
   /**
    * Function to animate the track element based on the calculations
@@ -555,8 +562,6 @@ namespace Carouzel {
       doInsertAfter(track, bpo.nDups[i]);
     }
   }
-
-
 
   /**
    * Function to find and apply the appropriate breakpoint settings based on the viewport
@@ -1228,7 +1233,6 @@ namespace Carouzel {
    * Class for every Carouzel instance.
    *
    */
-
   class Core {
     protected core: any = {};
     constructor(thisid: string, rootElem: HTMLElement, options?: ICarouzelSettings) {
@@ -1253,6 +1257,7 @@ namespace Carouzel {
       delete allLocalInstances[thisid];
     };
   }
+
   /**
    * ██████   ██████   ██████  ████████ 
    * ██   ██ ██    ██ ██    ██    ██    
@@ -1347,6 +1352,10 @@ namespace Carouzel {
       }
     };
 
+    /**
+     * Function to initialize all the carouzel which have 'data-carouzelauto' set
+     * 
+     */
     public globalInit = () => {
       this.init(_Selectors.rootAuto);
     };

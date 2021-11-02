@@ -86,6 +86,10 @@ declare namespace Carouzel {
          *
          */
         init: (query: string, options?: ICarouzelSettings | undefined) => void;
+        /**
+         * Function to initialize all the carouzel which have 'data-carouzelauto' set
+         *
+         */
         globalInit: () => void;
         /**
          * Function to get the Carouzel based on the query string provided.
