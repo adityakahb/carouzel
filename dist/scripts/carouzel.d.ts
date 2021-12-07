@@ -53,6 +53,7 @@ declare namespace Carouzel {
         startAtIndex: number;
         timingFunction: string;
         touchThreshold: number;
+        useTitlesAsDots: boolean;
     }
     /**
      * ██████   ██████   ██████  ████████

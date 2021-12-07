@@ -62,6 +62,7 @@ namespace Carouzel {
     swipe: boolean;
     threshold: number;
     timeFn: string;
+    useTitle: boolean;
   }
   
   interface ICarouzelBreakpoint {
@@ -110,6 +111,7 @@ namespace Carouzel {
     startAtIndex: number;
     timingFunction: string
     touchThreshold: number;
+    useTitlesAsDots: boolean;
   }
 
   interface IEventHandler {
@@ -223,6 +225,7 @@ namespace Carouzel {
     startAtIndex: 1,
     timingFunction: 'ease-in-out',
     touchThreshold: 100,
+    useTitlesAsDots: false,
   };
 
   /**
@@ -956,7 +959,7 @@ namespace Carouzel {
         elem.setAttribute(_Selectors.dot.slice(1, -1), '');
         elem.setAttribute('type', 'button');
         btnStr = `<div class="${core.settings.dotNcls}">${(j + 1)}</div>`;
-        if (core.bpall[i]._2Show === 1 && core._ds[j].getAttribute(_Selectors.stitle.slice(1, -1))) {
+        if (core.settings.useTitle && core.bpall[i]._2Show === 1 && core._ds[j].getAttribute(_Selectors.stitle.slice(1, -1))) {
           btnStr += core._ds[j].getAttribute(_Selectors.stitle.slice(1, -1));
           addClass(elem, core.settings.dotCls);
         }
@@ -1110,6 +1113,7 @@ namespace Carouzel {
       swipe: settings.hasTouchSwipe,
       threshold: settings.touchThreshold,
       timeFn: settings.timingFunction,
+      useTitle: settings.useTitlesAsDots,
     }
 
     if (settings.responsive && settings.responsive.length > 0)  {

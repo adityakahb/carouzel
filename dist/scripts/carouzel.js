@@ -79,7 +79,8 @@ var Carouzel;
         spaceBetween: 0,
         startAtIndex: 1,
         timingFunction: 'ease-in-out',
-        touchThreshold: 100
+        touchThreshold: 100,
+        useTitlesAsDots: false
     };
     /**
      * Function to trim whitespaces from a string
@@ -296,7 +297,7 @@ var Carouzel;
         if (core.settings.inf && core.track) {
             setTransitionProperties(core.track, 'none', 'unset', '0ms');
             if (!isTouched) {
-                core.track.style.transform = "translate3d(" + -core.pts[core.pi] + "px, 0, 0)";
+                core.track.style.transform = "translate3d(".concat(-core.pts[core.pi], "px, 0, 0)");
             }
         }
         else {
@@ -317,7 +318,7 @@ var Carouzel;
                 }
                 if (core.track) {
                     setTransitionProperties(core.track, 'none', 'unset', '0ms');
-                    core.track.style.transform = "translate3d(" + -core.pts[core.ci] + "px, 0, 0)";
+                    core.track.style.transform = "translate3d(".concat(-core.pts[core.ci], "px, 0, 0)");
                 }
                 core.ct = -core.pts[core.ci];
                 updateAttributes(core);
@@ -329,9 +330,9 @@ var Carouzel;
                     core.track.style.transitionProperty = 'transform';
                     if (isSmooth) {
                         core.track.style.transitionTimingFunction = core.settings.timeFn;
-                        core.track.style.transitionDuration = core.settings.speed + "ms";
+                        core.track.style.transitionDuration = "".concat(core.settings.speed, "ms");
                     }
-                    core.track.style.transform = "translate3d(" + -core.pts[core.ci] + "px, 0, 0)";
+                    core.track.style.transform = "translate3d(".concat(-core.pts[core.ci], "px, 0, 0)");
                     postAnimation();
                 }
             }, 0);
@@ -340,7 +341,7 @@ var Carouzel;
             var postOpacity_1 = function () {
                 setTimeout(function () {
                     if (core.track) {
-                        core.track.style.transform = "translate3d(" + -core.pts[core.ci] + "px, 0, 0)";
+                        core.track.style.transform = "translate3d(".concat(-core.pts[core.ci], "px, 0, 0)");
                         core.track.style.opacity = '1';
                     }
                     postAnimation();
@@ -348,7 +349,7 @@ var Carouzel;
             };
             setTimeout(function () {
                 if (core.track) {
-                    setTransitionProperties(core.track, 'opacity', core.settings.timeFn, core.settings.speed + "ms");
+                    setTransitionProperties(core.track, 'opacity', core.settings.timeFn, "".concat(core.settings.speed, "ms"));
                     core.track.style.opacity = '0';
                     postOpacity_1();
                 }
@@ -685,7 +686,7 @@ var Carouzel;
             if (core.track) {
                 core.track.style.transitionProperty = core.settings.effect;
                 core.track.style.transitionTimingFunction = core.settings.timeFn;
-                core.track.style.transitionDuration = core.settings.speed + "ms";
+                core.track.style.transitionDuration = "".concat(core.settings.speed, "ms");
             }
         };
         /**
@@ -701,7 +702,7 @@ var Carouzel;
                     posX2 = posX1 - thisevent.clientX;
                 }
                 if (core.settings.effect === _animationEffects[0]) {
-                    core.track.style.transform = "translate3d(" + (core.ct - posX2) + "px, 0, 0)";
+                    core.track.style.transform = "translate3d(".concat(core.ct - posX2, "px, 0, 0)");
                 }
                 posFinal = posX2;
             }
@@ -719,7 +720,7 @@ var Carouzel;
                     goToNext(core, false);
                 }
                 else {
-                    core.track.style.transform = "translate3d(" + core.ct + "px, 0, 0)";
+                    core.track.style.transform = "translate3d(".concat(core.ct, "px, 0, 0)");
                 }
             }
             if (core.track) {
@@ -797,8 +798,8 @@ var Carouzel;
                 var elem = document.createElement('button');
                 elem.setAttribute(_Selectors.dot.slice(1, -1), '');
                 elem.setAttribute('type', 'button');
-                btnStr = "<div class=\"" + core.settings.dotNcls + "\">" + (j + 1) + "</div>";
-                if (core.bpall[i]._2Show === 1 && core._ds[j].getAttribute(_Selectors.stitle.slice(1, -1))) {
+                btnStr = "<div class=\"".concat(core.settings.dotNcls, "\">").concat((j + 1), "</div>");
+                if (core.settings.useTitle && core.bpall[i]._2Show === 1 && core._ds[j].getAttribute(_Selectors.stitle.slice(1, -1))) {
                     btnStr += core._ds[j].getAttribute(_Selectors.stitle.slice(1, -1));
                     addClass(elem, core.settings.dotCls);
                 }
@@ -955,7 +956,8 @@ var Carouzel;
             startAt: settings.animationSpeed,
             swipe: settings.hasTouchSwipe,
             threshold: settings.touchThreshold,
-            timeFn: settings.timingFunction
+            timeFn: settings.timingFunction,
+            useTitle: settings.useTitlesAsDots
         };
         if (settings.responsive && settings.responsive.length > 0) {
             for (var i = 0; i < settings.responsive.length; i++) {
@@ -993,23 +995,23 @@ var Carouzel;
         var _core = __assign({}, core);
         _core.rootElem = core.rootElem = rootElem;
         _core.settings = mapSettings(settings);
-        _core._ds = rootElem.querySelectorAll("" + _Selectors.slide);
-        _core.arrowN = rootElem.querySelector("" + _Selectors.arrowN);
-        _core.arrowP = rootElem.querySelector("" + _Selectors.arrowP);
-        _core.btnPause = rootElem.querySelector("" + _Selectors.pauseBtn);
-        _core.btnPlay = rootElem.querySelector("" + _Selectors.playBtn);
+        _core._ds = rootElem.querySelectorAll("".concat(_Selectors.slide));
+        _core.arrowN = rootElem.querySelector("".concat(_Selectors.arrowN));
+        _core.arrowP = rootElem.querySelector("".concat(_Selectors.arrowP));
+        _core.btnPause = rootElem.querySelector("".concat(_Selectors.pauseBtn));
+        _core.btnPlay = rootElem.querySelector("".concat(_Selectors.playBtn));
         _core.ci = settings.startAtIndex = (settings.startAtIndex || 0) - 1;
-        _core.controlsW = rootElem.querySelector("" + _Selectors.controlsW);
+        _core.controlsW = rootElem.querySelector("".concat(_Selectors.controlsW));
         _core.eHandlers = [];
         _core.isLeftAdded = false;
-        _core.nav = rootElem.querySelector("" + _Selectors.nav);
-        _core.navW = rootElem.querySelector("" + _Selectors.navW);
+        _core.nav = rootElem.querySelector("".concat(_Selectors.nav));
+        _core.navW = rootElem.querySelector("".concat(_Selectors.navW));
         _core.pts = [];
         _core.sLength = _core._ds.length;
-        _core.track = rootElem.querySelector("" + _Selectors.track);
-        _core.trackM = rootElem.querySelector("" + _Selectors.trackM);
-        _core.trackO = rootElem.querySelector("" + _Selectors.trackO);
-        _core.trackW = rootElem.querySelector("" + _Selectors.trackW);
+        _core.track = rootElem.querySelector("".concat(_Selectors.track));
+        _core.trackM = rootElem.querySelector("".concat(_Selectors.trackM));
+        _core.trackO = rootElem.querySelector("".concat(_Selectors.trackO));
+        _core.trackW = rootElem.querySelector("".concat(_Selectors.trackW));
         core.goToNext = function () {
             goToNext(_core, false);
         };
@@ -1072,7 +1074,7 @@ var Carouzel;
         function Core(thisid, rootElem, options) {
             this.core = {};
             this.destroy = function (thisid) {
-                var allElems = document.querySelectorAll("#" + thisid + " *");
+                var allElems = document.querySelectorAll("#".concat(thisid, " *"));
                 var core = allLocalInstances[thisid];
                 for (var i = 0; i < allElems.length; i++) {
                     removeEventListeners(core, allElems[i]);
@@ -1083,7 +1085,7 @@ var Carouzel;
                         core.nav.removeChild(allElems[i]);
                     }
                     allElems[i].removeAttribute('style');
-                    removeClass(allElems[i], core.settings.activeCls + " " + core.settings.editCls + " " + core.settings.disableCls + " " + core.settings.dupCls + " " + core.settings.rtlCls);
+                    removeClass(allElems[i], "".concat(core.settings.activeCls, " ").concat(core.settings.editCls, " ").concat(core.settings.disableCls, " ").concat(core.settings.dupCls, " ").concat(core.settings.rtlCls));
                 }
                 delete allLocalInstances[thisid];
             };
