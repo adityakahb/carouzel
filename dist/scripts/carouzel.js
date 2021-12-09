@@ -238,12 +238,16 @@ var Carouzel;
     var updateAttributes = function (core) {
         var x;
         for (var i = 0; i < core._as.length; i++) {
-            removeClass(core._as[i], core.settings.activeCls);
-            core._as[i].setAttribute('aria-hidden', 'true');
+            if (core._as[i]) {
+                removeClass(core._as[i], core.settings.activeCls);
+                core._as[i].setAttribute('aria-hidden', 'true');
+            }
         }
         for (var i = core.ci + core.bpo.pDups.length; i < core.ci + core.bpo.pDups.length + core.bpo._2Show; i++) {
-            addClass(core._as[i], core.settings.activeCls);
-            core._as[i].removeAttribute('aria-hidden');
+            if (core._as[i]) {
+                addClass(core._as[i], core.settings.activeCls);
+                core._as[i].removeAttribute('aria-hidden');
+            }
         }
         if (!core.settings.inf && core.ci === 0) {
             addClass(core.arrowP, core.settings.disableCls || '');

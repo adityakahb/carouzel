@@ -3,6 +3,8 @@
   visibility: hidden; }
   [data-carouzel], [data-carouzel]:after, [data-carouzel]:before, [data-carouzel] *, [data-carouzel] *:after, [data-carouzel] *:before, [data-carouzel-auto], [data-carouzel-auto]:after, [data-carouzel-auto]:before, [data-carouzel-auto] *, [data-carouzel-auto] *:after, [data-carouzel-auto] *:before {
     box-sizing: border-box; }
+  [data-carouzel] button:not(:disabled), [data-carouzel] [type="button"]:not(:disabled), [data-carouzel] [type="reset"]:not(:disabled), [data-carouzel] [type="submit"]:not(:disabled), [data-carouzel-auto] button:not(:disabled), [data-carouzel-auto] [type="button"]:not(:disabled), [data-carouzel-auto] [type="reset"]:not(:disabled), [data-carouzel-auto] [type="submit"]:not(:disabled) {
+    cursor: pointer; }
   [data-carouzel] .__carouzel-hidden, [data-carouzel-auto] .__carouzel-hidden {
     display: none !important; }
   [data-carouzel] [data-carouzel-trackwrapper], [data-carouzel-auto] [data-carouzel-trackwrapper] {

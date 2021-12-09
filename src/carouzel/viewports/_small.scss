@@ -6,6 +6,9 @@
       box-sizing: border-box;
     }
   }
+  button:not(:disabled), [type="button"]:not(:disabled), [type="reset"]:not(:disabled), [type="submit"]:not(:disabled) {
+    cursor: pointer;
+  }
   .__carouzel-hidden {
     display: none !important;
   }

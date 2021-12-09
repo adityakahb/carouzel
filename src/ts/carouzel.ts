@@ -394,12 +394,16 @@ namespace Carouzel {
   const updateAttributes = (core: ICore) => {
     let x;
     for (let i=0; i<core._as.length; i++) {
-      removeClass(core._as[i] as Element, core.settings.activeCls);
-      core._as[i].setAttribute('aria-hidden', 'true');
+      if (core._as[i]) {
+        removeClass(core._as[i] as Element, core.settings.activeCls);
+        core._as[i].setAttribute('aria-hidden', 'true');
+      }
     }
     for (let i=core.ci + core.bpo.pDups.length; i<core.ci + core.bpo.pDups.length + core.bpo._2Show; i++) {
-      addClass(core._as[i] as Element, core.settings.activeCls);
-      core._as[i].removeAttribute('aria-hidden');
+      if (core._as[i]) {
+        addClass(core._as[i] as Element, core.settings.activeCls);
+        core._as[i].removeAttribute('aria-hidden');
+      }
     }
     if (!core.settings.inf && core.ci === 0) {
       addClass(core.arrowP as Element, core.settings.disableCls || '');
