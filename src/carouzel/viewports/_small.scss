@@ -1,12 +1,18 @@
-[data-carouzel], [data-carouzel-auto] {
+[data-carouzel] {
   opacity: 0;
   visibility: hidden;
-  &, * {
-    &, &:after, &:before {
+  &,
+  * {
+    &,
+    &:after,
+    &:before {
       box-sizing: border-box;
     }
   }
-  button:not(:disabled), [type="button"]:not(:disabled), [type="reset"]:not(:disabled), [type="submit"]:not(:disabled) {
+  button:not(:disabled),
+  [type='button']:not(:disabled),
+  [type='reset']:not(:disabled),
+  [type='submit']:not(:disabled) {
     cursor: pointer;
   }
   .__carouzel-hidden {
@@ -17,7 +23,7 @@
     margin-bottom: 10px;
   }
   [data-carouzel-trackouter] {
-    width: 100%; 
+    width: 100%;
   }
   [data-carouzel-trackmask] {
     overflow: hidden;
@@ -37,7 +43,10 @@
     border: 1px solid transparent;
     width: 100%;
   }
-  [data-carouzel-previousarrow], [data-carouzel-nextarrow], [data-carouzel-pause], [data-carouzel-play] {
+  [data-carouzel-previousarrow],
+  [data-carouzel-nextarrow],
+  [data-carouzel-pause],
+  [data-carouzel-play] {
     background-color: rgba(#000, 0.15);
     border: 1px solid #000;
     color: transparent;
@@ -53,7 +62,8 @@
       height: 100%;
       width: 100%;
     }
-    &:hover, &:focus {
+    &:hover,
+    &:focus {
       background-color: rgba(#000, 0.25);
       opacity: 1;
     }
@@ -66,14 +76,16 @@
       }
     }
   }
-  [data-carouzel-pause], [data-carouzel-play] {
+  [data-carouzel-pause],
+  [data-carouzel-play] {
     border-radius: 100%;
     bottom: 10px;
     left: 50%;
     position: absolute;
     transform: translate(-50%, 0);
   }
-  [data-carouzel-previousarrow], [data-carouzel-nextarrow] {
+  [data-carouzel-previousarrow],
+  [data-carouzel-nextarrow] {
     position: absolute;
     top: 50%;
     transform: translate(0, -50%);
@@ -111,7 +123,8 @@
     padding: 0;
     transition: background-color 250ms ease;
     width: 32px;
-    &:hover, &:focus {
+    &:hover,
+    &:focus {
       background-color: rgba(#000, 0.75);
     }
     &.__carouzel-active {
@@ -140,7 +153,8 @@
     }
   }
   &.__carouzel-rtl {
-    [data-carouzel-track], [data-carouzel-navigation] {
+    [data-carouzel-track],
+    [data-carouzel-navigation] {
       flex-direction: row-reverse;
     }
   }

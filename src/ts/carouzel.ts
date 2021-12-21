@@ -1,17 +1,27 @@
 /***
- *     ██████  █████  ██████   ██████  ██    ██ ███████ ███████ ██      
- *    ██      ██   ██ ██   ██ ██    ██ ██    ██    ███  ██      ██      
- *    ██      ███████ ██████  ██    ██ ██    ██   ███   █████   ██      
- *    ██      ██   ██ ██   ██ ██    ██ ██    ██  ███    ██      ██      
- *     ██████ ██   ██ ██   ██  ██████   ██████  ███████ ███████ ███████ 
- *                                                                      
- *                                                                      
+ *     ██████  █████  ██████   ██████  ██    ██ ███████ ███████ ██
+ *    ██      ██   ██ ██   ██ ██    ██ ██    ██    ███  ██      ██
+ *    ██      ███████ ██████  ██    ██ ██    ██   ███   █████   ██
+ *    ██      ██   ██ ██   ██ ██    ██ ██    ██  ███    ██      ██
+ *     ██████ ██   ██ ██   ██  ██████   ██████  ███████ ███████ ███████
+ *
+ *
  */
 namespace Carouzel {
-  "use strict";
+  'use strict';
 
   interface IRoot {
     [key: string]: any;
+  }
+
+  interface ICarouzelTimer {
+    start?: number;
+    total?: number;
+    elapsed?: number;
+    progress?: number;
+    position?: number;
+    prevX?: number;
+    nextX?: number;
   }
 
   interface ICarouzelCoreBreakpoint {
@@ -28,7 +38,7 @@ namespace Carouzel {
     pDups: Node[];
     swipe: boolean;
   }
-  
+
   interface ICarouzelCoreSettings {
     _2Scroll: number;
     _2Show: number;
@@ -61,10 +71,10 @@ namespace Carouzel {
     startAt: number;
     swipe: boolean;
     threshold: number;
-    timeFn: string;
+    timeFn?: Function;
     useTitle: boolean;
   }
-  
+
   interface ICarouzelBreakpoint {
     breakpoint: number | string;
     centerBetween: number;
@@ -97,7 +107,7 @@ namespace Carouzel {
     fadingClass: string;
     hasTouchSwipe: boolean;
     hiddenClass: string;
-    idPrefix: string,
+    idPrefix: string;
     isInfinite: boolean;
     isRTL: boolean;
     pauseOnHover: boolean;
@@ -109,7 +119,7 @@ namespace Carouzel {
     slidesToShow: number;
     spaceBetween: number;
     startAtIndex: number;
-    timingFunction: string
+    timingFunction?: Function;
     touchThreshold: number;
     useTitlesAsDots: boolean;
   }
@@ -126,6 +136,7 @@ namespace Carouzel {
   interface ICore {
     _as: NodeListOf<Element>;
     _ds: NodeListOf<Element>;
+    _t: ICarouzelTimer;
     appendSlide: Function;
     arrowN: HTMLElement | null;
     arrowP: HTMLElement | null;
@@ -171,7 +182,8 @@ namespace Carouzel {
   let windowResizeAny: any;
 
   const _animationEffects = ['scroll', 'fade'];
-  const _rootSelectorTypeError = 'Element(s) with the provided query do(es) not exist';
+  const _rootSelectorTypeError =
+    'Element(s) with the provided query do(es) not exist';
   const _optionsParseTypeError = 'Unable to parse the options string';
   const _duplicateBreakpointsTypeError = 'Duplicate breakpoints found';
   const _breakpointsParseTypeError = 'Error parsing breakpoints';
@@ -194,7 +206,7 @@ namespace Carouzel {
     trackO: '[data-carouzel-trackouter]',
     trackW: '[data-carouzel-trackwrapper]',
   };
-  const _Defaults:ICarouzelSettings = {
+  const _Defaults: ICarouzelSettings = {
     activeClass: '__carouzel-active',
     animationEffect: _animationEffects[0],
     animationSpeed: 400,
@@ -223,16 +235,17 @@ namespace Carouzel {
     slidesToShow: 1,
     spaceBetween: 0,
     startAtIndex: 1,
-    timingFunction: 'ease-in-out',
+    timingFunction: (time = 0, beginningVal = 0.5, change = 1, duration = 1) =>
+      change * (time /= duration) * time + beginningVal,
     touchThreshold: 100,
     useTitlesAsDots: false,
   };
 
   /**
    * Function to trim whitespaces from a string
-   * 
+   *
    * @param str - The string which needs to be trimmed
-   * 
+   *
    * @returns The trimmed string.
    *
    */
@@ -242,10 +255,10 @@ namespace Carouzel {
 
   /**
    * Function to check wheather an element has a string in its class attribute
-   * 
+   *
    * @param element - An HTML Element
    * @param cls - A string
-   * 
+   *
    * @returns `true` if the string exists in class attribute, otherwise `false`
    *
    */
@@ -260,7 +273,7 @@ namespace Carouzel {
 
   /**
    * Function to add a string to an element's class attribute
-   * 
+   *
    * @param element - An HTML Element
    * @param cls - A string
    *
@@ -281,7 +294,7 @@ namespace Carouzel {
 
   /**
    * Function to remove a string from an element's class attribute
-   * 
+   *
    * @param element - An HTML Element
    * @param cls - A string
    *
@@ -304,9 +317,9 @@ namespace Carouzel {
 
   /**
    * Function to fix the decimal places to 4
-   * 
+   *
    * @param num - A number
-   * 
+   *
    * @returns A string converted by applying toFixed function with decimal places 4
    *
    */
@@ -343,20 +356,26 @@ namespace Carouzel {
       }
     }
     return instanceCount;
-  }
-  
+  };
+
   /**
    * Function to remove all local events assigned to the navigation elements.
-   * 
+   *
    * @param core - Carouzel instance core object
    * @param element - An HTML Element from which the events need to be removed
    *
    */
-  const removeEventListeners = (core: any, element: Element | Document | Window) => {
+  const removeEventListeners = (
+    core: any,
+    element: Element | Document | Window
+  ) => {
     if ((core.eventHandlers || []).length > 0) {
       let j = core.eventHandlers.length;
       while (j--) {
-        if(core.eventHandlers[j].element.isEqualNode && core.eventHandlers[j].element.isEqualNode(element)) {
+        if (
+          core.eventHandlers[j].element.isEqualNode &&
+          core.eventHandlers[j].element.isEqualNode(element)
+        ) {
           core.eventHandlers[j].remove();
           core.eventHandlers.splice(j, 1);
         }
@@ -366,20 +385,24 @@ namespace Carouzel {
 
   /**
    * Function to remove all local events assigned to the navigation elements.
-   * 
+   *
    * @param element - An HTML Element which needs to be assigned an event
    * @param type - Event type
    * @param listener - The Event handler function
-   * 
+   *
    * @returns The event handler object
    *
    */
-  const eventHandler = (element: Element | Document | Window, type: string, listener: EventListenerOrEventListenerObject) => {
-    const eventHandler:IEventHandler = {
+  const eventHandler = (
+    element: Element | Document | Window,
+    type: string,
+    listener: EventListenerOrEventListenerObject
+  ) => {
+    const eventHandler: IEventHandler = {
       element: element,
       remove: () => {
         element.removeEventListener(type, listener, _useCapture);
-      }
+      },
     };
     element.addEventListener(type, listener, _useCapture);
     return eventHandler;
@@ -387,19 +410,23 @@ namespace Carouzel {
 
   /**
    * Function to update CSS classes on all respective elements
-   * 
+   *
    * @param core - Carouzel instance core object
    *
    */
   const updateAttributes = (core: ICore) => {
     let x;
-    for (let i=0; i<core._as.length; i++) {
+    for (let i = 0; i < core._as.length; i++) {
       if (core._as[i]) {
         removeClass(core._as[i] as Element, core.settings.activeCls);
         core._as[i].setAttribute('aria-hidden', 'true');
       }
     }
-    for (let i=core.ci + core.bpo.pDups.length; i<core.ci + core.bpo.pDups.length + core.bpo._2Show; i++) {
+    for (
+      let i = core.ci + core.bpo.pDups.length;
+      i < core.ci + core.bpo.pDups.length + core.bpo._2Show;
+      i++
+    ) {
       if (core._as[i]) {
         addClass(core._as[i] as Element, core.settings.activeCls);
         core._as[i].removeAttribute('aria-hidden');
@@ -416,7 +443,7 @@ namespace Carouzel {
       removeClass(core.arrowN as Element, core.settings.disableCls || '');
     }
     if (core.bpo.dots.length > 0) {
-      for (let i=0; i<core.bpo.dots.length; i++) {
+      for (let i = 0; i < core.bpo.dots.length; i++) {
         removeClass(core.bpo.dots[i] as Element, core.settings.activeCls);
       }
       x = Math.floor(core.ci / core.bpo._2Scroll);
@@ -431,14 +458,19 @@ namespace Carouzel {
 
   /**
    * Function to set CSS transition properties in style attribute of the element
-   * 
+   *
    * @param element - HTML element on which CSS transition properties are to be set
    * @param transitionProperty - The property which needs to be transitioned
    * @param transitionTimingFunction - The timing function to be followed during transition
    * @param transitionDuration - The duration followed for the transition
    *
    */
-  const setTransitionProperties = (element: HTMLElement, transitionProperty: string, transitionTimingFunction: string, transitionDuration: string) => {
+  const setTransitionProperties = (
+    element: HTMLElement,
+    transitionProperty: string,
+    transitionTimingFunction: string,
+    transitionDuration: string
+  ) => {
     element.style.transitionProperty = transitionProperty;
     element.style.transitionTimingFunction = transitionTimingFunction;
     element.style.transitionDuration = transitionDuration;
@@ -446,18 +478,31 @@ namespace Carouzel {
 
   /**
    * Function to animate the track element based on the calculations
-   * 
+   *
    * @param core - Carouzel instance core object
    *
    */
   const animateTrack = (core: ICore, isSmooth: boolean, isTouched: boolean) => {
+    core;
+    isSmooth;
+    isTouched;
+    updateAttributes;
+    setTransitionProperties;
+
     if (typeof core.settings.bFn === 'function') {
       core.settings.bFn();
     }
+
+    if (!core.pi) {
+      core.pi = 0;
+    }
+
     if (core.settings.inf && core.track) {
       setTransitionProperties(core.track, 'none', 'unset', '0ms');
       if (!isTouched) {
-        core.track.style.transform = `translate3d(${-core.pts[core.pi]}px, 0, 0)`;
+        core.track.style.transform = `translate3d(${-core.pts[
+          core.pi
+        ]}px, 0, 0)`;
       }
     } else {
       if (core.ci < 0) {
@@ -468,65 +513,113 @@ namespace Carouzel {
       }
     }
 
-    const postAnimation = () => {
-      setTimeout(() => {
-        if (core.ci >= core.sLength) {
-          core.ci = core.sLength - core.ci;
+    // const postAnimation = () => {
+    //   setTimeout(() => {
+    //     if (core.ci >= core.sLength) {
+    //       core.ci = core.sLength - core.ci;
+    //     }
+    //     if (core.ci < 0) {
+    //       core.ci = core.sLength + core.ci;
+    //     }
+    //     if (core.track) {
+    //       setTransitionProperties(core.track, 'none', 'unset', '0ms');
+    //       core.track.style.transform = `translate3d(${-core.pts[core.ci]}px, 0, 0)`;
+    //     }
+    //     core.ct = -core.pts[core.ci];
+    //     updateAttributes(core);
+    //   }, core.settings.speed);
+    // }
+    core._t.start = performance.now();
+    core._t.prevX = core.pts[core.pi];
+    core._t.nextX = core.pts[core.ci];
+    const scrollThisTrack = (now: number) => {
+      if (
+        core.track &&
+        core._t.start &&
+        core._t.total &&
+        core._t.prevX &&
+        core._t.nextX
+      ) {
+        core._t.elapsed = now - core._t.start;
+        if (typeof core.settings.timeFn === 'function') {
+          core._t.progress =
+            (core._t.elapsed / core._t.total) * core.settings.timeFn();
+        } else {
+          core._t.progress = core._t.elapsed / core._t.total;
         }
-        if (core.ci < 0) {
-          core.ci = core.sLength + core.ci;
-        }
-        if (core.track) {
-          setTransitionProperties(core.track, 'none', 'unset', '0ms');
-          core.track.style.transform = `translate3d(${-core.pts[core.ci]}px, 0, 0)`;
-        }
-        core.ct = -core.pts[core.ci];
-        updateAttributes(core);
-      }, core.settings.speed);
-    }
-
-    if (core.settings.effect === _animationEffects[0]) {
-      setTimeout(() => {
-        if (core.track) {
-          core.track.style.transitionProperty = 'transform';
-          if (isSmooth) {
-            core.track.style.transitionTimingFunction = core.settings.timeFn;
-            core.track.style.transitionDuration = `${core.settings.speed}ms`;
+        if (core.ci > core.pi) {
+          core._t.position =
+            core._t.prevX + core._t.progress * (core._t.nextX - core._t.prevX);
+          if (core._t.position > core._t.nextX) {
+            core._t.position = core._t.nextX;
           }
-          core.track.style.transform = `translate3d(${-core.pts[core.ci]}px, 0, 0)`;
-          postAnimation();
         }
-      }, 0);
-    }
-
-    if (core.settings.effect === _animationEffects[1]) {
-      const postOpacity = () => {
-        setTimeout(() => {
-          if (core.track) {
-            core.track.style.transform = `translate3d(${-core.pts[core.ci]}px, 0, 0)`;
-            core.track.style.opacity = '1';
+        if (core.ci < core.pi) {
+          core._t.position =
+            core._t.prevX - core._t.progress * (core._t.prevX - core._t.nextX);
+          if (core._t.position < core.pts[core.ci]) {
+            core._t.position = core.pts[core.ci];
           }
-          postAnimation();
-        }, core.settings.speed);
-      };
-      setTimeout(() => {
-        if (core.track) {
-          setTransitionProperties(core.track, 'opacity', core.settings.timeFn, `${core.settings.speed}ms`);
-          core.track.style.opacity = '0';
-          postOpacity();
         }
-      }, 0);
-    }
-    setTimeout(() => {
-      if (typeof core.settings.aFn === 'function') {
-        core.settings.aFn();
+        if (core._t.position) {
+          core._t.position = Math.round(core._t.position);
+          core.track.style.transform = `translate3d(${-core._t
+            .position}px, 0, 0)`;
+        }
+        if (core._t.progress < 1 && core._t.position !== core.pts[core.ci]) {
+          requestAnimationFrame(scrollThisTrack);
+        }
       }
-    }, core.settings.speed);
+    };
+    if (core.settings.effect === _animationEffects[0] && core.track) {
+      core.track.style.transitionProperty = 'transform';
+      // core.track.style.transform = `translate3d(${-core.pts[core.pi]}px, 0, 0)`;
+      // setTimeout(() => {
+      //   if (core.track) {
+      //     core.track.style.transitionProperty = 'transform';
+      //     if (isSmooth) {
+      //       core.track.style.transitionTimingFunction = core.settings.timeFn;
+      //       core.track.style.transitionDuration = `${core.settings.speed}ms`;
+      //     }
+      //     core.track.style.transform = `translate3d(${-core.pts[
+      //       core.ci
+      //     ]}px, 0, 0)`;
+      //     postAnimation();
+      //   }
+      // }, 0);
+      if (core._t.start && core._t.total && core.ci !== core.pi) {
+        requestAnimationFrame(scrollThisTrack);
+        // scrollThisTrack(performance.now());
+      }
+    }
+    // if (core.settings.effect === _animationEffects[1]) {
+    //   const postOpacity = () => {
+    //     setTimeout(() => {
+    //       if (core.track) {
+    //         core.track.style.transform = `translate3d(${-core.pts[core.ci]}px, 0, 0)`;
+    //         core.track.style.opacity = '1';
+    //       }
+    //       postAnimation();
+    //     }, core.settings.speed);
+    //   };
+    //   setTimeout(() => {
+    //     if (core.track) {
+    //       setTransitionProperties(core.track, 'opacity', core.settings.timeFn, `${core.settings.speed}ms`);
+    //       core.track.style.opacity = '0';
+    //       postOpacity();
+    //     }
+    //   }, 0);
+    // }
+    // setTimeout(() => {
+    //   if (typeof core.settings.aFn === 'function') {
+    //     core.settings.aFn();
+    //   }
+    // }, core.settings.speed);
   };
 
   /**
    * Function to prepend the duplicate or new elements in the track
-   * 
+   *
    * @param parent - Track element in which duplicates need to be prepended
    * @param child - The child element to be prepended
    *
@@ -540,7 +633,7 @@ namespace Carouzel {
 
   /**
    * Function to append the duplicate or new elements in the track
-   * 
+   *
    * @param parent - Track element in which duplicates need to be prepended
    * @param child - The child element to be prepended
    *
@@ -551,28 +644,32 @@ namespace Carouzel {
 
   /**
    * Function to manage the duplicate slides in the track based on the breakpoint
-   * 
+   *
    * @param track - Track element in which duplicates need to be deleted and inserted
    * @param bpo - The appropriate breakpoint based on the device width
    * @param duplicateClass - the class name associated with duplicate elements
    *
    */
-  const manageDuplicates = (track: HTMLElement, bpo: ICarouzelCoreBreakpoint, duplicateClass: string) => {
+  const manageDuplicates = (
+    track: HTMLElement,
+    bpo: ICarouzelCoreBreakpoint,
+    duplicateClass: string
+  ) => {
     let duplicates = track.querySelectorAll('.' + duplicateClass);
-    for (let i=0; i < duplicates.length; i++) {
+    for (let i = 0; i < duplicates.length; i++) {
       track.removeChild(duplicates[i]);
     }
-    for (let i=bpo.pDups.length - 1; i >= 0; i--) {
+    for (let i = bpo.pDups.length - 1; i >= 0; i--) {
       doInsertBefore(track, bpo.pDups[i]);
     }
-    for (let i=0; i < bpo.nDups.length; i++) {
+    for (let i = 0; i < bpo.nDups.length; i++) {
       doInsertAfter(track, bpo.nDups[i]);
     }
-  }
+  };
 
   /**
    * Function to find and apply the appropriate breakpoint settings based on the viewport
-   * 
+   *
    * @param core - Carouzel instance core object
    *
    */
@@ -583,16 +680,24 @@ namespace Carouzel {
     let slideWidth = 0;
     let trackWidth = 0;
     let temp = 0;
-    
-    while(len < core.bpall.length) {
-      if ((core.bpall[len + 1] && core.bpall[len + 1].bp > viewportWidth) || typeof core.bpall[len + 1] === 'undefined') {
+
+    while (len < core.bpall.length) {
+      if (
+        (core.bpall[len + 1] && core.bpall[len + 1].bp > viewportWidth) ||
+        typeof core.bpall[len + 1] === 'undefined'
+      ) {
         bpoptions = core.bpall[len];
         break;
       }
       len++;
     }
-    
-    if (core.rootElem && !hasClass(core.rootElem, core.settings.editCls) && (core.bpo_old || {})._2Show !== bpoptions._2Show && core.track) {
+
+    if (
+      core.rootElem &&
+      !hasClass(core.rootElem, core.settings.editCls) &&
+      (core.bpo_old || {})._2Show !== bpoptions._2Show &&
+      core.track
+    ) {
       manageDuplicates(core.track, bpoptions, core.settings.dupCls || '');
     }
     if ((core.bpo_old || {}).bp !== bpoptions.bp) {
@@ -629,34 +734,57 @@ namespace Carouzel {
       } else {
         removeClass(core.rootElem, core.settings.cntrCls);
       }
-      slideWidth = ((core.trackW.clientWidth - ((bpoptions._2Show - 1) * bpoptions.gutr)) / (bpoptions._2Show + bpoptions.cntr));
+      slideWidth =
+        (core.trackW.clientWidth - (bpoptions._2Show - 1) * bpoptions.gutr) /
+        (bpoptions._2Show + bpoptions.cntr);
       core.sWidth = slideWidth;
-      temp = core.sLength >= bpoptions._2Show ? bpoptions.bpSLen : bpoptions._2Show;
-      trackWidth = (slideWidth * temp) + (bpoptions.gutr * (temp + 1));
+      temp =
+        core.sLength >= bpoptions._2Show ? bpoptions.bpSLen : bpoptions._2Show;
+      trackWidth = slideWidth * temp + bpoptions.gutr * (temp + 1);
       core.track.style.width = toFixed4(trackWidth) + 'px';
-      core.trackO.style.width = toFixed4((bpoptions._2Show * slideWidth) + (bpoptions.gutr * (bpoptions._2Show - 1))) + 'px';
+      core.trackO.style.width =
+        toFixed4(
+          bpoptions._2Show * slideWidth +
+            bpoptions.gutr * (bpoptions._2Show - 1)
+        ) + 'px';
       core._as = core.trackO.querySelectorAll(_Selectors.slide);
       for (let i = 0; i < core._as.length; i++) {
         (core._as[i] as HTMLElement).style.width = toFixed4(slideWidth) + 'px';
         if (i === 0) {
-          (core._as[i] as HTMLElement).style.marginLeft = toFixed4(bpoptions.gutr) + 'px';
-          (core._as[i] as HTMLElement).style.marginRight = toFixed4(bpoptions.gutr / 2) + 'px';
+          (core._as[i] as HTMLElement).style.marginLeft =
+            toFixed4(bpoptions.gutr) + 'px';
+          (core._as[i] as HTMLElement).style.marginRight =
+            toFixed4(bpoptions.gutr / 2) + 'px';
         } else if (i === core._as.length - 1) {
-          (core._as[i] as HTMLElement).style.marginLeft = toFixed4(bpoptions.gutr / 2) + 'px';
-          (core._as[i] as HTMLElement).style.marginRight = toFixed4(bpoptions.gutr) + 'px';
+          (core._as[i] as HTMLElement).style.marginLeft =
+            toFixed4(bpoptions.gutr / 2) + 'px';
+          (core._as[i] as HTMLElement).style.marginRight =
+            toFixed4(bpoptions.gutr) + 'px';
         } else {
-          (core._as[i] as HTMLElement).style.marginLeft = toFixed4(bpoptions.gutr / 2) + 'px';
-          (core._as[i] as HTMLElement).style.marginRight = toFixed4(bpoptions.gutr / 2) + 'px';
+          (core._as[i] as HTMLElement).style.marginLeft =
+            toFixed4(bpoptions.gutr / 2) + 'px';
+          (core._as[i] as HTMLElement).style.marginRight =
+            toFixed4(bpoptions.gutr / 2) + 'px';
         }
       }
       for (let i = bpoptions.pDups.length; i > 0; i--) {
-        core.pts[-i] = ((-i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr)) + bpoptions.gutr ;
+        core.pts[-i] =
+          (-i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr) +
+          bpoptions.gutr;
       }
       for (let i = 0; i < core.sLength; i++) {
-        core.pts[i] = ((i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr)) + bpoptions.gutr ;
+        core.pts[i] =
+          (i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr) +
+          bpoptions.gutr;
       }
-      for (let i = core.sLength; i < core.sLength + bpoptions.nDups.length; i++) {
-        core.pts[i] = ((i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr)) + bpoptions.gutr ;
+      for (
+        let i = core.sLength;
+        i < core.sLength + bpoptions.nDups.length;
+        i++
+      ) {
+        core.pts[i] =
+          (i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr) +
+          bpoptions.gutr;
       }
       animateTrack(core, false, false);
     }
@@ -664,12 +792,12 @@ namespace Carouzel {
 
   /**
    * Function to go to the specific slide number
-   * 
+   *
    * @param core - Carouzel instance core object
    * @param slidenumber - Slide index to which the carouzel should be scrolled to
    *
    */
-  const goToSlide = (core: ICore, slidenumber:number) => {
+  const goToSlide = (core: ICore, slidenumber: number) => {
     if (core.ci !== slidenumber) {
       core.pi = core.ci;
       core.ci = slidenumber * core.bpo._2Scroll;
@@ -679,7 +807,7 @@ namespace Carouzel {
 
   /**
    * Function to go to the previous set of slides
-   * 
+   *
    * @param core - Carouzel instance core object
    *
    */
@@ -688,8 +816,12 @@ namespace Carouzel {
     core.ci -= core.bpo._2Scroll;
     if (core.settings.inf) {
       if (typeof core.pts[core.ci] === 'undefined') {
-        core.pi = core.sLength - (core.sLength % core.bpo._2Scroll > 0 ? core.sLength % core.bpo._2Scroll : core.bpo._2Scroll);
-        core.ci = core.pi - core.bpo._2Scroll;        
+        core.pi =
+          core.sLength -
+          (core.sLength % core.bpo._2Scroll > 0
+            ? core.sLength % core.bpo._2Scroll
+            : core.bpo._2Scroll);
+        core.ci = core.pi - core.bpo._2Scroll;
       } else {
         core.pi = core.ci + core.bpo._2Scroll;
       }
@@ -699,7 +831,7 @@ namespace Carouzel {
 
   /**
    * Function to go to the next set of slides
-   * 
+   *
    * @param core - Carouzel instance core object
    *
    */
@@ -720,7 +852,7 @@ namespace Carouzel {
 
   /**
    * Function to toggle keyboard navigation with left and right arrows
-   * 
+   *
    * @param core - Carouzel instance core object
    *
    */
@@ -728,21 +860,29 @@ namespace Carouzel {
     if (core.rootElem && core.settings.kb) {
       core.rootElem.setAttribute('tabindex', '-1');
       let keyCode = '';
-      core.eHandlers.push(eventHandler(core.rootElem, 'keydown', function (event: Event) {
-        event = event || window.event;
-        keyCode = (event as KeyboardEvent).key.toLowerCase();
-        switch (keyCode) {
-          case 'arrowleft': goToPrev(core, false); break;
-          case 'arrowright': goToNext(core, false); break;
-          default: keyCode = ''; break;
-        }
-      }));
+      core.eHandlers.push(
+        eventHandler(core.rootElem, 'keydown', function (event: Event) {
+          event = event || window.event;
+          keyCode = (event as KeyboardEvent).key.toLowerCase();
+          switch (keyCode) {
+            case 'arrowleft':
+              goToPrev(core, false);
+              break;
+            case 'arrowright':
+              goToNext(core, false);
+              break;
+            default:
+              keyCode = '';
+              break;
+          }
+        })
+      );
     }
   };
 
   /**
    * Function to toggle Play and Pause buttons when autoplaying carouzel is played or paused
-   * 
+   *
    * @param core - Carouzel instance core object
    * @param shouldPlay - A boolean value determining if the carouzel is being played or is paused
    *
@@ -761,20 +901,24 @@ namespace Carouzel {
 
   /**
    * Function to toggle Autoplay and pause on hover functionalities for the carouzel
-   * 
+   *
    * @param core - Carouzel instance core object
    *
    */
   const toggleAutoplay = (core: ICore) => {
     if (core.rootElem && core.settings.pauseHov) {
-      core.eHandlers.push(eventHandler(core.rootElem, 'mouseenter', function () {
-        core.paused = true;
-        togglePlayPause(core, false);
-      }));
-      core.eHandlers.push(eventHandler(core.rootElem, 'mouseleave', function () {
-        core.paused = false;
-        togglePlayPause(core, true);
-      }));
+      core.eHandlers.push(
+        eventHandler(core.rootElem, 'mouseenter', function () {
+          core.paused = true;
+          togglePlayPause(core, false);
+        })
+      );
+      core.eHandlers.push(
+        eventHandler(core.rootElem, 'mouseleave', function () {
+          core.paused = false;
+          togglePlayPause(core, true);
+        })
+      );
     }
     if (!core.settings.pauseHov) {
       core.paused = false;
@@ -788,146 +932,254 @@ namespace Carouzel {
 
   /**
    * Function to add click events to the arrows
-   * 
+   *
    * @param core - Carouzel instance core object
    *
    */
   const toggleControlButtons = (core: ICore) => {
     if (core.arrowP) {
-      core.eHandlers.push(eventHandler(core.arrowP, 'click', (event: Event) => {
-        event.preventDefault();
-        goToPrev(core, false);
-      }));
+      core.eHandlers.push(
+        eventHandler(core.arrowP, 'click', (event: Event) => {
+          event.preventDefault();
+          goToPrev(core, false);
+        })
+      );
     }
     if (core.arrowN) {
-      core.eHandlers.push(eventHandler(core.arrowN, 'click', (event: Event) => {
-        event.preventDefault();
-        goToNext(core, false);
-      }));
+      core.eHandlers.push(
+        eventHandler(core.arrowN, 'click', (event: Event) => {
+          event.preventDefault();
+          goToNext(core, false);
+        })
+      );
     }
     if (core.settings.inf && core.btnPause) {
-      core.eHandlers.push(eventHandler(core.btnPause, 'click', (event: Event) => {
-        event.preventDefault();
-        core.pauseClk = true;
-        togglePlayPause(core, false);
-      }));
+      core.eHandlers.push(
+        eventHandler(core.btnPause, 'click', (event: Event) => {
+          event.preventDefault();
+          core.pauseClk = true;
+          togglePlayPause(core, false);
+        })
+      );
     }
     if (core.settings.inf && core.btnPlay) {
-      core.eHandlers.push(eventHandler(core.btnPlay, 'click', (event: Event) => {
-        event.preventDefault();
-        core.pauseClk = false;
-        togglePlayPause(core, true);
-      }));
+      core.eHandlers.push(
+        eventHandler(core.btnPlay, 'click', (event: Event) => {
+          event.preventDefault();
+          core.pauseClk = false;
+          togglePlayPause(core, true);
+        })
+      );
     }
   };
-  
+
   /**
    * Function to add touch events to the track
-   * 
+   *
    * @param core - Carouzel instance core object
    *
    */
   const toggleTouchEvents = (core: ICore) => {
+    // let posX1 = 0;
+    // let posX2 = 0;
+    // let posFinal = 0;
+    // let threshold = core.settings.threshold || 100;
+    // let dragging = false;
+
+    // /**
+    //  * Local function for Touch Start event
+    //  *
+    //  */
+    // const touchStart = (thisevent: Event) => {
+    //   thisevent.preventDefault();
+    //   dragging = true;
+    //   if (thisevent.type === 'touchstart') {
+    //     posX1 = (thisevent as TouchEvent).touches[0].clientX;
+    //   } else {
+    //     posX1 = (thisevent as MouseEvent).clientX;
+    //   }
+    //   if (core.track) {
+    //     core.track.style.transitionProperty = core.settings.effect;
+    //     core.track.style.transitionTimingFunction = core.settings.timeFn;
+    //     core.track.style.transitionDuration = `${core.settings.speed}ms`;
+    //   }
+    // };
+
+    // /**
+    //  * Local function for Touch Move event
+    //  *
+    //  */
+    // const touchMove = (thisevent: Event) => {
+    //   if (dragging && core.track) {
+    //     if (thisevent.type == 'touchmove') {
+    //       posX2 = posX1 - (thisevent as TouchEvent).touches[0].clientX;
+    //     } else {
+    //       posX2 = posX1 - (thisevent as MouseEvent).clientX;
+    //     }
+    //     if (core.settings.effect === _animationEffects[0]) {
+    //       core.track.style.transform = `translate3d(${
+    //         core.ct - posX2
+    //       }px, 0, 0)`;
+    //     }
+    //     posFinal = posX2;
+    //   }
+    // };
+
+    // /**
+    //  * Local function for Touch End event
+    //  *
+    //  */
+    // const touchEnd = () => {
+    //   if (dragging && core.track) {
+    //     if (posFinal < -threshold) {
+    //       goToPrev(core, false);
+    //     } else if (posFinal > threshold) {
+    //       goToNext(core, false);
+    //     } else {
+    //       core.track.style.transform = `translate3d(${core.ct}px, 0, 0)`;
+    //     }
+    //   }
+    //   if (core.track) {
+    //     core.track.style.transitionProperty = 'none';
+    //     core.track.style.transitionTimingFunction = 'unset';
+    //     core.track.style.transitionDuration = '0ms';
+    //   }
+    //   posX1 = posX2 = posFinal = 0;
+    //   dragging = false;
+    // };
+
     let posX1 = 0;
     let posX2 = 0;
     let posFinal = 0;
-    let threshold = core.settings.threshold || 100;
+    let startX = 0;
+    let startY = 0;
+    let endX = 0;
+    let endY = 0;
+    let diffX = 0;
+    let diffY = 0;
+    let ratioX = 0;
+    let ratioY = 0;
     let dragging = false;
 
-    /**
-     * Local function for Touch Start event
-     * 
-     */
-    const touchStart = (thisevent: Event) => {
-      thisevent.preventDefault();
+    const touchStart = (e: Event) => {
       dragging = true;
-      if (thisevent.type === 'touchstart') {
-        posX1 = (thisevent as TouchEvent).touches[0].clientX;
+      if (e.type === 'touchstart') {
+        startX = (e as TouchEvent).changedTouches[0].screenX;
+        startY = (e as TouchEvent).changedTouches[0].screenY;
+        posX1 = (e as TouchEvent).changedTouches[0].screenX;
       } else {
-        posX1 = (thisevent as MouseEvent).clientX;
-      }
-      if (core.track) {
-        core.track.style.transitionProperty = core.settings.effect;
-        core.track.style.transitionTimingFunction = core.settings.timeFn;
-        core.track.style.transitionDuration = `${core.settings.speed}ms`;
+        startX = (e as MouseEvent).clientX;
+        startY = (e as MouseEvent).clientY;
+        posX1 = (e as MouseEvent).clientX;
       }
     };
 
-    /**
-     * Local function for Touch Move event
-     *
-     */
-    const touchMove = (thisevent: Event) => {
-      if (dragging && core.track) {
-        if (thisevent.type == 'touchmove') {
-          posX2 = posX1 - (thisevent as TouchEvent).touches[0].clientX;
+    const touchMove = (e: Event) => {
+      if (dragging) {
+        if (e.type === 'touchstart') {
+          endX = (e as TouchEvent).changedTouches[0].screenX;
+          endY = (e as TouchEvent).changedTouches[0].screenY;
+          posX2 = posX1 - (e as TouchEvent).changedTouches[0].screenX;
         } else {
-          posX2 = posX1 - (thisevent as MouseEvent).clientX;
+          endX = (e as MouseEvent).clientX;
+          endY = (e as MouseEvent).clientY;
+          posX2 = posX1 - (e as MouseEvent).clientX;
         }
-        if (core.settings.effect === _animationEffects[0]) {
-          core.track.style.transform = `translate3d(${core.ct - posX2}px, 0, 0)`; 
+        diffX = endX - startX;
+        diffY = endY - startY;
+        ratioX = Math.abs(diffX / diffY);
+        ratioY = Math.abs(diffY / diffX);
+
+        if (ratioX > ratioY) {
+          if (diffX > 0) {
+            console.log('right swipe');
+          } else if (diffX < 0) {
+            console.log('left swipe');
+          }
         }
         posFinal = posX2;
+        posFinal;
       }
     };
 
-    /**
-     * Local function for Touch End event
-     *
-     */
     const touchEnd = () => {
-      if (dragging && core.track) {
-        if (posFinal < -threshold) {
-          goToPrev(core, false);
-        } else if (posFinal > threshold) {
-          goToNext(core, false);
-        } else {
-          core.track.style.transform = `translate3d(${core.ct}px, 0, 0)`;
-        }
+      if (dragging) {
+        posX1 = posX2 = posFinal = 0;
+        dragging = false;
       }
-      if (core.track) {
-        core.track.style.transitionProperty = 'none';
-        core.track.style.transitionTimingFunction = 'unset';
-        core.track.style.transitionDuration = '0ms';
-      }
-      posX1 = posX2 = posFinal = 0;
-      dragging = false;
     };
 
-    core.eHandlers.push(eventHandler(core.track as HTMLElement, 'touchstart', function(event: Event) {
-      touchStart(event);
-    }));
-    core.eHandlers.push(eventHandler(core.track as HTMLElement, 'touchmove', function(event: Event) {
-      touchMove(event);
-    }));
-    core.eHandlers.push(eventHandler(core.track as HTMLElement, 'touchend', function() {
-      touchEnd();
-    }));
-    core.eHandlers.push(eventHandler(core.track as HTMLElement, 'mousedown', function(event: Event) {
-      touchStart(event);
-    }));
-    core.eHandlers.push(eventHandler(core.track as HTMLElement, 'mouseup', function() {
-      touchEnd();
-    }));
-    core.eHandlers.push(eventHandler(core.track as HTMLElement, 'mouseleave', function() {
-      touchEnd();
-    }));
-    core.eHandlers.push(eventHandler(core.track as HTMLElement, 'mousemove', function(event: Event) {
-      touchMove(event);
-    }));
+    core.eHandlers.push(
+      eventHandler(
+        core.track as HTMLElement,
+        'touchstart',
+        function (event: Event) {
+          touchStart(event);
+        }
+      )
+    );
+    core.eHandlers.push(
+      eventHandler(
+        core.track as HTMLElement,
+        'touchmove',
+        function (event: Event) {
+          touchMove(event);
+        }
+      )
+    );
+    core.eHandlers.push(
+      eventHandler(core.track as HTMLElement, 'touchend', function () {
+        touchEnd();
+      })
+    );
+    core.eHandlers.push(
+      eventHandler(
+        core.track as HTMLElement,
+        'mousedown',
+        function (event: Event) {
+          touchStart(event);
+        }
+      )
+    );
+    core.eHandlers.push(
+      eventHandler(core.track as HTMLElement, 'mouseup', function () {
+        touchEnd();
+      })
+    );
+    core.eHandlers.push(
+      eventHandler(core.track as HTMLElement, 'mouseleave', function () {
+        touchEnd();
+      })
+    );
+    core.eHandlers.push(
+      eventHandler(
+        core.track as HTMLElement,
+        'mousemove',
+        function (event: Event) {
+          touchMove(event);
+        }
+      )
+    );
   };
 
   /**
    * Function to generate duplicate elements and dot navigation before hand for all breakpoints
-   * 
+   *
    * @param core - Carouzel instance core object
    *
    */
   const generateElements = (core: ICore) => {
-    for (let i=0; i<core.bpall.length; i++) {
+    for (let i = 0; i < core.bpall.length; i++) {
       core.bpall[i].bpSLen = core.sLength;
       if (core.settings.inf) {
-        for (let j=core.sLength - core.bpall[i]._2Show - Math.ceil(core.bpall[i].cntr / 2); j<core.sLength; j++) {
+        for (
+          let j =
+            core.sLength -
+            core.bpall[i]._2Show -
+            Math.ceil(core.bpall[i].cntr / 2);
+          j < core.sLength;
+          j++
+        ) {
           if (core._ds[j]) {
             let elem = core._ds[j].cloneNode(true);
             addClass(elem as Element, core.settings.dupCls || '');
@@ -935,7 +1187,11 @@ namespace Carouzel {
             core.bpall[i].pDups.push(elem);
           }
         }
-        for (let j=0; j<core.bpall[i]._2Show + Math.ceil(core.bpall[i].cntr / 2); j++) {
+        for (
+          let j = 0;
+          j < core.bpall[i]._2Show + Math.ceil(core.bpall[i].cntr / 2);
+          j++
+        ) {
           if (core._ds[j]) {
             let elem = core._ds[j].cloneNode(true);
             addClass(elem as Element, core.settings.dupCls || '');
@@ -945,7 +1201,7 @@ namespace Carouzel {
         }
       }
     }
-    for (let i=0; i < core.bpall.length; i++) {
+    for (let i = 0; i < core.bpall.length; i++) {
       let pageLength = Math.floor(core.sLength / core.bpall[i]._2Scroll);
       let navBtns: Node[] = [];
       let var1 = core.sLength % core.bpall[i]._2Scroll;
@@ -958,25 +1214,35 @@ namespace Carouzel {
       }
       core.bpall[i].dots = [];
       let btnStr = '';
-      for (let j=0; j < pageLength; j++) {
+      for (let j = 0; j < pageLength; j++) {
         let elem = document.createElement('button');
         elem.setAttribute(_Selectors.dot.slice(1, -1), '');
         elem.setAttribute('type', 'button');
-        btnStr = `<div class="${core.settings.dotNcls}">${(j + 1)}</div>`;
-        if (core.settings.useTitle && core.bpall[i]._2Show === 1 && core._ds[j].getAttribute(_Selectors.stitle.slice(1, -1))) {
+        btnStr = `<div class="${core.settings.dotNcls}">${j + 1}</div>`;
+        if (
+          core.settings.useTitle &&
+          core.bpall[i]._2Show === 1 &&
+          core._ds[j].getAttribute(_Selectors.stitle.slice(1, -1))
+        ) {
           btnStr += core._ds[j].getAttribute(_Selectors.stitle.slice(1, -1));
           addClass(elem, core.settings.dotCls);
         }
         elem.innerHTML = btnStr;
         navBtns.push(elem);
       }
-      for (let j=0; j < pageLength; j++) {
-        core.eHandlers.push(eventHandler(navBtns[j] as HTMLElement, 'click', function (event: Event) {
-          event.preventDefault();
-          core.pi = core.ci;
-          core.ci = j * core.bpall[i]._2Scroll;
-          animateTrack(core, true, false);
-        }));
+      for (let j = 0; j < pageLength; j++) {
+        core.eHandlers.push(
+          eventHandler(
+            navBtns[j] as HTMLElement,
+            'click',
+            function (event: Event) {
+              event.preventDefault();
+              core.pi = core.ci;
+              core.ci = j * core.bpall[i]._2Scroll;
+              animateTrack(core, true, false);
+            }
+          )
+        );
         core.bpall[i].dots.push(navBtns[j]);
       }
     }
@@ -984,7 +1250,7 @@ namespace Carouzel {
 
   /**
    * Function to validate all breakpoints to check duplicates
-   * 
+   *
    * @param breakpoints - Breakpoint settings array
    *
    */
@@ -992,7 +1258,7 @@ namespace Carouzel {
     try {
       let tempArr = [];
       let len = breakpoints.length;
-      while(len--) {
+      while (len--) {
         if (tempArr.indexOf(breakpoints[len].bp) === -1) {
           tempArr.push(breakpoints[len].bp);
         }
@@ -1000,7 +1266,9 @@ namespace Carouzel {
       if (tempArr.length === breakpoints.length) {
         return {
           val: true,
-          bp: breakpoints.sort((a, b) => parseFloat(a.bp as string) - parseFloat(b.bp as string))
+          bp: breakpoints.sort(
+            (a, b) => parseFloat(a.bp as string) - parseFloat(b.bp as string)
+          ),
         };
       } else {
         throw new TypeError(_duplicateBreakpointsTypeError);
@@ -1008,11 +1276,11 @@ namespace Carouzel {
     } catch (e) {
       throw new TypeError(_breakpointsParseTypeError);
     }
-  }
+  };
 
   /**
    * Function to update breakpoints to override missing settings from previous breakpoint
-   * 
+   *
    * @param settings - Core settings object containing merge of default and custom settings
    *
    */
@@ -1034,7 +1302,7 @@ namespace Carouzel {
     let tempArr = [];
     if (settings.res && settings.res.length > 0) {
       let settingsLength = settings.res.length;
-      while(settingsLength--) {
+      while (settingsLength--) {
         tempArr.push(settings.res[settingsLength]);
       }
     }
@@ -1045,9 +1313,9 @@ namespace Carouzel {
       let bpLen = 1;
       let bp1: ICarouzelCoreBreakpoint;
       let bp2: ICarouzelCoreBreakpoint;
-      while(bpLen < updatedArr.bp.length) {
-        bp1 = bpArr[bpLen-1];
-        bp2 = {...bp1, ...updatedArr.bp[bpLen]};
+      while (bpLen < updatedArr.bp.length) {
+        bp1 = bpArr[bpLen - 1];
+        bp2 = { ...bp1, ...updatedArr.bp[bpLen] };
         if (typeof bp2._arrows === 'undefined') {
           bp2._arrows = bp1._arrows;
         }
@@ -1077,10 +1345,9 @@ namespace Carouzel {
     return [];
   };
 
-
   /**
    * Function to map default and custom settings to Core settings with shorter names
-   * 
+   *
    * @param settings - Settings object containing merge of default and custom settings
    *
    */
@@ -1118,9 +1385,9 @@ namespace Carouzel {
       threshold: settings.touchThreshold,
       timeFn: settings.timingFunction,
       useTitle: settings.useTitlesAsDots,
-    }
+    };
 
-    if (settings.responsive && settings.responsive.length > 0)  {
+    if (settings.responsive && settings.responsive.length > 0) {
       for (let i = 0; i < settings.responsive.length; i++) {
         let obj: ICarouzelCoreBreakpoint = {
           _2Scroll: settings.responsive[i].slidesToScroll,
@@ -1135,7 +1402,7 @@ namespace Carouzel {
           nDups: [],
           pDups: [],
           swipe: settings.responsive[i].hasTouchSwipe,
-        }
+        };
         if (settingsobj.res) {
           settingsobj.res.push(obj);
         }
@@ -1147,18 +1414,22 @@ namespace Carouzel {
 
   /**
    * Function to initialize the carouzel core object and assign respective events
-   * 
+   *
    * @param core - Carouzel instance core object
    *
    */
-  const init = (core: ICore, rootElem: HTMLElement, settings: ICarouzelSettings) => {
+  const init = (
+    core: ICore,
+    rootElem: HTMLElement,
+    settings: ICarouzelSettings
+  ) => {
     if (typeof settings.beforeInit === 'function') {
       settings.beforeInit();
     }
-    let _core: ICore = {...core};
+    let _core: ICore = { ...core };
     _core.rootElem = core.rootElem = rootElem;
     _core.settings = mapSettings(settings);
-    
+
     _core._ds = rootElem.querySelectorAll(`${_Selectors.slide}`);
     _core.arrowN = rootElem.querySelector(`${_Selectors.arrowN}`);
     _core.arrowP = rootElem.querySelector(`${_Selectors.arrowP}`);
@@ -1176,6 +1447,8 @@ namespace Carouzel {
     _core.trackM = rootElem.querySelector(`${_Selectors.trackM}`);
     _core.trackO = rootElem.querySelector(`${_Selectors.trackO}`);
     _core.trackW = rootElem.querySelector(`${_Selectors.trackW}`);
+    _core._t = {};
+    _core._t.total = _core.settings.speed;
 
     core.goToNext = () => {
       goToNext(_core, false);
@@ -1198,7 +1471,7 @@ namespace Carouzel {
         doInsertAfter(_core.track, slideElem);
       }
     };
-    
+
     if (_core.settings.effect === _animationEffects[1]) {
       addClass(core.rootElem as Element, _core.settings.fadCls);
     }
@@ -1232,47 +1505,57 @@ namespace Carouzel {
   };
 
   /**
-   *  ██████  ██████  ██████  ███████ 
-   * ██      ██    ██ ██   ██ ██      
-   * ██      ██    ██ ██████  █████   
-   * ██      ██    ██ ██   ██ ██      
-   *  ██████  ██████  ██   ██ ███████    
-   * 
+   *  ██████  ██████  ██████  ███████
+   * ██      ██    ██ ██   ██ ██
+   * ██      ██    ██ ██████  █████
+   * ██      ██    ██ ██   ██ ██
+   *  ██████  ██████  ██   ██ ███████
+   *
    * Class for every Carouzel instance.
    *
    */
   class Core {
     protected core: any = {};
-    constructor(thisid: string, rootElem: HTMLElement, options?: ICarouzelSettings) {
-      let initObj = init(this.core, rootElem, {..._Defaults, ...options});
+    constructor(
+      thisid: string,
+      rootElem: HTMLElement,
+      options?: ICarouzelSettings
+    ) {
+      let initObj = init(this.core, rootElem, { ..._Defaults, ...options });
       this.core = initObj.global;
       allLocalInstances[thisid] = initObj.local;
     }
     protected destroy = (thisid: string) => {
       let allElems = document.querySelectorAll(`#${thisid} *`);
       let core = allLocalInstances[thisid];
-      for (let i=0; i<allElems.length; i++) {
+      for (let i = 0; i < allElems.length; i++) {
         removeEventListeners(core, allElems[i]);
-        if (core.track && hasClass(allElems[i] as Element, core.settings.dupCls)) {
+        if (
+          core.track &&
+          hasClass(allElems[i] as Element, core.settings.dupCls)
+        ) {
           core.track.removeChild(allElems[i]);
         }
         if (core.nav && allElems[i].hasAttribute(_Selectors.dot.slice(1, -1))) {
           core.nav.removeChild(allElems[i]);
         }
         allElems[i].removeAttribute('style');
-        removeClass(allElems[i] as HTMLElement, `${core.settings.activeCls} ${core.settings.editCls} ${core.settings.disableCls} ${core.settings.dupCls} ${core.settings.rtlCls}`)
+        removeClass(
+          allElems[i] as HTMLElement,
+          `${core.settings.activeCls} ${core.settings.editCls} ${core.settings.disableCls} ${core.settings.dupCls} ${core.settings.rtlCls}`
+        );
       }
       delete allLocalInstances[thisid];
     };
   }
 
   /**
-   * ██████   ██████   ██████  ████████ 
-   * ██   ██ ██    ██ ██    ██    ██    
-   * ██████  ██    ██ ██    ██    ██    
-   * ██   ██ ██    ██ ██    ██    ██    
-   * ██   ██  ██████   ██████     ██    
-   * 
+   * ██████   ██████   ██████  ████████
+   * ██   ██ ██    ██ ██    ██    ██
+   * ██████  ██    ██ ██    ██    ██
+   * ██   ██ ██    ██ ██    ██    ██
+   * ██   ██  ██████   ██████     ██
+   *
    * Exposed Singleton Class for global usage.
    *
    */
@@ -1287,7 +1570,7 @@ namespace Carouzel {
     constructor() {}
     /**
      * Function to return single instance
-     * 
+     *
      * @returns Single Carouzel Instance
      *
      */
@@ -1300,7 +1583,7 @@ namespace Carouzel {
 
     /**
      * Function to initialize the Carouzel plugin for provided query strings.
-     * 
+     *
      * @param query - The CSS selector for which the Carouzel needs to be initialized.
      * @param options - The optional object to customize every Carouzel instance.
      *
@@ -1330,10 +1613,15 @@ namespace Carouzel {
 
           if (!isElementPresent) {
             let newOptions;
-            let autoDataAttr = (roots[i] as HTMLElement).getAttribute(_Selectors.rootAuto.slice(1, -1)) || '';
+            let autoDataAttr =
+              (roots[i] as HTMLElement).getAttribute(
+                _Selectors.rootAuto.slice(1, -1)
+              ) || '';
             if (autoDataAttr) {
               try {
-                newOptions = JSON.parse(stringTrim(autoDataAttr).replace(/'/g, '"'));
+                newOptions = JSON.parse(
+                  stringTrim(autoDataAttr).replace(/'/g, '"')
+                );
               } catch (e) {
                 throw new TypeError(_optionsParseTypeError);
               }
@@ -1341,11 +1629,25 @@ namespace Carouzel {
               newOptions = options;
             }
             if (id) {
-              allGlobalInstances[id] = new Core(id, roots[i] as HTMLElement, newOptions);
+              allGlobalInstances[id] = new Core(
+                id,
+                roots[i] as HTMLElement,
+                newOptions
+              );
             } else {
-              const thisid = id ? id : {...newOptions, ..._Defaults}.idPrefix + '_' + new Date().getTime() + '_root_' + (i + 1);
+              const thisid = id
+                ? id
+                : { ...newOptions, ..._Defaults }.idPrefix +
+                  '_' +
+                  new Date().getTime() +
+                  '_root_' +
+                  (i + 1);
               roots[i].setAttribute('id', thisid);
-              allGlobalInstances[thisid] = new Core(thisid, roots[i] as HTMLElement, newOptions);
+              allGlobalInstances[thisid] = new Core(
+                thisid,
+                roots[i] as HTMLElement,
+                newOptions
+              );
             }
           }
         }
@@ -1362,7 +1664,7 @@ namespace Carouzel {
 
     /**
      * Function to initialize all the carouzel which have 'data-carouzelauto' set
-     * 
+     *
      */
     public globalInit = () => {
       this.init(_Selectors.rootAuto);
@@ -1370,7 +1672,7 @@ namespace Carouzel {
 
     /**
      * Function to get the Carouzel based on the query string provided.
-     * 
+     *
      * @param query - The CSS selector for which the Carouzel needs to be initialized.
      *
      */
@@ -1380,7 +1682,7 @@ namespace Carouzel {
 
     /**
      * Function to destroy the Carouzel plugin for provided query strings.
-     * 
+     *
      * @param query - The CSS selector for which the Carouzel needs to be initialized.
      *
      */

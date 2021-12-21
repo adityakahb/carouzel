@@ -20,7 +20,7 @@ var __assign = (this && this.__assign) || function () {
  */
 var Carouzel;
 (function (Carouzel) {
-    "use strict";
+    'use strict';
     var allLocalInstances = {};
     var allGlobalInstances = {};
     var isWindowEventAttached = false;
@@ -78,7 +78,13 @@ var Carouzel;
         slidesToShow: 1,
         spaceBetween: 0,
         startAtIndex: 1,
-        timingFunction: 'ease-in-out',
+        timingFunction: function (time, beginningVal, change, duration) {
+            if (time === void 0) { time = 0; }
+            if (beginningVal === void 0) { beginningVal = 0.5; }
+            if (change === void 0) { change = 1; }
+            if (duration === void 0) { duration = 1; }
+            return change * (time /= duration) * time + beginningVal;
+        },
         touchThreshold: 100,
         useTitlesAsDots: false
     };
@@ -202,7 +208,8 @@ var Carouzel;
         if ((core.eventHandlers || []).length > 0) {
             var j = core.eventHandlers.length;
             while (j--) {
-                if (core.eventHandlers[j].element.isEqualNode && core.eventHandlers[j].element.isEqualNode(element)) {
+                if (core.eventHandlers[j].element.isEqualNode &&
+                    core.eventHandlers[j].element.isEqualNode(element)) {
                     core.eventHandlers[j].remove();
                     core.eventHandlers.splice(j, 1);
                 }
@@ -295,8 +302,16 @@ var Carouzel;
      *
      */
     var animateTrack = function (core, isSmooth, isTouched) {
+        core;
+        isSmooth;
+        isTouched;
+        updateAttributes;
+        setTransitionProperties;
         if (typeof core.settings.bFn === 'function') {
             core.settings.bFn();
+        }
+        if (!core.pi) {
+            core.pi = 0;
         }
         if (core.settings.inf && core.track) {
             setTransitionProperties(core.track, 'none', 'unset', '0ms');
@@ -312,58 +327,107 @@ var Carouzel;
                 core.ci = core.sLength - core.bpo._2Show;
             }
         }
-        var postAnimation = function () {
-            setTimeout(function () {
-                if (core.ci >= core.sLength) {
-                    core.ci = core.sLength - core.ci;
+        // const postAnimation = () => {
+        //   setTimeout(() => {
+        //     if (core.ci >= core.sLength) {
+        //       core.ci = core.sLength - core.ci;
+        //     }
+        //     if (core.ci < 0) {
+        //       core.ci = core.sLength + core.ci;
+        //     }
+        //     if (core.track) {
+        //       setTransitionProperties(core.track, 'none', 'unset', '0ms');
+        //       core.track.style.transform = `translate3d(${-core.pts[core.ci]}px, 0, 0)`;
+        //     }
+        //     core.ct = -core.pts[core.ci];
+        //     updateAttributes(core);
+        //   }, core.settings.speed);
+        // }
+        core._t.start = performance.now();
+        core._t.prevX = core.pts[core.pi];
+        core._t.nextX = core.pts[core.ci];
+        var scrollThisTrack = function (now) {
+            if (core.track &&
+                core._t.start &&
+                core._t.total &&
+                core._t.prevX &&
+                core._t.nextX) {
+                core._t.elapsed = now - core._t.start;
+                if (typeof core.settings.timeFn === 'function') {
+                    core._t.progress =
+                        (core._t.elapsed / core._t.total) * core.settings.timeFn();
                 }
-                if (core.ci < 0) {
-                    core.ci = core.sLength + core.ci;
+                else {
+                    core._t.progress = core._t.elapsed / core._t.total;
                 }
-                if (core.track) {
-                    setTransitionProperties(core.track, 'none', 'unset', '0ms');
-                    core.track.style.transform = "translate3d(".concat(-core.pts[core.ci], "px, 0, 0)");
-                }
-                core.ct = -core.pts[core.ci];
-                updateAttributes(core);
-            }, core.settings.speed);
-        };
-        if (core.settings.effect === _animationEffects[0]) {
-            setTimeout(function () {
-                if (core.track) {
-                    core.track.style.transitionProperty = 'transform';
-                    if (isSmooth) {
-                        core.track.style.transitionTimingFunction = core.settings.timeFn;
-                        core.track.style.transitionDuration = "".concat(core.settings.speed, "ms");
+                if (core.ci > core.pi) {
+                    core._t.position =
+                        core._t.prevX + core._t.progress * (core._t.nextX - core._t.prevX);
+                    if (core._t.position > core._t.nextX) {
+                        core._t.position = core._t.nextX;
                     }
-                    core.track.style.transform = "translate3d(".concat(-core.pts[core.ci], "px, 0, 0)");
-                    postAnimation();
                 }
-            }, 0);
-        }
-        if (core.settings.effect === _animationEffects[1]) {
-            var postOpacity_1 = function () {
-                setTimeout(function () {
-                    if (core.track) {
-                        core.track.style.transform = "translate3d(".concat(-core.pts[core.ci], "px, 0, 0)");
-                        core.track.style.opacity = '1';
+                if (core.ci < core.pi) {
+                    core._t.position =
+                        core._t.prevX - core._t.progress * (core._t.prevX - core._t.nextX);
+                    if (core._t.position < core.pts[core.ci]) {
+                        core._t.position = core.pts[core.ci];
                     }
-                    postAnimation();
-                }, core.settings.speed);
-            };
-            setTimeout(function () {
-                if (core.track) {
-                    setTransitionProperties(core.track, 'opacity', core.settings.timeFn, "".concat(core.settings.speed, "ms"));
-                    core.track.style.opacity = '0';
-                    postOpacity_1();
                 }
-            }, 0);
-        }
-        setTimeout(function () {
-            if (typeof core.settings.aFn === 'function') {
-                core.settings.aFn();
+                if (core._t.position) {
+                    core._t.position = Math.round(core._t.position);
+                    core.track.style.transform = "translate3d(".concat(-core._t
+                        .position, "px, 0, 0)");
+                }
+                if (core._t.progress < 1 && core._t.position !== core.pts[core.ci]) {
+                    requestAnimationFrame(scrollThisTrack);
+                }
             }
-        }, core.settings.speed);
+        };
+        if (core.settings.effect === _animationEffects[0] && core.track) {
+            core.track.style.transitionProperty = 'transform';
+            // core.track.style.transform = `translate3d(${-core.pts[core.pi]}px, 0, 0)`;
+            // setTimeout(() => {
+            //   if (core.track) {
+            //     core.track.style.transitionProperty = 'transform';
+            //     if (isSmooth) {
+            //       core.track.style.transitionTimingFunction = core.settings.timeFn;
+            //       core.track.style.transitionDuration = `${core.settings.speed}ms`;
+            //     }
+            //     core.track.style.transform = `translate3d(${-core.pts[
+            //       core.ci
+            //     ]}px, 0, 0)`;
+            //     postAnimation();
+            //   }
+            // }, 0);
+            if (core._t.start && core._t.total && core.ci !== core.pi) {
+                requestAnimationFrame(scrollThisTrack);
+                // scrollThisTrack(performance.now());
+            }
+        }
+        // if (core.settings.effect === _animationEffects[1]) {
+        //   const postOpacity = () => {
+        //     setTimeout(() => {
+        //       if (core.track) {
+        //         core.track.style.transform = `translate3d(${-core.pts[core.ci]}px, 0, 0)`;
+        //         core.track.style.opacity = '1';
+        //       }
+        //       postAnimation();
+        //     }, core.settings.speed);
+        //   };
+        //   setTimeout(() => {
+        //     if (core.track) {
+        //       setTransitionProperties(core.track, 'opacity', core.settings.timeFn, `${core.settings.speed}ms`);
+        //       core.track.style.opacity = '0';
+        //       postOpacity();
+        //     }
+        //   }, 0);
+        // }
+        // setTimeout(() => {
+        //   if (typeof core.settings.aFn === 'function') {
+        //     core.settings.aFn();
+        //   }
+        // }, core.settings.speed);
     };
     /**
      * Function to prepend the duplicate or new elements in the track
@@ -422,13 +486,17 @@ var Carouzel;
         var trackWidth = 0;
         var temp = 0;
         while (len < core.bpall.length) {
-            if ((core.bpall[len + 1] && core.bpall[len + 1].bp > viewportWidth) || typeof core.bpall[len + 1] === 'undefined') {
+            if ((core.bpall[len + 1] && core.bpall[len + 1].bp > viewportWidth) ||
+                typeof core.bpall[len + 1] === 'undefined') {
                 bpoptions = core.bpall[len];
                 break;
             }
             len++;
         }
-        if (core.rootElem && !hasClass(core.rootElem, core.settings.editCls) && (core.bpo_old || {})._2Show !== bpoptions._2Show && core.track) {
+        if (core.rootElem &&
+            !hasClass(core.rootElem, core.settings.editCls) &&
+            (core.bpo_old || {})._2Show !== bpoptions._2Show &&
+            core.track) {
             manageDuplicates(core.track, bpoptions, core.settings.dupCls || '');
         }
         if ((core.bpo_old || {}).bp !== bpoptions.bp) {
@@ -467,36 +535,53 @@ var Carouzel;
             else {
                 removeClass(core.rootElem, core.settings.cntrCls);
             }
-            slideWidth = ((core.trackW.clientWidth - ((bpoptions._2Show - 1) * bpoptions.gutr)) / (bpoptions._2Show + bpoptions.cntr));
+            slideWidth =
+                (core.trackW.clientWidth - (bpoptions._2Show - 1) * bpoptions.gutr) /
+                    (bpoptions._2Show + bpoptions.cntr);
             core.sWidth = slideWidth;
-            temp = core.sLength >= bpoptions._2Show ? bpoptions.bpSLen : bpoptions._2Show;
-            trackWidth = (slideWidth * temp) + (bpoptions.gutr * (temp + 1));
+            temp =
+                core.sLength >= bpoptions._2Show ? bpoptions.bpSLen : bpoptions._2Show;
+            trackWidth = slideWidth * temp + bpoptions.gutr * (temp + 1);
             core.track.style.width = toFixed4(trackWidth) + 'px';
-            core.trackO.style.width = toFixed4((bpoptions._2Show * slideWidth) + (bpoptions.gutr * (bpoptions._2Show - 1))) + 'px';
+            core.trackO.style.width =
+                toFixed4(bpoptions._2Show * slideWidth +
+                    bpoptions.gutr * (bpoptions._2Show - 1)) + 'px';
             core._as = core.trackO.querySelectorAll(_Selectors.slide);
             for (var i = 0; i < core._as.length; i++) {
                 core._as[i].style.width = toFixed4(slideWidth) + 'px';
                 if (i === 0) {
-                    core._as[i].style.marginLeft = toFixed4(bpoptions.gutr) + 'px';
-                    core._as[i].style.marginRight = toFixed4(bpoptions.gutr / 2) + 'px';
+                    core._as[i].style.marginLeft =
+                        toFixed4(bpoptions.gutr) + 'px';
+                    core._as[i].style.marginRight =
+                        toFixed4(bpoptions.gutr / 2) + 'px';
                 }
                 else if (i === core._as.length - 1) {
-                    core._as[i].style.marginLeft = toFixed4(bpoptions.gutr / 2) + 'px';
-                    core._as[i].style.marginRight = toFixed4(bpoptions.gutr) + 'px';
+                    core._as[i].style.marginLeft =
+                        toFixed4(bpoptions.gutr / 2) + 'px';
+                    core._as[i].style.marginRight =
+                        toFixed4(bpoptions.gutr) + 'px';
                 }
                 else {
-                    core._as[i].style.marginLeft = toFixed4(bpoptions.gutr / 2) + 'px';
-                    core._as[i].style.marginRight = toFixed4(bpoptions.gutr / 2) + 'px';
+                    core._as[i].style.marginLeft =
+                        toFixed4(bpoptions.gutr / 2) + 'px';
+                    core._as[i].style.marginRight =
+                        toFixed4(bpoptions.gutr / 2) + 'px';
                 }
             }
             for (var i = bpoptions.pDups.length; i > 0; i--) {
-                core.pts[-i] = ((-i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr)) + bpoptions.gutr;
+                core.pts[-i] =
+                    (-i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr) +
+                        bpoptions.gutr;
             }
             for (var i = 0; i < core.sLength; i++) {
-                core.pts[i] = ((i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr)) + bpoptions.gutr;
+                core.pts[i] =
+                    (i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr) +
+                        bpoptions.gutr;
             }
             for (var i = core.sLength; i < core.sLength + bpoptions.nDups.length; i++) {
-                core.pts[i] = ((i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr)) + bpoptions.gutr;
+                core.pts[i] =
+                    (i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr) +
+                        bpoptions.gutr;
             }
             animateTrack(core, false, false);
         }
@@ -526,7 +611,11 @@ var Carouzel;
         core.ci -= core.bpo._2Scroll;
         if (core.settings.inf) {
             if (typeof core.pts[core.ci] === 'undefined') {
-                core.pi = core.sLength - (core.sLength % core.bpo._2Scroll > 0 ? core.sLength % core.bpo._2Scroll : core.bpo._2Scroll);
+                core.pi =
+                    core.sLength -
+                        (core.sLength % core.bpo._2Scroll > 0
+                            ? core.sLength % core.bpo._2Scroll
+                            : core.bpo._2Scroll);
                 core.ci = core.pi - core.bpo._2Scroll;
             }
             else {
@@ -669,71 +758,128 @@ var Carouzel;
      *
      */
     var toggleTouchEvents = function (core) {
+        // let posX1 = 0;
+        // let posX2 = 0;
+        // let posFinal = 0;
+        // let threshold = core.settings.threshold || 100;
+        // let dragging = false;
+        // /**
+        //  * Local function for Touch Start event
+        //  *
+        //  */
+        // const touchStart = (thisevent: Event) => {
+        //   thisevent.preventDefault();
+        //   dragging = true;
+        //   if (thisevent.type === 'touchstart') {
+        //     posX1 = (thisevent as TouchEvent).touches[0].clientX;
+        //   } else {
+        //     posX1 = (thisevent as MouseEvent).clientX;
+        //   }
+        //   if (core.track) {
+        //     core.track.style.transitionProperty = core.settings.effect;
+        //     core.track.style.transitionTimingFunction = core.settings.timeFn;
+        //     core.track.style.transitionDuration = `${core.settings.speed}ms`;
+        //   }
+        // };
+        // /**
+        //  * Local function for Touch Move event
+        //  *
+        //  */
+        // const touchMove = (thisevent: Event) => {
+        //   if (dragging && core.track) {
+        //     if (thisevent.type == 'touchmove') {
+        //       posX2 = posX1 - (thisevent as TouchEvent).touches[0].clientX;
+        //     } else {
+        //       posX2 = posX1 - (thisevent as MouseEvent).clientX;
+        //     }
+        //     if (core.settings.effect === _animationEffects[0]) {
+        //       core.track.style.transform = `translate3d(${
+        //         core.ct - posX2
+        //       }px, 0, 0)`;
+        //     }
+        //     posFinal = posX2;
+        //   }
+        // };
+        // /**
+        //  * Local function for Touch End event
+        //  *
+        //  */
+        // const touchEnd = () => {
+        //   if (dragging && core.track) {
+        //     if (posFinal < -threshold) {
+        //       goToPrev(core, false);
+        //     } else if (posFinal > threshold) {
+        //       goToNext(core, false);
+        //     } else {
+        //       core.track.style.transform = `translate3d(${core.ct}px, 0, 0)`;
+        //     }
+        //   }
+        //   if (core.track) {
+        //     core.track.style.transitionProperty = 'none';
+        //     core.track.style.transitionTimingFunction = 'unset';
+        //     core.track.style.transitionDuration = '0ms';
+        //   }
+        //   posX1 = posX2 = posFinal = 0;
+        //   dragging = false;
+        // };
         var posX1 = 0;
         var posX2 = 0;
         var posFinal = 0;
-        var threshold = core.settings.threshold || 100;
+        var startX = 0;
+        var startY = 0;
+        var endX = 0;
+        var endY = 0;
+        var diffX = 0;
+        var diffY = 0;
+        var ratioX = 0;
+        var ratioY = 0;
         var dragging = false;
-        /**
-         * Local function for Touch Start event
-         *
-         */
-        var touchStart = function (thisevent) {
-            thisevent.preventDefault();
+        var touchStart = function (e) {
             dragging = true;
-            if (thisevent.type === 'touchstart') {
-                posX1 = thisevent.touches[0].clientX;
+            if (e.type === 'touchstart') {
+                startX = e.changedTouches[0].screenX;
+                startY = e.changedTouches[0].screenY;
+                posX1 = e.changedTouches[0].screenX;
             }
             else {
-                posX1 = thisevent.clientX;
-            }
-            if (core.track) {
-                core.track.style.transitionProperty = core.settings.effect;
-                core.track.style.transitionTimingFunction = core.settings.timeFn;
-                core.track.style.transitionDuration = "".concat(core.settings.speed, "ms");
+                startX = e.clientX;
+                startY = e.clientY;
+                posX1 = e.clientX;
             }
         };
-        /**
-         * Local function for Touch Move event
-         *
-         */
-        var touchMove = function (thisevent) {
-            if (dragging && core.track) {
-                if (thisevent.type == 'touchmove') {
-                    posX2 = posX1 - thisevent.touches[0].clientX;
+        var touchMove = function (e) {
+            if (dragging) {
+                if (e.type === 'touchstart') {
+                    endX = e.changedTouches[0].screenX;
+                    endY = e.changedTouches[0].screenY;
+                    posX2 = posX1 - e.changedTouches[0].screenX;
                 }
                 else {
-                    posX2 = posX1 - thisevent.clientX;
+                    endX = e.clientX;
+                    endY = e.clientY;
+                    posX2 = posX1 - e.clientX;
                 }
-                if (core.settings.effect === _animationEffects[0]) {
-                    core.track.style.transform = "translate3d(".concat(core.ct - posX2, "px, 0, 0)");
+                diffX = endX - startX;
+                diffY = endY - startY;
+                ratioX = Math.abs(diffX / diffY);
+                ratioY = Math.abs(diffY / diffX);
+                if (ratioX > ratioY) {
+                    if (diffX > 0) {
+                        console.log('right swipe');
+                    }
+                    else if (diffX < 0) {
+                        console.log('left swipe');
+                    }
                 }
                 posFinal = posX2;
+                posFinal;
             }
         };
-        /**
-         * Local function for Touch End event
-         *
-         */
         var touchEnd = function () {
-            if (dragging && core.track) {
-                if (posFinal < -threshold) {
-                    goToPrev(core, false);
-                }
-                else if (posFinal > threshold) {
-                    goToNext(core, false);
-                }
-                else {
-                    core.track.style.transform = "translate3d(".concat(core.ct, "px, 0, 0)");
-                }
+            if (dragging) {
+                posX1 = posX2 = posFinal = 0;
+                dragging = false;
             }
-            if (core.track) {
-                core.track.style.transitionProperty = 'none';
-                core.track.style.transitionTimingFunction = 'unset';
-                core.track.style.transitionDuration = '0ms';
-            }
-            posX1 = posX2 = posFinal = 0;
-            dragging = false;
         };
         core.eHandlers.push(eventHandler(core.track, 'touchstart', function (event) {
             touchStart(event);
@@ -767,7 +913,9 @@ var Carouzel;
         for (var i = 0; i < core.bpall.length; i++) {
             core.bpall[i].bpSLen = core.sLength;
             if (core.settings.inf) {
-                for (var j = core.sLength - core.bpall[i]._2Show - Math.ceil(core.bpall[i].cntr / 2); j < core.sLength; j++) {
+                for (var j = core.sLength -
+                    core.bpall[i]._2Show -
+                    Math.ceil(core.bpall[i].cntr / 2); j < core.sLength; j++) {
                     if (core._ds[j]) {
                         var elem = core._ds[j].cloneNode(true);
                         addClass(elem, core.settings.dupCls || '');
@@ -802,8 +950,10 @@ var Carouzel;
                 var elem = document.createElement('button');
                 elem.setAttribute(_Selectors.dot.slice(1, -1), '');
                 elem.setAttribute('type', 'button');
-                btnStr = "<div class=\"".concat(core.settings.dotNcls, "\">").concat((j + 1), "</div>");
-                if (core.settings.useTitle && core.bpall[i]._2Show === 1 && core._ds[j].getAttribute(_Selectors.stitle.slice(1, -1))) {
+                btnStr = "<div class=\"".concat(core.settings.dotNcls, "\">").concat(j + 1, "</div>");
+                if (core.settings.useTitle &&
+                    core.bpall[i]._2Show === 1 &&
+                    core._ds[j].getAttribute(_Selectors.stitle.slice(1, -1))) {
                     btnStr += core._ds[j].getAttribute(_Selectors.stitle.slice(1, -1));
                     addClass(elem, core.settings.dotCls);
                 }
@@ -1016,6 +1166,8 @@ var Carouzel;
         _core.trackM = rootElem.querySelector("".concat(_Selectors.trackM));
         _core.trackO = rootElem.querySelector("".concat(_Selectors.trackO));
         _core.trackW = rootElem.querySelector("".concat(_Selectors.trackW));
+        _core._t = {};
+        _core._t.total = _core.settings.speed;
         core.goToNext = function () {
             goToNext(_core, false);
         };
@@ -1082,7 +1234,8 @@ var Carouzel;
                 var core = allLocalInstances[thisid];
                 for (var i = 0; i < allElems.length; i++) {
                     removeEventListeners(core, allElems[i]);
-                    if (core.track && hasClass(allElems[i], core.settings.dupCls)) {
+                    if (core.track &&
+                        hasClass(allElems[i], core.settings.dupCls)) {
                         core.track.removeChild(allElems[i]);
                     }
                     if (core.nav && allElems[i].hasAttribute(_Selectors.dot.slice(1, -1))) {
@@ -1162,7 +1315,13 @@ var Carouzel;
                                 allGlobalInstances[id] = new Core(id, roots[i], newOptions);
                             }
                             else {
-                                var thisid = id ? id : __assign(__assign({}, newOptions), _Defaults).idPrefix + '_' + new Date().getTime() + '_root_' + (i + 1);
+                                var thisid = id
+                                    ? id
+                                    : __assign(__assign({}, newOptions), _Defaults).idPrefix +
+                                        '_' +
+                                        new Date().getTime() +
+                                        '_root_' +
+                                        (i + 1);
                                 roots[i].setAttribute('id', thisid);
                                 allGlobalInstances[thisid] = new Core(thisid, roots[i], newOptions);
                             }
