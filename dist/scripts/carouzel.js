@@ -78,15 +78,57 @@ var Carouzel;
         slidesToShow: 1,
         spaceBetween: 0,
         startAtIndex: 1,
-        timingFunction: function (time, beginningVal, change, duration) {
-            if (time === void 0) { time = 0; }
-            if (beginningVal === void 0) { beginningVal = 0.5; }
-            if (change === void 0) { change = 1; }
-            if (duration === void 0) { duration = 1; }
-            return change * (time /= duration) * time + beginningVal;
-        },
+        timingFunction: 'linear',
         touchThreshold: 100,
         useTitlesAsDots: false
+    };
+    /*
+     * Easing Functions - inspired from http://gizma.com/easing/
+     * only considering the t value for the range [0, 1] => [0, 1]
+     */
+    var _easingFunctions = {
+        // no easing, no acceleration
+        linear: function (t) { return t; },
+        // accelerating from zero velocity
+        easeInQuad: function (t) { return t * t; },
+        // decelerating to zero velocity
+        easeOutQuad: function (t) { return t * (2 - t); },
+        // acceleration until halfway, then deceleration
+        easeInOutQuad: function (t) { return (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t); },
+        // accelerating from zero velocity
+        easeInCubic: function (t) { return t * t * t; },
+        // decelerating to zero velocity
+        easeOutCubic: function (t) { return --t * t * t + 1; },
+        // acceleration until halfway, then deceleration
+        easeInOutCubic: function (t) {
+            return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+        },
+        // accelerating from zero velocity
+        easeInQuart: function (t) { return t * t * t * t; },
+        // decelerating to zero velocity
+        easeOutQuart: function (t) { return 1 - --t * t * t * t; },
+        // acceleration until halfway, then deceleration
+        easeInOutQuart: function (t) {
+            return t < 0.5 ? 8 * t * t * t * t : 1 - 8 * --t * t * t * t;
+        },
+        // accelerating from zero velocity
+        easeInQuint: function (t) { return t * t * t * t * t; },
+        // decelerating to zero velocity
+        easeOutQuint: function (t) { return 1 + --t * t * t * t * t; },
+        // acceleration until halfway, then deceleration
+        easeInOutQuint: function (t) {
+            return t < 0.5 ? 16 * t * t * t * t * t : 1 + 16 * --t * t * t * t * t;
+        },
+        // elastic bounce effect at the beginning
+        easeInElastic: function (t) { return (0.04 - 0.04 / t) * Math.sin(25 * t) + 1; },
+        // elastic bounce effect at the end
+        easeOutElastic: function (t) { return ((0.04 * t) / --t) * Math.sin(25 * t); },
+        // elastic bounce effect at the beginning and end
+        easeInOutElastic: function (t) {
+            return (t -= 0.5) < 0
+                ? (0.02 + 0.01 / t) * Math.sin(50 * t)
+                : (0.02 - 0.01 / t) * Math.sin(50 * t) + 1;
+        }
     };
     /**
      * Function to trim whitespaces from a string
@@ -282,31 +324,12 @@ var Carouzel;
         }
     };
     /**
-     * Function to set CSS transition properties in style attribute of the element
-     *
-     * @param element - HTML element on which CSS transition properties are to be set
-     * @param transitionProperty - The property which needs to be transitioned
-     * @param transitionTimingFunction - The timing function to be followed during transition
-     * @param transitionDuration - The duration followed for the transition
-     *
-     */
-    var setTransitionProperties = function (element, transitionProperty, transitionTimingFunction, transitionDuration) {
-        element.style.transitionProperty = transitionProperty;
-        element.style.transitionTimingFunction = transitionTimingFunction;
-        element.style.transitionDuration = transitionDuration;
-    };
-    /**
      * Function to animate the track element based on the calculations
      *
      * @param core - Carouzel instance core object
      *
      */
-    var animateTrack = function (core, isSmooth, isTouched) {
-        core;
-        isSmooth;
-        isTouched;
-        updateAttributes;
-        setTransitionProperties;
+    var animateTrack = function (core, touchedPixel) {
         if (typeof core.settings.bFn === 'function') {
             core.settings.bFn();
         }
@@ -314,10 +337,7 @@ var Carouzel;
             core.pi = 0;
         }
         if (core.settings.inf && core.track) {
-            setTransitionProperties(core.track, 'none', 'unset', '0ms');
-            if (!isTouched) {
-                core.track.style.transform = "translate3d(".concat(-core.pts[core.pi], "px, 0, 0)");
-            }
+            core.track.style.transform = "translate3d(".concat(-core.pts[core.pi], "px, 0, 0)");
         }
         else {
             if (core.ci < 0) {
@@ -327,107 +347,110 @@ var Carouzel;
                 core.ci = core.sLength - core.bpo._2Show;
             }
         }
-        // const postAnimation = () => {
-        //   setTimeout(() => {
-        //     if (core.ci >= core.sLength) {
-        //       core.ci = core.sLength - core.ci;
-        //     }
-        //     if (core.ci < 0) {
-        //       core.ci = core.sLength + core.ci;
-        //     }
-        //     if (core.track) {
-        //       setTransitionProperties(core.track, 'none', 'unset', '0ms');
-        //       core.track.style.transform = `translate3d(${-core.pts[core.ci]}px, 0, 0)`;
-        //     }
-        //     core.ct = -core.pts[core.ci];
-        //     updateAttributes(core);
-        //   }, core.settings.speed);
-        // }
+        var postAnimation = function () {
+            if (core.ci >= core.sLength) {
+                core.ci = core.sLength - core.ci;
+            }
+            if (core.ci < 0) {
+                core.ci = core.sLength + core.ci;
+            }
+            if (core.track) {
+                core.track.style.transform = "translate3d(".concat(-core.pts[core.ci], "px, 0, 0)");
+            }
+            core.ct = -core._t.nextX;
+            updateAttributes(core);
+            setTimeout(function () {
+                if (typeof core.settings.aFn === 'function') {
+                    core.settings.aFn();
+                }
+            }, 0);
+        };
+        updateAttributes(core);
         core._t.start = performance.now();
         core._t.prevX = core.pts[core.pi];
         core._t.nextX = core.pts[core.ci];
         var scrollThisTrack = function (now) {
-            if (core.track &&
-                core._t.start &&
-                core._t.total &&
-                core._t.prevX &&
-                core._t.nextX) {
-                core._t.elapsed = now - core._t.start;
-                if (typeof core.settings.timeFn === 'function') {
-                    core._t.progress =
-                        (core._t.elapsed / core._t.total) * core.settings.timeFn();
+            core._t.elapsed = now - core._t.start;
+            core._t.progress = _easingFunctions[core.settings.timeFn](core._t.elapsed / core._t.total);
+            if (core.ci > core.pi) {
+                core._t.position =
+                    core._t.prevX +
+                        touchedPixel +
+                        core._t.progress * (core._t.nextX - core._t.prevX);
+                if (core._t.position > core._t.nextX) {
+                    core._t.position = core._t.nextX;
                 }
-                else {
-                    core._t.progress = core._t.elapsed / core._t.total;
+            }
+            if (core.ci < core.pi) {
+                core._t.position =
+                    core._t.prevX +
+                        touchedPixel -
+                        core._t.progress * (core._t.prevX - core._t.nextX);
+                if (core._t.position < core.pts[core.ci]) {
+                    core._t.position = core.pts[core.ci];
                 }
-                if (core.ci > core.pi) {
-                    core._t.position =
-                        core._t.prevX + core._t.progress * (core._t.nextX - core._t.prevX);
-                    if (core._t.position > core._t.nextX) {
-                        core._t.position = core._t.nextX;
-                    }
+            }
+            if (core._t.position && core.track) {
+                core._t.position = Math.round(core._t.position);
+                core.track.style.transform = "translate3d(".concat(-core._t
+                    .position, "px, 0, 0)");
+            }
+            if (core._t.progress < 1 && core._t.position !== core.pts[core.ci]) {
+                requestAnimationFrame(scrollThisTrack);
+            }
+            else {
+                postAnimation();
+            }
+        };
+        var fadeThisTrack = function (now) {
+            core._t.elapsed = now - core._t.start;
+            core._t.progress = _easingFunctions[core.settings.timeFn](core._t.elapsed / core._t.total);
+            if (core.ci > core.pi) {
+                core._t.position =
+                    core._t.prevX +
+                        touchedPixel +
+                        core._t.progress * (core._t.nextX - core._t.prevX);
+                if (core._t.position > core._t.nextX) {
+                    core._t.position = core._t.nextX;
                 }
-                if (core.ci < core.pi) {
-                    core._t.position =
-                        core._t.prevX - core._t.progress * (core._t.prevX - core._t.nextX);
-                    if (core._t.position < core.pts[core.ci]) {
-                        core._t.position = core.pts[core.ci];
-                    }
+            }
+            if (core.ci < core.pi) {
+                core._t.position =
+                    core._t.prevX +
+                        touchedPixel -
+                        core._t.progress * (core._t.prevX - core._t.nextX);
+                if (core._t.position < core.pts[core.ci]) {
+                    core._t.position = core.pts[core.ci];
                 }
-                if (core._t.position) {
-                    core._t.position = Math.round(core._t.position);
-                    core.track.style.transform = "translate3d(".concat(-core._t
-                        .position, "px, 0, 0)");
-                }
-                if (core._t.progress < 1 && core._t.position !== core.pts[core.ci]) {
-                    requestAnimationFrame(scrollThisTrack);
-                }
+            }
+            if (core._t.position && core.track) {
+                core._t.position = Math.round(core._t.position);
+                core.track.style.transform = "translate3d(".concat(-core._t.nextX, "px, 0, 0)");
+            }
+            if (core._t.progress < 1 && core._t.position !== core.pts[core.ci]) {
+                requestAnimationFrame(fadeThisTrack);
+            }
+            else {
+                postAnimation();
             }
         };
         if (core.settings.effect === _animationEffects[0] && core.track) {
             core.track.style.transitionProperty = 'transform';
-            // core.track.style.transform = `translate3d(${-core.pts[core.pi]}px, 0, 0)`;
-            // setTimeout(() => {
-            //   if (core.track) {
-            //     core.track.style.transitionProperty = 'transform';
-            //     if (isSmooth) {
-            //       core.track.style.transitionTimingFunction = core.settings.timeFn;
-            //       core.track.style.transitionDuration = `${core.settings.speed}ms`;
-            //     }
-            //     core.track.style.transform = `translate3d(${-core.pts[
-            //       core.ci
-            //     ]}px, 0, 0)`;
-            //     postAnimation();
-            //   }
-            // }, 0);
             if (core._t.start && core._t.total && core.ci !== core.pi) {
                 requestAnimationFrame(scrollThisTrack);
-                // scrollThisTrack(performance.now());
             }
         }
-        // if (core.settings.effect === _animationEffects[1]) {
-        //   const postOpacity = () => {
-        //     setTimeout(() => {
-        //       if (core.track) {
-        //         core.track.style.transform = `translate3d(${-core.pts[core.ci]}px, 0, 0)`;
-        //         core.track.style.opacity = '1';
-        //       }
-        //       postAnimation();
-        //     }, core.settings.speed);
-        //   };
-        //   setTimeout(() => {
-        //     if (core.track) {
-        //       setTransitionProperties(core.track, 'opacity', core.settings.timeFn, `${core.settings.speed}ms`);
-        //       core.track.style.opacity = '0';
-        //       postOpacity();
-        //     }
-        //   }, 0);
-        // }
-        // setTimeout(() => {
-        //   if (typeof core.settings.aFn === 'function') {
-        //     core.settings.aFn();
-        //   }
-        // }, core.settings.speed);
+        if (core.settings.effect === _animationEffects[1] && core.track) {
+            core.track.style.transitionProperty = 'opacity';
+            for (var i = 0; i < core._as.length; i++) {
+                if (!hasClass(core._as[i], core.settings.activeCls)) {
+                    core._as[i].style.opacity = '0';
+                }
+            }
+            if (core._t.start && core._t.total && core.ci !== core.pi) {
+                requestAnimationFrame(fadeThisTrack);
+            }
+        }
     };
     /**
      * Function to prepend the duplicate or new elements in the track
@@ -583,7 +606,7 @@ var Carouzel;
                     (i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr) +
                         bpoptions.gutr;
             }
-            animateTrack(core, false, false);
+            animateTrack(core, 0);
         }
     };
     /**
@@ -597,7 +620,7 @@ var Carouzel;
         if (core.ci !== slidenumber) {
             core.pi = core.ci;
             core.ci = slidenumber * core.bpo._2Scroll;
-            animateTrack(core, true, false);
+            animateTrack(core, 0);
         }
     };
     /**
@@ -606,7 +629,7 @@ var Carouzel;
      * @param core - Carouzel instance core object
      *
      */
-    var goToPrev = function (core, isTouched) {
+    var goToPrev = function (core, touchedPixel) {
         core.pi = core.ci;
         core.ci -= core.bpo._2Scroll;
         if (core.settings.inf) {
@@ -622,7 +645,7 @@ var Carouzel;
                 core.pi = core.ci + core.bpo._2Scroll;
             }
         }
-        animateTrack(core, true, isTouched);
+        animateTrack(core, touchedPixel);
     };
     /**
      * Function to go to the next set of slides
@@ -630,8 +653,7 @@ var Carouzel;
      * @param core - Carouzel instance core object
      *
      */
-    var goToNext = function (core, isTouched) {
-        isTouched;
+    var goToNext = function (core, touchedPixel) {
         core.pi = core.ci;
         core.ci += core.bpo._2Scroll;
         if (core.settings.inf) {
@@ -643,7 +665,7 @@ var Carouzel;
                 core.pi = core.ci - core.bpo._2Scroll;
             }
         }
-        animateTrack(core, true, isTouched);
+        animateTrack(core, touchedPixel);
     };
     /**
      * Function to toggle keyboard navigation with left and right arrows
@@ -660,10 +682,10 @@ var Carouzel;
                 keyCode_1 = event.key.toLowerCase();
                 switch (keyCode_1) {
                     case 'arrowleft':
-                        goToPrev(core, false);
+                        goToPrev(core, 0);
                         break;
                     case 'arrowright':
-                        goToNext(core, false);
+                        goToNext(core, 0);
                         break;
                     default:
                         keyCode_1 = '';
@@ -713,7 +735,7 @@ var Carouzel;
         }
         core.autoTimer = setInterval(function () {
             if (!core.paused && !core.pauseClk) {
-                goToNext(core, false);
+                goToNext(core, 0);
             }
         }, core.settings.autoS);
     };
@@ -727,13 +749,13 @@ var Carouzel;
         if (core.arrowP) {
             core.eHandlers.push(eventHandler(core.arrowP, 'click', function (event) {
                 event.preventDefault();
-                goToPrev(core, false);
+                goToPrev(core, 0);
             }));
         }
         if (core.arrowN) {
             core.eHandlers.push(eventHandler(core.arrowN, 'click', function (event) {
                 event.preventDefault();
-                goToNext(core, false);
+                goToNext(core, 0);
             }));
         }
         if (core.settings.inf && core.btnPause) {
@@ -758,82 +780,19 @@ var Carouzel;
      *
      */
     var toggleTouchEvents = function (core) {
-        // let posX1 = 0;
-        // let posX2 = 0;
-        // let posFinal = 0;
-        // let threshold = core.settings.threshold || 100;
-        // let dragging = false;
-        // /**
-        //  * Local function for Touch Start event
-        //  *
-        //  */
-        // const touchStart = (thisevent: Event) => {
-        //   thisevent.preventDefault();
-        //   dragging = true;
-        //   if (thisevent.type === 'touchstart') {
-        //     posX1 = (thisevent as TouchEvent).touches[0].clientX;
-        //   } else {
-        //     posX1 = (thisevent as MouseEvent).clientX;
-        //   }
-        //   if (core.track) {
-        //     core.track.style.transitionProperty = core.settings.effect;
-        //     core.track.style.transitionTimingFunction = core.settings.timeFn;
-        //     core.track.style.transitionDuration = `${core.settings.speed}ms`;
-        //   }
-        // };
-        // /**
-        //  * Local function for Touch Move event
-        //  *
-        //  */
-        // const touchMove = (thisevent: Event) => {
-        //   if (dragging && core.track) {
-        //     if (thisevent.type == 'touchmove') {
-        //       posX2 = posX1 - (thisevent as TouchEvent).touches[0].clientX;
-        //     } else {
-        //       posX2 = posX1 - (thisevent as MouseEvent).clientX;
-        //     }
-        //     if (core.settings.effect === _animationEffects[0]) {
-        //       core.track.style.transform = `translate3d(${
-        //         core.ct - posX2
-        //       }px, 0, 0)`;
-        //     }
-        //     posFinal = posX2;
-        //   }
-        // };
-        // /**
-        //  * Local function for Touch End event
-        //  *
-        //  */
-        // const touchEnd = () => {
-        //   if (dragging && core.track) {
-        //     if (posFinal < -threshold) {
-        //       goToPrev(core, false);
-        //     } else if (posFinal > threshold) {
-        //       goToNext(core, false);
-        //     } else {
-        //       core.track.style.transform = `translate3d(${core.ct}px, 0, 0)`;
-        //     }
-        //   }
-        //   if (core.track) {
-        //     core.track.style.transitionProperty = 'none';
-        //     core.track.style.transitionTimingFunction = 'unset';
-        //     core.track.style.transitionDuration = '0ms';
-        //   }
-        //   posX1 = posX2 = posFinal = 0;
-        //   dragging = false;
-        // };
-        var posX1 = 0;
-        var posX2 = 0;
-        var posFinal = 0;
-        var startX = 0;
-        var startY = 0;
-        var endX = 0;
-        var endY = 0;
         var diffX = 0;
         var diffY = 0;
+        var dragging = false;
+        var endX = 0;
+        var endY = 0;
+        var posFinal = 0;
+        var posX1 = 0;
+        var posX2 = 0;
         var ratioX = 0;
         var ratioY = 0;
-        var dragging = false;
+        var startX = 0;
+        var startY = 0;
+        var threshold = core.settings.threshold || 100;
         var touchStart = function (e) {
             dragging = true;
             if (e.type === 'touchstart') {
@@ -863,20 +822,33 @@ var Carouzel;
                 diffY = endY - startY;
                 ratioX = Math.abs(diffX / diffY);
                 ratioY = Math.abs(diffY / diffX);
+                if (!core.ct) {
+                    core.ct = -core.pts[core.ci];
+                }
                 if (ratioX > ratioY) {
-                    if (diffX > 0) {
-                        console.log('right swipe');
-                    }
-                    else if (diffX < 0) {
-                        console.log('left swipe');
+                    // if (diffX > 0) {
+                    //   console.log('right swipe');
+                    // } else if (diffX < 0) {
+                    //   console.log('left swipe');
+                    // }
+                    if (core.track && core.settings.effect === _animationEffects[0]) {
+                        core.track.style.transform = "translate3d(".concat(core.ct - posX2, "px, 0, 0)");
                     }
                 }
                 posFinal = posX2;
-                posFinal;
             }
         };
         var touchEnd = function () {
-            if (dragging) {
+            if (dragging && core.track) {
+                if (posFinal < -threshold) {
+                    goToPrev(core, posFinal);
+                }
+                else if (posFinal > threshold) {
+                    goToNext(core, posFinal);
+                }
+                else {
+                    core.track.style.transform = "translate3d(".concat(core.ct, "px, 0, 0)");
+                }
                 posX1 = posX2 = posFinal = 0;
                 dragging = false;
             }
@@ -965,7 +937,7 @@ var Carouzel;
                     event.preventDefault();
                     core.pi = core.ci;
                     core.ci = j * core.bpall[i]._2Scroll;
-                    animateTrack(core, true, false);
+                    animateTrack(core, 0);
                 }));
                 core.bpall[i].dots.push(navBtns[j]);
             };
@@ -1169,10 +1141,10 @@ var Carouzel;
         _core._t = {};
         _core._t.total = _core.settings.speed;
         core.goToNext = function () {
-            goToNext(_core, false);
+            goToNext(_core, 0);
         };
         core.goToPrevious = function () {
-            goToPrev(_core, false);
+            goToPrev(_core, 0);
         };
         core.goToSlide = function (slidenumber) {
             if (!isNaN(slidenumber)) {

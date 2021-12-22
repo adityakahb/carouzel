@@ -51,7 +51,7 @@ declare namespace Carouzel {
         slidesToShow: number;
         spaceBetween: number;
         startAtIndex: number;
-        timingFunction?: Function;
+        timingFunction: string;
         touchThreshold: number;
         useTitlesAsDots: boolean;
     }

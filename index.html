@@ -690,40 +690,41 @@
           <div class="row">
             <div class="col">
               <section
-                data-carouzel="{
-                'isInfinite': true,
-                'autoplay': false,
-                'autoplaySpeed': 5000,
-                'animationSpeed': 300,
-                'animationEffect': 'scroll',
-                'pauseOnHover': true,
-                'slidesToScroll': 1,
-                'slidesToShow': 1,
-                'showArrows': true,
-                'showNavigation': false,
-                'centerBetween': 1,
-                'spaceBetween': 10,
-                'responsive': [
-                    {
-                      'breakpoint': 768,
-                      'slidesToScroll': 2,
-                      'slidesToShow': 2,
-                      'showArrows': true,
-                      'showNavigation': true,
-                      'centerBetween':  1,
-                      'spaceBetween': 20
-                    },
-                    {
-                      'breakpoint': 1024,
-                      'slidesToScroll': 3,
-                      'slidesToShow': 3,
-                      'showArrows': true,
-                      'showNavigation': true,
-                      'centerBetween':  3,
-                      'spaceBetween': 30
-                    }
-                ]
-             }"
+                data-carouzel
+                data-carouzel-auto="{
+                  'isInfinite': true,
+                  'autoplay': false,
+                  'autoplaySpeed': 5000,
+                  'animationSpeed': 300,
+                  'animationEffect': 'scroll',
+                  'pauseOnHover': true,
+                  'slidesToScroll': 1,
+                  'slidesToShow': 1,
+                  'showArrows': true,
+                  'showNavigation': false,
+                  'centerBetween': 1,
+                  'spaceBetween': 10,
+                  'responsive': [
+                      {
+                        'breakpoint': 768,
+                        'slidesToScroll': 2,
+                        'slidesToShow': 2,
+                        'showArrows': true,
+                        'showNavigation': true,
+                        'centerBetween':  1,
+                        'spaceBetween': 20
+                      },
+                      {
+                        'breakpoint': 1024,
+                        'slidesToScroll': 3,
+                        'slidesToShow': 3,
+                        'showArrows': true,
+                        'showNavigation': true,
+                        'centerBetween':  3,
+                        'spaceBetween': 30
+                      }
+                  ]
+                }"
                 aria-roledescription="carousel"
                 aria-label="Implementation of Carouzel through `data-attribute`"
               >
@@ -2010,164 +2011,164 @@
       });
 
       __carouzel_instance.init('#__carouzel_1');
-      // __carouzel_instance.init('#__carouzel_2', {
-      //   slidesToShow: 3,
-      //   slidesToScroll: 3,
-      // });
-      // __carouzel_instance.init('#__carouzel_3', {
-      //   slidesToShow: 1,
-      //   showNav: false,
-      //   responsive: [
-      //     {
-      //       breakpoint: 700,
-      //       slidesToScroll: 2,
-      //       slidesToShow: 2,
-      //       showNav: true,
-      //     },
-      //     {
-      //       breakpoint: 1100,
-      //       slidesToScroll: 4,
-      //       slidesToShow: 4,
-      //     },
-      //   ],
-      // });
-      // __carouzel_instance.init('#__carouzel_4', {
-      //   slidesToShow: 1,
-      //   animationEffect: 'fade',
-      //   speed: 500,
-      //   responsive: [
-      //     {
-      //       breakpoint: 700,
-      //       slidesToScroll: 3,
-      //       slidesToShow: 3,
-      //     },
-      //   ],
-      // });
-      // __carouzel_instance.init('#__carouzel_6', {
-      //   slidesToShow: 1,
-      //   autoplay: true,
-      //   pauseOnHover: true,
-      //   responsive: [
-      //     {
-      //       breakpoint: 700,
-      //       slidesToScroll: 2,
-      //       slidesToShow: 2,
-      //     },
-      //     {
-      //       breakpoint: 1100,
-      //       slidesToScroll: 3,
-      //       slidesToShow: 3,
-      //     },
-      //   ],
-      // });
-      // __carouzel_instance.init('#__carouzel_7', {
-      //   slidesToShow: 1,
-      //   isInfinite: false,
-      //   responsive: [
-      //     {
-      //       breakpoint: 700,
-      //       slidesToScroll: 2,
-      //       slidesToShow: 2,
-      //     },
-      //     {
-      //       breakpoint: 1100,
-      //       slidesToScroll: 3,
-      //       slidesToShow: 3,
-      //     },
-      //   ],
-      // });
-      // __carouzel_instance.init('#__carouzel_8', {
-      //   showNav: false,
-      //   beforeInit: function () {
-      //     toastBeforeInit.show();
-      //   },
-      //   afterInit: function () {
-      //     toastAfterInit.show();
-      //   },
-      //   beforeScroll: function () {
-      //     toastBeforeScroll.show();
-      //   },
-      //   afterScroll: function () {
-      //     toastAfterScroll.show();
-      //   },
-      //   responsive: [
-      //     {
-      //       breakpoint: 700,
-      //       showNav: true,
-      //     },
-      //   ],
-      // });
-      // __carouzel_instance.init('#__carouzel_9', {
-      //   centerBetween: 1,
-      //   isInfinite: true,
-      //   responsive: [
-      //     {
-      //       breakpoint: 700,
-      //       centerBetween: 3,
-      //     },
-      //   ],
-      // });
-      // __carouzel_instance.init('#__carouzel_10', {
-      //   useTitlesAsDots: true,
-      // });
-      // __carouzel_instance.init('#__carouzel_11', {
-      //   slidesToShow: 1,
-      //   showNav: false,
-      //   spaceBetween: 20,
-      //   responsive: [
-      //     {
-      //       breakpoint: 700,
-      //       slidesToScroll: 2,
-      //       slidesToShow: 2,
-      //       showNav: true,
-      //       spaceBetween: 30,
-      //     },
-      //     {
-      //       breakpoint: 1100,
-      //       slidesToScroll: 4,
-      //       slidesToShow: 4,
-      //       spaceBetween: 50,
-      //     },
-      //   ],
-      // });
-      // __carouzel_instance.init('#__carouzel_12', {
-      //   isRTL: true,
-      //   slidesToShow: 1,
-      //   showNav: false,
-      //   isInfinite: false,
-      //   responsive: [
-      //     {
-      //       breakpoint: 700,
-      //       slidesToScroll: 2,
-      //       slidesToShow: 2,
-      //       showNav: true,
-      //     },
-      //     {
-      //       breakpoint: 1100,
-      //       slidesToScroll: 4,
-      //       slidesToShow: 4,
-      //     },
-      //   ],
-      // });
-      // var gotoslideinput = document.getElementById('gotoslideinput');
-      // var gotonextbtn = document.getElementById('gotonextbtn');
-      // var gotoprevbtn = document.getElementById('gotoprevbtn');
-      // var instance8 = __carouzel_instance.getInstance('#__carouzel_8');
-      // gotonextbtn.addEventListener('click', function () {
-      //   if (instance8) {
-      //     instance8.core.goToNext();
-      //   }
-      // });
-      // gotoprevbtn.addEventListener('click', function () {
-      //   if (instance8) {
-      //     instance8.core.goToPrevious();
-      //   }
-      // });
-      // gotoslideinput.addEventListener('change', function (event) {
-      //   if (instance8) {
-      //     instance8.core.goToSlide(event.target.value);
-      //   }
-      // });
+      __carouzel_instance.init('#__carouzel_2', {
+        slidesToShow: 3,
+        slidesToScroll: 3,
+      });
+      __carouzel_instance.init('#__carouzel_3', {
+        slidesToShow: 1,
+        showNav: false,
+        responsive: [
+          {
+            breakpoint: 700,
+            slidesToScroll: 2,
+            slidesToShow: 2,
+            showNav: true,
+          },
+          {
+            breakpoint: 1100,
+            slidesToScroll: 4,
+            slidesToShow: 4,
+          },
+        ],
+      });
+      __carouzel_instance.init('#__carouzel_4', {
+        slidesToShow: 1,
+        animationEffect: 'fade',
+        speed: 500,
+        responsive: [
+          {
+            breakpoint: 700,
+            slidesToScroll: 3,
+            slidesToShow: 3,
+          },
+        ],
+      });
+      __carouzel_instance.init('#__carouzel_6', {
+        slidesToShow: 1,
+        autoplay: true,
+        pauseOnHover: true,
+        responsive: [
+          {
+            breakpoint: 700,
+            slidesToScroll: 2,
+            slidesToShow: 2,
+          },
+          {
+            breakpoint: 1100,
+            slidesToScroll: 3,
+            slidesToShow: 3,
+          },
+        ],
+      });
+      __carouzel_instance.init('#__carouzel_7', {
+        slidesToShow: 1,
+        isInfinite: false,
+        responsive: [
+          {
+            breakpoint: 700,
+            slidesToScroll: 2,
+            slidesToShow: 2,
+          },
+          {
+            breakpoint: 1100,
+            slidesToScroll: 3,
+            slidesToShow: 3,
+          },
+        ],
+      });
+      __carouzel_instance.init('#__carouzel_8', {
+        showNav: false,
+        beforeInit: function () {
+          toastBeforeInit.show();
+        },
+        afterInit: function () {
+          toastAfterInit.show();
+        },
+        beforeScroll: function () {
+          toastBeforeScroll.show();
+        },
+        afterScroll: function () {
+          toastAfterScroll.show();
+        },
+        responsive: [
+          {
+            breakpoint: 700,
+            showNav: true,
+          },
+        ],
+      });
+      __carouzel_instance.init('#__carouzel_9', {
+        centerBetween: 1,
+        isInfinite: true,
+        responsive: [
+          {
+            breakpoint: 700,
+            centerBetween: 3,
+          },
+        ],
+      });
+      __carouzel_instance.init('#__carouzel_10', {
+        useTitlesAsDots: true,
+      });
+      __carouzel_instance.init('#__carouzel_11', {
+        slidesToShow: 1,
+        showNav: false,
+        spaceBetween: 20,
+        responsive: [
+          {
+            breakpoint: 700,
+            slidesToScroll: 2,
+            slidesToShow: 2,
+            showNav: true,
+            spaceBetween: 30,
+          },
+          {
+            breakpoint: 1100,
+            slidesToScroll: 4,
+            slidesToShow: 4,
+            spaceBetween: 50,
+          },
+        ],
+      });
+      __carouzel_instance.init('#__carouzel_12', {
+        isRTL: true,
+        slidesToShow: 1,
+        showNav: false,
+        isInfinite: false,
+        responsive: [
+          {
+            breakpoint: 700,
+            slidesToScroll: 2,
+            slidesToShow: 2,
+            showNav: true,
+          },
+          {
+            breakpoint: 1100,
+            slidesToScroll: 4,
+            slidesToShow: 4,
+          },
+        ],
+      });
+      var gotoslideinput = document.getElementById('gotoslideinput');
+      var gotonextbtn = document.getElementById('gotonextbtn');
+      var gotoprevbtn = document.getElementById('gotoprevbtn');
+      var instance8 = __carouzel_instance.getInstance('#__carouzel_8');
+      gotonextbtn.addEventListener('click', function () {
+        if (instance8) {
+          instance8.core.goToNext();
+        }
+      });
+      gotoprevbtn.addEventListener('click', function () {
+        if (instance8) {
+          instance8.core.goToPrevious();
+        }
+      });
+      gotoslideinput.addEventListener('change', function (event) {
+        if (instance8) {
+          instance8.core.goToSlide(event.target.value);
+        }
+      });
     </script>
   </body>
 </html>
