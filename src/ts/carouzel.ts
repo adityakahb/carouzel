@@ -595,7 +595,6 @@ namespace Carouzel {
     };
 
     if (core.settings.effect === _animationEffects[0] && core.track) {
-      core.track.style.transitionProperty = 'transform';
       if (core._t.start && core._t.total && core.ci !== core.pi) {
         core._t.id = requestAnimationFrame(scrollThisTrack);
       }
@@ -623,9 +622,34 @@ namespace Carouzel {
     };
 
     if (core.settings.effect === _animationEffects[1] && core.track) {
-      core.track.style.transitionProperty = 'opacity';
-      if (core.track) {
-        core.track.style.transform = `translate3d(${-core._t.nextX}px, 0, 0)`;
+      core.track.style.transform = `translate3d(${-core._t.nextX}px, 0, 0)`;
+      for (let i = 0; i < core._as.length; i++) {
+        if (!hasClass(core._as[i], core.settings.activeCls)) {
+          if (i >= core.ci + core.bpo._2Show) {
+            console.log(
+              '=-=== next',
+              i + 1,
+              core.ci,
+              core.sWidth,
+              core.bpo._2Show
+            );
+            (
+              core._as[i] as HTMLElement
+            ).style.transform = `translate3d(0px, 0, 0)`;
+          }
+          if (i <= core.ci + core.bpo._2Show) {
+            console.log(
+              '=-=== prev',
+              i + 1,
+              core.ci,
+              core.sWidth,
+              core.bpo._2Show
+            );
+            (
+              core._as[i] as HTMLElement
+            ).style.transform = `translate3d(0px, 0, 0)`;
+          }
+        }
       }
       if (core._t.start && core._t.total && core.ci !== core.pi) {
         core._t.id = requestAnimationFrame(fadeThisTrack);

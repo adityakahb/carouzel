@@ -19,7 +19,6 @@
   [data-carouzel] [data-carouzel-trackouter] {
     width: 100%; }
   [data-carouzel] [data-carouzel-trackmask] {
-    overflow: hidden;
     width: 100%; }
   [data-carouzel] [data-carouzel-track] {
     align-items: flex-start;
