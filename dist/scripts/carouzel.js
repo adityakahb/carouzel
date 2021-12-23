@@ -413,33 +413,50 @@ var Carouzel;
             core._t.progress = _easingFunctions[core.settings.timeFn](core._t.elapsed / core._t.total);
             core._t.progress = core._t.progress > 1 ? 1 : core._t.progress;
             for (var i = 0; i < core._as.length; i++) {
-                if (hasClass(core._as[i], core.settings.activeCls)) {
-                    core._as[i].style.opacity = '' + core._t.progress;
-                }
-                else {
-                    core._as[i].style.opacity =
-                        '0' + (1 - core._t.progress);
-                }
+                core._as[i].style.visibility = 'visible';
+                // if (hasClass(core._as[i], core.settings.activeCls)) {
+                //   (core._as[i] as HTMLElement).style.opacity = '' + core._t.progress;
+                // } else {
+                //   (core._as[i] as HTMLElement).style.opacity =
+                //   '' + (1 - core._t.progress);
+                // }
             }
             if (core._t.progress < 1) {
                 core._t.id = requestAnimationFrame(fadeThisTrack);
             }
             else {
                 postAnimation();
+                for (var i = 0; i < core._as.length; i++) {
+                    // (core._as[i] as HTMLElement).style.transform = `translate3d(0, 0, 0)`;
+                    if (hasClass(core._as[i], core.settings.activeCls)) {
+                        core._as[i].style.opacity = '1';
+                    }
+                    else {
+                        // (core._as[i] as HTMLElement).style.visibility = 'hidden';
+                        // (core._as[i] as HTMLElement).style.opacity = '0';
+                    }
+                }
             }
         };
         if (core.settings.effect === _animationEffects[1] && core.track) {
             core.track.style.transform = "translate3d(".concat(-core._t.nextX, "px, 0, 0)");
             for (var i = 0; i < core._as.length; i++) {
-                if (!hasClass(core._as[i], core.settings.activeCls)) {
-                    if (i >= core.ci + core.bpo._2Show) {
-                        console.log('=-=== next', i + 1, core.ci, core.sWidth, core.bpo._2Show);
-                        core._as[i].style.transform = "translate3d(0px, 0, 0)";
+                // (core._as[i] as HTMLElement).style.visibility = 'hidden';
+                // (core._as[i] as HTMLElement).style.opacity = '0';
+                // (core._as[i] as HTMLElement).style.transform = `translate3d(${-core.pts[core.ci]}px, 0, 0)`;
+                if (hasClass(core._as[i], core.settings.activeCls)) {
+                    core._as[i].style.transform = "translate3d(0, 0, 0)";
+                }
+                else {
+                    console.log('======', i, core.ci + core.bpo._2Show);
+                    if (i < core.ci + core.bpo._2Show) {
+                        core._as[i].style.transform = "translate3d(".concat(core.pts[core.ci], "px, 0, 0)");
                     }
-                    if (i <= core.ci + core.bpo._2Show) {
-                        console.log('=-=== prev', i + 1, core.ci, core.sWidth, core.bpo._2Show);
-                        core._as[i].style.transform = "translate3d(0px, 0, 0)";
+                    if (i > core.ci + core.bpo._2Show) {
+                        core._as[i].style.transform = "translate3d(".concat(-core
+                            .pts[core.ci], "px, 0, 0)");
                     }
+                    console.log('======', i, core.ci + core.bpo._2Show, i < core.ci + core.bpo._2Show, i > core.ci + core.bpo._2Show);
                 }
             }
             if (core._t.start && core._t.total && core.ci !== core.pi) {
