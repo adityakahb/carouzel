@@ -1176,11 +1176,16 @@
             </div>
           </div>
           <div class="row py-5">
-            <div class="col-12 col-md-6 text-center text-md-end">
+            <div class="col-12 col-xl-6 text-center text-xl-end mb-4 mb-xl-0">
               <button type="button" id="destroybtn" class="btn btn-danger mx-1">
                 Destroy
               </button>
-              <button type="button" id="initbtn" class="btn btn-success mx-1">
+              <button
+                type="button"
+                id="initbtn"
+                class="btn btn-success mx-1"
+                hidden
+              >
                 initialize
               </button>
               <button
@@ -1198,7 +1203,7 @@
                 Go to Next
               </button>
             </div>
-            <div class="col-12 col-md-6 text-center text-md-start">
+            <div class="col-12 col-xl-6 text-center text-xl-start">
               <div class="input-group my-3 my-md-0 w-75 w-md-50 d-inline-flex">
                 <span class="input-group-text" id="basic-addon1"
                   >Go to Slide</span
@@ -1210,7 +1215,7 @@
                   class="form-control"
                   aria-describedby="basic-addon1"
                   min="1"
-                  max="12"
+                  max="8"
                 />
               </div>
             </div>
@@ -1231,7 +1236,7 @@
                           data-carouzel-slide
                           role="group"
                           aria-roledescription="slide"
-                          aria-label="1 of 12"
+                          aria-label="1 of 8"
                         >
                           <div>01</div>
                         </div>
@@ -1239,7 +1244,7 @@
                           data-carouzel-slide
                           role="group"
                           aria-roledescription="slide"
-                          aria-label="2 of 12"
+                          aria-label="2 of 8"
                         >
                           <div>02</div>
                         </div>
@@ -1247,7 +1252,7 @@
                           data-carouzel-slide
                           role="group"
                           aria-roledescription="slide"
-                          aria-label="3 of 12"
+                          aria-label="3 of 8"
                         >
                           <div>03</div>
                         </div>
@@ -1255,7 +1260,7 @@
                           data-carouzel-slide
                           role="group"
                           aria-roledescription="slide"
-                          aria-label="4 of 12"
+                          aria-label="4 of 8"
                         >
                           <div>04</div>
                         </div>
@@ -1263,7 +1268,7 @@
                           data-carouzel-slide
                           role="group"
                           aria-roledescription="slide"
-                          aria-label="5 of 12"
+                          aria-label="5 of 8"
                         >
                           <div>05</div>
                         </div>
@@ -1271,7 +1276,7 @@
                           data-carouzel-slide
                           role="group"
                           aria-roledescription="slide"
-                          aria-label="6 of 12"
+                          aria-label="6 of 8"
                         >
                           <div>06</div>
                         </div>
@@ -1279,7 +1284,7 @@
                           data-carouzel-slide
                           role="group"
                           aria-roledescription="slide"
-                          aria-label="7 of 12"
+                          aria-label="7 of 8"
                         >
                           <div>07</div>
                         </div>
@@ -1287,41 +1292,9 @@
                           data-carouzel-slide
                           role="group"
                           aria-roledescription="slide"
-                          aria-label="8 of 12"
+                          aria-label="8 of 8"
                         >
                           <div>08</div>
-                        </div>
-                        <div
-                          data-carouzel-slide
-                          role="group"
-                          aria-roledescription="slide"
-                          aria-label="9 of 12"
-                        >
-                          <div>09</div>
-                        </div>
-                        <div
-                          data-carouzel-slide
-                          role="group"
-                          aria-roledescription="slide"
-                          aria-label="10 of 12"
-                        >
-                          <div>10</div>
-                        </div>
-                        <div
-                          data-carouzel-slide
-                          role="group"
-                          aria-roledescription="slide"
-                          aria-label="11 of 12"
-                        >
-                          <div>11</div>
-                        </div>
-                        <div
-                          data-carouzel-slide
-                          role="group"
-                          aria-roledescription="slide"
-                          aria-label="12 of 12"
-                        >
-                          <div>12</div>
                         </div>
                       </div>
                     </div>
@@ -2195,27 +2168,6 @@
           },
         ],
       });
-      __carouzel_instance.init('#__carouzel_8', {
-        showNav: false,
-        beforeInit: function () {
-          toastBeforeInit.show();
-        },
-        afterInit: function () {
-          toastAfterInit.show();
-        },
-        beforeScroll: function () {
-          toastBeforeScroll.show();
-        },
-        afterScroll: function () {
-          toastAfterScroll.show();
-        },
-        responsive: [
-          {
-            breakpoint: 700,
-            showNav: true,
-          },
-        ],
-      });
       __carouzel_instance.init('#__carouzel_9', {
         centerBetween: 1,
         isInfinite: true,
@@ -2271,11 +2223,61 @@
       var gotoslideinput = document.getElementById('gotoslideinput');
       var gotonextbtn = document.getElementById('gotonextbtn');
       var gotoprevbtn = document.getElementById('gotoprevbtn');
+      var destroybtn = document.getElementById('destroybtn');
+      var initbtn = document.getElementById('initbtn');
+
+      var carouzel8Settings = {
+        showNav: false,
+        beforeInit: function () {
+          toastBeforeInit.show();
+        },
+        afterInit: function () {
+          toastAfterInit.show();
+        },
+        beforeScroll: function () {
+          toastBeforeScroll.show();
+        },
+        afterScroll: function () {
+          toastAfterScroll.show();
+        },
+        responsive: [
+          {
+            breakpoint: 700,
+            showNav: true,
+          },
+        ],
+      };
+
+      __carouzel_instance.init('#__carouzel_8', carouzel8Settings);
       var instance8 = __carouzel_instance.getInstance('#__carouzel_8');
       gotonextbtn.addEventListener('click', function () {
         if (instance8) {
           instance8.core.goToNext();
         }
+      });
+      destroybtn.addEventListener('click', function () {
+        destroybtn.setAttribute('hidden', 'true');
+        initbtn.removeAttribute('hidden');
+        gotoslideinput.setAttribute('disabled', true);
+        gotonextbtn.setAttribute('disabled', true);
+        gotoprevbtn.setAttribute('disabled', true);
+        btnbeforeinit.setAttribute('disabled', true);
+        btnafterinit.setAttribute('disabled', true);
+        btnbeforescroll.setAttribute('disabled', true);
+        btnafterscroll.setAttribute('disabled', true);
+        __carouzel_instance.destroy('#__carouzel_8');
+      });
+      initbtn.addEventListener('click', function () {
+        destroybtn.removeAttribute('hidden');
+        initbtn.setAttribute('hidden', 'true');
+        gotoslideinput.removeAttribute('disabled');
+        gotonextbtn.removeAttribute('disabled');
+        gotoprevbtn.removeAttribute('disabled');
+        btnbeforeinit.removeAttribute('disabled');
+        btnafterinit.removeAttribute('disabled');
+        btnbeforescroll.removeAttribute('disabled');
+        btnafterscroll.removeAttribute('disabled');
+        __carouzel_instance.init('#__carouzel_8', carouzel8Settings);
       });
       gotoprevbtn.addEventListener('click', function () {
         if (instance8) {

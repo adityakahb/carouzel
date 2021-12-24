@@ -151,7 +151,7 @@ var Carouzel;
      *
      */
     var hasClass = function (element, cls) {
-        if (element) {
+        if (element && typeof element.className === "string") {
             var clsarr = element.className.split(" ");
             return clsarr.indexOf(cls) > -1 ? true : false;
         }
@@ -165,7 +165,7 @@ var Carouzel;
      *
      */
     var addClass = function (element, cls) {
-        if (element) {
+        if (element && typeof element.className === "string") {
             var clsarr = cls.split(" ");
             var clsarrLength = clsarr.length;
             for (var i = 0; i < clsarrLength; i++) {
@@ -185,7 +185,7 @@ var Carouzel;
      *
      */
     var removeClass = function (element, cls) {
-        if (element) {
+        if (element && typeof element.className === "string") {
             var clsarr = cls.split(" ");
             var curclass = element.className.split(" ");
             var curclassLength = curclass.length;
@@ -247,14 +247,12 @@ var Carouzel;
      *
      */
     var removeEventListeners = function (core, element) {
-        if ((core.eventHandlers || []).length > 0) {
-            var j = core.eventHandlers.length;
-            while (j--) {
-                if (core.eventHandlers[j].element.isEqualNode &&
-                    core.eventHandlers[j].element.isEqualNode(element)) {
-                    core.eventHandlers[j].remove();
-                    core.eventHandlers.splice(j, 1);
-                }
+        var j = core.eHandlers.length;
+        while (j--) {
+            if (core.eHandlers[j].element.isEqualNode &&
+                core.eHandlers[j].element.isEqualNode(element)) {
+                core.eHandlers[j].remove();
+                core.eHandlers.splice(j, 1);
             }
         }
     };
@@ -1282,6 +1280,24 @@ var Carouzel;
         }
         return { global: core, local: _core };
     };
+    var destroy = function (thisid) {
+        var allElems = document.querySelectorAll("#".concat(thisid, " *"));
+        var core = allLocalInstances[thisid];
+        for (var i = 0; i < allElems.length; i++) {
+            removeEventListeners(core, allElems[i]);
+            if (core.track &&
+                hasClass(allElems[i], core.settings.dupCls)) {
+                core.track.removeChild(allElems[i]);
+            }
+            if (core.nav && allElems[i].hasAttribute(_Selectors.dot.slice(1, -1))) {
+                core.nav.removeChild(allElems[i]);
+            }
+            allElems[i].removeAttribute("style");
+            removeClass(allElems[i], "".concat(core.settings.activeCls, " ").concat(core.settings.editCls, " ").concat(core.settings.disableCls, " ").concat(core.settings.dupCls, " ").concat(core.settings.rtlCls));
+        }
+        removeClass(core.rootElem, "".concat(core.settings.activeCls, " ").concat(core.settings.editCls, " ").concat(core.settings.disableCls, " ").concat(core.settings.dupCls, " ").concat(core.settings.rtlCls));
+        delete allLocalInstances[thisid];
+    };
     /**
      *  ██████  ██████  ██████  ███████
      * ██      ██    ██ ██   ██ ██
@@ -1295,23 +1311,6 @@ var Carouzel;
     var Core = /** @class */ (function () {
         function Core(thisid, rootElem, options) {
             this.core = {};
-            this.destroy = function (thisid) {
-                var allElems = document.querySelectorAll("#".concat(thisid, " *"));
-                var core = allLocalInstances[thisid];
-                for (var i = 0; i < allElems.length; i++) {
-                    removeEventListeners(core, allElems[i]);
-                    if (core.track &&
-                        hasClass(allElems[i], core.settings.dupCls)) {
-                        core.track.removeChild(allElems[i]);
-                    }
-                    if (core.nav && allElems[i].hasAttribute(_Selectors.dot.slice(1, -1))) {
-                        core.nav.removeChild(allElems[i]);
-                    }
-                    allElems[i].removeAttribute("style");
-                    removeClass(allElems[i], "".concat(core.settings.activeCls, " ").concat(core.settings.editCls, " ").concat(core.settings.disableCls, " ").concat(core.settings.dupCls, " ").concat(core.settings.rtlCls));
-                }
-                delete allLocalInstances[thisid];
-            };
             var initObj = init(this.core, rootElem, __assign(__assign({}, _Defaults), options));
             this.core = initObj.global;
             allLocalInstances[thisid] = initObj.local;
@@ -1433,7 +1432,7 @@ var Carouzel;
                     for (var i = 0; i < rootsLength; i++) {
                         var id = roots[i].getAttribute("id");
                         if (id && allGlobalInstances[id]) {
-                            allGlobalInstances[id].destroy(id);
+                            destroy(id);
                             delete allGlobalInstances[id];
                         }
                     }

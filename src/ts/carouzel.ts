@@ -311,7 +311,7 @@ namespace Carouzel {
    *
    */
   const hasClass = (element: Element, cls: string) => {
-    if (element) {
+    if (element && typeof element.className === `string`) {
       const clsarr = element.className.split(` `);
       return clsarr.indexOf(cls) > -1 ? true : false;
     }
@@ -327,7 +327,7 @@ namespace Carouzel {
    *
    */
   const addClass = (element: Element, cls: string) => {
-    if (element) {
+    if (element && typeof element.className === `string`) {
       let clsarr = cls.split(` `);
       let clsarrLength = clsarr.length;
       for (let i = 0; i < clsarrLength; i++) {
@@ -348,7 +348,7 @@ namespace Carouzel {
    *
    */
   const removeClass = (element: Element, cls: string) => {
-    if (element) {
+    if (element && typeof element.className === `string`) {
       let clsarr = cls.split(` `);
       let curclass = element.className.split(` `);
       let curclassLength = curclass.length;
@@ -417,16 +417,14 @@ namespace Carouzel {
     core: any,
     element: Element | Document | Window
   ) => {
-    if ((core.eventHandlers || []).length > 0) {
-      let j = core.eventHandlers.length;
-      while (j--) {
-        if (
-          core.eventHandlers[j].element.isEqualNode &&
-          core.eventHandlers[j].element.isEqualNode(element)
-        ) {
-          core.eventHandlers[j].remove();
-          core.eventHandlers.splice(j, 1);
-        }
+    let j = core.eHandlers.length;
+    while (j--) {
+      if (
+        core.eHandlers[j].element.isEqualNode &&
+        core.eHandlers[j].element.isEqualNode(element)
+      ) {
+        core.eHandlers[j].remove();
+        core.eHandlers.splice(j, 1);
       }
     }
   };
@@ -1586,6 +1584,33 @@ namespace Carouzel {
     return { global: core, local: _core };
   };
 
+  const destroy = (thisid: string) => {
+    let allElems = document.querySelectorAll(`#${thisid} *`);
+    let core = allLocalInstances[thisid];
+    for (let i = 0; i < allElems.length; i++) {
+      removeEventListeners(core, allElems[i]);
+      if (
+        core.track &&
+        hasClass(allElems[i] as Element, core.settings.dupCls)
+      ) {
+        core.track.removeChild(allElems[i]);
+      }
+      if (core.nav && allElems[i].hasAttribute(_Selectors.dot.slice(1, -1))) {
+        core.nav.removeChild(allElems[i]);
+      }
+      allElems[i].removeAttribute(`style`);
+      removeClass(
+        allElems[i] as HTMLElement,
+        `${core.settings.activeCls} ${core.settings.editCls} ${core.settings.disableCls} ${core.settings.dupCls} ${core.settings.rtlCls}`
+      );
+    }
+    removeClass(
+      core.rootElem as HTMLElement,
+      `${core.settings.activeCls} ${core.settings.editCls} ${core.settings.disableCls} ${core.settings.dupCls} ${core.settings.rtlCls}`
+    );
+    delete allLocalInstances[thisid];
+  };
+
   /**
    *  ██████  ██████  ██████  ███████
    * ██      ██    ██ ██   ██ ██
@@ -1607,28 +1632,6 @@ namespace Carouzel {
       this.core = initObj.global;
       allLocalInstances[thisid] = initObj.local;
     }
-    protected destroy = (thisid: string) => {
-      let allElems = document.querySelectorAll(`#${thisid} *`);
-      let core = allLocalInstances[thisid];
-      for (let i = 0; i < allElems.length; i++) {
-        removeEventListeners(core, allElems[i]);
-        if (
-          core.track &&
-          hasClass(allElems[i] as Element, core.settings.dupCls)
-        ) {
-          core.track.removeChild(allElems[i]);
-        }
-        if (core.nav && allElems[i].hasAttribute(_Selectors.dot.slice(1, -1))) {
-          core.nav.removeChild(allElems[i]);
-        }
-        allElems[i].removeAttribute(`style`);
-        removeClass(
-          allElems[i] as HTMLElement,
-          `${core.settings.activeCls} ${core.settings.editCls} ${core.settings.disableCls} ${core.settings.dupCls} ${core.settings.rtlCls}`
-        );
-      }
-      delete allLocalInstances[thisid];
-    };
   }
 
   /**
@@ -1775,7 +1778,7 @@ namespace Carouzel {
         for (let i = 0; i < rootsLength; i++) {
           const id = roots[i].getAttribute(`id`);
           if (id && allGlobalInstances[id]) {
-            allGlobalInstances[id].destroy(id);
+            destroy(id);
             delete allGlobalInstances[id];
           }
         }
