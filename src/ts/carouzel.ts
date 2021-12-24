@@ -495,6 +495,9 @@ namespace Carouzel {
         removeClass(core.bpo.dots[i] as Element, core.settings.activeCls);
       }
       x = Math.floor(core.ci / core.bpo._2Scroll);
+      if (core.settings.rtl) {
+        x = core.bpo.dots.length - x - 1;
+      }
       if (x < 0) {
         x = core.bpo.dots.length - 1;
       }
@@ -1120,26 +1123,19 @@ namespace Carouzel {
         ) {
           canFiniteAnimate = false;
           if (!core.settings.inf) {
-            console.log('=======1');
             if (diffX > 0) {
-              console.log('=======2');
-              if (posFinal <= 0) {
-                console.log('=======3');
+              if (Math.abs(core.ct) <= 0) {
                 core.track.style.transform = `translate3d(${core.ct}px, 0, 0)`;
               } else {
-                console.log('=======4');
                 canFiniteAnimate = true;
               }
             } else if (diffX < 0) {
-              console.log('=======5');
               if (
                 Math.abs(core.ct) + core.sWidth * core.bpo._2Show >=
                 core.sWidth * core._as.length
               ) {
-                console.log('=======6');
                 core.track.style.transform = `translate3d(${core.ct}px, 0, 0)`;
               } else {
-                console.log('=======7');
                 canFiniteAnimate = true;
               }
             }
@@ -1149,7 +1145,6 @@ namespace Carouzel {
               (core._as[k] as HTMLElement).style.opacity = `0`;
             }
           }
-
           if (posFinal < -threshold) {
             if (
               core.settings.effect === _animationEffects[0] &&

@@ -136,7 +136,8 @@
     display: flex;
     justify-content: center;
     align-items: center; }
-  [data-carouzel].__carouzel-rtl [data-carouzel-track],
+  [data-carouzel].__carouzel-rtl [data-carouzel-track] {
+    flex-direction: row-reverse; }
   [data-carouzel].__carouzel-rtl [data-carouzel-navigation] {
     flex-direction: row-reverse; }
   [data-carouzel].__carouzel-editmode [data-carouzel-trackouter] {
