@@ -819,6 +819,7 @@ var Carouzel;
         var startX = 0;
         var startY = 0;
         var threshold = core.settings.threshold || 100;
+        var canFiniteAnimate = false;
         var touchStart = function (e) {
             dragging = true;
             if (e.type === "touchstart") {
@@ -852,11 +853,6 @@ var Carouzel;
                     core.ct = -core.pts[core.ci];
                 }
                 if (ratioX > ratioY) {
-                    // if (diffX > 0) {
-                    //   console.log(`right swipe`);
-                    // } else if (diffX < 0) {
-                    //   console.log(`left swipe`);
-                    // }
                     if (core.track && core.settings.effect === _animationEffects[0]) {
                         core.track.style.transform = "translate3d(".concat(core.ct - posX2, "px, 0, 0)");
                     }
@@ -888,24 +884,55 @@ var Carouzel;
                     ratioY !== Infinity &&
                     ratioX !== Infinity &&
                     ratioX !== ratioY) {
+                    canFiniteAnimate = false;
+                    if (!core.settings.inf) {
+                        console.log('=======1');
+                        if (diffX > 0) {
+                            console.log('=======2');
+                            if (posFinal <= 0) {
+                                console.log('=======3');
+                                core.track.style.transform = "translate3d(".concat(core.ct, "px, 0, 0)");
+                            }
+                            else {
+                                console.log('=======4');
+                                canFiniteAnimate = true;
+                            }
+                        }
+                        else if (diffX < 0) {
+                            console.log('=======5');
+                            if (Math.abs(core.ct) + core.sWidth * core.bpo._2Show >=
+                                core.sWidth * core._as.length) {
+                                console.log('=======6');
+                                core.track.style.transform = "translate3d(".concat(core.ct, "px, 0, 0)");
+                            }
+                            else {
+                                console.log('=======7');
+                                canFiniteAnimate = true;
+                            }
+                        }
+                    }
                     if (core.settings.effect === _animationEffects[1]) {
                         for (var k = 0; k < core._as.length; k++) {
                             core._as[k].style.opacity = "0";
                         }
                     }
                     if (posFinal < -threshold) {
-                        if (core.settings.effect === _animationEffects[0]) {
+                        if (core.settings.effect === _animationEffects[0] &&
+                            (canFiniteAnimate || core.settings.inf)) {
                             goToPrev(core, posFinal);
                         }
-                        if (core.settings.effect === _animationEffects[1]) {
+                        if (core.settings.effect === _animationEffects[1] &&
+                            (canFiniteAnimate || core.settings.inf)) {
                             goToPrev(core, 1);
                         }
                     }
                     else if (posFinal > threshold) {
-                        if (core.settings.effect === _animationEffects[0]) {
+                        if (core.settings.effect === _animationEffects[0] &&
+                            (canFiniteAnimate || core.settings.inf)) {
                             goToNext(core, posFinal);
                         }
-                        if (core.settings.effect === _animationEffects[1]) {
+                        if (core.settings.effect === _animationEffects[1] &&
+                            (canFiniteAnimate || core.settings.inf)) {
                             goToNext(core, 1);
                         }
                     }

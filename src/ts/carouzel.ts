@@ -1046,6 +1046,7 @@ namespace Carouzel {
     let startX = 0;
     let startY = 0;
     let threshold = core.settings.threshold || 100;
+    let canFiniteAnimate = false;
 
     const touchStart = (e: Event) => {
       dragging = true;
@@ -1081,11 +1082,6 @@ namespace Carouzel {
         }
 
         if (ratioX > ratioY) {
-          // if (diffX > 0) {
-          //   console.log(`right swipe`);
-          // } else if (diffX < 0) {
-          //   console.log(`left swipe`);
-          // }
           if (core.track && core.settings.effect === _animationEffects[0]) {
             core.track.style.transform = `translate3d(${
               core.ct - posX2
@@ -1122,23 +1118,62 @@ namespace Carouzel {
           ratioX !== Infinity &&
           ratioX !== ratioY
         ) {
+          canFiniteAnimate = false;
+          if (!core.settings.inf) {
+            console.log('=======1');
+            if (diffX > 0) {
+              console.log('=======2');
+              if (posFinal <= 0) {
+                console.log('=======3');
+                core.track.style.transform = `translate3d(${core.ct}px, 0, 0)`;
+              } else {
+                console.log('=======4');
+                canFiniteAnimate = true;
+              }
+            } else if (diffX < 0) {
+              console.log('=======5');
+              if (
+                Math.abs(core.ct) + core.sWidth * core.bpo._2Show >=
+                core.sWidth * core._as.length
+              ) {
+                console.log('=======6');
+                core.track.style.transform = `translate3d(${core.ct}px, 0, 0)`;
+              } else {
+                console.log('=======7');
+                canFiniteAnimate = true;
+              }
+            }
+          }
           if (core.settings.effect === _animationEffects[1]) {
             for (let k = 0; k < core._as.length; k++) {
               (core._as[k] as HTMLElement).style.opacity = `0`;
             }
           }
+
           if (posFinal < -threshold) {
-            if (core.settings.effect === _animationEffects[0]) {
+            if (
+              core.settings.effect === _animationEffects[0] &&
+              (canFiniteAnimate || core.settings.inf)
+            ) {
               goToPrev(core, posFinal);
             }
-            if (core.settings.effect === _animationEffects[1]) {
+            if (
+              core.settings.effect === _animationEffects[1] &&
+              (canFiniteAnimate || core.settings.inf)
+            ) {
               goToPrev(core, 1);
             }
           } else if (posFinal > threshold) {
-            if (core.settings.effect === _animationEffects[0]) {
+            if (
+              core.settings.effect === _animationEffects[0] &&
+              (canFiniteAnimate || core.settings.inf)
+            ) {
               goToNext(core, posFinal);
             }
-            if (core.settings.effect === _animationEffects[1]) {
+            if (
+              core.settings.effect === _animationEffects[1] &&
+              (canFiniteAnimate || core.settings.inf)
+            ) {
               goToNext(core, 1);
             }
           } else {
