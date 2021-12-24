@@ -20,65 +20,65 @@ var __assign = (this && this.__assign) || function () {
  */
 var Carouzel;
 (function (Carouzel) {
-    'use strict';
+    "use strict";
     var allLocalInstances = {};
     var allGlobalInstances = {};
     var isWindowEventAttached = false;
     var windowResizeAny;
-    var _animationEffects = ['scroll', 'fade'];
-    var _rootSelectorTypeError = 'Element(s) with the provided query do(es) not exist';
-    var _optionsParseTypeError = 'Unable to parse the options string';
-    var _duplicateBreakpointsTypeError = 'Duplicate breakpoints found';
-    var _breakpointsParseTypeError = 'Error parsing breakpoints';
+    var _animationEffects = ["scroll", "fade"];
+    var _rootSelectorTypeError = "Element(s) with the provided query do(es) not exist";
+    var _optionsParseTypeError = "Unable to parse the options string";
+    var _duplicateBreakpointsTypeError = "Duplicate breakpoints found";
+    var _breakpointsParseTypeError = "Error parsing breakpoints";
     var _useCapture = false;
     var _Selectors = {
-        arrowN: '[data-carouzel-nextarrow]',
-        arrowP: '[data-carouzel-previousarrow]',
-        controlsW: '[data-carouzel-controlswrapper]',
-        dot: '[data-carouzel-navbutton]',
-        nav: '[data-carouzel-navigation]',
-        navW: '[data-carouzel-navigationwrapper]',
-        pauseBtn: '[data-carouzel-pause]',
-        playBtn: '[data-carouzel-play]',
-        root: '[data-carouzel]',
-        rootAuto: '[data-carouzel-auto]',
-        slide: '[data-carouzel-slide]',
-        stitle: '[data-carouzel-title]',
-        track: '[data-carouzel-track]',
-        trackM: '[data-carouzel-trackmask]',
-        trackO: '[data-carouzel-trackouter]',
-        trackW: '[data-carouzel-trackwrapper]'
+        arrowN: "[data-carouzel-nextarrow]",
+        arrowP: "[data-carouzel-previousarrow]",
+        controlsW: "[data-carouzel-controlswrapper]",
+        dot: "[data-carouzel-navbutton]",
+        nav: "[data-carouzel-navigation]",
+        navW: "[data-carouzel-navigationwrapper]",
+        pauseBtn: "[data-carouzel-pause]",
+        playBtn: "[data-carouzel-play]",
+        root: "[data-carouzel]",
+        rootAuto: "[data-carouzel-auto]",
+        slide: "[data-carouzel-slide]",
+        stitle: "[data-carouzel-title]",
+        track: "[data-carouzel-track]",
+        trackM: "[data-carouzel-trackmask]",
+        trackO: "[data-carouzel-trackouter]",
+        trackW: "[data-carouzel-trackwrapper]"
     };
     var _Defaults = {
-        activeClass: '__carouzel-active',
+        activeClass: "__carouzel-active",
         animationEffect: _animationEffects[0],
-        animationSpeed: 1000,
+        animationSpeed: 400,
         autoplay: false,
         autoplaySpeed: 3000,
         centerBetween: 0,
-        centeredClass: '__carouzel-centered',
-        disabledClass: '__carouzel-disabled',
-        dotIndexClass: '__carouzel-pageindex',
-        dotTitleClass: '__carouzel-pagetitle',
-        duplicateClass: '__carouzel-duplicate',
-        editClass: '__carouzel-editmode',
+        centeredClass: "__carouzel-centered",
+        disabledClass: "__carouzel-disabled",
+        dotIndexClass: "__carouzel-pageindex",
+        dotTitleClass: "__carouzel-pagetitle",
+        duplicateClass: "__carouzel-duplicate",
+        editClass: "__carouzel-editmode",
         enableKeyboard: true,
-        fadingClass: '__carouzel-fade',
+        fadingClass: "__carouzel-fade",
         hasTouchSwipe: true,
-        hiddenClass: '__carouzel-hidden',
-        idPrefix: '__carouzel',
+        hiddenClass: "__carouzel-hidden",
+        idPrefix: "__carouzel",
         isInfinite: true,
         isRTL: false,
         pauseOnHover: false,
         responsive: [],
-        rtlClass: '__carouzel-rtl',
+        rtlClass: "__carouzel-rtl",
         showArrows: true,
         showNavigation: true,
         slidesToScroll: 1,
         slidesToShow: 1,
         spaceBetween: 0,
         startAtIndex: 1,
-        timingFunction: 'linear',
+        timingFunction: "linear",
         touchThreshold: 100,
         useTitlesAsDots: false
     };
@@ -139,7 +139,7 @@ var Carouzel;
      *
      */
     var stringTrim = function (str) {
-        return str.replace(/^\s+|\s+$|\s+(?=\s)/g, '');
+        return str.replace(/^\s+|\s+$|\s+(?=\s)/g, "");
     };
     /**
      * Function to check wheather an element has a string in its class attribute
@@ -152,13 +152,13 @@ var Carouzel;
      */
     var hasClass = function (element, cls) {
         if (element) {
-            var clsarr = element.className.split(' ');
+            var clsarr = element.className.split(" ");
             return clsarr.indexOf(cls) > -1 ? true : false;
         }
         return false;
     };
     /**
-     * Function to add a string to an element's class attribute
+     * Function to add a string to an element`s class attribute
      *
      * @param element - An HTML Element
      * @param cls - A string
@@ -166,19 +166,19 @@ var Carouzel;
      */
     var addClass = function (element, cls) {
         if (element) {
-            var clsarr = cls.split(' ');
+            var clsarr = cls.split(" ");
             var clsarrLength = clsarr.length;
             for (var i = 0; i < clsarrLength; i++) {
                 var thiscls = clsarr[i];
                 if (!hasClass(element, thiscls)) {
-                    element.className += ' ' + thiscls;
+                    element.className += " " + thiscls;
                 }
             }
             element.className = stringTrim(element.className);
         }
     };
     /**
-     * Function to remove a string from an element's class attribute
+     * Function to remove a string from an element`s class attribute
      *
      * @param element - An HTML Element
      * @param cls - A string
@@ -186,8 +186,8 @@ var Carouzel;
      */
     var removeClass = function (element, cls) {
         if (element) {
-            var clsarr = cls.split(' ');
-            var curclass = element.className.split(' ');
+            var clsarr = cls.split(" ");
+            var curclass = element.className.split(" ");
             var curclassLength = curclass.length;
             for (var i = 0; i < curclassLength; i++) {
                 var thiscls = curclass[i];
@@ -196,7 +196,7 @@ var Carouzel;
                     i--;
                 }
             }
-            element.className = stringTrim(curclass.join(' '));
+            element.className = stringTrim(curclass.join(" "));
         }
     };
     /**
@@ -215,7 +215,7 @@ var Carouzel;
      *
      */
     var winResizeFn = function () {
-        if (typeof windowResizeAny !== 'undefined') {
+        if (typeof windowResizeAny !== "undefined") {
             clearTimeout(windowResizeAny);
         }
         windowResizeAny = setTimeout(function () {
@@ -289,26 +289,26 @@ var Carouzel;
         for (var i = 0; i < core._as.length; i++) {
             if (core._as[i]) {
                 removeClass(core._as[i], core.settings.activeCls);
-                core._as[i].setAttribute('aria-hidden', 'true');
+                core._as[i].setAttribute("aria-hidden", "true");
             }
         }
         for (var i = core.ci + core.bpo.pDups.length; i < core.ci + core.bpo.pDups.length + core.bpo._2Show; i++) {
             if (core._as[i]) {
                 addClass(core._as[i], core.settings.activeCls);
-                core._as[i].removeAttribute('aria-hidden');
+                core._as[i].removeAttribute("aria-hidden");
             }
         }
         if (!core.settings.inf && core.ci === 0) {
-            addClass(core.arrowP, core.settings.disableCls || '');
+            addClass(core.arrowP, core.settings.disableCls || "");
         }
         else {
-            removeClass(core.arrowP, core.settings.disableCls || '');
+            removeClass(core.arrowP, core.settings.disableCls || "");
         }
         if (!core.settings.inf && core.ci === core.sLength - core.bpo._2Show) {
-            addClass(core.arrowN, core.settings.disableCls || '');
+            addClass(core.arrowN, core.settings.disableCls || "");
         }
         else {
-            removeClass(core.arrowN, core.settings.disableCls || '');
+            removeClass(core.arrowN, core.settings.disableCls || "");
         }
         if (core.bpo.dots.length > 0) {
             for (var i = 0; i < core.bpo.dots.length; i++) {
@@ -331,7 +331,7 @@ var Carouzel;
      */
     var animateTrack = function (core, touchedPixel) {
         if (touchedPixel === void 0) { touchedPixel = 0; }
-        if (typeof core.settings.bFn === 'function') {
+        if (typeof core.settings.bFn === "function") {
             core.settings.bFn();
         }
         if (!core.pi) {
@@ -361,7 +361,7 @@ var Carouzel;
             core.ct = -core._t.nextX;
             updateAttributes(core);
             setTimeout(function () {
-                if (typeof core.settings.aFn === 'function') {
+                if (typeof core.settings.aFn === "function") {
                     core.settings.aFn();
                 }
             }, 0);
@@ -413,13 +413,19 @@ var Carouzel;
             core._t.progress = _easingFunctions[core.settings.timeFn](core._t.elapsed / core._t.total);
             core._t.progress = core._t.progress > 1 ? 1 : core._t.progress;
             for (var i = 0; i < core._as.length; i++) {
-                core._as[i].style.visibility = 'visible';
-                // if (hasClass(core._as[i], core.settings.activeCls)) {
-                //   (core._as[i] as HTMLElement).style.opacity = '' + core._t.progress;
-                // } else {
-                //   (core._as[i] as HTMLElement).style.opacity =
-                //   '' + (1 - core._t.progress);
-                // }
+                if (i < core.ci + core.bpo._2Show && core.pi < core.ci) {
+                    core._as[i].style.visibility = "visible";
+                }
+                if (i > core.ci + core.bpo._2Show && core.pi > core.ci) {
+                    core._as[i].style.visibility = "visible";
+                }
+                if (hasClass(core._as[i], core.settings.activeCls)) {
+                    core._as[i].style.opacity = "" + core._t.progress;
+                }
+                else {
+                    core._as[i].style.opacity =
+                        "" + (1 - core._t.progress);
+                }
             }
             if (core._t.progress < 1) {
                 core._t.id = requestAnimationFrame(fadeThisTrack);
@@ -427,13 +433,13 @@ var Carouzel;
             else {
                 postAnimation();
                 for (var i = 0; i < core._as.length; i++) {
-                    // (core._as[i] as HTMLElement).style.transform = `translate3d(0, 0, 0)`;
+                    core._as[i].style.transform = "translate3d(0, 0, 0)";
                     if (hasClass(core._as[i], core.settings.activeCls)) {
-                        core._as[i].style.opacity = '1';
+                        core._as[i].style.opacity = "1";
                     }
                     else {
-                        // (core._as[i] as HTMLElement).style.visibility = 'hidden';
-                        // (core._as[i] as HTMLElement).style.opacity = '0';
+                        core._as[i].style.visibility = "hidden";
+                        core._as[i].style.opacity = "0";
                     }
                 }
             }
@@ -441,22 +447,21 @@ var Carouzel;
         if (core.settings.effect === _animationEffects[1] && core.track) {
             core.track.style.transform = "translate3d(".concat(-core._t.nextX, "px, 0, 0)");
             for (var i = 0; i < core._as.length; i++) {
-                // (core._as[i] as HTMLElement).style.visibility = 'hidden';
-                // (core._as[i] as HTMLElement).style.opacity = '0';
-                // (core._as[i] as HTMLElement).style.transform = `translate3d(${-core.pts[core.ci]}px, 0, 0)`;
                 if (hasClass(core._as[i], core.settings.activeCls)) {
+                    core._as[i].style.visibility = "visible";
+                    core._as[i].style.opacity = "1";
                     core._as[i].style.transform = "translate3d(0, 0, 0)";
                 }
                 else {
-                    console.log('======', i, core.ci + core.bpo._2Show);
+                    core._as[i].style.visibility = "hidden";
+                    core._as[i].style.opacity = "0";
                     if (i < core.ci + core.bpo._2Show) {
-                        core._as[i].style.transform = "translate3d(".concat(core.pts[core.ci], "px, 0, 0)");
+                        core._as[i].style.transform = "translate3d(".concat(core.pts[0], "px, 0, 0)");
                     }
                     if (i > core.ci + core.bpo._2Show) {
                         core._as[i].style.transform = "translate3d(".concat(-core
-                            .pts[core.ci], "px, 0, 0)");
+                            .pts[0], "px, 0, 0)");
                     }
-                    console.log('======', i, core.ci + core.bpo._2Show, i < core.ci + core.bpo._2Show, i > core.ci + core.bpo._2Show);
                 }
             }
             if (core._t.start && core._t.total && core.ci !== core.pi) {
@@ -496,7 +501,7 @@ var Carouzel;
      *
      */
     var manageDuplicates = function (track, bpo, duplicateClass) {
-        var duplicates = track.querySelectorAll('.' + duplicateClass);
+        var duplicates = track.querySelectorAll("." + duplicateClass);
         for (var i = 0; i < duplicates.length; i++) {
             track.removeChild(duplicates[i]);
         }
@@ -522,7 +527,7 @@ var Carouzel;
         var temp = 0;
         while (len < core.bpall.length) {
             if ((core.bpall[len + 1] && core.bpall[len + 1].bp > viewportWidth) ||
-                typeof core.bpall[len + 1] === 'undefined') {
+                typeof core.bpall[len + 1] === "undefined") {
                 bpoptions = core.bpall[len];
                 break;
             }
@@ -532,7 +537,7 @@ var Carouzel;
             !hasClass(core.rootElem, core.settings.editCls) &&
             (core.bpo_old || {})._2Show !== bpoptions._2Show &&
             core.track) {
-            manageDuplicates(core.track, bpoptions, core.settings.dupCls || '');
+            manageDuplicates(core.track, bpoptions, core.settings.dupCls || "");
         }
         if ((core.bpo_old || {}).bp !== bpoptions.bp) {
             core.bpo = bpoptions;
@@ -577,30 +582,30 @@ var Carouzel;
             temp =
                 core.sLength >= bpoptions._2Show ? bpoptions.bpSLen : bpoptions._2Show;
             trackWidth = slideWidth * temp + bpoptions.gutr * (temp + 1);
-            core.track.style.width = toFixed4(trackWidth) + 'px';
+            core.track.style.width = toFixed4(trackWidth) + "px";
             core.trackO.style.width =
                 toFixed4(bpoptions._2Show * slideWidth +
-                    bpoptions.gutr * (bpoptions._2Show - 1)) + 'px';
+                    bpoptions.gutr * (bpoptions._2Show - 1)) + "px";
             core._as = core.trackO.querySelectorAll(_Selectors.slide);
             for (var i = 0; i < core._as.length; i++) {
-                core._as[i].style.width = toFixed4(slideWidth) + 'px';
+                core._as[i].style.width = toFixed4(slideWidth) + "px";
                 if (i === 0) {
                     core._as[i].style.marginLeft =
-                        toFixed4(bpoptions.gutr) + 'px';
+                        toFixed4(bpoptions.gutr) + "px";
                     core._as[i].style.marginRight =
-                        toFixed4(bpoptions.gutr / 2) + 'px';
+                        toFixed4(bpoptions.gutr / 2) + "px";
                 }
                 else if (i === core._as.length - 1) {
                     core._as[i].style.marginLeft =
-                        toFixed4(bpoptions.gutr / 2) + 'px';
+                        toFixed4(bpoptions.gutr / 2) + "px";
                     core._as[i].style.marginRight =
-                        toFixed4(bpoptions.gutr) + 'px';
+                        toFixed4(bpoptions.gutr) + "px";
                 }
                 else {
                     core._as[i].style.marginLeft =
-                        toFixed4(bpoptions.gutr / 2) + 'px';
+                        toFixed4(bpoptions.gutr / 2) + "px";
                     core._as[i].style.marginRight =
-                        toFixed4(bpoptions.gutr / 2) + 'px';
+                        toFixed4(bpoptions.gutr / 2) + "px";
                 }
             }
             for (var i = bpoptions.pDups.length; i > 0; i--) {
@@ -651,7 +656,7 @@ var Carouzel;
             cancelAnimationFrame(core._t.id);
         }
         if (core.settings.inf) {
-            if (typeof core.pts[core.ci] === 'undefined') {
+            if (typeof core.pts[core.ci] === "undefined") {
                 core.pi =
                     core.sLength -
                         (core.sLength % core.bpo._2Scroll > 0
@@ -678,7 +683,7 @@ var Carouzel;
             cancelAnimationFrame(core._t.id);
         }
         if (core.settings.inf) {
-            if (typeof core.pts[core.ci + core.bpo._2Show] === 'undefined') {
+            if (typeof core.pts[core.ci + core.bpo._2Show] === "undefined") {
                 core.pi = core.pi - core.sLength;
                 core.ci = 0;
             }
@@ -696,20 +701,20 @@ var Carouzel;
      */
     var toggleKeyboard = function (core) {
         if (core.rootElem && core.settings.kb) {
-            core.rootElem.setAttribute('tabindex', '-1');
-            var keyCode_1 = '';
-            core.eHandlers.push(eventHandler(core.rootElem, 'keydown', function (event) {
+            core.rootElem.setAttribute("tabindex", "-1");
+            var keyCode_1 = "";
+            core.eHandlers.push(eventHandler(core.rootElem, "keydown", function (event) {
                 event = event || window.event;
                 keyCode_1 = event.key.toLowerCase();
                 switch (keyCode_1) {
-                    case 'arrowleft':
+                    case "arrowleft":
                         goToPrev(core, 0);
                         break;
-                    case 'arrowright':
+                    case "arrowright":
                         goToNext(core, 0);
                         break;
                     default:
-                        keyCode_1 = '';
+                        keyCode_1 = "";
                         break;
                 }
             }));
@@ -742,11 +747,11 @@ var Carouzel;
      */
     var toggleAutoplay = function (core) {
         if (core.rootElem && core.settings.pauseHov) {
-            core.eHandlers.push(eventHandler(core.rootElem, 'mouseenter', function () {
+            core.eHandlers.push(eventHandler(core.rootElem, "mouseenter", function () {
                 core.paused = true;
                 togglePlayPause(core, false);
             }));
-            core.eHandlers.push(eventHandler(core.rootElem, 'mouseleave', function () {
+            core.eHandlers.push(eventHandler(core.rootElem, "mouseleave", function () {
                 core.paused = false;
                 togglePlayPause(core, true);
             }));
@@ -768,26 +773,26 @@ var Carouzel;
      */
     var toggleControlButtons = function (core) {
         if (core.arrowP) {
-            core.eHandlers.push(eventHandler(core.arrowP, 'click', function (event) {
+            core.eHandlers.push(eventHandler(core.arrowP, "click", function (event) {
                 event.preventDefault();
                 goToPrev(core, 0);
             }));
         }
         if (core.arrowN) {
-            core.eHandlers.push(eventHandler(core.arrowN, 'click', function (event) {
+            core.eHandlers.push(eventHandler(core.arrowN, "click", function (event) {
                 event.preventDefault();
                 goToNext(core, 0);
             }));
         }
         if (core.settings.inf && core.btnPause) {
-            core.eHandlers.push(eventHandler(core.btnPause, 'click', function (event) {
+            core.eHandlers.push(eventHandler(core.btnPause, "click", function (event) {
                 event.preventDefault();
                 core.pauseClk = true;
                 togglePlayPause(core, false);
             }));
         }
         if (core.settings.inf && core.btnPlay) {
-            core.eHandlers.push(eventHandler(core.btnPlay, 'click', function (event) {
+            core.eHandlers.push(eventHandler(core.btnPlay, "click", function (event) {
                 event.preventDefault();
                 core.pauseClk = false;
                 togglePlayPause(core, true);
@@ -816,7 +821,7 @@ var Carouzel;
         var threshold = core.settings.threshold || 100;
         var touchStart = function (e) {
             dragging = true;
-            if (e.type === 'touchstart') {
+            if (e.type === "touchstart") {
                 startX = e.changedTouches[0].screenX;
                 startY = e.changedTouches[0].screenY;
                 posX1 = e.changedTouches[0].screenX;
@@ -829,7 +834,7 @@ var Carouzel;
         };
         var touchMove = function (e) {
             if (dragging) {
-                if (e.type === 'touchstart') {
+                if (e.type === "touchstart") {
                     endX = e.changedTouches[0].screenX;
                     endY = e.changedTouches[0].screenY;
                     posX2 = posX1 - e.changedTouches[0].screenX;
@@ -848,80 +853,96 @@ var Carouzel;
                 }
                 if (ratioX > ratioY) {
                     // if (diffX > 0) {
-                    //   console.log('right swipe');
+                    //   console.log(`right swipe`);
                     // } else if (diffX < 0) {
-                    //   console.log('left swipe');
+                    //   console.log(`left swipe`);
                     // }
                     if (core.track && core.settings.effect === _animationEffects[0]) {
                         core.track.style.transform = "translate3d(".concat(core.ct - posX2, "px, 0, 0)");
                     }
                     if (core.track && core.settings.effect === _animationEffects[1]) {
                         for (var k = 0; k < core._as.length; k++) {
-                            // (core._as[k] as HTMLElement).style.opacity =
-                            //   '' + Math.abs(posX2) / threshold / 7.5;
-                            core._as[k].style.opacity = '1';
+                            core._as[k].style.opacity = "1";
                         }
                     }
                 }
                 posFinal = posX2;
             }
         };
-        var touchEnd = function () {
+        var touchEnd = function (e) {
             if (dragging && core.track) {
-                if (core.settings.effect === _animationEffects[1]) {
-                    for (var k = 0; k < core._as.length; k++) {
-                        core._as[k].style.opacity = '0';
-                    }
-                }
-                if (posFinal < -threshold) {
-                    if (core.settings.effect === _animationEffects[0]) {
-                        goToPrev(core, posFinal);
-                    }
-                    if (core.settings.effect === _animationEffects[1]) {
-                        goToPrev(core, 1);
-                    }
-                }
-                else if (posFinal > threshold) {
-                    if (core.settings.effect === _animationEffects[0]) {
-                        goToNext(core, posFinal);
-                    }
-                    if (core.settings.effect === _animationEffects[1]) {
-                        goToNext(core, 1);
-                    }
+                if (e.type === "touchstart") {
+                    endX = e.changedTouches[0].screenX;
+                    endY = e.changedTouches[0].screenY;
                 }
                 else {
-                    if (core.settings.effect === _animationEffects[0]) {
-                        core.track.style.transform = "translate3d(".concat(core.ct, "px, 0, 0)");
-                    }
+                    endX = e.clientX;
+                    endY = e.clientY;
+                }
+                diffX = endX - startX;
+                diffY = endY - startY;
+                ratioX = Math.abs(diffX / diffY);
+                ratioY = Math.abs(diffY / diffX);
+                if (!isNaN(ratioX) &&
+                    !isNaN(ratioY) &&
+                    ratioY !== Infinity &&
+                    ratioX !== Infinity &&
+                    ratioX !== ratioY) {
                     if (core.settings.effect === _animationEffects[1]) {
                         for (var k = 0; k < core._as.length; k++) {
-                            core._as[k].style.opacity = '1';
+                            core._as[k].style.opacity = "0";
                         }
                     }
+                    if (posFinal < -threshold) {
+                        if (core.settings.effect === _animationEffects[0]) {
+                            goToPrev(core, posFinal);
+                        }
+                        if (core.settings.effect === _animationEffects[1]) {
+                            goToPrev(core, 1);
+                        }
+                    }
+                    else if (posFinal > threshold) {
+                        if (core.settings.effect === _animationEffects[0]) {
+                            goToNext(core, posFinal);
+                        }
+                        if (core.settings.effect === _animationEffects[1]) {
+                            goToNext(core, 1);
+                        }
+                    }
+                    else {
+                        if (core.settings.effect === _animationEffects[0]) {
+                            core.track.style.transform = "translate3d(".concat(core.ct, "px, 0, 0)");
+                        }
+                        if (core.settings.effect === _animationEffects[1]) {
+                            for (var k = 0; k < core._as.length; k++) {
+                                core._as[k].style.opacity = "1";
+                            }
+                        }
+                    }
+                    posX1 = posX2 = posFinal = 0;
+                    dragging = false;
                 }
-                posX1 = posX2 = posFinal = 0;
-                dragging = false;
             }
         };
-        core.eHandlers.push(eventHandler(core.track, 'touchstart', function (event) {
+        core.eHandlers.push(eventHandler(core.track, "touchstart", function (event) {
             touchStart(event);
         }));
-        core.eHandlers.push(eventHandler(core.track, 'touchmove', function (event) {
+        core.eHandlers.push(eventHandler(core.track, "touchmove", function (event) {
             touchMove(event);
         }));
-        core.eHandlers.push(eventHandler(core.track, 'touchend', function () {
-            touchEnd();
+        core.eHandlers.push(eventHandler(core.track, "touchend", function (e) {
+            touchEnd(e);
         }));
-        core.eHandlers.push(eventHandler(core.track, 'mousedown', function (event) {
+        core.eHandlers.push(eventHandler(core.track, "mousedown", function (event) {
             touchStart(event);
         }));
-        core.eHandlers.push(eventHandler(core.track, 'mouseup', function () {
-            touchEnd();
+        core.eHandlers.push(eventHandler(core.track, "mouseup", function (e) {
+            touchEnd(e);
         }));
-        core.eHandlers.push(eventHandler(core.track, 'mouseleave', function () {
-            touchEnd();
+        core.eHandlers.push(eventHandler(core.track, "mouseleave", function (e) {
+            touchEnd(e);
         }));
-        core.eHandlers.push(eventHandler(core.track, 'mousemove', function (event) {
+        core.eHandlers.push(eventHandler(core.track, "mousemove", function (event) {
             touchMove(event);
         }));
     };
@@ -940,7 +961,7 @@ var Carouzel;
                     Math.ceil(core.bpall[i].cntr / 2); j < core.sLength; j++) {
                     if (core._ds[j]) {
                         var elem = core._ds[j].cloneNode(true);
-                        addClass(elem, core.settings.dupCls || '');
+                        addClass(elem, core.settings.dupCls || "");
                         core.bpall[i].bpSLen++;
                         core.bpall[i].pDups.push(elem);
                     }
@@ -948,7 +969,7 @@ var Carouzel;
                 for (var j = 0; j < core.bpall[i]._2Show + Math.ceil(core.bpall[i].cntr / 2); j++) {
                     if (core._ds[j]) {
                         var elem = core._ds[j].cloneNode(true);
-                        addClass(elem, core.settings.dupCls || '');
+                        addClass(elem, core.settings.dupCls || "");
                         core.bpall[i].bpSLen++;
                         core.bpall[i].nDups.push(elem);
                     }
@@ -967,11 +988,11 @@ var Carouzel;
                 pageLength++;
             }
             core.bpall[i].dots = [];
-            var btnStr = '';
+            var btnStr = "";
             for (var j = 0; j < pageLength; j++) {
-                var elem = document.createElement('button');
-                elem.setAttribute(_Selectors.dot.slice(1, -1), '');
-                elem.setAttribute('type', 'button');
+                var elem = document.createElement("button");
+                elem.setAttribute(_Selectors.dot.slice(1, -1), "");
+                elem.setAttribute("type", "button");
                 btnStr = "<div class=\"".concat(core.settings.dotNcls, "\">").concat(j + 1, "</div>");
                 if (core.settings.useTitle &&
                     core.bpall[i]._2Show === 1 &&
@@ -983,7 +1004,7 @@ var Carouzel;
                 navBtns.push(elem);
             }
             var _loop_2 = function (j) {
-                core.eHandlers.push(eventHandler(navBtns[j], 'click', function (event) {
+                core.eHandlers.push(eventHandler(navBtns[j], "click", function (event) {
                     event.preventDefault();
                     core.pi = core.ci;
                     core.ci = j * core.bpall[i]._2Scroll;
@@ -1066,25 +1087,25 @@ var Carouzel;
             while (bpLen < updatedArr.bp.length) {
                 bp1 = bpArr[bpLen - 1];
                 bp2 = __assign(__assign({}, bp1), updatedArr.bp[bpLen]);
-                if (typeof bp2._arrows === 'undefined') {
+                if (typeof bp2._arrows === "undefined") {
                     bp2._arrows = bp1._arrows;
                 }
-                if (typeof bp2._nav === 'undefined') {
+                if (typeof bp2._nav === "undefined") {
                     bp2._nav = bp1._nav;
                 }
-                if (typeof bp2._2Show === 'undefined') {
+                if (typeof bp2._2Show === "undefined") {
                     bp2._2Show = bp1._2Show;
                 }
-                if (typeof bp2._2Scroll === 'undefined') {
+                if (typeof bp2._2Scroll === "undefined") {
                     bp2._2Scroll = bp1._2Scroll;
                 }
-                if (typeof bp2.swipe === 'undefined') {
+                if (typeof bp2.swipe === "undefined") {
                     bp2.swipe = bp1.swipe;
                 }
-                if (typeof bp2.cntr === 'undefined') {
+                if (typeof bp2.cntr === "undefined") {
                     bp2.cntr = bp1.cntr;
                 }
-                if (typeof bp2.gutr === 'undefined') {
+                if (typeof bp2.gutr === "undefined") {
                     bp2.gutr = bp1.gutr;
                 }
                 bpArr.push(bp2);
@@ -1165,7 +1186,7 @@ var Carouzel;
      *
      */
     var init = function (core, rootElem, settings) {
-        if (typeof settings.beforeInit === 'function') {
+        if (typeof settings.beforeInit === "function") {
             settings.beforeInit();
         }
         var _core = __assign({}, core);
@@ -1233,7 +1254,7 @@ var Carouzel;
             applyLayout(_core, _core.settings.rtl);
         }
         addClass(core.rootElem, _core.settings.activeCls);
-        if (typeof settings.afterInit === 'function') {
+        if (typeof settings.afterInit === "function") {
             settings.afterInit();
         }
         return { global: core, local: _core };
@@ -1263,7 +1284,7 @@ var Carouzel;
                     if (core.nav && allElems[i].hasAttribute(_Selectors.dot.slice(1, -1))) {
                         core.nav.removeChild(allElems[i]);
                     }
-                    allElems[i].removeAttribute('style');
+                    allElems[i].removeAttribute("style");
                     removeClass(allElems[i], "".concat(core.settings.activeCls, " ").concat(core.settings.editCls, " ").concat(core.settings.disableCls, " ").concat(core.settings.dupCls, " ").concat(core.settings.rtlCls));
                 }
                 delete allLocalInstances[thisid];
@@ -1309,7 +1330,7 @@ var Carouzel;
                 }
                 if (rootsLength > 0) {
                     for (var i = 0; i < rootsLength; i++) {
-                        var id = roots[i].getAttribute('id');
+                        var id = roots[i].getAttribute("id");
                         var isElementPresent = false;
                         if (id) {
                             for (var j = 0; j < instanceLength; j++) {
@@ -1321,10 +1342,10 @@ var Carouzel;
                         }
                         if (!isElementPresent) {
                             var newOptions = void 0;
-                            var autoDataAttr = roots[i].getAttribute(_Selectors.rootAuto.slice(1, -1)) || '';
+                            var autoDataAttr = roots[i].getAttribute(_Selectors.rootAuto.slice(1, -1)) || "";
                             if (autoDataAttr) {
                                 try {
-                                    newOptions = JSON.parse(stringTrim(autoDataAttr).replace(/'/g, '"'));
+                                    newOptions = JSON.parse(stringTrim(autoDataAttr).replace(/'/g, "\""));
                                 }
                                 catch (e) {
                                     throw new TypeError(_optionsParseTypeError);
@@ -1340,18 +1361,18 @@ var Carouzel;
                                 var thisid = id
                                     ? id
                                     : __assign(__assign({}, newOptions), _Defaults).idPrefix +
-                                        '_' +
+                                        "_" +
                                         new Date().getTime() +
-                                        '_root_' +
+                                        "_root_" +
                                         (i + 1);
-                                roots[i].setAttribute('id', thisid);
+                                roots[i].setAttribute("id", thisid);
                                 allGlobalInstances[thisid] = new Core(thisid, roots[i], newOptions);
                             }
                         }
                     }
                     if (window && getInstancesLength() > 0 && !isWindowEventAttached) {
                         isWindowEventAttached = true;
-                        window.addEventListener('resize', winResizeFn);
+                        window.addEventListener("resize", winResizeFn);
                     }
                 }
                 else {
@@ -1361,7 +1382,7 @@ var Carouzel;
                 }
             };
             /**
-             * Function to initialize all the carouzel which have 'data-carouzelauto' set
+             * Function to initialize all the carouzel which have `data-carouzelauto` set
              *
              */
             this.globalInit = function () {
@@ -1387,14 +1408,14 @@ var Carouzel;
                 var rootsLength = roots.length;
                 if (rootsLength > 0) {
                     for (var i = 0; i < rootsLength; i++) {
-                        var id = roots[i].getAttribute('id');
+                        var id = roots[i].getAttribute("id");
                         if (id && allGlobalInstances[id]) {
                             allGlobalInstances[id].destroy(id);
                             delete allGlobalInstances[id];
                         }
                     }
                     if (window && getInstancesLength() === 0) {
-                        window.removeEventListener('resize', winResizeFn);
+                        window.removeEventListener("resize", winResizeFn);
                     }
                 }
                 else {
@@ -1420,7 +1441,7 @@ var Carouzel;
     Carouzel.Root = Root;
 })(Carouzel || (Carouzel = {}));
 Carouzel.Root.getInstance().globalInit();
-if (typeof exports === 'object' && typeof module !== 'undefined') {
+if (typeof exports === "object" && typeof module !== "undefined") {
     module.exports = Carouzel;
 }
 //# sourceMappingURL=carouzel.js.map

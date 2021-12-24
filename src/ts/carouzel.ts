@@ -8,7 +8,7 @@
  *
  */
 namespace Carouzel {
-  'use strict';
+  `use strict`;
 
   interface IRoot {
     [key: string]: any;
@@ -186,61 +186,60 @@ namespace Carouzel {
   let isWindowEventAttached = false;
   let windowResizeAny: any;
 
-  const _animationEffects = ['scroll', 'fade'];
-  const _rootSelectorTypeError =
-    'Element(s) with the provided query do(es) not exist';
-  const _optionsParseTypeError = 'Unable to parse the options string';
-  const _duplicateBreakpointsTypeError = 'Duplicate breakpoints found';
-  const _breakpointsParseTypeError = 'Error parsing breakpoints';
+  const _animationEffects = [`scroll`, `fade`];
+  const _rootSelectorTypeError = `Element(s) with the provided query do(es) not exist`;
+  const _optionsParseTypeError = `Unable to parse the options string`;
+  const _duplicateBreakpointsTypeError = `Duplicate breakpoints found`;
+  const _breakpointsParseTypeError = `Error parsing breakpoints`;
   const _useCapture = false;
   const _Selectors = {
-    arrowN: '[data-carouzel-nextarrow]',
-    arrowP: '[data-carouzel-previousarrow]',
-    controlsW: '[data-carouzel-controlswrapper]',
-    dot: '[data-carouzel-navbutton]',
-    nav: '[data-carouzel-navigation]',
-    navW: '[data-carouzel-navigationwrapper]',
-    pauseBtn: '[data-carouzel-pause]',
-    playBtn: '[data-carouzel-play]',
-    root: '[data-carouzel]',
-    rootAuto: '[data-carouzel-auto]',
-    slide: '[data-carouzel-slide]',
-    stitle: '[data-carouzel-title]',
-    track: '[data-carouzel-track]',
-    trackM: '[data-carouzel-trackmask]',
-    trackO: '[data-carouzel-trackouter]',
-    trackW: '[data-carouzel-trackwrapper]',
+    arrowN: `[data-carouzel-nextarrow]`,
+    arrowP: `[data-carouzel-previousarrow]`,
+    controlsW: `[data-carouzel-controlswrapper]`,
+    dot: `[data-carouzel-navbutton]`,
+    nav: `[data-carouzel-navigation]`,
+    navW: `[data-carouzel-navigationwrapper]`,
+    pauseBtn: `[data-carouzel-pause]`,
+    playBtn: `[data-carouzel-play]`,
+    root: `[data-carouzel]`,
+    rootAuto: `[data-carouzel-auto]`,
+    slide: `[data-carouzel-slide]`,
+    stitle: `[data-carouzel-title]`,
+    track: `[data-carouzel-track]`,
+    trackM: `[data-carouzel-trackmask]`,
+    trackO: `[data-carouzel-trackouter]`,
+    trackW: `[data-carouzel-trackwrapper]`,
   };
   const _Defaults: ICarouzelSettings = {
-    activeClass: '__carouzel-active',
+    activeClass: `__carouzel-active`,
     animationEffect: _animationEffects[0],
-    animationSpeed: 1000,
+    animationSpeed: 400,
     autoplay: false,
     autoplaySpeed: 3000,
     centerBetween: 0,
-    centeredClass: '__carouzel-centered',
-    disabledClass: '__carouzel-disabled',
-    dotIndexClass: '__carouzel-pageindex',
-    dotTitleClass: '__carouzel-pagetitle',
-    duplicateClass: '__carouzel-duplicate',
-    editClass: '__carouzel-editmode',
+    centeredClass: `__carouzel-centered`,
+    disabledClass: `__carouzel-disabled`,
+    dotIndexClass: `__carouzel-pageindex`,
+    dotTitleClass: `__carouzel-pagetitle`,
+    duplicateClass: `__carouzel-duplicate`,
+    editClass: `__carouzel-editmode`,
     enableKeyboard: true,
-    fadingClass: '__carouzel-fade',
+    fadingClass: `__carouzel-fade`,
     hasTouchSwipe: true,
-    hiddenClass: '__carouzel-hidden',
-    idPrefix: '__carouzel',
+    hiddenClass: `__carouzel-hidden`,
+    idPrefix: `__carouzel`,
     isInfinite: true,
     isRTL: false,
     pauseOnHover: false,
     responsive: [],
-    rtlClass: '__carouzel-rtl',
+    rtlClass: `__carouzel-rtl`,
     showArrows: true,
     showNavigation: true,
     slidesToScroll: 1,
     slidesToShow: 1,
     spaceBetween: 0,
     startAtIndex: 1,
-    timingFunction: 'linear',
+    timingFunction: `linear`,
     touchThreshold: 100,
     useTitlesAsDots: false,
   };
@@ -299,7 +298,7 @@ namespace Carouzel {
    *
    */
   const stringTrim = (str: string) => {
-    return str.replace(/^\s+|\s+$|\s+(?=\s)/g, '');
+    return str.replace(/^\s+|\s+$|\s+(?=\s)/g, ``);
   };
 
   /**
@@ -313,7 +312,7 @@ namespace Carouzel {
    */
   const hasClass = (element: Element, cls: string) => {
     if (element) {
-      const clsarr = element.className.split(' ');
+      const clsarr = element.className.split(` `);
       return clsarr.indexOf(cls) > -1 ? true : false;
     }
 
@@ -321,7 +320,7 @@ namespace Carouzel {
   };
 
   /**
-   * Function to add a string to an element's class attribute
+   * Function to add a string to an element`s class attribute
    *
    * @param element - An HTML Element
    * @param cls - A string
@@ -329,12 +328,12 @@ namespace Carouzel {
    */
   const addClass = (element: Element, cls: string) => {
     if (element) {
-      let clsarr = cls.split(' ');
+      let clsarr = cls.split(` `);
       let clsarrLength = clsarr.length;
       for (let i = 0; i < clsarrLength; i++) {
         let thiscls = clsarr[i];
         if (!hasClass(element, thiscls)) {
-          element.className += ' ' + thiscls;
+          element.className += ` ` + thiscls;
         }
       }
       element.className = stringTrim(element.className);
@@ -342,7 +341,7 @@ namespace Carouzel {
   };
 
   /**
-   * Function to remove a string from an element's class attribute
+   * Function to remove a string from an element`s class attribute
    *
    * @param element - An HTML Element
    * @param cls - A string
@@ -350,8 +349,8 @@ namespace Carouzel {
    */
   const removeClass = (element: Element, cls: string) => {
     if (element) {
-      let clsarr = cls.split(' ');
-      let curclass = element.className.split(' ');
+      let clsarr = cls.split(` `);
+      let curclass = element.className.split(` `);
       let curclassLength = curclass.length;
       for (let i = 0; i < curclassLength; i++) {
         let thiscls = curclass[i];
@@ -360,7 +359,7 @@ namespace Carouzel {
           i--;
         }
       }
-      element.className = stringTrim(curclass.join(' '));
+      element.className = stringTrim(curclass.join(` `));
     }
   };
 
@@ -381,7 +380,7 @@ namespace Carouzel {
    *
    */
   const winResizeFn = () => {
-    if (typeof windowResizeAny !== 'undefined') {
+    if (typeof windowResizeAny !== `undefined`) {
       clearTimeout(windowResizeAny);
     }
     windowResizeAny = setTimeout(() => {
@@ -468,7 +467,7 @@ namespace Carouzel {
     for (let i = 0; i < core._as.length; i++) {
       if (core._as[i]) {
         removeClass(core._as[i] as Element, core.settings.activeCls);
-        core._as[i].setAttribute('aria-hidden', 'true');
+        core._as[i].setAttribute(`aria-hidden`, `true`);
       }
     }
     for (
@@ -478,18 +477,18 @@ namespace Carouzel {
     ) {
       if (core._as[i]) {
         addClass(core._as[i] as Element, core.settings.activeCls);
-        core._as[i].removeAttribute('aria-hidden');
+        core._as[i].removeAttribute(`aria-hidden`);
       }
     }
     if (!core.settings.inf && core.ci === 0) {
-      addClass(core.arrowP as Element, core.settings.disableCls || '');
+      addClass(core.arrowP as Element, core.settings.disableCls || ``);
     } else {
-      removeClass(core.arrowP as Element, core.settings.disableCls || '');
+      removeClass(core.arrowP as Element, core.settings.disableCls || ``);
     }
     if (!core.settings.inf && core.ci === core.sLength - core.bpo._2Show) {
-      addClass(core.arrowN as Element, core.settings.disableCls || '');
+      addClass(core.arrowN as Element, core.settings.disableCls || ``);
     } else {
-      removeClass(core.arrowN as Element, core.settings.disableCls || '');
+      removeClass(core.arrowN as Element, core.settings.disableCls || ``);
     }
     if (core.bpo.dots.length > 0) {
       for (let i = 0; i < core.bpo.dots.length; i++) {
@@ -512,7 +511,7 @@ namespace Carouzel {
    *
    */
   const animateTrack = (core: ICore, touchedPixel = 0) => {
-    if (typeof core.settings.bFn === 'function') {
+    if (typeof core.settings.bFn === `function`) {
       core.settings.bFn();
     }
 
@@ -546,7 +545,7 @@ namespace Carouzel {
       core.ct = -core._t.nextX;
       updateAttributes(core);
       setTimeout(() => {
-        if (typeof core.settings.aFn === 'function') {
+        if (typeof core.settings.aFn === `function`) {
           core.settings.aFn();
         }
       }, 0);
@@ -607,25 +606,30 @@ namespace Carouzel {
       );
       core._t.progress = core._t.progress > 1 ? 1 : core._t.progress;
       for (let i = 0; i < core._as.length; i++) {
-        (core._as[i] as HTMLElement).style.visibility = 'visible';
-        // if (hasClass(core._as[i], core.settings.activeCls)) {
-        //   (core._as[i] as HTMLElement).style.opacity = '' + core._t.progress;
-        // } else {
-        //   (core._as[i] as HTMLElement).style.opacity =
-        //   '' + (1 - core._t.progress);
-        // }
+        if (i < core.ci + core.bpo._2Show && core.pi < core.ci) {
+          (core._as[i] as HTMLElement).style.visibility = `visible`;
+        }
+        if (i > core.ci + core.bpo._2Show && core.pi > core.ci) {
+          (core._as[i] as HTMLElement).style.visibility = `visible`;
+        }
+        if (hasClass(core._as[i], core.settings.activeCls)) {
+          (core._as[i] as HTMLElement).style.opacity = `` + core._t.progress;
+        } else {
+          (core._as[i] as HTMLElement).style.opacity =
+            `` + (1 - core._t.progress);
+        }
       }
       if (core._t.progress < 1) {
         core._t.id = requestAnimationFrame(fadeThisTrack);
       } else {
         postAnimation();
         for (let i = 0; i < core._as.length; i++) {
-          // (core._as[i] as HTMLElement).style.transform = `translate3d(0, 0, 0)`;
+          (core._as[i] as HTMLElement).style.transform = `translate3d(0, 0, 0)`;
           if (hasClass(core._as[i], core.settings.activeCls)) {
-            (core._as[i] as HTMLElement).style.opacity = '1';
+            (core._as[i] as HTMLElement).style.opacity = `1`;
           } else {
-            // (core._as[i] as HTMLElement).style.visibility = 'hidden';
-            // (core._as[i] as HTMLElement).style.opacity = '0';
+            (core._as[i] as HTMLElement).style.visibility = `hidden`;
+            (core._as[i] as HTMLElement).style.opacity = `0`;
           }
         }
       }
@@ -634,29 +638,22 @@ namespace Carouzel {
     if (core.settings.effect === _animationEffects[1] && core.track) {
       core.track.style.transform = `translate3d(${-core._t.nextX}px, 0, 0)`;
       for (let i = 0; i < core._as.length; i++) {
-        // (core._as[i] as HTMLElement).style.visibility = 'hidden';
-        // (core._as[i] as HTMLElement).style.opacity = '0';
-        // (core._as[i] as HTMLElement).style.transform = `translate3d(${-core.pts[core.ci]}px, 0, 0)`;
         if (hasClass(core._as[i], core.settings.activeCls)) {
+          (core._as[i] as HTMLElement).style.visibility = `visible`;
+          (core._as[i] as HTMLElement).style.opacity = `1`;
           (core._as[i] as HTMLElement).style.transform = `translate3d(0, 0, 0)`;
         } else {
-          console.log('======', i, core.ci + core.bpo._2Show);
+          (core._as[i] as HTMLElement).style.visibility = `hidden`;
+          (core._as[i] as HTMLElement).style.opacity = `0`;
           if (i < core.ci + core.bpo._2Show) {
-            (core._as[i] as HTMLElement).style.transform = `translate3d(${
-              core.pts[core.ci]
-            }px, 0, 0)`;
+            (
+              core._as[i] as HTMLElement
+            ).style.transform = `translate3d(${core.pts[0]}px, 0, 0)`;
           }
           if (i > core.ci + core.bpo._2Show) {
             (core._as[i] as HTMLElement).style.transform = `translate3d(${-core
-              .pts[core.ci]}px, 0, 0)`;
+              .pts[0]}px, 0, 0)`;
           }
-          console.log(
-            '======',
-            i,
-            core.ci + core.bpo._2Show,
-            i < core.ci + core.bpo._2Show,
-            i > core.ci + core.bpo._2Show
-          );
         }
       }
       if (core._t.start && core._t.total && core.ci !== core.pi) {
@@ -703,7 +700,7 @@ namespace Carouzel {
     bpo: ICarouzelCoreBreakpoint,
     duplicateClass: string
   ) => {
-    let duplicates = track.querySelectorAll('.' + duplicateClass);
+    let duplicates = track.querySelectorAll(`.` + duplicateClass);
     for (let i = 0; i < duplicates.length; i++) {
       track.removeChild(duplicates[i]);
     }
@@ -732,7 +729,7 @@ namespace Carouzel {
     while (len < core.bpall.length) {
       if (
         (core.bpall[len + 1] && core.bpall[len + 1].bp > viewportWidth) ||
-        typeof core.bpall[len + 1] === 'undefined'
+        typeof core.bpall[len + 1] === `undefined`
       ) {
         bpoptions = core.bpall[len];
         break;
@@ -746,7 +743,7 @@ namespace Carouzel {
       (core.bpo_old || {})._2Show !== bpoptions._2Show &&
       core.track
     ) {
-      manageDuplicates(core.track, bpoptions, core.settings.dupCls || '');
+      manageDuplicates(core.track, bpoptions, core.settings.dupCls || ``);
     }
     if ((core.bpo_old || {}).bp !== bpoptions.bp) {
       core.bpo = bpoptions;
@@ -789,30 +786,30 @@ namespace Carouzel {
       temp =
         core.sLength >= bpoptions._2Show ? bpoptions.bpSLen : bpoptions._2Show;
       trackWidth = slideWidth * temp + bpoptions.gutr * (temp + 1);
-      core.track.style.width = toFixed4(trackWidth) + 'px';
+      core.track.style.width = toFixed4(trackWidth) + `px`;
       core.trackO.style.width =
         toFixed4(
           bpoptions._2Show * slideWidth +
             bpoptions.gutr * (bpoptions._2Show - 1)
-        ) + 'px';
+        ) + `px`;
       core._as = core.trackO.querySelectorAll(_Selectors.slide);
       for (let i = 0; i < core._as.length; i++) {
-        (core._as[i] as HTMLElement).style.width = toFixed4(slideWidth) + 'px';
+        (core._as[i] as HTMLElement).style.width = toFixed4(slideWidth) + `px`;
         if (i === 0) {
           (core._as[i] as HTMLElement).style.marginLeft =
-            toFixed4(bpoptions.gutr) + 'px';
+            toFixed4(bpoptions.gutr) + `px`;
           (core._as[i] as HTMLElement).style.marginRight =
-            toFixed4(bpoptions.gutr / 2) + 'px';
+            toFixed4(bpoptions.gutr / 2) + `px`;
         } else if (i === core._as.length - 1) {
           (core._as[i] as HTMLElement).style.marginLeft =
-            toFixed4(bpoptions.gutr / 2) + 'px';
+            toFixed4(bpoptions.gutr / 2) + `px`;
           (core._as[i] as HTMLElement).style.marginRight =
-            toFixed4(bpoptions.gutr) + 'px';
+            toFixed4(bpoptions.gutr) + `px`;
         } else {
           (core._as[i] as HTMLElement).style.marginLeft =
-            toFixed4(bpoptions.gutr / 2) + 'px';
+            toFixed4(bpoptions.gutr / 2) + `px`;
           (core._as[i] as HTMLElement).style.marginRight =
-            toFixed4(bpoptions.gutr / 2) + 'px';
+            toFixed4(bpoptions.gutr / 2) + `px`;
         }
       }
       for (let i = bpoptions.pDups.length; i > 0; i--) {
@@ -869,7 +866,7 @@ namespace Carouzel {
       cancelAnimationFrame(core._t.id);
     }
     if (core.settings.inf) {
-      if (typeof core.pts[core.ci] === 'undefined') {
+      if (typeof core.pts[core.ci] === `undefined`) {
         core.pi =
           core.sLength -
           (core.sLength % core.bpo._2Scroll > 0
@@ -896,7 +893,7 @@ namespace Carouzel {
       cancelAnimationFrame(core._t.id);
     }
     if (core.settings.inf) {
-      if (typeof core.pts[core.ci + core.bpo._2Show] === 'undefined') {
+      if (typeof core.pts[core.ci + core.bpo._2Show] === `undefined`) {
         core.pi = core.pi - core.sLength;
         core.ci = 0;
       } else {
@@ -914,21 +911,21 @@ namespace Carouzel {
    */
   const toggleKeyboard = (core: ICore) => {
     if (core.rootElem && core.settings.kb) {
-      core.rootElem.setAttribute('tabindex', '-1');
-      let keyCode = '';
+      core.rootElem.setAttribute(`tabindex`, `-1`);
+      let keyCode = ``;
       core.eHandlers.push(
-        eventHandler(core.rootElem, 'keydown', function (event: Event) {
+        eventHandler(core.rootElem, `keydown`, function (event: Event) {
           event = event || window.event;
           keyCode = (event as KeyboardEvent).key.toLowerCase();
           switch (keyCode) {
-            case 'arrowleft':
+            case `arrowleft`:
               goToPrev(core, 0);
               break;
-            case 'arrowright':
+            case `arrowright`:
               goToNext(core, 0);
               break;
             default:
-              keyCode = '';
+              keyCode = ``;
               break;
           }
         })
@@ -964,13 +961,13 @@ namespace Carouzel {
   const toggleAutoplay = (core: ICore) => {
     if (core.rootElem && core.settings.pauseHov) {
       core.eHandlers.push(
-        eventHandler(core.rootElem, 'mouseenter', function () {
+        eventHandler(core.rootElem, `mouseenter`, function () {
           core.paused = true;
           togglePlayPause(core, false);
         })
       );
       core.eHandlers.push(
-        eventHandler(core.rootElem, 'mouseleave', function () {
+        eventHandler(core.rootElem, `mouseleave`, function () {
           core.paused = false;
           togglePlayPause(core, true);
         })
@@ -995,7 +992,7 @@ namespace Carouzel {
   const toggleControlButtons = (core: ICore) => {
     if (core.arrowP) {
       core.eHandlers.push(
-        eventHandler(core.arrowP, 'click', (event: Event) => {
+        eventHandler(core.arrowP, `click`, (event: Event) => {
           event.preventDefault();
           goToPrev(core, 0);
         })
@@ -1003,7 +1000,7 @@ namespace Carouzel {
     }
     if (core.arrowN) {
       core.eHandlers.push(
-        eventHandler(core.arrowN, 'click', (event: Event) => {
+        eventHandler(core.arrowN, `click`, (event: Event) => {
           event.preventDefault();
           goToNext(core, 0);
         })
@@ -1011,7 +1008,7 @@ namespace Carouzel {
     }
     if (core.settings.inf && core.btnPause) {
       core.eHandlers.push(
-        eventHandler(core.btnPause, 'click', (event: Event) => {
+        eventHandler(core.btnPause, `click`, (event: Event) => {
           event.preventDefault();
           core.pauseClk = true;
           togglePlayPause(core, false);
@@ -1020,7 +1017,7 @@ namespace Carouzel {
     }
     if (core.settings.inf && core.btnPlay) {
       core.eHandlers.push(
-        eventHandler(core.btnPlay, 'click', (event: Event) => {
+        eventHandler(core.btnPlay, `click`, (event: Event) => {
           event.preventDefault();
           core.pauseClk = false;
           togglePlayPause(core, true);
@@ -1052,7 +1049,7 @@ namespace Carouzel {
 
     const touchStart = (e: Event) => {
       dragging = true;
-      if (e.type === 'touchstart') {
+      if (e.type === `touchstart`) {
         startX = (e as TouchEvent).changedTouches[0].screenX;
         startY = (e as TouchEvent).changedTouches[0].screenY;
         posX1 = (e as TouchEvent).changedTouches[0].screenX;
@@ -1065,7 +1062,7 @@ namespace Carouzel {
 
     const touchMove = (e: Event) => {
       if (dragging) {
-        if (e.type === 'touchstart') {
+        if (e.type === `touchstart`) {
           endX = (e as TouchEvent).changedTouches[0].screenX;
           endY = (e as TouchEvent).changedTouches[0].screenY;
           posX2 = posX1 - (e as TouchEvent).changedTouches[0].screenX;
@@ -1082,11 +1079,12 @@ namespace Carouzel {
         if (!core.ct) {
           core.ct = -core.pts[core.ci];
         }
+
         if (ratioX > ratioY) {
           // if (diffX > 0) {
-          //   console.log('right swipe');
+          //   console.log(`right swipe`);
           // } else if (diffX < 0) {
-          //   console.log('left swipe');
+          //   console.log(`left swipe`);
           // }
           if (core.track && core.settings.effect === _animationEffects[0]) {
             core.track.style.transform = `translate3d(${
@@ -1095,9 +1093,7 @@ namespace Carouzel {
           }
           if (core.track && core.settings.effect === _animationEffects[1]) {
             for (let k = 0; k < core._as.length; k++) {
-              // (core._as[k] as HTMLElement).style.opacity =
-              //   '' + Math.abs(posX2) / threshold / 7.5;
-              (core._as[k] as HTMLElement).style.opacity = '1';
+              (core._as[k] as HTMLElement).style.opacity = `1`;
             }
           }
         }
@@ -1105,46 +1101,66 @@ namespace Carouzel {
       }
     };
 
-    const touchEnd = () => {
+    const touchEnd = (e: Event) => {
       if (dragging && core.track) {
-        if (core.settings.effect === _animationEffects[1]) {
-          for (let k = 0; k < core._as.length; k++) {
-            (core._as[k] as HTMLElement).style.opacity = '0';
-          }
-        }
-        if (posFinal < -threshold) {
-          if (core.settings.effect === _animationEffects[0]) {
-            goToPrev(core, posFinal);
-          }
-          if (core.settings.effect === _animationEffects[1]) {
-            goToPrev(core, 1);
-          }
-        } else if (posFinal > threshold) {
-          if (core.settings.effect === _animationEffects[0]) {
-            goToNext(core, posFinal);
-          }
-          if (core.settings.effect === _animationEffects[1]) {
-            goToNext(core, 1);
-          }
+        if (e.type === `touchstart`) {
+          endX = (e as TouchEvent).changedTouches[0].screenX;
+          endY = (e as TouchEvent).changedTouches[0].screenY;
         } else {
-          if (core.settings.effect === _animationEffects[0]) {
-            core.track.style.transform = `translate3d(${core.ct}px, 0, 0)`;
-          }
+          endX = (e as MouseEvent).clientX;
+          endY = (e as MouseEvent).clientY;
+        }
+        diffX = endX - startX;
+        diffY = endY - startY;
+        ratioX = Math.abs(diffX / diffY);
+        ratioY = Math.abs(diffY / diffX);
+
+        if (
+          !isNaN(ratioX) &&
+          !isNaN(ratioY) &&
+          ratioY !== Infinity &&
+          ratioX !== Infinity &&
+          ratioX !== ratioY
+        ) {
           if (core.settings.effect === _animationEffects[1]) {
             for (let k = 0; k < core._as.length; k++) {
-              (core._as[k] as HTMLElement).style.opacity = '1';
+              (core._as[k] as HTMLElement).style.opacity = `0`;
             }
           }
+          if (posFinal < -threshold) {
+            if (core.settings.effect === _animationEffects[0]) {
+              goToPrev(core, posFinal);
+            }
+            if (core.settings.effect === _animationEffects[1]) {
+              goToPrev(core, 1);
+            }
+          } else if (posFinal > threshold) {
+            if (core.settings.effect === _animationEffects[0]) {
+              goToNext(core, posFinal);
+            }
+            if (core.settings.effect === _animationEffects[1]) {
+              goToNext(core, 1);
+            }
+          } else {
+            if (core.settings.effect === _animationEffects[0]) {
+              core.track.style.transform = `translate3d(${core.ct}px, 0, 0)`;
+            }
+            if (core.settings.effect === _animationEffects[1]) {
+              for (let k = 0; k < core._as.length; k++) {
+                (core._as[k] as HTMLElement).style.opacity = `1`;
+              }
+            }
+          }
+          posX1 = posX2 = posFinal = 0;
+          dragging = false;
         }
-        posX1 = posX2 = posFinal = 0;
-        dragging = false;
       }
     };
 
     core.eHandlers.push(
       eventHandler(
         core.track as HTMLElement,
-        'touchstart',
+        `touchstart`,
         function (event: Event) {
           touchStart(event);
         }
@@ -1153,40 +1169,44 @@ namespace Carouzel {
     core.eHandlers.push(
       eventHandler(
         core.track as HTMLElement,
-        'touchmove',
+        `touchmove`,
         function (event: Event) {
           touchMove(event);
         }
       )
     );
     core.eHandlers.push(
-      eventHandler(core.track as HTMLElement, 'touchend', function () {
-        touchEnd();
+      eventHandler(core.track as HTMLElement, `touchend`, function (e: Event) {
+        touchEnd(e);
       })
     );
     core.eHandlers.push(
       eventHandler(
         core.track as HTMLElement,
-        'mousedown',
+        `mousedown`,
         function (event: Event) {
           touchStart(event);
         }
       )
     );
     core.eHandlers.push(
-      eventHandler(core.track as HTMLElement, 'mouseup', function () {
-        touchEnd();
-      })
-    );
-    core.eHandlers.push(
-      eventHandler(core.track as HTMLElement, 'mouseleave', function () {
-        touchEnd();
+      eventHandler(core.track as HTMLElement, `mouseup`, function (e: Event) {
+        touchEnd(e);
       })
     );
     core.eHandlers.push(
       eventHandler(
         core.track as HTMLElement,
-        'mousemove',
+        `mouseleave`,
+        function (e: Event) {
+          touchEnd(e);
+        }
+      )
+    );
+    core.eHandlers.push(
+      eventHandler(
+        core.track as HTMLElement,
+        `mousemove`,
         function (event: Event) {
           touchMove(event);
         }
@@ -1214,7 +1234,7 @@ namespace Carouzel {
         ) {
           if (core._ds[j]) {
             let elem = core._ds[j].cloneNode(true);
-            addClass(elem as Element, core.settings.dupCls || '');
+            addClass(elem as Element, core.settings.dupCls || ``);
             core.bpall[i].bpSLen++;
             core.bpall[i].pDups.push(elem);
           }
@@ -1226,7 +1246,7 @@ namespace Carouzel {
         ) {
           if (core._ds[j]) {
             let elem = core._ds[j].cloneNode(true);
-            addClass(elem as Element, core.settings.dupCls || '');
+            addClass(elem as Element, core.settings.dupCls || ``);
             core.bpall[i].bpSLen++;
             core.bpall[i].nDups.push(elem);
           }
@@ -1245,11 +1265,11 @@ namespace Carouzel {
         pageLength++;
       }
       core.bpall[i].dots = [];
-      let btnStr = '';
+      let btnStr = ``;
       for (let j = 0; j < pageLength; j++) {
-        let elem = document.createElement('button');
-        elem.setAttribute(_Selectors.dot.slice(1, -1), '');
-        elem.setAttribute('type', 'button');
+        let elem = document.createElement(`button`);
+        elem.setAttribute(_Selectors.dot.slice(1, -1), ``);
+        elem.setAttribute(`type`, `button`);
         btnStr = `<div class="${core.settings.dotNcls}">${j + 1}</div>`;
         if (
           core.settings.useTitle &&
@@ -1266,7 +1286,7 @@ namespace Carouzel {
         core.eHandlers.push(
           eventHandler(
             navBtns[j] as HTMLElement,
-            'click',
+            `click`,
             function (event: Event) {
               event.preventDefault();
               core.pi = core.ci;
@@ -1348,25 +1368,25 @@ namespace Carouzel {
       while (bpLen < updatedArr.bp.length) {
         bp1 = bpArr[bpLen - 1];
         bp2 = { ...bp1, ...updatedArr.bp[bpLen] };
-        if (typeof bp2._arrows === 'undefined') {
+        if (typeof bp2._arrows === `undefined`) {
           bp2._arrows = bp1._arrows;
         }
-        if (typeof bp2._nav === 'undefined') {
+        if (typeof bp2._nav === `undefined`) {
           bp2._nav = bp1._nav;
         }
-        if (typeof bp2._2Show === 'undefined') {
+        if (typeof bp2._2Show === `undefined`) {
           bp2._2Show = bp1._2Show;
         }
-        if (typeof bp2._2Scroll === 'undefined') {
+        if (typeof bp2._2Scroll === `undefined`) {
           bp2._2Scroll = bp1._2Scroll;
         }
-        if (typeof bp2.swipe === 'undefined') {
+        if (typeof bp2.swipe === `undefined`) {
           bp2.swipe = bp1.swipe;
         }
-        if (typeof bp2.cntr === 'undefined') {
+        if (typeof bp2.cntr === `undefined`) {
           bp2.cntr = bp1.cntr;
         }
-        if (typeof bp2.gutr === 'undefined') {
+        if (typeof bp2.gutr === `undefined`) {
           bp2.gutr = bp1.gutr;
         }
         bpArr.push(bp2);
@@ -1455,7 +1475,7 @@ namespace Carouzel {
     rootElem: HTMLElement,
     settings: ICarouzelSettings
   ) => {
-    if (typeof settings.beforeInit === 'function') {
+    if (typeof settings.beforeInit === `function`) {
       settings.beforeInit();
     }
     let _core: ICore = { ...core };
@@ -1530,7 +1550,7 @@ namespace Carouzel {
     }
 
     addClass(core.rootElem as Element, _core.settings.activeCls);
-    if (typeof settings.afterInit === 'function') {
+    if (typeof settings.afterInit === `function`) {
       settings.afterInit();
     }
     return { global: core, local: _core };
@@ -1571,7 +1591,7 @@ namespace Carouzel {
         if (core.nav && allElems[i].hasAttribute(_Selectors.dot.slice(1, -1))) {
           core.nav.removeChild(allElems[i]);
         }
-        allElems[i].removeAttribute('style');
+        allElems[i].removeAttribute(`style`);
         removeClass(
           allElems[i] as HTMLElement,
           `${core.settings.activeCls} ${core.settings.editCls} ${core.settings.disableCls} ${core.settings.dupCls} ${core.settings.rtlCls}`
@@ -1632,7 +1652,7 @@ namespace Carouzel {
       }
       if (rootsLength > 0) {
         for (let i = 0; i < rootsLength; i++) {
-          const id = roots[i].getAttribute('id');
+          const id = roots[i].getAttribute(`id`);
           let isElementPresent = false;
           if (id) {
             for (let j = 0; j < instanceLength; j++) {
@@ -1648,11 +1668,11 @@ namespace Carouzel {
             let autoDataAttr =
               (roots[i] as HTMLElement).getAttribute(
                 _Selectors.rootAuto.slice(1, -1)
-              ) || '';
+              ) || ``;
             if (autoDataAttr) {
               try {
                 newOptions = JSON.parse(
-                  stringTrim(autoDataAttr).replace(/'/g, '"')
+                  stringTrim(autoDataAttr).replace(/'/g, `"`)
                 );
               } catch (e) {
                 throw new TypeError(_optionsParseTypeError);
@@ -1670,11 +1690,11 @@ namespace Carouzel {
               const thisid = id
                 ? id
                 : { ...newOptions, ..._Defaults }.idPrefix +
-                  '_' +
+                  `_` +
                   new Date().getTime() +
-                  '_root_' +
+                  `_root_` +
                   (i + 1);
-              roots[i].setAttribute('id', thisid);
+              roots[i].setAttribute(`id`, thisid);
               allGlobalInstances[thisid] = new Core(
                 thisid,
                 roots[i] as HTMLElement,
@@ -1685,7 +1705,7 @@ namespace Carouzel {
         }
         if (window && getInstancesLength() > 0 && !isWindowEventAttached) {
           isWindowEventAttached = true;
-          window.addEventListener('resize', winResizeFn);
+          window.addEventListener(`resize`, winResizeFn);
         }
       } else {
         if (query !== _Selectors.rootAuto) {
@@ -1695,7 +1715,7 @@ namespace Carouzel {
     };
 
     /**
-     * Function to initialize all the carouzel which have 'data-carouzelauto' set
+     * Function to initialize all the carouzel which have `data-carouzelauto` set
      *
      */
     public globalInit = () => {
@@ -1723,14 +1743,14 @@ namespace Carouzel {
       const rootsLength = roots.length;
       if (rootsLength > 0) {
         for (let i = 0; i < rootsLength; i++) {
-          const id = roots[i].getAttribute('id');
+          const id = roots[i].getAttribute(`id`);
           if (id && allGlobalInstances[id]) {
             allGlobalInstances[id].destroy(id);
             delete allGlobalInstances[id];
           }
         }
         if (window && getInstancesLength() === 0) {
-          window.removeEventListener('resize', winResizeFn);
+          window.removeEventListener(`resize`, winResizeFn);
         }
       } else {
         throw new TypeError(_rootSelectorTypeError);
@@ -1739,6 +1759,6 @@ namespace Carouzel {
   }
 }
 Carouzel.Root.getInstance().globalInit();
-if (typeof exports === 'object' && typeof module !== 'undefined') {
+if (typeof exports === `object` && typeof module !== `undefined`) {
   module.exports = Carouzel;
 }
