@@ -836,7 +836,7 @@ var Carouzel;
         };
         var touchMove = function (e) {
             if (dragging) {
-                if (e.type === "touchstart") {
+                if (e.type === "touchmove") {
                     endX = e.changedTouches[0].screenX;
                     endY = e.changedTouches[0].screenY;
                     posX2 = posX1 - e.changedTouches[0].screenX;
@@ -868,7 +868,7 @@ var Carouzel;
         };
         var touchEnd = function (e) {
             if (dragging && core.track) {
-                if (e.type === "touchstart") {
+                if (e.type === "touchend") {
                     endX = e.changedTouches[0].screenX;
                     endY = e.changedTouches[0].screenY;
                 }

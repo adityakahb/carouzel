@@ -1064,7 +1064,7 @@ namespace Carouzel {
 
     const touchMove = (e: Event) => {
       if (dragging) {
-        if (e.type === `touchstart`) {
+        if (e.type === `touchmove`) {
           endX = (e as TouchEvent).changedTouches[0].screenX;
           endY = (e as TouchEvent).changedTouches[0].screenY;
           posX2 = posX1 - (e as TouchEvent).changedTouches[0].screenX;
@@ -1081,7 +1081,6 @@ namespace Carouzel {
         if (!core.ct) {
           core.ct = -core.pts[core.ci];
         }
-
         if (ratioX > ratioY) {
           if (core.track && core.settings.effect === _animationEffects[0]) {
             core.track.style.transform = `translate3d(${
@@ -1100,7 +1099,7 @@ namespace Carouzel {
 
     const touchEnd = (e: Event) => {
       if (dragging && core.track) {
-        if (e.type === `touchstart`) {
+        if (e.type === `touchend`) {
           endX = (e as TouchEvent).changedTouches[0].screenX;
           endY = (e as TouchEvent).changedTouches[0].screenY;
         } else {

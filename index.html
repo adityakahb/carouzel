@@ -1176,18 +1176,24 @@
             </div>
           </div>
           <div class="row py-5">
-            <div class="col-12 col-xl-6 text-center text-xl-end mb-4 mb-xl-0">
-              <button type="button" id="destroybtn" class="btn btn-danger mx-1">
-                Destroy
-              </button>
-              <button
-                type="button"
-                id="initbtn"
-                class="btn btn-success mx-1"
-                hidden
-              >
-                initialize
-              </button>
+            <div class="col-12 col-xl-6 text-center text-xl-end mb-3 mb-xl-0">
+              <div class="d-grid d-md-inline-block gap-2 mb-3 mb-md-0">
+                <button
+                  type="button"
+                  id="destroybtn"
+                  class="btn btn-block btn-danger mx-1"
+                >
+                  Destroy
+                </button>
+                <button
+                  type="button"
+                  id="initbtn"
+                  class="btn btn-success mx-1"
+                  hidden
+                >
+                  initialize
+                </button>
+              </div>
               <button
                 type="button"
                 id="gotoprevbtn"
@@ -2137,7 +2143,7 @@
       });
       __carouzel_instance.init('#__carouzel_6', {
         slidesToShow: 1,
-        autoplay: false,
+        autoplay: true,
         pauseOnHover: true,
         responsive: [
           {
