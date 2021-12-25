@@ -26,10 +26,30 @@ var Carouzel;
     var isWindowEventAttached = false;
     var windowResizeAny;
     var _animationEffects = ["scroll", "fade"];
+    var _easingEffects = [
+        "linear",
+        "easeInQuad",
+        "easeOutQuad",
+        "easeInOutQuad",
+        "easeInCubic",
+        "easeOutCubic",
+        "easeInOutCubic",
+        "easeInQuart",
+        "easeOutQuart",
+        "easeInOutQuart",
+        "easeInQuint",
+        "easeOutQuint",
+        "easeInOutQuint",
+        "easeInElastic",
+        "easeOutElastic",
+        "easeInOutElastic",
+    ];
     var _rootSelectorTypeError = "Element(s) with the provided query do(es) not exist";
     var _optionsParseTypeError = "Unable to parse the options string";
     var _duplicateBreakpointsTypeError = "Duplicate breakpoints found";
     var _breakpointsParseTypeError = "Error parsing breakpoints";
+    var _noEffectFoundError = "Animation effect function not found in presets. Try using one from (".concat(_animationEffects.join(', '), "). Setting the animation effect to ").concat(_animationEffects[0], ".");
+    var _noEasingFoundError = "Easing function not found in presets. Try using one from (".concat(_easingEffects.join(', '), "). Setting the easing function to ").concat(_easingEffects[0], ".");
     var _useCapture = false;
     var _Selectors = {
         arrowN: "[data-carouzel-nextarrow]",
@@ -373,6 +393,7 @@ var Carouzel;
         core._t.nextX = core.pts[core.ci];
         var scrollThisTrack = function (now) {
             core._t.elapsed = now - core._t.start;
+            console.log('===========core.settings.timeFn scroll', core.settings.timeFn);
             core._t.progress = _easingFunctions[core.settings.timeFn](core._t.elapsed / core._t.total);
             if (core.ci > core.pi) {
                 core._t.position =
@@ -411,6 +432,7 @@ var Carouzel;
         }
         var fadeThisTrack = function (now) {
             core._t.elapsed = now - core._t.start;
+            console.log('===========core.settings.timeFn fade', core.settings.timeFn);
             core._t.progress = _easingFunctions[core.settings.timeFn](core._t.elapsed / core._t.total);
             core._t.progress = core._t.progress > 1 ? 1 : core._t.progress;
             for (var i = 0; i < core._as.length; i++) {
@@ -1160,7 +1182,13 @@ var Carouzel;
             dotNcls: settings.dotIndexClass,
             dupCls: settings.duplicateClass,
             editCls: settings.editClass,
-            effect: settings.animationEffect,
+            effect: (function () {
+                if (_animationEffects.indexOf(settings.animationEffect) > -1) {
+                    return settings.animationEffect;
+                }
+                console.warn(_noEffectFoundError);
+                return _animationEffects[0];
+            })(),
             fadCls: settings.fadingClass,
             gutr: settings.spaceBetween,
             hidCls: settings.hiddenClass,
@@ -1174,7 +1202,13 @@ var Carouzel;
             startAt: settings.animationSpeed,
             swipe: settings.hasTouchSwipe,
             threshold: settings.touchThreshold,
-            timeFn: settings.timingFunction,
+            timeFn: (function () {
+                if (_easingFunctions[settings.timingFunction]) {
+                    return settings.timingFunction;
+                }
+                console.warn(_noEasingFoundError);
+                return _easingEffects[0];
+            })(),
             useTitle: settings.useTitlesAsDots
         };
         if (settings.responsive && settings.responsive.length > 0) {

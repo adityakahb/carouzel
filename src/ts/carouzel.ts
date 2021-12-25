@@ -187,10 +187,34 @@ namespace Carouzel {
   let windowResizeAny: any;
 
   const _animationEffects = [`scroll`, `fade`];
+  const _easingEffects = [
+    `linear`,
+    `easeInQuad`,
+    `easeOutQuad`,
+    `easeInOutQuad`,
+    `easeInCubic`,
+    `easeOutCubic`,
+    `easeInOutCubic`,
+    `easeInQuart`,
+    `easeOutQuart`,
+    `easeInOutQuart`,
+    `easeInQuint`,
+    `easeOutQuint`,
+    `easeInOutQuint`,
+    `easeInElastic`,
+    `easeOutElastic`,
+    `easeInOutElastic`,
+  ];
   const _rootSelectorTypeError = `Element(s) with the provided query do(es) not exist`;
   const _optionsParseTypeError = `Unable to parse the options string`;
   const _duplicateBreakpointsTypeError = `Duplicate breakpoints found`;
   const _breakpointsParseTypeError = `Error parsing breakpoints`;
+  const _noEffectFoundError = `Animation effect function not found in presets. Try using one from (${_animationEffects.join(
+    ', '
+  )}). Setting the animation effect to ${_animationEffects[0]}.`;
+  const _noEasingFoundError = `Easing function not found in presets. Try using one from (${_easingEffects.join(
+    ', '
+  )}). Setting the easing function to ${_easingEffects[0]}.`;
   const _useCapture = false;
   const _Selectors = {
     arrowN: `[data-carouzel-nextarrow]`,
@@ -559,6 +583,10 @@ namespace Carouzel {
 
     const scrollThisTrack = (now: number) => {
       core._t.elapsed = now - core._t.start;
+      console.log(
+        '===========core.settings.timeFn scroll',
+        core.settings.timeFn
+      );
       core._t.progress = _easingFunctions[core.settings.timeFn](
         core._t.elapsed / core._t.total
       );
@@ -602,6 +630,7 @@ namespace Carouzel {
 
     const fadeThisTrack = (now: number) => {
       core._t.elapsed = now - core._t.start;
+      console.log('===========core.settings.timeFn fade', core.settings.timeFn);
       core._t.progress = _easingFunctions[core.settings.timeFn](
         core._t.elapsed / core._t.total
       );
@@ -1448,7 +1477,13 @@ namespace Carouzel {
       dotNcls: settings.dotIndexClass,
       dupCls: settings.duplicateClass,
       editCls: settings.editClass,
-      effect: settings.animationEffect,
+      effect: (() => {
+        if (_animationEffects.indexOf(settings.animationEffect) > -1) {
+          return settings.animationEffect;
+        }
+        console.warn(_noEffectFoundError);
+        return _animationEffects[0];
+      })(),
       fadCls: settings.fadingClass,
       gutr: settings.spaceBetween,
       hidCls: settings.hiddenClass,
@@ -1462,7 +1497,13 @@ namespace Carouzel {
       startAt: settings.animationSpeed,
       swipe: settings.hasTouchSwipe,
       threshold: settings.touchThreshold,
-      timeFn: settings.timingFunction,
+      timeFn: (() => {
+        if (_easingFunctions[settings.timingFunction]) {
+          return settings.timingFunction;
+        }
+        console.warn(_noEasingFoundError);
+        return _easingEffects[0];
+      })(),
       useTitle: settings.useTitlesAsDots,
     };
 
