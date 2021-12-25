@@ -583,10 +583,6 @@ namespace Carouzel {
 
     const scrollThisTrack = (now: number) => {
       core._t.elapsed = now - core._t.start;
-      console.log(
-        '===========core.settings.timeFn scroll',
-        core.settings.timeFn
-      );
       core._t.progress = _easingFunctions[core.settings.timeFn](
         core._t.elapsed / core._t.total
       );
@@ -630,7 +626,6 @@ namespace Carouzel {
 
     const fadeThisTrack = (now: number) => {
       core._t.elapsed = now - core._t.start;
-      console.log('===========core.settings.timeFn fade', core.settings.timeFn);
       core._t.progress = _easingFunctions[core.settings.timeFn](
         core._t.elapsed / core._t.total
       );

@@ -393,7 +393,6 @@ var Carouzel;
         core._t.nextX = core.pts[core.ci];
         var scrollThisTrack = function (now) {
             core._t.elapsed = now - core._t.start;
-            console.log('===========core.settings.timeFn scroll', core.settings.timeFn);
             core._t.progress = _easingFunctions[core.settings.timeFn](core._t.elapsed / core._t.total);
             if (core.ci > core.pi) {
                 core._t.position =
@@ -432,7 +431,6 @@ var Carouzel;
         }
         var fadeThisTrack = function (now) {
             core._t.elapsed = now - core._t.start;
-            console.log('===========core.settings.timeFn fade', core.settings.timeFn);
             core._t.progress = _easingFunctions[core.settings.timeFn](core._t.elapsed / core._t.total);
             core._t.progress = core._t.progress > 1 ? 1 : core._t.progress;
             for (var i = 0; i < core._as.length; i++) {
