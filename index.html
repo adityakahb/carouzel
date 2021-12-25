@@ -1175,7 +1175,7 @@
               <h2>Events &amp; Methods</h2>
             </div>
           </div>
-          <div class="row py-5">
+          <div class="row pb-5">
             <div class="col-12 col-xl-6 text-center text-xl-end mb-3 mb-xl-0">
               <div class="d-grid d-md-inline-block gap-2 mb-3 mb-md-0">
                 <button
@@ -1396,6 +1396,7 @@
             <div class="col">
               <section
                 data-carouzel
+                data-carouzel-centered
                 id="__carouzel_9"
                 aria-roledescription="carousel"
                 aria-label="Carouzel showing centered slides"
@@ -1815,6 +1816,7 @@
                 id="__carouzel_12"
                 aria-roledescription="carousel"
                 aria-label="Carouzel showing different settings at different breakpoints"
+                data-carouzel-rtl
               >
                 <div data-carouzel-trackwrapper>
                   <div data-carouzel-trackmask>
@@ -2006,10 +2008,11 @@
               <h2>Easing</h2>
             </div>
           </div>
-          <div class="row py-5">
+          <div class="row pb-5">
             <form
               id="__carouzel_13form"
               class="
+                m-0
                 row row-cols-lg-auto
                 g-3
                 justify-content-center
@@ -2039,7 +2042,7 @@
               </div>
 
               <div class="col-12 text-start">
-                <label for="effectfnselect">Animation Effect</label>
+                <label for="effectfnselect">Effect</label>
                 <select class="form-select" id="effectfnselect">
                   <option value="scroll" selected>Scroll</option>
                   <option value="fade">Fade</option>
@@ -2058,7 +2061,7 @@
               </div>
 
               <div class="col-12">
-                <button type="submit" class="btn btn-info">Apply</button>
+                <button type="submit" class="btn btn-secondary">Apply</button>
               </div>
             </form>
           </div>
@@ -2332,7 +2335,7 @@
       });
       __carouzel_instance.init('#__carouzel_6', {
         slidesToShow: 1,
-        autoplay: true,
+        autoplay: false,
         pauseOnHover: true,
         responsive: [
           {
@@ -2397,7 +2400,6 @@
         ],
       });
       __carouzel_instance.init('#__carouzel_12', {
-        isRTL: true,
         slidesToShow: 1,
         showNav: false,
         isInfinite: false,

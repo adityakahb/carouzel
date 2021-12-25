@@ -62,6 +62,7 @@ var Carouzel;
         playBtn: "[data-carouzel-play]",
         root: "[data-carouzel]",
         rootAuto: "[data-carouzel-auto]",
+        rtl: "[data-carouzel-rtl]",
         slide: "[data-carouzel-slide]",
         stitle: "[data-carouzel-title]",
         track: "[data-carouzel-track]",
@@ -76,14 +77,12 @@ var Carouzel;
         autoplay: false,
         autoplaySpeed: 3000,
         centerBetween: 0,
-        centeredClass: "__carouzel-centered",
         disabledClass: "__carouzel-disabled",
         dotIndexClass: "__carouzel-pageindex",
         dotTitleClass: "__carouzel-pagetitle",
         duplicateClass: "__carouzel-duplicate",
         editClass: "__carouzel-editmode",
         enableKeyboard: true,
-        fadingClass: "__carouzel-fade",
         hasTouchSwipe: true,
         hiddenClass: "__carouzel-hidden",
         idPrefix: "__carouzel",
@@ -91,7 +90,6 @@ var Carouzel;
         isRTL: false,
         pauseOnHover: false,
         responsive: [],
-        rtlClass: "__carouzel-rtl",
         showArrows: true,
         showNavigation: true,
         slidesToScroll: 1,
@@ -477,11 +475,10 @@ var Carouzel;
                     core._as[i].style.visibility = "hidden";
                     core._as[i].style.opacity = "0";
                     if (i < core.ci + core.bpo._2Show) {
-                        core._as[i].style.transform = "translate3d(".concat(core.pts[0], "px, 0, 0)");
+                        core._as[i].style.transform = "translate3d(".concat(core.pts[0] - core.bpo.gutr, "px, 0, 0)");
                     }
                     if (i > core.ci + core.bpo._2Show) {
-                        core._as[i].style.transform = "translate3d(".concat(-core
-                            .pts[0], "px, 0, 0)");
+                        core._as[i].style.transform = "translate3d(".concat(-(core.pts[0] - core.bpo.gutr), "px, 0, 0)");
                     }
                 }
             }
@@ -590,12 +587,6 @@ var Carouzel;
         }
         if (core.rootElem && core.trackW && core.trackO && core.track) {
             core.pts = {};
-            if (bpoptions.cntr > 0) {
-                addClass(core.rootElem, core.settings.cntrCls);
-            }
-            else {
-                removeClass(core.rootElem, core.settings.cntrCls);
-            }
             slideWidth =
                 (core.trackW.clientWidth - (bpoptions._2Show - 1) * bpoptions.gutr) /
                     (bpoptions._2Show + bpoptions.cntr);
@@ -1174,7 +1165,6 @@ var Carouzel;
             autoS: settings.autoplaySpeed,
             bFn: settings.beforeScroll,
             cntr: settings.centerBetween,
-            cntrCls: settings.centeredClass,
             disableCls: settings.disabledClass,
             dotCls: settings.dotTitleClass,
             dotNcls: settings.dotIndexClass,
@@ -1187,7 +1177,6 @@ var Carouzel;
                 console.warn(_noEffectFoundError);
                 return _animationEffects[0];
             })(),
-            fadCls: settings.fadingClass,
             gutr: settings.spaceBetween,
             hidCls: settings.hiddenClass,
             inf: settings.isInfinite,
@@ -1195,7 +1184,6 @@ var Carouzel;
             kb: settings.enableKeyboard,
             pauseHov: settings.pauseOnHover,
             res: [],
-            rtlCls: settings.rtlClass,
             speed: settings.animationSpeed,
             startAt: settings.animationSpeed,
             swipe: settings.hasTouchSwipe,
@@ -1262,6 +1250,10 @@ var Carouzel;
         _core.trackM = rootElem.querySelector("".concat(_Selectors.trackM));
         _core.trackO = rootElem.querySelector("".concat(_Selectors.trackO));
         _core.trackW = rootElem.querySelector("".concat(_Selectors.trackW));
+        _core.settings.rtl = false;
+        if (_core.rootElem.hasAttribute(_Selectors.rtl.slice(1, -1))) {
+            _core.settings.rtl = true;
+        }
         _core._t = {};
         _core._t.total = _core.settings.speed;
         core.goToNext = function () {
@@ -1285,12 +1277,6 @@ var Carouzel;
                 doInsertAfter(_core.track, slideElem);
             }
         };
-        if (_core.settings.effect === _animationEffects[1]) {
-            addClass(core.rootElem, _core.settings.fadCls);
-        }
-        if (_core.settings.rtl) {
-            addClass(core.rootElem, _core.settings.rtlCls);
-        }
         if (!_core._ds[_core.ci]) {
             _core.ci = settings.startAtIndex = 0;
         }
@@ -1325,9 +1311,9 @@ var Carouzel;
                 core.nav.removeChild(allElems[i]);
             }
             allElems[i].removeAttribute("style");
-            removeClass(allElems[i], "".concat(core.settings.activeCls, " ").concat(core.settings.editCls, " ").concat(core.settings.disableCls, " ").concat(core.settings.dupCls, " ").concat(core.settings.rtlCls));
+            removeClass(allElems[i], "".concat(core.settings.activeCls, " ").concat(core.settings.editCls, " ").concat(core.settings.disableCls, " ").concat(core.settings.dupCls));
         }
-        removeClass(core.rootElem, "".concat(core.settings.activeCls, " ").concat(core.settings.editCls, " ").concat(core.settings.disableCls, " ").concat(core.settings.dupCls, " ").concat(core.settings.rtlCls));
+        removeClass(core.rootElem, "".concat(core.settings.activeCls, " ").concat(core.settings.editCls, " ").concat(core.settings.disableCls, " ").concat(core.settings.dupCls));
         delete allLocalInstances[thisid];
     };
     /**

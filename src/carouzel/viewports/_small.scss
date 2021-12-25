@@ -139,14 +139,14 @@
       width: 100%;
     }
   }
-  &.__carouzel-centered {
+  &[data-carouzel-centered] {
     [data-carouzel-trackmask] {
       display: flex;
       justify-content: center;
       align-items: center;
     }
   }
-  &.__carouzel-rtl {
+  &[data-carouzel-rtl] {
     [data-carouzel-track] {
       flex-direction: row-reverse;
     }

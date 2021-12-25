@@ -8428,7 +8428,7 @@ h4, .h4, .h4 {
       h4, .h4, .h4 {
         font-size: 18px; } }
 
-[data-carouzel] [data-carouzel-slide], [data-carouzel-auto] [data-carouzel-slide] {
+[data-carouzel] [data-carouzel-slide] {
   align-items: center;
   background-color: #fff;
   border-left: 1px solid red;
@@ -8438,8 +8438,8 @@ h4, .h4, .h4 {
   font-size: 40px;
   font-weight: bold;
   justify-content: center;
-  line-height: 200px;
-  width: 100%; }
+  width: 100%;
+  height: 200px; }
 
 #__carouzel_10[data-carouzel] [data-carouzel-navigation] {
   flex-direction: column; }

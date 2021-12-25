@@ -142,15 +142,15 @@
     text-align: left;
     width: 100%; }
 
-[data-carouzel].__carouzel-centered [data-carouzel-trackmask] {
+[data-carouzel][data-carouzel-centered] [data-carouzel-trackmask] {
   display: flex;
   justify-content: center;
   align-items: center; }
 
-[data-carouzel].__carouzel-rtl [data-carouzel-track] {
+[data-carouzel][data-carouzel-rtl] [data-carouzel-track] {
   flex-direction: row-reverse; }
 
-[data-carouzel].__carouzel-rtl [data-carouzel-navigation] {
+[data-carouzel][data-carouzel-rtl] [data-carouzel-navigation] {
   flex-direction: row-reverse; }
 
 [data-carouzel].__carouzel-editmode [data-carouzel-trackouter] {

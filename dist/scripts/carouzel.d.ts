@@ -29,14 +29,12 @@ declare namespace Carouzel {
         beforeInit?: Function;
         beforeScroll?: Function;
         centerBetween: number;
-        centeredClass: string;
         disabledClass: string;
         dotIndexClass: string;
         dotTitleClass: string;
         duplicateClass: string;
         editClass: string;
         enableKeyboard: boolean;
-        fadingClass: string;
         hasTouchSwipe: boolean;
         hiddenClass: string;
         idPrefix: string;
@@ -44,7 +42,6 @@ declare namespace Carouzel {
         isRTL: boolean;
         pauseOnHover: boolean;
         responsive?: ICarouzelBreakpoint[];
-        rtlClass: string;
         showArrows: boolean;
         showNavigation: boolean;
         slidesToScroll: number;
