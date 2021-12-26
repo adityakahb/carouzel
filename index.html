@@ -2201,6 +2201,28 @@
               <h2>Hash Navigation</h2>
             </div>
           </div>
+          <div class="row pb-5">
+            <form
+              class="
+                m-0
+                row row-cols-lg-auto
+                g-3
+                justify-content-center
+                align-items-center
+              "
+            >
+              <div class="col-12">
+                <button
+                  type="button"
+                  id="__carouzel_14_btn"
+                  class="btn btn-secondary"
+                >
+                  Add hash and refresh
+                </button>
+              </div>
+            </form>
+          </div>
+
           <div class="row">
             <div class="col">
               <section
@@ -2313,6 +2335,11 @@
                   <div data-carouzel-navigation></div>
                 </div>
               </section>
+            </div>
+          </div>
+          <div class="row my-5">
+            <div class="col text-center">
+              <hr />
             </div>
           </div>
         </div>
@@ -2642,6 +2669,12 @@
         carouzel_13settings.animationSpeed = easingNumText.value;
         __carouzel_instance.destroy('#__carouzel_13');
         __carouzel_instance.init('#__carouzel_13', carouzel_13settings);
+      });
+      var __carouzel_14_btn = document.getElementById('__carouzel_14_btn');
+      __carouzel_14_btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        window.location.hash = '__carouzel_14_id_4';
+        window.location.reload();
       });
       __carouzel_instance.init('#__carouzel_14', {
         trackUrlHash: true,
