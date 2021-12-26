@@ -66,10 +66,10 @@ var Carouzel;
         rtl: "[data-carouzel-rtl]",
         slide: "[data-carouzel-slide]",
         stitle: "[data-carouzel-title]",
-        track: "[data-carouzel-track]",
-        trackM: "[data-carouzel-trackmask]",
-        trackO: "[data-carouzel-trackouter]",
-        trackW: "[data-carouzel-trackwrapper]"
+        trk: "[data-carouzel-track]",
+        trkM: "[data-carouzel-trackMask]",
+        trkO: "[data-carouzel-trackOuter]",
+        trkW: "[data-carouzel-trackWrapper]"
     };
     var _Defaults = {
         activeClass: "__carouzel-active",
@@ -209,8 +209,8 @@ var Carouzel;
         if (element && typeof element.className === "string") {
             var clsarr = cls.split(" ");
             var curclass = element.className.split(" ");
-            var curclassLength = curclass.length;
-            for (var i = 0; i < curclassLength; i++) {
+            var curclassLen = curclass.length;
+            for (var i = 0; i < curclassLen; i++) {
                 var thiscls = curclass[i];
                 if (clsarr.indexOf(thiscls) > -1) {
                     curclass.splice(i, 1);
@@ -251,7 +251,7 @@ var Carouzel;
      * Function to return the number of Instances created
      *
      */
-    var getInstancesLength = function () {
+    var getInstancesLen = function () {
         var instanceCount = 0;
         for (var e in allGlobalInstances) {
             if (allGlobalInstances.hasOwnProperty(e)) {
@@ -307,41 +307,41 @@ var Carouzel;
         var x;
         for (var i = 0; i < core._as.length; i++) {
             if (core._as[i]) {
-                removeClass(core._as[i], core.settings.activeCls);
+                removeClass(core._as[i], core.opts.activeCls);
                 core._as[i].setAttribute("aria-hidden", "true");
             }
         }
         for (var i = core.ci + core.bpo.pDups.length; i < core.ci + core.bpo.pDups.length + core.bpo._2Show; i++) {
             if (core._as[i]) {
-                addClass(core._as[i], core.settings.activeCls);
+                addClass(core._as[i], core.opts.activeCls);
                 core._as[i].removeAttribute("aria-hidden");
             }
         }
-        if (!core.settings.inf && core.ci === 0) {
-            addClass(core.arrowP, core.settings.disableCls || "");
+        if (!core.opts.inf && core.ci === 0) {
+            addClass(core.arrowP, core.opts.disableCls || "");
         }
         else {
-            removeClass(core.arrowP, core.settings.disableCls || "");
+            removeClass(core.arrowP, core.opts.disableCls || "");
         }
-        if (!core.settings.inf && core.ci === core.sLength - core.bpo._2Show) {
-            addClass(core.arrowN, core.settings.disableCls || "");
+        if (!core.opts.inf && core.ci === core.sLen - core.bpo._2Show) {
+            addClass(core.arrowN, core.opts.disableCls || "");
         }
         else {
-            removeClass(core.arrowN, core.settings.disableCls || "");
+            removeClass(core.arrowN, core.opts.disableCls || "");
         }
         if (core.bpo.dots.length > 0) {
             for (var i = 0; i < core.bpo.dots.length; i++) {
-                removeClass(core.bpo.dots[i], core.settings.activeCls);
+                removeClass(core.bpo.dots[i], core.opts.activeCls);
             }
             x = Math.floor(core.ci / core.bpo._2Scroll);
-            if (core.settings.rtl) {
+            if (core.opts.rtl) {
                 x = core.bpo.dots.length - x - 1;
             }
             if (x < 0) {
                 x = core.bpo.dots.length - 1;
             }
             if (core.bpo.dots[x]) {
-                addClass(core.bpo.dots[x], core.settings.activeCls);
+                addClass(core.bpo.dots[x], core.opts.activeCls);
             }
         }
     };
@@ -353,56 +353,61 @@ var Carouzel;
      */
     var animateTrack = function (core, touchedPixel) {
         if (touchedPixel === void 0) { touchedPixel = 0; }
-        if (typeof core.settings.bFn === "function") {
-            core.settings.bFn();
+        if (typeof core.opts.bFn === "function") {
+            core.opts.bFn();
         }
         if (!core.pi) {
             core.pi = 0;
         }
-        if (core.settings.inf && core.track) {
-            core.track.style.transform = "translate3d(".concat(-core.pts[core.pi], "px, 0, 0)");
+        if (core.opts.inf && core.trk) {
+            core.trk.style.transform = "translate3d(".concat(-core.pts[core.pi], "px, 0, 0)");
         }
         else {
             if (core.ci < 0) {
                 core.ci = 0;
             }
-            if (core.ci + core.bpo._2Show >= core.sLength) {
-                core.ci = core.sLength - core.bpo._2Show;
+            if (core.ci + core.bpo._2Show >= core.sLen) {
+                core.ci = core.sLen - core.bpo._2Show;
             }
         }
         var postAnimation = function () {
-            if (core.ci >= core.sLength) {
-                core.ci = core.sLength - core.ci;
+            if (core.ci >= core.sLen) {
+                core.ci = core.sLen - core.ci;
             }
             if (core.ci < 0) {
-                core.ci = core.sLength + core.ci;
+                core.ci = core.sLen + core.ci;
             }
-            if (core.track) {
-                core.track.style.transform = "translate3d(".concat(-core.pts[core.ci], "px, 0, 0)");
+            if (core.trk) {
+                core.trk.style.transform = "translate3d(".concat(-core.pts[core.ci], "px, 0, 0)");
             }
             core.ct = -core._t.nextX;
             updateAttributes(core);
             setTimeout(function () {
                 var _a;
-                if (core.settings._urlH) {
-                    hashSlide = (_a = core.rootElem) === null || _a === void 0 ? void 0 : _a.querySelector(".".concat(core.settings.activeCls));
+                if (core.opts._urlH) {
+                    hashSlide = (_a = core.root) === null || _a === void 0 ? void 0 : _a.querySelector(".".concat(core.opts.activeCls));
                     if (hashSlide && window.location.hash) {
                         window.location.hash = hashSlide.getAttribute("id") || '';
                     }
                     hashSlide = null;
                 }
-                if (typeof core.settings.aFn === "function") {
-                    core.settings.aFn();
+                if (typeof core.opts.aFn === "function") {
+                    core.opts.aFn();
                 }
             }, 0);
         };
         updateAttributes(core);
-        core._t.start = performance.now();
+        if (performance) {
+            core._t.start = performance.now();
+        }
+        else {
+            core._t.start = Date.now();
+        }
         core._t.prevX = core.pts[core.pi];
         core._t.nextX = core.pts[core.ci];
         var scrollThisTrack = function (now) {
             core._t.elapsed = now - core._t.start;
-            core._t.progress = _easingFunctions[core.settings.timeFn](core._t.elapsed / core._t.total);
+            core._t.progress = _easingFunctions[core.opts.timeFn](core._t.elapsed / core._t.total);
             if (core.ci > core.pi) {
                 core._t.position =
                     core._t.prevX +
@@ -421,10 +426,9 @@ var Carouzel;
                     core._t.position = core.pts[core.ci];
                 }
             }
-            if (core._t.position && core.track) {
+            if (core._t.position && core.trk) {
                 core._t.position = Math.round(core._t.position);
-                core.track.style.transform = "translate3d(".concat(-core._t
-                    .position, "px, 0, 0)");
+                core.trk.style.transform = "translate3d(".concat(-core._t.position, "px, 0, 0)");
             }
             if (core._t.progress < 1 && core._t.position !== core.pts[core.ci]) {
                 core._t.id = requestAnimationFrame(scrollThisTrack);
@@ -433,14 +437,14 @@ var Carouzel;
                 postAnimation();
             }
         };
-        if (core.settings.effect === _animationEffects[0] && core.track) {
+        if (core.opts.effect === _animationEffects[0] && core.trk) {
             if (core._t.start && core._t.total && core.ci !== core.pi) {
                 core._t.id = requestAnimationFrame(scrollThisTrack);
             }
         }
         var fadeThisTrack = function (now) {
             core._t.elapsed = now - core._t.start;
-            core._t.progress = _easingFunctions[core.settings.timeFn](core._t.elapsed / core._t.total);
+            core._t.progress = _easingFunctions[core.opts.timeFn](core._t.elapsed / core._t.total);
             core._t.progress = core._t.progress > 1 ? 1 : core._t.progress;
             for (var i = 0; i < core._as.length; i++) {
                 if (i < core.ci + core.bpo._2Show && core.pi < core.ci) {
@@ -449,7 +453,7 @@ var Carouzel;
                 if (i > core.ci + core.bpo._2Show && core.pi > core.ci) {
                     core._as[i].style.visibility = "visible";
                 }
-                if (hasClass(core._as[i], core.settings.activeCls)) {
+                if (hasClass(core._as[i], core.opts.activeCls)) {
                     core._as[i].style.opacity = "" + core._t.progress;
                 }
                 else {
@@ -464,7 +468,7 @@ var Carouzel;
                 postAnimation();
                 for (var i = 0; i < core._as.length; i++) {
                     core._as[i].style.transform = "translate3d(0, 0, 0)";
-                    if (hasClass(core._as[i], core.settings.activeCls)) {
+                    if (hasClass(core._as[i], core.opts.activeCls)) {
                         core._as[i].style.opacity = "1";
                     }
                     else {
@@ -474,10 +478,10 @@ var Carouzel;
                 }
             }
         };
-        if (core.settings.effect === _animationEffects[1] && core.track) {
-            core.track.style.transform = "translate3d(".concat(-core._t.nextX, "px, 0, 0)");
+        if (core.opts.effect === _animationEffects[1] && core.trk) {
+            core.trk.style.transform = "translate3d(".concat(-core._t.nextX, "px, 0, 0)");
             for (var i = 0; i < core._as.length; i++) {
-                if (hasClass(core._as[i], core.settings.activeCls)) {
+                if (hasClass(core._as[i], core.opts.activeCls)) {
                     core._as[i].style.visibility = "visible";
                     core._as[i].style.opacity = "1";
                     core._as[i].style.transform = "translate3d(0, 0, 0)";
@@ -552,7 +556,7 @@ var Carouzel;
         var bpoptions = core.bpall[0];
         var len = 0;
         var slideWidth = 0;
-        var trackWidth = 0;
+        var trkWidth = 0;
         var temp = 0;
         while (len < core.bpall.length) {
             if ((core.bpall[len + 1] && core.bpall[len + 1].bp > viewportWidth) ||
@@ -562,11 +566,11 @@ var Carouzel;
             }
             len++;
         }
-        if (core.rootElem &&
-            !hasClass(core.rootElem, core.settings.editCls) &&
+        if (core.root &&
+            !hasClass(core.root, core.opts.editCls) &&
             (core.bpo_old || {})._2Show !== bpoptions._2Show &&
-            core.track) {
-            manageDuplicates(core.track, bpoptions, core.settings.dupCls || "");
+            core.trk) {
+            manageDuplicates(core.trk, bpoptions, core.opts.dupCls || "");
         }
         if ((core.bpo_old || {}).bp !== bpoptions.bp) {
             core.bpo = bpoptions;
@@ -582,34 +586,34 @@ var Carouzel;
             }
         }
         if (!bpoptions._arrows && core.controlsW) {
-            addClass(core.controlsW, core.settings.hidCls);
+            addClass(core.controlsW, core.opts.hidCls);
         }
         else if (core.controlsW) {
-            removeClass(core.controlsW, core.settings.hidCls);
+            removeClass(core.controlsW, core.opts.hidCls);
         }
         if (!bpoptions._nav && core.navW) {
-            addClass(core.navW, core.settings.hidCls);
+            addClass(core.navW, core.opts.hidCls);
         }
         else if (core.navW) {
-            removeClass(core.navW, core.settings.hidCls);
+            removeClass(core.navW, core.opts.hidCls);
         }
         if (isRTLFirstLoad) {
-            core.ci = core.settings.startAt = core.sLength - bpoptions._2Scroll;
+            core.ci = core.opts.startAt = core.sLen - bpoptions._2Scroll;
         }
-        if (core.rootElem && core.trackW && core.trackO && core.track) {
+        if (core.root && core.trkW && core.trkO && core.trk) {
             core.pts = {};
             slideWidth =
-                (core.trackW.clientWidth - (bpoptions._2Show - 1) * bpoptions.gutr) /
+                (core.trkW.clientWidth - (bpoptions._2Show - 1) * bpoptions.gutr) /
                     (bpoptions._2Show + bpoptions.cntr);
-            core.sWidth = slideWidth;
+            core.sWid = slideWidth;
             temp =
-                core.sLength >= bpoptions._2Show ? bpoptions.bpSLen : bpoptions._2Show;
-            trackWidth = slideWidth * temp + bpoptions.gutr * (temp + 1);
-            core.track.style.width = toFixed4(trackWidth) + "px";
-            core.trackO.style.width =
+                core.sLen >= bpoptions._2Show ? bpoptions.bpSLen : bpoptions._2Show;
+            trkWidth = slideWidth * temp + bpoptions.gutr * (temp + 1);
+            core.trk.style.width = toFixed4(trkWidth) + "px";
+            core.trkO.style.width =
                 toFixed4(bpoptions._2Show * slideWidth +
                     bpoptions.gutr * (bpoptions._2Show - 1)) + "px";
-            core._as = core.trackO.querySelectorAll(_Selectors.slide);
+            core._as = core.trkO.querySelectorAll(_Selectors.slide);
             for (var i = 0; i < core._as.length; i++) {
                 core._as[i].style.width = toFixed4(slideWidth) + "px";
                 if (i === 0) {
@@ -636,12 +640,12 @@ var Carouzel;
                     (-i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr) +
                         bpoptions.gutr;
             }
-            for (var i = 0; i < core.sLength; i++) {
+            for (var i = 0; i < core.sLen; i++) {
                 core.pts[i] =
                     (i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr) +
                         bpoptions.gutr;
             }
-            for (var i = core.sLength; i < core.sLength + bpoptions.nDups.length; i++) {
+            for (var i = core.sLen; i < core.sLen + bpoptions.nDups.length; i++) {
                 core.pts[i] =
                     (i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr) +
                         bpoptions.gutr;
@@ -678,12 +682,12 @@ var Carouzel;
         if (core._t.id) {
             cancelAnimationFrame(core._t.id);
         }
-        if (core.settings.inf) {
+        if (core.opts.inf) {
             if (typeof core.pts[core.ci] === "undefined") {
                 core.pi =
-                    core.sLength -
-                        (core.sLength % core.bpo._2Scroll > 0
-                            ? core.sLength % core.bpo._2Scroll
+                    core.sLen -
+                        (core.sLen % core.bpo._2Scroll > 0
+                            ? core.sLen % core.bpo._2Scroll
                             : core.bpo._2Scroll);
                 core.ci = core.pi - core.bpo._2Scroll;
             }
@@ -705,9 +709,9 @@ var Carouzel;
         if (core._t.id) {
             cancelAnimationFrame(core._t.id);
         }
-        if (core.settings.inf) {
+        if (core.opts.inf) {
             if (typeof core.pts[core.ci + core.bpo._2Show] === "undefined") {
-                core.pi = core.pi - core.sLength;
+                core.pi = core.pi - core.sLen;
                 core.ci = 0;
             }
             else {
@@ -723,10 +727,10 @@ var Carouzel;
      *
      */
     var toggleKeyboard = function (core) {
-        if (core.rootElem && core.settings.kb) {
-            core.rootElem.setAttribute("tabindex", "-1");
+        if (core.root && core.opts.kb) {
+            core.root.setAttribute("tabindex", "-1");
             var keyCode_1 = "";
-            core.eHandlers.push(eventHandler(core.rootElem, "keydown", function (event) {
+            core.eHandlers.push(eventHandler(core.root, "keydown", function (event) {
                 event = event || window.event;
                 keyCode_1 = event.key.toLowerCase();
                 switch (keyCode_1) {
@@ -751,14 +755,14 @@ var Carouzel;
      *
      */
     var togglePlayPause = function (core, shouldPlay) {
-        if (core && core.btnPause && core.btnPlay) {
+        if (core && core.bPause && core.bPlay) {
             if (shouldPlay) {
-                addClass(core.btnPlay, core.settings.hidCls);
-                removeClass(core.btnPause, core.settings.hidCls);
+                addClass(core.bPlay, core.opts.hidCls);
+                removeClass(core.bPause, core.opts.hidCls);
             }
             else {
-                addClass(core.btnPause, core.settings.hidCls);
-                removeClass(core.btnPlay, core.settings.hidCls);
+                addClass(core.bPause, core.opts.hidCls);
+                removeClass(core.bPlay, core.opts.hidCls);
             }
         }
     };
@@ -769,24 +773,24 @@ var Carouzel;
      *
      */
     var toggleAutoplay = function (core) {
-        if (core.rootElem && core.settings.pauseHov) {
-            core.eHandlers.push(eventHandler(core.rootElem, "mouseenter", function () {
+        if (core.root && core.opts.pauseHov) {
+            core.eHandlers.push(eventHandler(core.root, "mouseenter", function () {
                 core.paused = true;
                 togglePlayPause(core, false);
             }));
-            core.eHandlers.push(eventHandler(core.rootElem, "mouseleave", function () {
+            core.eHandlers.push(eventHandler(core.root, "mouseleave", function () {
                 core.paused = false;
                 togglePlayPause(core, true);
             }));
         }
-        if (!core.settings.pauseHov) {
+        if (!core.opts.pauseHov) {
             core.paused = false;
         }
-        core.autoTimer = setInterval(function () {
+        core.autoT = setInterval(function () {
             if (!core.paused && !core.pauseClk) {
                 goToNext(core, 0);
             }
-        }, core.settings.autoS);
+        }, core.opts.autoS);
     };
     /**
      * Function to add click events to the arrows
@@ -807,15 +811,15 @@ var Carouzel;
                 goToNext(core, 0);
             }));
         }
-        if (core.settings.inf && core.btnPause) {
-            core.eHandlers.push(eventHandler(core.btnPause, "click", function (event) {
+        if (core.opts.inf && core.bPause) {
+            core.eHandlers.push(eventHandler(core.bPause, "click", function (event) {
                 event.preventDefault();
                 core.pauseClk = true;
                 togglePlayPause(core, false);
             }));
         }
-        if (core.settings.inf && core.btnPlay) {
-            core.eHandlers.push(eventHandler(core.btnPlay, "click", function (event) {
+        if (core.opts.inf && core.bPlay) {
+            core.eHandlers.push(eventHandler(core.bPlay, "click", function (event) {
                 event.preventDefault();
                 core.pauseClk = false;
                 togglePlayPause(core, true);
@@ -841,7 +845,7 @@ var Carouzel;
         var ratioY = 0;
         var startX = 0;
         var startY = 0;
-        var threshold = core.settings.threshold || 100;
+        var threshold = core.opts.threshold || 100;
         var canFiniteAnimate = false;
         var touchStart = function (e) {
             dragging = true;
@@ -876,10 +880,10 @@ var Carouzel;
                     core.ct = -core.pts[core.ci];
                 }
                 if (ratioX > ratioY) {
-                    if (core.track && core.settings.effect === _animationEffects[0]) {
-                        core.track.style.transform = "translate3d(".concat(core.ct - posX2, "px, 0, 0)");
+                    if (core.trk && core.opts.effect === _animationEffects[0]) {
+                        core.trk.style.transform = "translate3d(".concat(core.ct - posX2, "px, 0, 0)");
                     }
-                    if (core.track && core.settings.effect === _animationEffects[1]) {
+                    if (core.trk && core.opts.effect === _animationEffects[1]) {
                         for (var k = 0; k < core._as.length; k++) {
                             core._as[k].style.opacity = "1";
                         }
@@ -889,7 +893,7 @@ var Carouzel;
             }
         };
         var touchEnd = function (e) {
-            if (dragging && core.track) {
+            if (dragging && core.trk) {
                 if (e.type === "touchend") {
                     endX = e.changedTouches[0].screenX;
                     endY = e.changedTouches[0].screenY;
@@ -908,55 +912,55 @@ var Carouzel;
                     ratioX !== Infinity &&
                     ratioX !== ratioY) {
                     canFiniteAnimate = false;
-                    if (!core.settings.inf) {
+                    if (!core.opts.inf) {
                         if (diffX > 0) {
                             if (Math.abs(core.ct) <= 0) {
-                                core.track.style.transform = "translate3d(".concat(core.ct, "px, 0, 0)");
+                                core.trk.style.transform = "translate3d(".concat(core.ct, "px, 0, 0)");
                             }
                             else {
                                 canFiniteAnimate = true;
                             }
                         }
                         else if (diffX < 0) {
-                            if (Math.abs(core.ct) + core.sWidth * core.bpo._2Show >=
-                                core.sWidth * core._as.length) {
-                                core.track.style.transform = "translate3d(".concat(core.ct, "px, 0, 0)");
+                            if (Math.abs(core.ct) + core.sWid * core.bpo._2Show >=
+                                core.sWid * core._as.length) {
+                                core.trk.style.transform = "translate3d(".concat(core.ct, "px, 0, 0)");
                             }
                             else {
                                 canFiniteAnimate = true;
                             }
                         }
                     }
-                    if (core.settings.effect === _animationEffects[1]) {
+                    if (core.opts.effect === _animationEffects[1]) {
                         for (var k = 0; k < core._as.length; k++) {
                             core._as[k].style.opacity = "0";
                         }
                     }
                     if (posFinal < -threshold) {
-                        if (core.settings.effect === _animationEffects[0] &&
-                            (canFiniteAnimate || core.settings.inf)) {
+                        if (core.opts.effect === _animationEffects[0] &&
+                            (canFiniteAnimate || core.opts.inf)) {
                             goToPrev(core, posFinal);
                         }
-                        if (core.settings.effect === _animationEffects[1] &&
-                            (canFiniteAnimate || core.settings.inf)) {
+                        if (core.opts.effect === _animationEffects[1] &&
+                            (canFiniteAnimate || core.opts.inf)) {
                             goToPrev(core, 1);
                         }
                     }
                     else if (posFinal > threshold) {
-                        if (core.settings.effect === _animationEffects[0] &&
-                            (canFiniteAnimate || core.settings.inf)) {
+                        if (core.opts.effect === _animationEffects[0] &&
+                            (canFiniteAnimate || core.opts.inf)) {
                             goToNext(core, posFinal);
                         }
-                        if (core.settings.effect === _animationEffects[1] &&
-                            (canFiniteAnimate || core.settings.inf)) {
+                        if (core.opts.effect === _animationEffects[1] &&
+                            (canFiniteAnimate || core.opts.inf)) {
                             goToNext(core, 1);
                         }
                     }
                     else {
-                        if (core.settings.effect === _animationEffects[0]) {
-                            core.track.style.transform = "translate3d(".concat(core.ct, "px, 0, 0)");
+                        if (core.opts.effect === _animationEffects[0]) {
+                            core.trk.style.transform = "translate3d(".concat(core.ct, "px, 0, 0)");
                         }
-                        if (core.settings.effect === _animationEffects[1]) {
+                        if (core.opts.effect === _animationEffects[1]) {
                             for (var k = 0; k < core._as.length; k++) {
                                 core._as[k].style.opacity = "1";
                             }
@@ -967,25 +971,25 @@ var Carouzel;
                 }
             }
         };
-        core.eHandlers.push(eventHandler(core.track, "touchstart", function (event) {
+        core.eHandlers.push(eventHandler(core.trk, "touchstart", function (event) {
             touchStart(event);
         }));
-        core.eHandlers.push(eventHandler(core.track, "touchmove", function (event) {
+        core.eHandlers.push(eventHandler(core.trk, "touchmove", function (event) {
             touchMove(event);
         }));
-        core.eHandlers.push(eventHandler(core.track, "touchend", function (e) {
+        core.eHandlers.push(eventHandler(core.trk, "touchend", function (e) {
             touchEnd(e);
         }));
-        core.eHandlers.push(eventHandler(core.track, "mousedown", function (event) {
+        core.eHandlers.push(eventHandler(core.trk, "mousedown", function (event) {
             touchStart(event);
         }));
-        core.eHandlers.push(eventHandler(core.track, "mouseup", function (e) {
+        core.eHandlers.push(eventHandler(core.trk, "mouseup", function (e) {
             touchEnd(e);
         }));
-        core.eHandlers.push(eventHandler(core.track, "mouseleave", function (e) {
+        core.eHandlers.push(eventHandler(core.trk, "mouseleave", function (e) {
             touchEnd(e);
         }));
-        core.eHandlers.push(eventHandler(core.track, "mousemove", function (event) {
+        core.eHandlers.push(eventHandler(core.trk, "mousemove", function (event) {
             touchMove(event);
         }));
     };
@@ -997,14 +1001,14 @@ var Carouzel;
      */
     var generateElements = function (core) {
         for (var i = 0; i < core.bpall.length; i++) {
-            core.bpall[i].bpSLen = core.sLength;
-            if (core.settings.inf) {
-                for (var j = core.sLength -
+            core.bpall[i].bpSLen = core.sLen;
+            if (core.opts.inf) {
+                for (var j = core.sLen -
                     core.bpall[i]._2Show -
-                    Math.ceil(core.bpall[i].cntr / 2); j < core.sLength; j++) {
+                    Math.ceil(core.bpall[i].cntr / 2); j < core.sLen; j++) {
                     if (core._ds[j]) {
                         var elem = core._ds[j].cloneNode(true);
-                        addClass(elem, core.settings.dupCls || "");
+                        addClass(elem, core.opts.dupCls || "");
                         core.bpall[i].bpSLen++;
                         core.bpall[i].pDups.push(elem);
                     }
@@ -1012,7 +1016,7 @@ var Carouzel;
                 for (var j = 0; j < core.bpall[i]._2Show + Math.ceil(core.bpall[i].cntr / 2); j++) {
                     if (core._ds[j]) {
                         var elem = core._ds[j].cloneNode(true);
-                        addClass(elem, core.settings.dupCls || "");
+                        addClass(elem, core.opts.dupCls || "");
                         core.bpall[i].bpSLen++;
                         core.bpall[i].nDups.push(elem);
                     }
@@ -1020,9 +1024,9 @@ var Carouzel;
             }
         }
         var _loop_1 = function (i) {
-            var pageLength = Math.floor(core.sLength / core.bpall[i]._2Scroll);
+            var pageLength = Math.floor(core.sLen / core.bpall[i]._2Scroll);
             var navBtns = [];
-            var var1 = core.sLength % core.bpall[i]._2Scroll;
+            var var1 = core.sLen % core.bpall[i]._2Scroll;
             var var2 = core.bpall[i]._2Show - core.bpall[i]._2Scroll;
             if (var2 > var1) {
                 pageLength--;
@@ -1036,12 +1040,12 @@ var Carouzel;
                 var elem = document.createElement("button");
                 elem.setAttribute(_Selectors.dot.slice(1, -1), "");
                 elem.setAttribute("type", "button");
-                btnStr = "<div class=\"".concat(core.settings.dotNcls, "\">").concat(j + 1, "</div>");
-                if (core.settings.useTitle &&
+                btnStr = "<div class=\"".concat(core.opts.dotNcls, "\">").concat(j + 1, "</div>");
+                if (core.opts.useTitle &&
                     core.bpall[i]._2Show === 1 &&
                     core._ds[j].getAttribute(_Selectors.stitle.slice(1, -1))) {
                     btnStr += core._ds[j].getAttribute(_Selectors.stitle.slice(1, -1));
-                    addClass(elem, core.settings.dotCls);
+                    addClass(elem, core.opts.dotCls);
                 }
                 elem.innerHTML = btnStr;
                 navBtns.push(elem);
@@ -1115,9 +1119,9 @@ var Carouzel;
         };
         var tempArr = [];
         if (settings.res && settings.res.length > 0) {
-            var settingsLength = settings.res.length;
-            while (settingsLength--) {
-                tempArr.push(settings.res[settingsLength]);
+            var settingsLen = settings.res.length;
+            while (settingsLen--) {
+                tempArr.push(settings.res[settingsLen]);
             }
         }
         tempArr.push(defaultBreakpoint);
@@ -1238,36 +1242,35 @@ var Carouzel;
      * @param core - Carouzel instance core object
      *
      */
-    var init = function (core, rootElem, settings) {
+    var init = function (core, root, settings) {
         if (typeof settings.beforeInit === "function") {
             settings.beforeInit();
         }
         var _core = __assign({}, core);
-        _core.rootElem = core.rootElem = rootElem;
-        _core.settings = mapSettings(settings);
-        _core._ds = rootElem.querySelectorAll("".concat(_Selectors.slide));
-        _core.arrowN = rootElem.querySelector("".concat(_Selectors.arrowN));
-        _core.arrowP = rootElem.querySelector("".concat(_Selectors.arrowP));
-        _core.btnPause = rootElem.querySelector("".concat(_Selectors.pauseBtn));
-        _core.btnPlay = rootElem.querySelector("".concat(_Selectors.playBtn));
+        _core.root = core.root = root;
+        _core.opts = mapSettings(settings);
+        _core._ds = root.querySelectorAll("".concat(_Selectors.slide));
+        _core.arrowN = root.querySelector("".concat(_Selectors.arrowN));
+        _core.arrowP = root.querySelector("".concat(_Selectors.arrowP));
+        _core.bPause = root.querySelector("".concat(_Selectors.pauseBtn));
+        _core.bPlay = root.querySelector("".concat(_Selectors.playBtn));
         _core.ci = settings.startAtIndex = (settings.startAtIndex || 0) - 1;
-        _core.controlsW = rootElem.querySelector("".concat(_Selectors.controlsW));
+        _core.controlsW = root.querySelector("".concat(_Selectors.controlsW));
         _core.eHandlers = [];
-        _core.isLeftAdded = false;
-        _core.nav = rootElem.querySelector("".concat(_Selectors.nav));
-        _core.navW = rootElem.querySelector("".concat(_Selectors.navW));
+        _core.nav = root.querySelector("".concat(_Selectors.nav));
+        _core.navW = root.querySelector("".concat(_Selectors.navW));
         _core.pts = [];
-        _core.sLength = _core._ds.length;
-        _core.track = rootElem.querySelector("".concat(_Selectors.track));
-        _core.trackM = rootElem.querySelector("".concat(_Selectors.trackM));
-        _core.trackO = rootElem.querySelector("".concat(_Selectors.trackO));
-        _core.trackW = rootElem.querySelector("".concat(_Selectors.trackW));
-        _core.settings.rtl = false;
-        if (_core.rootElem.hasAttribute(_Selectors.rtl.slice(1, -1))) {
-            _core.settings.rtl = true;
+        _core.sLen = _core._ds.length;
+        _core.trk = root.querySelector("".concat(_Selectors.trk));
+        _core.trkM = root.querySelector("".concat(_Selectors.trkM));
+        _core.trkO = root.querySelector("".concat(_Selectors.trkO));
+        _core.trkW = root.querySelector("".concat(_Selectors.trkW));
+        _core.opts.rtl = false;
+        if (_core.root.hasAttribute(_Selectors.rtl.slice(1, -1))) {
+            _core.opts.rtl = true;
         }
         _core._t = {};
-        _core._t.total = _core.settings.speed;
+        _core._t.total = _core.opts.speed;
         core.goToNext = function () {
             goToNext(_core, 0);
         };
@@ -1280,31 +1283,31 @@ var Carouzel;
             }
         };
         core.prependSlide = function (slideElem) {
-            if (_core.track) {
-                doInsertBefore(_core.track, slideElem);
+            if (_core.trk) {
+                doInsertBefore(_core.trk, slideElem);
             }
         };
         core.appendSlide = function (slideElem) {
-            if (_core.track) {
-                doInsertAfter(_core.track, slideElem);
+            if (_core.trk) {
+                doInsertAfter(_core.trk, slideElem);
             }
         };
         if (!_core._ds[_core.ci]) {
             _core.ci = settings.startAtIndex = 0;
         }
-        if (_core.track && _core.sLength > 0) {
-            if (_core.settings.auto) {
-                _core.settings.inf = true;
+        if (_core.trk && _core.sLen > 0) {
+            if (_core.opts.auto) {
+                _core.opts.inf = true;
                 toggleAutoplay(_core);
             }
-            _core.bpall = updateBreakpoints(_core.settings);
+            _core.bpall = updateBreakpoints(_core.opts);
             toggleKeyboard(_core);
             generateElements(_core);
             toggleControlButtons(_core);
             toggleTouchEvents(_core);
-            applyLayout(_core, _core.settings.rtl);
+            applyLayout(_core, _core.opts.rtl);
         }
-        addClass(core.rootElem, _core.settings.activeCls);
+        addClass(core.root, _core.opts.activeCls);
         if (typeof settings.afterInit === "function") {
             settings.afterInit();
         }
@@ -1315,7 +1318,7 @@ var Carouzel;
                 windowHash = windowHash.slice(1, windowHash.length);
             }
             if ((windowHash || '').length > 0) {
-                var thisSlides = core.rootElem.querySelectorAll("".concat(_Selectors.slide));
+                var thisSlides = core.root.querySelectorAll("".concat(_Selectors.slide));
                 var foundSlideIndex = -1;
                 for (var s = 0; s < thisSlides.length; s++) {
                     if (thisSlides[s].getAttribute("id") === windowHash) {
@@ -1335,17 +1338,16 @@ var Carouzel;
         var core = allLocalInstances[thisid];
         for (var i = 0; i < allElems.length; i++) {
             removeEventListeners(core, allElems[i]);
-            if (core.track &&
-                hasClass(allElems[i], core.settings.dupCls)) {
-                core.track.removeChild(allElems[i]);
+            if (core.trk && hasClass(allElems[i], core.opts.dupCls)) {
+                core.trk.removeChild(allElems[i]);
             }
             if (core.nav && allElems[i].hasAttribute(_Selectors.dot.slice(1, -1))) {
                 core.nav.removeChild(allElems[i]);
             }
             allElems[i].removeAttribute("style");
-            removeClass(allElems[i], "".concat(core.settings.activeCls, " ").concat(core.settings.editCls, " ").concat(core.settings.disableCls, " ").concat(core.settings.dupCls));
+            removeClass(allElems[i], "".concat(core.opts.activeCls, " ").concat(core.opts.editCls, " ").concat(core.opts.disableCls, " ").concat(core.opts.dupCls));
         }
-        removeClass(core.rootElem, "".concat(core.settings.activeCls, " ").concat(core.settings.editCls, " ").concat(core.settings.disableCls, " ").concat(core.settings.dupCls));
+        removeClass(core.root, "".concat(core.opts.activeCls, " ").concat(core.opts.editCls, " ").concat(core.opts.disableCls, " ").concat(core.opts.dupCls));
         delete allLocalInstances[thisid];
     };
     /**
@@ -1359,9 +1361,9 @@ var Carouzel;
      *
      */
     var Core = /** @class */ (function () {
-        function Core(thisid, rootElem, options) {
+        function Core(thisid, root, options) {
             this.core = {};
-            var initObj = init(this.core, rootElem, __assign(__assign({}, _Defaults), options));
+            var initObj = init(this.core, root, __assign(__assign({}, _Defaults), options));
             this.core = initObj.global;
             allLocalInstances[thisid] = initObj.local;
         }
@@ -1393,15 +1395,15 @@ var Carouzel;
              */
             this.init = function (query, options) {
                 var roots = document.querySelectorAll(query);
-                var rootsLength = roots.length;
+                var rootsLen = roots.length;
                 var instanceLength = 0;
                 for (var i in allGlobalInstances) {
                     if (allGlobalInstances.hasOwnProperty(i)) {
                         instanceLength++;
                     }
                 }
-                if (rootsLength > 0) {
-                    for (var i = 0; i < rootsLength; i++) {
+                if (rootsLen > 0) {
+                    for (var i = 0; i < rootsLen; i++) {
                         var id = roots[i].getAttribute("id");
                         var isElementPresent = false;
                         if (id) {
@@ -1442,7 +1444,7 @@ var Carouzel;
                             }
                         }
                     }
-                    if (window && getInstancesLength() > 0 && !isWindowEventAttached) {
+                    if (window && getInstancesLen() > 0 && !isWindowEventAttached) {
                         isWindowEventAttached = true;
                         window.addEventListener("resize", winResizeFn);
                     }
@@ -1477,16 +1479,16 @@ var Carouzel;
              */
             this.destroy = function (query) {
                 var roots = document.querySelectorAll(query);
-                var rootsLength = roots.length;
-                if (rootsLength > 0) {
-                    for (var i = 0; i < rootsLength; i++) {
+                var rootsLen = roots.length;
+                if (rootsLen > 0) {
+                    for (var i = 0; i < rootsLen; i++) {
                         var id = roots[i].getAttribute("id");
                         if (id && allGlobalInstances[id]) {
                             destroy(id);
                             delete allGlobalInstances[id];
                         }
                     }
-                    if (window && getInstancesLength() === 0) {
+                    if (window && getInstancesLen() === 0) {
                         window.removeEventListener("resize", winResizeFn);
                     }
                 }
