@@ -182,6 +182,7 @@ namespace Carouzel {
   let allGlobalInstances: IRoot = {};
   let isWindowEventAttached = false;
   let windowResizeAny: any;
+  let hashSlide: HTMLElement | null | undefined;
 
   const _animationEffects = [`scroll`, `fade`];
   const _easingEffects = [
@@ -567,11 +568,17 @@ namespace Carouzel {
       core.ct = -core._t.nextX;
       updateAttributes(core);
       setTimeout(() => {
+        if (core.settings._urlH) {
+          hashSlide = core.rootElem?.querySelector(
+            `.${core.settings.activeCls}`
+          );
+          if (hashSlide && ((window as Window).location as Location).hash) {
+            window.location.hash = hashSlide.getAttribute(`id`) || '';
+          }
+          hashSlide = null;
+        }
         if (typeof core.settings.aFn === `function`) {
           core.settings.aFn();
-        }
-        if (core.settings._urlH) {
-          console.log('===========core.settings._urlH', core.settings._urlH);
         }
       }, 0);
     };

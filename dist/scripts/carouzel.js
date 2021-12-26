@@ -25,6 +25,7 @@ var Carouzel;
     var allGlobalInstances = {};
     var isWindowEventAttached = false;
     var windowResizeAny;
+    var hashSlide;
     var _animationEffects = ["scroll", "fade"];
     var _easingEffects = [
         "linear",
@@ -382,11 +383,16 @@ var Carouzel;
             core.ct = -core._t.nextX;
             updateAttributes(core);
             setTimeout(function () {
+                var _a;
+                if (core.settings._urlH) {
+                    hashSlide = (_a = core.rootElem) === null || _a === void 0 ? void 0 : _a.querySelector(".".concat(core.settings.activeCls));
+                    if (hashSlide && window.location.hash) {
+                        window.location.hash = hashSlide.getAttribute("id") || '';
+                    }
+                    hashSlide = null;
+                }
                 if (typeof core.settings.aFn === "function") {
                     core.settings.aFn();
-                }
-                if (core.settings._urlH) {
-                    console.log('===========core.settings._urlH', core.settings._urlH);
                 }
             }, 0);
         };
