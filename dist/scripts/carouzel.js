@@ -74,6 +74,7 @@ var Carouzel;
         activeClass: "__carouzel-active",
         animationEffect: _animationEffects[0],
         animationSpeed: 400,
+        appendUrlHash: false,
         autoplay: false,
         autoplaySpeed: 3000,
         centerBetween: 0,
@@ -98,6 +99,7 @@ var Carouzel;
         startAtIndex: 1,
         timingFunction: "linear",
         touchThreshold: 100,
+        trackUrlHash: false,
         useTitlesAsDots: false
     };
     /*
@@ -382,6 +384,9 @@ var Carouzel;
             setTimeout(function () {
                 if (typeof core.settings.aFn === "function") {
                     core.settings.aFn();
+                }
+                if (core.settings._urlH) {
+                    console.log('===========core.settings._urlH', core.settings._urlH);
                 }
             }, 0);
         };
@@ -1159,6 +1164,7 @@ var Carouzel;
             _2Show: settings.slidesToShow,
             _arrows: settings.showArrows,
             _nav: settings.showNavigation,
+            _urlH: settings.appendUrlHash,
             activeCls: settings.activeClass,
             aFn: settings.afterScroll,
             auto: settings.autoplay,
@@ -1295,6 +1301,26 @@ var Carouzel;
         addClass(core.rootElem, _core.settings.activeCls);
         if (typeof settings.afterInit === "function") {
             settings.afterInit();
+        }
+        if (settings.trackUrlHash &&
+            (window || {}).location.hash) {
+            var windowHash = window.location.hash || "";
+            if (windowHash.charAt(0) === "#") {
+                windowHash = windowHash.slice(1, windowHash.length);
+            }
+            if ((windowHash || '').length > 0) {
+                var thisSlides = core.rootElem.querySelectorAll("".concat(_Selectors.slide));
+                var foundSlideIndex = -1;
+                for (var s = 0; s < thisSlides.length; s++) {
+                    if (thisSlides[s].getAttribute("id") === windowHash) {
+                        foundSlideIndex = s;
+                        break;
+                    }
+                }
+                if (foundSlideIndex !== -1) {
+                    core.goToSlide(foundSlideIndex);
+                }
+            }
         }
         return { global: core, local: _core };
     };

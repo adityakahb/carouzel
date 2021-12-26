@@ -46,6 +46,7 @@ namespace Carouzel {
     _2Show: number;
     _arrows: boolean;
     _nav: boolean;
+    _urlH: boolean;
     activeCls: string;
     aFn?: Function;
     auto: boolean;
@@ -91,6 +92,7 @@ namespace Carouzel {
     afterScroll?: Function;
     animationEffect: string;
     animationSpeed: number;
+    appendUrlHash: boolean;
     autoplay: boolean;
     autoplaySpeed: number;
     beforeInit?: Function;
@@ -117,6 +119,7 @@ namespace Carouzel {
     startAtIndex: number;
     timingFunction: string;
     touchThreshold: number;
+    trackUrlHash: boolean;
     useTitlesAsDots: boolean;
   }
 
@@ -233,6 +236,7 @@ namespace Carouzel {
     activeClass: `__carouzel-active`,
     animationEffect: _animationEffects[0],
     animationSpeed: 400,
+    appendUrlHash: false,
     autoplay: false,
     autoplaySpeed: 3000,
     centerBetween: 0,
@@ -257,6 +261,7 @@ namespace Carouzel {
     startAtIndex: 1,
     timingFunction: `linear`,
     touchThreshold: 100,
+    trackUrlHash: false,
     useTitlesAsDots: false,
   };
 
@@ -564,6 +569,9 @@ namespace Carouzel {
       setTimeout(() => {
         if (typeof core.settings.aFn === `function`) {
           core.settings.aFn();
+        }
+        if (core.settings._urlH) {
+          console.log('===========core.settings._urlH', core.settings._urlH);
         }
       }, 0);
     };
@@ -1448,6 +1456,7 @@ namespace Carouzel {
       _2Show: settings.slidesToShow,
       _arrows: settings.showArrows,
       _nav: settings.showNavigation,
+      _urlH: settings.appendUrlHash,
       activeCls: settings.activeClass,
       aFn: settings.afterScroll,
       auto: settings.autoplay,
@@ -1596,6 +1605,30 @@ namespace Carouzel {
     addClass(core.rootElem as Element, _core.settings.activeCls);
     if (typeof settings.afterInit === `function`) {
       settings.afterInit();
+    }
+    if (
+      settings.trackUrlHash &&
+      (((window as Window) || {}).location as Location).hash
+    ) {
+      let windowHash = window.location.hash || ``;
+      if (windowHash.charAt(0) === `#`) {
+        windowHash = windowHash.slice(1, windowHash.length);
+      }
+      if ((windowHash || '').length > 0) {
+        const thisSlides = core.rootElem.querySelectorAll(
+          `${_Selectors.slide}`
+        );
+        let foundSlideIndex: number = -1;
+        for (let s = 0; s < thisSlides.length; s++) {
+          if (thisSlides[s].getAttribute(`id`) === windowHash) {
+            foundSlideIndex = s;
+            break;
+          }
+        }
+        if (foundSlideIndex !== -1) {
+          core.goToSlide(foundSlideIndex);
+        }
+      }
     }
     return { global: core, local: _core };
   };

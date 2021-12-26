@@ -2072,7 +2072,7 @@
                 data-carouzel
                 id="__carouzel_13"
                 aria-roledescription="carousel"
-                aria-label="Carouzel showing events and methods"
+                aria-label="Carouzel showing easing presets"
               >
                 <div data-carouzel-trackwrapper>
                   <div data-carouzel-trackmask>
@@ -2193,6 +2193,126 @@
           <div class="row my-5">
             <div class="col text-center">
               <hr />
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col text-center">
+              <h2>Hash Navigation</h2>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <section
+                data-carouzel
+                id="__carouzel_14"
+                aria-roledescription="carousel"
+                aria-label="Simple implementation of Carouzel"
+              >
+                <div data-carouzel-trackwrapper>
+                  <div data-carouzel-trackmask>
+                    <div data-carouzel-trackouter>
+                      <div data-carouzel-track aria-live="polite">
+                        <div
+                          data-carouzel-slide
+                          role="group"
+                          aria-roledescription="slide"
+                          aria-label="1 of 6"
+                          id="__carouzel_14_id_1"
+                        >
+                          <div>01</div>
+                        </div>
+                        <div
+                          data-carouzel-slide
+                          role="group"
+                          aria-roledescription="slide"
+                          aria-label="2 of 6"
+                          id="__carouzel_14_id_2"
+                        >
+                          <div>02</div>
+                        </div>
+                        <div
+                          data-carouzel-slide
+                          role="group"
+                          aria-roledescription="slide"
+                          aria-label="3 of 6"
+                          id="__carouzel_14_id_3"
+                        >
+                          <div>03</div>
+                        </div>
+                        <div
+                          data-carouzel-slide
+                          role="group"
+                          aria-roledescription="slide"
+                          aria-label="4 of 6"
+                          id="__carouzel_14_id_4"
+                        >
+                          <div>04</div>
+                        </div>
+                        <div
+                          data-carouzel-slide
+                          role="group"
+                          aria-roledescription="slide"
+                          aria-label="5 of 6"
+                          id="__carouzel_14_id_5"
+                        >
+                          <div>05</div>
+                        </div>
+                        <div
+                          data-carouzel-slide
+                          role="group"
+                          aria-roledescription="slide"
+                          aria-label="6 of 6"
+                          id="__carouzel_14_id_6"
+                        >
+                          <div>06</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div data-carouzel-controlswrapper>
+                    <button
+                      type="button"
+                      data-carouzel-previousarrow
+                      aria-label="Previous"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="24px"
+                        viewBox="0 0 24 24"
+                        width="24px"
+                        fill="#000000"
+                      >
+                        <path d="M0 0h24v24H0V0z" fill="none" />
+                        <path
+                          d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z"
+                        />
+                      </svg>
+                    </button>
+                    <button
+                      type="button"
+                      data-carouzel-nextarrow
+                      aria-label="Next"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="24px"
+                        viewBox="0 0 24 24"
+                        width="24px"
+                        fill="#000000"
+                      >
+                        <path d="M0 0h24v24H0V0z" fill="none" />
+                        <path
+                          d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6z"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <div data-carouzel-navigationwrapper>
+                  <div data-carouzel-navigation></div>
+                </div>
+              </section>
             </div>
           </div>
         </div>
@@ -2522,6 +2642,10 @@
         carouzel_13settings.animationSpeed = easingNumText.value;
         __carouzel_instance.destroy('#__carouzel_13');
         __carouzel_instance.init('#__carouzel_13', carouzel_13settings);
+      });
+      __carouzel_instance.init('#__carouzel_14', {
+        trackUrlHash: true,
+        appendUrlHash: true,
       });
     </script>
   </body>

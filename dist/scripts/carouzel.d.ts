@@ -24,6 +24,7 @@ declare namespace Carouzel {
         afterScroll?: Function;
         animationEffect: string;
         animationSpeed: number;
+        appendUrlHash: boolean;
         autoplay: boolean;
         autoplaySpeed: number;
         beforeInit?: Function;
@@ -50,6 +51,7 @@ declare namespace Carouzel {
         startAtIndex: number;
         timingFunction: string;
         touchThreshold: number;
+        trackUrlHash: boolean;
         useTitlesAsDots: boolean;
     }
     /**
