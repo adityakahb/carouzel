@@ -552,7 +552,7 @@ var Carouzel;
      *
      */
     var applyLayout = function (core, isRTLFirstLoad) {
-        var viewportWidth = window.outerWidth;
+        var viewportWidth = window === null || window === void 0 ? void 0 : window.innerWidth;
         var bpoptions = core.bpall[0];
         var len = 0;
         var slideWidth = 0;
@@ -731,7 +731,7 @@ var Carouzel;
             core.root.setAttribute("tabindex", "-1");
             var keyCode_1 = "";
             core.eHandlers.push(eventHandler(core.root, "keydown", function (event) {
-                event = event || window.event;
+                event = event || (window === null || window === void 0 ? void 0 : window.event);
                 keyCode_1 = event.key.toLowerCase();
                 switch (keyCode_1) {
                     case "arrowleft":
@@ -1037,7 +1037,7 @@ var Carouzel;
             core.bpall[i].dots = [];
             var btnStr = "";
             for (var j = 0; j < pageLength; j++) {
-                var elem = document.createElement("button");
+                var elem = document === null || document === void 0 ? void 0 : document.createElement("button");
                 elem.setAttribute(_Selectors.dot.slice(1, -1), "");
                 elem.setAttribute("type", "button");
                 btnStr = "<div class=\"".concat(core.opts.dotNcls, "\">").concat(j + 1, "</div>");
@@ -1243,6 +1243,7 @@ var Carouzel;
      *
      */
     var init = function (core, root, settings) {
+        var _a;
         if (typeof settings.beforeInit === "function") {
             settings.beforeInit();
         }
@@ -1311,8 +1312,7 @@ var Carouzel;
         if (typeof settings.afterInit === "function") {
             settings.afterInit();
         }
-        if (settings.trackUrlHash &&
-            (window || {}).location.hash) {
+        if (settings.trackUrlHash && ((_a = window === null || window === void 0 ? void 0 : window.location) === null || _a === void 0 ? void 0 : _a.hash)) {
             var windowHash = window.location.hash || "";
             if (windowHash.charAt(0) === "#") {
                 windowHash = windowHash.slice(1, windowHash.length);
@@ -1334,7 +1334,7 @@ var Carouzel;
         return { global: core, local: _core };
     };
     var destroy = function (thisid) {
-        var allElems = document.querySelectorAll("#".concat(thisid, " *"));
+        var allElems = document === null || document === void 0 ? void 0 : document.querySelectorAll("#".concat(thisid, " *"));
         var core = allLocalInstances[thisid];
         for (var i = 0; i < allElems.length; i++) {
             removeEventListeners(core, allElems[i]);
@@ -1394,7 +1394,7 @@ var Carouzel;
              *
              */
             this.init = function (query, options) {
-                var roots = document.querySelectorAll(query);
+                var roots = document === null || document === void 0 ? void 0 : document.querySelectorAll(query);
                 var rootsLen = roots.length;
                 var instanceLength = 0;
                 for (var i in allGlobalInstances) {
@@ -1444,9 +1444,9 @@ var Carouzel;
                             }
                         }
                     }
-                    if (window && getInstancesLen() > 0 && !isWindowEventAttached) {
+                    if (getInstancesLen() > 0 && !isWindowEventAttached) {
                         isWindowEventAttached = true;
-                        window.addEventListener("resize", winResizeFn);
+                        window === null || window === void 0 ? void 0 : window.addEventListener("resize", winResizeFn, false);
                     }
                 }
                 else {
@@ -1478,7 +1478,7 @@ var Carouzel;
              *
              */
             this.destroy = function (query) {
-                var roots = document.querySelectorAll(query);
+                var roots = document === null || document === void 0 ? void 0 : document.querySelectorAll(query);
                 var rootsLen = roots.length;
                 if (rootsLen > 0) {
                     for (var i = 0; i < rootsLen; i++) {
@@ -1488,8 +1488,8 @@ var Carouzel;
                             delete allGlobalInstances[id];
                         }
                     }
-                    if (window && getInstancesLen() === 0) {
-                        window.removeEventListener("resize", winResizeFn);
+                    if (getInstancesLen() === 0) {
+                        window === null || window === void 0 ? void 0 : window.removeEventListener("resize", winResizeFn, false);
                     }
                 }
                 else {

@@ -7,16 +7,20 @@
 [data-carouzel] {
   [data-carouzel-slide] {
     align-items: center;
-    background-color: #fff;
-    border-left: 1px solid red;
-    border-right: 1px solid red;
-    color: black;
+    background: linear-gradient(
+      135deg,
+      rgba(236, 240, 241, 1) 0%,
+      rgba(255, 255, 255, 1) 100%
+    );
+    border: 1px solid $gray-300;
+    color: $dark;
     display: flex;
     font-size: 40px;
     font-weight: bold;
-    justify-content: center;
-    width: 100%;
     height: 200px;
+    justify-content: center;
+    user-select: none;
+    width: 100%;
   }
 }
 #__carouzel_10[data-carouzel] {

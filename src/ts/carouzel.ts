@@ -750,7 +750,7 @@ namespace Carouzel {
    *
    */
   const applyLayout = (core: ICore, isRTLFirstLoad: boolean) => {
-    let viewportWidth = window.outerWidth;
+    let viewportWidth = window?.innerWidth;
     let bpoptions = core.bpall[0];
     let len = 0;
     let slideWidth = 0;
@@ -937,7 +937,7 @@ namespace Carouzel {
       let keyCode = ``;
       core.eHandlers.push(
         eventHandler(core.root, `keydown`, function (event: Event) {
-          event = event || window.event;
+          event = event || window?.event;
           keyCode = (event as KeyboardEvent).key.toLowerCase();
           switch (keyCode) {
             case `arrowleft`:
@@ -1311,7 +1311,7 @@ namespace Carouzel {
       core.bpall[i].dots = [];
       let btnStr = ``;
       for (let j = 0; j < pageLength; j++) {
-        let elem = document.createElement(`button`);
+        let elem = document?.createElement(`button`);
         elem.setAttribute(_Selectors.dot.slice(1, -1), ``);
         elem.setAttribute(`type`, `button`);
         btnStr = `<div class="${core.opts.dotNcls}">${j + 1}</div>`;
@@ -1602,10 +1602,7 @@ namespace Carouzel {
     if (typeof settings.afterInit === `function`) {
       settings.afterInit();
     }
-    if (
-      settings.trackUrlHash &&
-      (((window as Window) || {}).location as Location).hash
-    ) {
+    if (settings.trackUrlHash && window?.location?.hash) {
       let windowHash = window.location.hash || ``;
       if (windowHash.charAt(0) === `#`) {
         windowHash = windowHash.slice(1, windowHash.length);
@@ -1628,7 +1625,7 @@ namespace Carouzel {
   };
 
   const destroy = (thisid: string) => {
-    let allElems = document.querySelectorAll(`#${thisid} *`);
+    let allElems = document?.querySelectorAll(`#${thisid} *`);
     let core = allLocalInstances[thisid];
     for (let i = 0; i < allElems.length; i++) {
       removeEventListeners(core, allElems[i]);
@@ -1714,7 +1711,7 @@ namespace Carouzel {
      *
      */
     public init = (query: string, options?: ICarouzelSettings) => {
-      const roots = document.querySelectorAll(query);
+      const roots = document?.querySelectorAll(query);
       const rootsLen = roots.length;
       let instanceLength = 0;
 
@@ -1776,9 +1773,9 @@ namespace Carouzel {
             }
           }
         }
-        if (window && getInstancesLen() > 0 && !isWindowEventAttached) {
+        if (getInstancesLen() > 0 && !isWindowEventAttached) {
           isWindowEventAttached = true;
-          window.addEventListener(`resize`, winResizeFn);
+          window?.addEventListener(`resize`, winResizeFn, false);
         }
       } else {
         if (query !== _Selectors.rootAuto) {
@@ -1812,7 +1809,7 @@ namespace Carouzel {
      *
      */
     protected destroy = (query: string) => {
-      const roots = document.querySelectorAll(query);
+      const roots = document?.querySelectorAll(query);
       const rootsLen = roots.length;
       if (rootsLen > 0) {
         for (let i = 0; i < rootsLen; i++) {
@@ -1822,8 +1819,8 @@ namespace Carouzel {
             delete allGlobalInstances[id];
           }
         }
-        if (window && getInstancesLen() === 0) {
-          window.removeEventListener(`resize`, winResizeFn);
+        if (getInstancesLen() === 0) {
+          window?.removeEventListener(`resize`, winResizeFn, false);
         }
       } else {
         throw new TypeError(_rootSelectorTypeError);
