@@ -36,3 +36,11 @@
     }
   }
 }
+#__carouzel_15[data-carouzel] {
+  [data-carouzel-slide] {
+    display: block;
+    height: auto;
+    font-size: unset;
+    font-weight: normal;
+  }
+}

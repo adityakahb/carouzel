@@ -164,4 +164,36 @@
       }
     }
   }
+  [data-carouzel-video] {
+    height: 0;
+    position: relative;
+    overflow: hidden;
+    padding-bottom: 56.25%;
+    iframe,
+    video,
+    .video-js {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+    .vjs-loading-spinner,
+    .vjs-big-play-button,
+    .vjs-control-bar,
+    .vjs-error-display,
+    .vjs-modal-dialog {
+      z-index: 3;
+    }
+    [data-carouzel-video-content] {
+      background-color: rgba(#fff, 0.85);
+      bottom: 0;
+      left: 0;
+      padding: 1em;
+      position: absolute;
+      width: 100%;
+      z-index: 5;
+    }
+  }
 }

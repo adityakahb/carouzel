@@ -19,6 +19,7 @@
       href="https://fonts.googleapis.com/icon?family=Material+Icons"
       rel="stylesheet"
     />
+    <link href="https://vjs.zencdn.net/7.17.0/video-js.css" rel="stylesheet" />
     <link href="dist/styles/carouzel/carouzel.min.css" rel="stylesheet" />
     <link href="dist/styles/site/index.min.css" rel="stylesheet" />
     <link
@@ -200,84 +201,132 @@
     <section>
       <div class="max-wrap text-center px-5">
         <div class="container-fluid">
-          <div class="row my-4">
-          </div>
-        </div></div>
+          <div class="row my-4"></div>
+        </div>
+      </div>
     </section>
     <section>
-      <div class="max-wrap text-center px-5">
-        <nav class="navbar navbar-dark bg-dark rounded">
-          <div class="container-fluid">
-            <span class="text-light fs-4">Examples</span>
-            <button
-              class="navbar-toggler"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#navbarNavDropdown"
-              aria-controls="navbarNavDropdown"
-              aria-expanded="false"
-              aria-label="Toggle navigation"
-            >
-              <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNavDropdown">
-              <ul class="navbar-nav">
-                <li class="nav-item">
-                  <a class="nav-link" href="#__carouzel_1_title">Simple</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#__carouzel_2_title">Multiple Slides</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#__carouzel_3_title">Responsive</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#__carouzel_4_title">Fading Animation</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#__carouzel_5_title">Using `data-attribute`</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#__carouzel_6_title">Autoplay</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#__carouzel_7_title">Finite</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#__carouzel_8_title">Events &amp; Methods</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#__carouzel_9_title">Centered</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#__carouzel_10_title">Slide titles as navigation</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#__carouzel_11_title">Gutter space</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#__carouzel_12_title">Right to Left</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#__carouzel_13_title">Easing</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#__carouzel_14_title">URL Hash Navigation</a>
-                </li>
-              </ul>
+      <div class="max-wrap text-center px-10">
+        <div class="container-fluid">
+          <div class="grid">
+            <div class="row">
+              <div class="col-md-8 offset-md-2 col-lg-6 offset-lg-3">
+                <nav class="navbar navbar-dark bg-dark rounded w-100">
+                  <div class="container-fluid">
+                    <span class="text-light fs-4">Examples</span>
+                    <button
+                      class="navbar-toggler"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#navbarNavDropdown"
+                      aria-controls="navbarNavDropdown"
+                      aria-expanded="false"
+                      aria-label="Toggle navigation"
+                    >
+                      <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div
+                      class="collapse navbar-collapse"
+                      id="navbarNavDropdown"
+                    >
+                      <ul class="navbar-nav">
+                        <li class="nav-item">
+                          <a class="nav-link" href="#__carouzel_1_title"
+                            >Simple</a
+                          >
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" href="#__carouzel_2_title"
+                            >Multiple Slides</a
+                          >
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" href="#__carouzel_3_title"
+                            >Responsive</a
+                          >
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" href="#__carouzel_4_title"
+                            >Fading Animation</a
+                          >
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" href="#__carouzel_5_title"
+                            >Using `data-attribute`</a
+                          >
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" href="#__carouzel_6_title"
+                            >Autoplay</a
+                          >
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" href="#__carouzel_7_title"
+                            >Finite</a
+                          >
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" href="#__carouzel_8_title"
+                            >Events &amp; Methods</a
+                          >
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" href="#__carouzel_9_title"
+                            >Centered</a
+                          >
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" href="#__carouzel_10_title"
+                            >Slide titles as navigation</a
+                          >
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" href="#__carouzel_11_title"
+                            >Gutter space</a
+                          >
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" href="#__carouzel_12_title"
+                            >Right to Left</a
+                          >
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" href="#__carouzel_13_title"
+                            >Easing</a
+                          >
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" href="#__carouzel_14_title"
+                            >URL Hash Navigation</a
+                          >
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" href="#__carouzel_15_title"
+                            >Video Carouzel</a
+                          >
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </nav>
+              </div>
             </div>
           </div>
-        </nav>
+        </div>
       </div>
+    </section>
+
     <section>
       <div class="max-wrap text-center px-5">
         <div class="container-fluid">
-          <div class="row my-4">
-          </div>
+          <div class="row my-4"></div>
           <div class="row">
             <div class="col text-center">
               <h2 id="__carouzel_1_title">Simple</h2>
-              <a href="https://codesandbox.io/s/carouzel-simple-jt6g6?file=/index.html" target="_blank" class="btn btn-sm btn-outline-info"
+              <a
+                href="https://codesandbox.io/s/carouzel-simple-jt6g6?file=/index.html"
+                target="_blank"
+                class="btn btn-sm btn-outline-info"
                 ><span class="material-icons">code</span> View on Codesandbox</a
               >
               <br /><br />
@@ -397,10 +446,14 @@
               <hr />
             </div>
           </div>
+
           <div class="row">
             <div class="col text-center">
               <h2 id="__carouzel_2_title">Multiple Items</h2>
-              <a href="https://codesandbox.io/s/carouzel-multiple-rm53q?file=/index.html" target="_blank" class="btn btn-sm btn-outline-info"
+              <a
+                href="https://codesandbox.io/s/carouzel-multiple-rm53q?file=/index.html"
+                target="_blank"
+                class="btn btn-sm btn-outline-info"
                 ><span class="material-icons">code</span> View on Codesandbox</a
               >
               <br /><br />
@@ -520,6 +573,7 @@
               <hr />
             </div>
           </div>
+
           <div class="row">
             <div class="col text-center">
               <h2 id="__carouzel_3_title">Responsive</h2>
@@ -527,7 +581,10 @@
                 Resize the window to see the change in number of displayed
                 slides
               </p>
-              <a href="https://codesandbox.io/s/carouzel-responsive-4o4p9?file=/index.html" target="_blank" class="btn btn-sm btn-outline-info"
+              <a
+                href="https://codesandbox.io/s/carouzel-responsive-4o4p9?file=/index.html"
+                target="_blank"
+                class="btn btn-sm btn-outline-info"
                 ><span class="material-icons">code</span> View on Codesandbox</a
               >
               <br /><br />
@@ -647,10 +704,14 @@
               <hr />
             </div>
           </div>
+
           <div class="row">
             <div class="col text-center">
               <h2 id="__carouzel_4_title">Fading Animation</h2>
-              <a href="https://codesandbox.io/s/carouzel-fading-animaton-9p9jh?file=/index.html" target="_blank" class="btn btn-sm btn-outline-info"
+              <a
+                href="https://codesandbox.io/s/carouzel-fading-animaton-9p9jh?file=/index.html"
+                target="_blank"
+                class="btn btn-sm btn-outline-info"
                 ><span class="material-icons">code</span> View on Codesandbox</a
               >
               <br /><br />
@@ -673,7 +734,12 @@
                           role="group"
                           aria-roledescription="slide"
                           aria-label="1 of 12"
-                          style="background: url('https://picsum.photos/800/600?random=654321') center center no-repeat; background-size: cover; color: #fff"
+                          style="
+                            background: url('https://picsum.photos/800/600?random=654321')
+                              center center no-repeat;
+                            background-size: cover;
+                            color: #fff;
+                          "
                         >
                           <div>01</div>
                         </div>
@@ -682,7 +748,12 @@
                           role="group"
                           aria-roledescription="slide"
                           aria-label="2 of 12"
-                          style="background: url('https://picsum.photos/800/600?random=65432') center center no-repeat; background-size: cover; color: #fff"
+                          style="
+                            background: url('https://picsum.photos/800/600?random=65432')
+                              center center no-repeat;
+                            background-size: cover;
+                            color: #fff;
+                          "
                         >
                           <div>02</div>
                         </div>
@@ -691,7 +762,12 @@
                           role="group"
                           aria-roledescription="slide"
                           aria-label="3 of 12"
-                          style="background: url('https://picsum.photos/800/600?random=6543') center center no-repeat; background-size: cover; color: #fff"
+                          style="
+                            background: url('https://picsum.photos/800/600?random=6543')
+                              center center no-repeat;
+                            background-size: cover;
+                            color: #fff;
+                          "
                         >
                           <div>03</div>
                         </div>
@@ -700,7 +776,12 @@
                           role="group"
                           aria-roledescription="slide"
                           aria-label="4 of 12"
-                          style="background: url('https://picsum.photos/800/600?random=654') center center no-repeat; background-size: cover; color: #fff"
+                          style="
+                            background: url('https://picsum.photos/800/600?random=654')
+                              center center no-repeat;
+                            background-size: cover;
+                            color: #fff;
+                          "
                         >
                           <div>04</div>
                         </div>
@@ -709,7 +790,12 @@
                           role="group"
                           aria-roledescription="slide"
                           aria-label="5 of 12"
-                          style="background: url('https://picsum.photos/800/600?random=65') center center no-repeat; background-size: cover; color: #fff"
+                          style="
+                            background: url('https://picsum.photos/800/600?random=65')
+                              center center no-repeat;
+                            background-size: cover;
+                            color: #fff;
+                          "
                         >
                           <div>05</div>
                         </div>
@@ -718,7 +804,12 @@
                           role="group"
                           aria-roledescription="slide"
                           aria-label="6 of 12"
-                          style="background: url('https://picsum.photos/800/600?random=6') center center no-repeat; background-size: cover; color: #fff"
+                          style="
+                            background: url('https://picsum.photos/800/600?random=6')
+                              center center no-repeat;
+                            background-size: cover;
+                            color: #fff;
+                          "
                         >
                           <div>06</div>
                         </div>
@@ -727,7 +818,12 @@
                           role="group"
                           aria-roledescription="slide"
                           aria-label="7 of 12"
-                          style="background: url('https://picsum.photos/800/600?random=987654') center center no-repeat; background-size: cover; color: #fff"
+                          style="
+                            background: url('https://picsum.photos/800/600?random=987654')
+                              center center no-repeat;
+                            background-size: cover;
+                            color: #fff;
+                          "
                         >
                           <div>07</div>
                         </div>
@@ -736,7 +832,12 @@
                           role="group"
                           aria-roledescription="slide"
                           aria-label="8 of 12"
-                          style="background: url('https://picsum.photos/800/600?random=98765') center center no-repeat; background-size: cover; color: #fff"
+                          style="
+                            background: url('https://picsum.photos/800/600?random=98765')
+                              center center no-repeat;
+                            background-size: cover;
+                            color: #fff;
+                          "
                         >
                           <div>08</div>
                         </div>
@@ -745,7 +846,12 @@
                           role="group"
                           aria-roledescription="slide"
                           aria-label="9 of 12"
-                          style="background: url('https://picsum.photos/800/600?random=9876') center center no-repeat; background-size: cover; color: #fff"
+                          style="
+                            background: url('https://picsum.photos/800/600?random=9876')
+                              center center no-repeat;
+                            background-size: cover;
+                            color: #fff;
+                          "
                         >
                           <div>09</div>
                         </div>
@@ -754,7 +860,12 @@
                           role="group"
                           aria-roledescription="slide"
                           aria-label="10 of 12"
-                          style="background: url('https://picsum.photos/800/600?random=987') center center no-repeat; background-size: cover; color: #fff"
+                          style="
+                            background: url('https://picsum.photos/800/600?random=987')
+                              center center no-repeat;
+                            background-size: cover;
+                            color: #fff;
+                          "
                         >
                           <div>10</div>
                         </div>
@@ -763,7 +874,12 @@
                           role="group"
                           aria-roledescription="slide"
                           aria-label="11 of 12"
-                          style="background: url('https://picsum.photos/800/600?random=98') center center no-repeat; background-size: cover; color: #fff"
+                          style="
+                            background: url('https://picsum.photos/800/600?random=98')
+                              center center no-repeat;
+                            background-size: cover;
+                            color: #fff;
+                          "
                         >
                           <div>11</div>
                         </div>
@@ -772,7 +888,12 @@
                           role="group"
                           aria-roledescription="slide"
                           aria-label="12 of 12"
-                          style="background: url('https://picsum.photos/800/600?random=9') center center no-repeat; background-size: cover; color: #fff"
+                          style="
+                            background: url('https://picsum.photos/800/600?random=9')
+                              center center no-repeat;
+                            background-size: cover;
+                            color: #fff;
+                          "
                         >
                           <div>12</div>
                         </div>
@@ -830,11 +951,15 @@
               <hr />
             </div>
           </div>
+
           <div class="row">
             <div class="col text-center">
               <h2 id="__carouzel_5_title">Through data-attribute</h2>
               <p class="lead">Uses `data-carouzel-auto`</p>
-              <a href="https://codesandbox.io/s/carouzel-using-data-attribute-wqked?file=/index.html" target="_blank" class="btn btn-sm btn-outline-info"
+              <a
+                href="https://codesandbox.io/s/carouzel-using-data-attribute-wqked?file=/index.html"
+                target="_blank"
+                class="btn btn-sm btn-outline-info"
                 ><span class="material-icons">code</span> View on Codesandbox</a
               >
               <br /><br />
@@ -991,11 +1116,15 @@
               <hr />
             </div>
           </div>
+
           <div class="row">
             <div class="col text-center">
               <h2 id="__carouzel_6_title">Autoplay</h2>
               <p class="lead">With `pauseOnHover`</p>
-              <a href="https://codesandbox.io/s/carouzel-autoplay-k4tk4?file=/index.html" target="_blank" class="btn btn-sm btn-outline-info"
+              <a
+                href="https://codesandbox.io/s/carouzel-autoplay-k4tk4?file=/index.html"
+                target="_blank"
+                class="btn btn-sm btn-outline-info"
                 ><span class="material-icons">code</span> View on Codesandbox</a
               >
               <br /><br />
@@ -1148,10 +1277,14 @@
               <hr />
             </div>
           </div>
+
           <div class="row">
             <div class="col text-center">
               <h2 id="__carouzel_7_title">Finite</h2>
-              <a href="https://codesandbox.io/s/carouzel-finite-3sy8r?file=/index.html" target="_blank" class="btn btn-sm btn-outline-info"
+              <a
+                href="https://codesandbox.io/s/carouzel-finite-3sy8r?file=/index.html"
+                target="_blank"
+                class="btn btn-sm btn-outline-info"
                 ><span class="material-icons">code</span> View on Codesandbox</a
               >
               <br /><br />
@@ -1271,10 +1404,14 @@
               <hr />
             </div>
           </div>
+
           <div class="row">
             <div class="col text-center">
               <h2 id="__carouzel_8_title">Events &amp; Methods</h2>
-              <a href="https://codesandbox.io/s/carouzel-events-and-methods-0s52x?file=/index.html" target="_blank" class="btn btn-sm btn-outline-info"
+              <a
+                href="https://codesandbox.io/s/carouzel-events-and-methods-0s52x?file=/index.html"
+                target="_blank"
+                class="btn btn-sm btn-outline-info"
                 ><span class="material-icons">code</span> View on Codesandbox</a
               >
               <br /><br />
@@ -1492,10 +1629,14 @@
               <hr />
             </div>
           </div>
+
           <div class="row">
             <div class="col text-center">
               <h2 id="__carouzel_9_title">Centered</h2>
-              <a href="https://codesandbox.io/s/carouzel-centered-jmbr4?file=/index.html" target="_blank" class="btn btn-sm btn-outline-info"
+              <a
+                href="https://codesandbox.io/s/carouzel-centered-jmbr4?file=/index.html"
+                target="_blank"
+                class="btn btn-sm btn-outline-info"
                 ><span class="material-icons">code</span> View on Codesandbox</a
               >
               <br /><br />
@@ -1616,6 +1757,7 @@
               <hr />
             </div>
           </div>
+
           <div class="row">
             <div class="col text-center">
               <h2 id="__carouzel_10_title">Slide titles as navigation</h2>
@@ -1623,7 +1765,10 @@
                 Uses `data-carouzel-title` for each slide, works only when
                 slidesToShow is 1 and `useTitlesAsDots` is true
               </p>
-              <a href="https://codesandbox.io/s/carouzel-slide-titles-as-dots-tykcs?file=/index.html" target="_blank" class="btn btn-sm btn-outline-info"
+              <a
+                href="https://codesandbox.io/s/carouzel-slide-titles-as-dots-tykcs?file=/index.html"
+                target="_blank"
+                class="btn btn-sm btn-outline-info"
                 ><span class="material-icons">code</span> View on Codesandbox</a
               >
               <br /><br />
@@ -1750,10 +1895,14 @@
               <hr />
             </div>
           </div>
+
           <div class="row">
             <div class="col text-center">
               <h2 id="__carouzel_11_title">Gutter Space</h2>
-              <a href="https://codesandbox.io/s/carouzel-gutter-space-cltvd?file=/index.html" target="_blank" class="btn btn-sm btn-outline-info"
+              <a
+                href="https://codesandbox.io/s/carouzel-gutter-space-cltvd?file=/index.html"
+                target="_blank"
+                class="btn btn-sm btn-outline-info"
                 ><span class="material-icons">code</span> View on Codesandbox</a
               >
               <br /><br />
@@ -1921,10 +2070,14 @@
               <hr />
             </div>
           </div>
+
           <div class="row">
             <div class="col text-center">
               <h2 id="__carouzel_12_title">Right To Left</h2>
-              <a href="https://codesandbox.io/s/carouzel-right-to-left-pop1y?file=/index.html" target="_blank" class="btn btn-sm btn-outline-info"
+              <a
+                href="https://codesandbox.io/s/carouzel-right-to-left-pop1y?file=/index.html"
+                target="_blank"
+                class="btn btn-sm btn-outline-info"
                 ><span class="material-icons">code</span> View on Codesandbox</a
               >
               <br /><br />
@@ -2124,10 +2277,14 @@
               <hr />
             </div>
           </div>
+
           <div class="row">
             <div class="col text-center">
               <h2 id="__carouzel_13_title">Easing</h2>
-              <a href="https://codesandbox.io/s/carouzel-easing-vkuxo?file=/index.html" target="_blank" class="btn btn-sm btn-outline-info"
+              <a
+                href="https://codesandbox.io/s/carouzel-easing-vkuxo?file=/index.html"
+                target="_blank"
+                class="btn btn-sm btn-outline-info"
                 ><span class="material-icons">code</span> View on Codesandbox</a
               >
               <br /><br />
@@ -2323,7 +2480,10 @@
           <div class="row">
             <div class="col text-center">
               <h2 id="__carouzel_14_title">Hash Navigation</h2>
-              <a href="https://codesandbox.io/s/carouzel-hash-navigation-wppyo?file=/index.html" target="_blank" class="btn btn-sm btn-outline-info"
+              <a
+                href="https://codesandbox.io/s/carouzel-hash-navigation-wppyo?file=/index.html"
+                target="_blank"
+                class="btn btn-sm btn-outline-info"
                 ><span class="material-icons">code</span> View on Codesandbox</a
               >
               <br /><br />
@@ -2472,6 +2632,243 @@
               </section>
             </div>
           </div>
+
+          <div class="row my-5">
+            <div class="col text-center">
+              <hr />
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col text-center">
+              <h2 id="__carouzel_15_title">Video Carouzel</h2>
+              <a
+                href="https://codesandbox.io/s/carouzel-hash-navigation-wppyo?file=/index.html"
+                target="_blank"
+                class="btn btn-sm btn-outline-info"
+                ><span class="material-icons">code</span> View on Codesandbox</a
+              >
+              <br /><br />
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <section
+                data-carouzel
+                id="__carouzel_15"
+                aria-roledescription="carousel"
+                aria-label="Carouzel showing video embeds"
+              >
+                <div data-carouzel-trackwrapper>
+                  <div data-carouzel-trackmask>
+                    <div data-carouzel-trackouter>
+                      <div data-carouzel-track aria-live="polite">
+                        <div
+                          data-carouzel-slide
+                          role="group"
+                          aria-roledescription="slide"
+                          aria-label="1 of 6"
+                        >
+                          <div>
+                            <div data-carouzel-video>
+                              <iframe
+                                width="560"
+                                height="315"
+                                src="https://www.youtube.com/embed/rzfmZC3kg3M"
+                                title="YouTube video player"
+                                frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen
+                              ></iframe>
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          data-carouzel-slide
+                          role="group"
+                          aria-roledescription="slide"
+                          aria-label="2 of 6"
+                        >
+                          <div>
+                            <div data-carouzel-video>
+                              <iframe
+                                src="https://player.vimeo.com/video/63655754?h=10a7533127"
+                                width="640"
+                                height="360"
+                                frameborder="0"
+                                allow="autoplay; fullscreen; picture-in-picture"
+                                allowfullscreen
+                              ></iframe>
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          data-carouzel-slide
+                          role="group"
+                          aria-roledescription="slide"
+                          aria-label="3 of 6"
+                        >
+                          <div>
+                            <div data-carouzel-video>
+                              <iframe
+                                frameborder="0"
+                                type="text/html"
+                                src="https://www.dailymotion.com/embed/video/x36zno3"
+                                width="100%"
+                                height="100%"
+                                allowfullscreen
+                              >
+                              </iframe>
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          data-carouzel-slide
+                          role="group"
+                          aria-roledescription="slide"
+                          aria-label="4 of 6"
+                        >
+                          <div>
+                            <div data-carouzel-video>
+                              <video
+                                class="video-js"
+                                controls
+                                preload="auto"
+                                width="640"
+                                height="264"
+                                poster="MY_VIDEO_POSTER.jpg"
+                                data-setup="{}"
+                              >
+                                <source
+                                  src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+                                  type="video/mp4"
+                                />
+                                <p class="vjs-no-js">
+                                  To view this video please enable JavaScript,
+                                  and consider upgrading to a web browser that
+                                  <a
+                                    href="https://videojs.com/html5-video-support/"
+                                    target="_blank"
+                                    >supports HTML5 video</a
+                                  >
+                                </p>
+                              </video>
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          data-carouzel-slide
+                          role="group"
+                          aria-roledescription="slide"
+                          aria-label="5 of 6"
+                        >
+                          <div>
+                            <div data-carouzel-video>
+                              <video width="320" height="240" controls>
+                                <source
+                                  src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4"
+                                  type="video/mp4"
+                                />
+                                Your browser does not support the video tag.
+                              </video>
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          data-carouzel-slide
+                          role="group"
+                          aria-roledescription="slide"
+                          aria-label="6 of 6"
+                        >
+                          <div>
+                            <div data-carouzel-video>
+                              <video
+                                width="320"
+                                height="240"
+                                loop
+                                autoplay
+                                muted
+                              >
+                                <source
+                                  src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
+                                  type="video/mp4"
+                                />
+                                Your browser does not support the video tag.
+                              </video>
+                              <div data-carouzel-video-content>
+                                <h3>Lorem ipsum dolor sit amet</h3>
+                                <p>
+                                  Donec metus velit, pellentesque at
+                                  sollicitudin at, pulvinar ac nunc. Ut feugiat
+                                  dui nulla, eget sollicitudin nunc sodales
+                                  vitae.
+                                </p>
+                                <p>
+                                  Pellentesque habitant morbi tristique senectus
+                                  et netus et malesuada fames ac turpis egestas.
+                                  Integer id lorem ac tortor malesuada semper.
+                                  Donec convallis odio faucibus, faucibus justo
+                                  ac, suscipit dui.
+                                </p>
+                                <button type="button" class="btn btn-primary">
+                                  This does nothing<span class="material-icons">
+                                    chevron_right
+                                  </span>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div data-carouzel-controlswrapper>
+                    <button
+                      type="button"
+                      data-carouzel-previousarrow
+                      aria-label="Previous"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="24px"
+                        viewBox="0 0 24 24"
+                        width="24px"
+                        fill="#000000"
+                      >
+                        <path d="M0 0h24v24H0V0z" fill="none" />
+                        <path
+                          d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z"
+                        />
+                      </svg>
+                    </button>
+                    <button
+                      type="button"
+                      data-carouzel-nextarrow
+                      aria-label="Next"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="24px"
+                        viewBox="0 0 24 24"
+                        width="24px"
+                        fill="#000000"
+                      >
+                        <path d="M0 0h24v24H0V0z" fill="none" />
+                        <path
+                          d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6z"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <div data-carouzel-navigationwrapper>
+                  <div data-carouzel-navigation></div>
+                </div>
+              </section>
+            </div>
+          </div>
+
           <div class="row my-5">
             <div class="col text-center">
               <hr />
@@ -2538,13 +2935,17 @@
         </div>
       </div>
     </section>
-    <a href="#" class="btn btn-dark rounded-circle" id="btnGoToTop" aria-label="Go to Top" hidden>
-      <span class="material-icons">
-        arrow_upward
-        </span>
+    <a
+      href="#"
+      class="btn btn-dark rounded-circle"
+      id="btnGoToTop"
+      aria-label="Go to Top"
+      hidden
+    >
+      <span class="material-icons"> arrow_upward </span>
     </a>
     <!-- JavaScript Bundle with Popper -->
-    <footer class="py-5 text-center">
+    <footer class="my-5 text-center">
       &copy;
       <a href="http://www.adityabhakay.com" target="_blank">Aditya Bhakay</a>
     </footer>
@@ -2553,6 +2954,7 @@
       integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
       crossorigin="anonymous"
     ></script>
+    <script src="https://vjs.zencdn.net/7.17.0/video.min.js"></script>
     <script src="dist/scripts/carouzel.js" type="text/javascript"></script>
 
     <script type="text/javascript">
@@ -2660,7 +3062,7 @@
         ],
       });
       __carouzel_instance.init('#__carouzel_9', {
-        centerBetween: 1
+        centerBetween: 1,
       });
       __carouzel_instance.init('#__carouzel_10', {
         useTitlesAsDots: true,
@@ -2698,8 +3100,8 @@
           },
           {
             breakpoint: 1100,
-            slidesToScroll: 1,
-            slidesToShow: 1,
+            slidesToScroll: 4,
+            slidesToShow: 4,
           },
         ],
       });
@@ -2826,16 +3228,20 @@
         trackUrlHash: true,
         appendUrlHash: true,
       });
-
-      document.addEventListener("DOMContentLoaded", function(){
-        window.addEventListener('scroll', function() {
-          if (window.scrollY > document.getElementById('top_intro').clientHeight) {
+      __carouzel_instance.init('#__carouzel_15');
+      document.addEventListener('DOMContentLoaded', function () {
+        window.addEventListener('scroll', function () {
+          if (
+            window.scrollY > document.getElementById('top_intro').clientHeight
+          ) {
             document.getElementById('btnGoToTop').removeAttribute('hidden');
           } else {
-            document.getElementById('btnGoToTop').setAttribute('hidden', 'true');
-          } 
+            document
+              .getElementById('btnGoToTop')
+              .setAttribute('hidden', 'true');
+          }
         });
-      }); 
+      });
     </script>
   </body>
 </html>

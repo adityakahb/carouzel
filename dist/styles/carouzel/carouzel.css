@@ -160,4 +160,33 @@
   [data-carouzel].__carouzel-editmode [data-carouzel-track] [data-carouzel-slide] {
     width: 100% !important; }
 
+[data-carouzel] [data-carouzel-video] {
+  height: 0;
+  position: relative;
+  overflow: hidden;
+  padding-bottom: 56.25%; }
+  [data-carouzel] [data-carouzel-video] iframe,
+  [data-carouzel] [data-carouzel-video] video,
+  [data-carouzel] [data-carouzel-video] .video-js {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1; }
+  [data-carouzel] [data-carouzel-video] .vjs-loading-spinner,
+  [data-carouzel] [data-carouzel-video] .vjs-big-play-button,
+  [data-carouzel] [data-carouzel-video] .vjs-control-bar,
+  [data-carouzel] [data-carouzel-video] .vjs-error-display,
+  [data-carouzel] [data-carouzel-video] .vjs-modal-dialog {
+    z-index: 3; }
+  [data-carouzel] [data-carouzel-video] [data-carouzel-video-content] {
+    background-color: rgba(255, 255, 255, 0.85);
+    bottom: 0;
+    left: 0;
+    padding: 1em;
+    position: absolute;
+    width: 100%;
+    z-index: 5; }
+
 /*# sourceMappingURL=carouzel.css.map */

@@ -965,9 +965,9 @@ var Carouzel;
                             }
                         }
                     }
-                    posX1 = posX2 = posFinal = 0;
-                    dragging = false;
                 }
+                posX1 = posX2 = posFinal = 0;
+                dragging = false;
             }
         };
         core.eHandlers.push(eventHandler(core.trk, "touchstart", function (event) {
@@ -1054,6 +1054,12 @@ var Carouzel;
                     event.preventDefault();
                     core.pi = core.ci;
                     core.ci = j * core.bpall[i]._2Scroll;
+                    if (core.opts.rtl) {
+                        core.ci = (pageLength - j - 1) * core.bpall[i]._2Scroll;
+                    }
+                    else {
+                        core.ci = j * core.bpall[i]._2Scroll;
+                    }
                     animateTrack(core, 0);
                 }));
                 core.bpall[i].dots.push(navBtns[j]);
