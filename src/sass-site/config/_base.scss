@@ -60,6 +60,19 @@ h6,
   }
 }
 
+#btnGoToTop.btn {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  right: 10px;
+  bottom: 10px;
+  z-index: 12;
+}
+
 @media (max-width: 500px) {
   .github-corner:hover .octo-arm {
     animation: none;

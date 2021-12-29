@@ -18,7 +18,6 @@
   }
   [data-carouzel-trackwrapper] {
     position: relative;
-    margin-bottom: 10px;
   }
   [data-carouzel-trackouter] {
     width: 100%;
@@ -45,24 +44,26 @@
   [data-carouzel-nextarrow],
   [data-carouzel-pause],
   [data-carouzel-play] {
-    background-color: rgba(#000, 0.15);
-    border: 1px solid #000;
+    background-color: #fff;
+    border-radius: 100%;
+    border: 1px solid #ced4da;
     color: transparent;
     cursor: pointer;
     font-size: 1px;
-    height: 48px;
-    opacity: 0.75;
+    height: 40px;
     transition: all 250ms ease;
-    width: 48px;
-    z-index: 12;
+    width: 40px;
+    z-index: 1;
+    padding: 0;
     svg {
       cursor: pointer;
-      height: 100%;
-      width: 100%;
+      height: 75%;
+      width: 75%;
+      fill: #212529;
     }
     &:hover,
     &:focus {
-      background-color: rgba(#000, 0.25);
+      background-color: #ced4da;
       opacity: 1;
     }
     &.__carouzel-disabled {
@@ -89,11 +90,9 @@
     transform: translate(0, -50%);
   }
   [data-carouzel-previousarrow] {
-    border-radius: 50% 0 0 50%;
     left: -48px;
   }
   [data-carouzel-nextarrow] {
-    border-radius: 0 50% 50% 0;
     right: -48px;
   }
   [data-carouzel-navigation] {
@@ -101,17 +100,16 @@
     display: flex;
     justify-content: center;
     list-style: none;
-    margin: 0 0 1em 0;
     padding: 0;
   }
   [data-carouzel-navigationwrapper] {
-    margin-bottom: 1em;
+    margin: 1em 0;
   }
   [data-carouzel-navbutton] {
-    background-color: rgba(#000, 0.5);
+    background-color: #fff;
     border-radius: 100%;
-    border: 1px solid #000;
-    color: #fff;
+    border: 1px solid #ced4da;
+    color: #212529;
     display: block;
     font-size: 14px;
     font-weight: bold;
@@ -123,11 +121,10 @@
     width: 32px;
     &:hover,
     &:focus {
-      background-color: rgba(#000, 0.75);
+      background-color: #dee2e6;
     }
     &.__carouzel-active {
-      background-color: #f00;
-      border: 1px solid #f00;
+      background-color: #ced4da;
     }
     &.__carouzel-pagetitle {
       border-radius: 0;

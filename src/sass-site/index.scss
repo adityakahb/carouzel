@@ -9,11 +9,11 @@
     align-items: center;
     background: linear-gradient(
       135deg,
-      rgba(236, 240, 241, 1) 0%,
+      rgba(206, 212, 218, 1) 0%,
       rgba(255, 255, 255, 1) 100%
     );
-    border: 1px solid $gray-300;
-    color: $dark;
+    border: 1px solid #ced4da;
+    color: #212529;
     display: flex;
     font-size: 40px;
     font-weight: bold;
@@ -21,6 +21,11 @@
     justify-content: center;
     user-select: none;
     width: 100%;
+  }
+}
+[data-carouzel]#__carouzel_4 {
+  [data-carouzel-slide] {
+    border: 0;
   }
 }
 #__carouzel_10[data-carouzel] {

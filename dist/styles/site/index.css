@@ -8369,6 +8369,18 @@ h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6,
   80% {
     transform: rotate(10deg); } }
 
+#btnGoToTop.btn {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  right: 10px;
+  bottom: 10px;
+  z-index: 12; }
+
 @media (max-width: 500px) {
   .github-corner:hover .octo-arm {
     animation: none; }
@@ -8430,8 +8442,8 @@ h4, .h4, .h4 {
 
 [data-carouzel] [data-carouzel-slide] {
   align-items: center;
-  background: linear-gradient(135deg, #ecf0f1 0%, white 100%);
-  border: 1px solid #dee2e6;
+  background: linear-gradient(135deg, #ced4da 0%, white 100%);
+  border: 1px solid #ced4da;
   color: #212529;
   display: flex;
   font-size: 40px;
@@ -8440,6 +8452,9 @@ h4, .h4, .h4 {
   justify-content: center;
   user-select: none;
   width: 100%; }
+
+[data-carouzel]#__carouzel_4 [data-carouzel-slide] {
+  border: 0; }
 
 #__carouzel_10[data-carouzel] [data-carouzel-navigation] {
   flex-direction: column; }
