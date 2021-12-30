@@ -1,108 +1,80 @@
 // Karma configuration
-// Generated on Sat Oct 06 2018 10:51:29 GMT-0500 (Central Daylight Time)
+// Generated on Thu Dec 30 2021 16:06:50 GMT+0530 (India Standard Time)
 
 module.exports = function (config) {
   config.set({
-
     // base path that will be used to resolve all patterns (eg. files, exclude)
     basePath: '',
 
-
     // frameworks to use
-    // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ['jasmine', 'viewport'],
-
+    // available frameworks: https://www.npmjs.com/search?q=keywords:karma-adapter
+    frameworks: ['jasmine'],
 
     // list of files / patterns to load in the browser
     files: [
-      'dist/styles/theme-1/amegmen.min.css',
-      'dist/scripts/amegmen.js',
-      'spec/amegmen.spec.js'
+      'dist/styles/site/index.css',
+      'dist/styles/carouzel/carouzel.css',
+      'dist/scripts/carouzel.js',
+      'spec/carouzel.spec.js',
     ],
-
 
     // list of files / patterns to exclude
-    exclude: [],
-
+    exclude: [
+      'dist/styles/site/index.css',
+      'dist/styles/carouzel/carouzel.css',
+    ],
 
     // preprocess matching files before serving them to the browser
-    // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
+    // available preprocessors: https://www.npmjs.com/search?q=keywords:karma-preprocessor
     preprocessors: {
-      'dist/scripts/amegmen.js': ['coverage'],
-      'spec/amegmen.spec.js': ['babel']
+      'dist/scripts/carouzel.js': ['coverage'],
     },
-
-    babelPreprocessor: {
-      options: {
-        presets: ['@babel/preset-env'],
-        sourceMap: 'inline'
-      },
-      filename: function (file) {
-        return file.originalPath.replace(/\.js$/, '.es5.js');
-      },
-      sourceFileName: function (file) {
-        return file.originalPath;
-      }
-    },
-
-    plugins: [
-      require('karma-babel-preprocessor'),
-      require('karma-chrome-launcher'),
-      require('karma-coverage'),
-      require('karma-firefox-launcher'),
-      require('karma-ie-launcher'),
-      require('karma-jasmine-html-reporter'),
-      require('karma-jasmine'),
-      require('karma-spec-reporter'),
-      require('karma-viewport')
-    ],
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
-    // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['coverage', 'spec', 'kjhtml'],
-
+    // available reporters: https://www.npmjs.com/search?q=keywords:karma-reporter
+    reporters: ['coverage', 'kjhtml'],
 
     // web server port
     port: 9876,
 
-
     // enable / disable colors in the output (reporters and logs)
     colors: true,
 
-
     // level of logging
     // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
-    logLevel: config.LOG_DISABLE,
-
+    logLevel: config.LOG_INFO,
 
     // enable / disable watching file and executing tests whenever any file changes
     autoWatch: true,
 
-    coverageReporter: {
-      type: 'html',
-      dir: 'coverage/'
-      // Would output the results into: .'/coverage/'
-    },
-
     // start these browsers
-    // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['Chrome', 'Firefox', 'IE'],
-    
-    client: {
-      clearContext: false,
-      jasmine: {
-        random: false // disable the random running order
-      }
-    },
-
+    // available browser launchers: https://www.npmjs.com/search?q=keywords:karma-launcher
+    // browsers: ['Chrome', 'Firefox', 'IE', 'PhantomJS'],
+    browsers: ['Chrome'],
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
     singleRun: false,
 
     // Concurrency level
-    // how many browser should be started simultaneous
+    // how many browser instances should be started simultaneously
     concurrency: Infinity,
-  })
-}
+
+    client: {
+      clearContext: false,
+      jasmine: {
+        random: false, // disable the random running order
+      },
+    },
+
+    // optionally, configure the reporter
+    coverageReporter: {
+      type: 'html',
+      dir: 'coverage/',
+      instrumenterOptions: {
+        istanbul: { noCompact: true },
+      },
+    },
+  });
+};

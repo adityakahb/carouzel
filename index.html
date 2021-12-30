@@ -3134,12 +3134,7 @@
       };
 
       __carouzel_instance.init('#__carouzel_8', carouzel8Settings);
-      var instance8 = __carouzel_instance.getInstance('#__carouzel_8');
-      gotonextbtn.addEventListener('click', function () {
-        if (instance8) {
-          instance8.core.goToNext();
-        }
-      });
+      var instance8 = __carouzel_instance.getRoots('#__carouzel_8')[0];
       destroybtn.addEventListener('click', function () {
         destroybtn.setAttribute('hidden', 'true');
         initbtn.removeAttribute('hidden');
@@ -3164,14 +3159,19 @@
         btnafterscroll.removeAttribute('disabled');
         __carouzel_instance.init('#__carouzel_8', carouzel8Settings);
       });
+      gotonextbtn.addEventListener('click', function () {
+        if (instance8) {
+          instance8.goToNext();
+        }
+      });
       gotoprevbtn.addEventListener('click', function () {
         if (instance8) {
-          instance8.core.goToPrevious();
+          instance8.goToPrevious();
         }
       });
       gotoslideinput.addEventListener('change', function (event) {
         if (instance8) {
-          instance8.core.goToSlide(event.target.value);
+          instance8.goToSlide(event.target.value);
         }
       });
       var __carouzel_13form = document.getElementById('__carouzel_13form');

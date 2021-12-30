@@ -132,35 +132,44 @@ namespace Carouzel {
     [key: number]: number;
   }
 
+  interface ICoreGlobal {
+    appendSlide: Function;
+    goToNext: Function;
+    goToPrevious: Function;
+    goToSlide: Function;
+    prependSlide: Function;
+    root: HTMLElement | null;
+  }
+
   interface ICore {
+    _2Next: Function;
+    _2Prev: Function;
+    _2Slide: Function;
     _as: NodeListOf<Element>;
     _ds: NodeListOf<Element>;
     _t: ICarouzelTimer;
-    appendSlide: Function;
     arrowN: HTMLElement | null;
     arrowP: HTMLElement | null;
+    aSlide: Function;
     autoT: any;
     bpall: ICarouzelCoreBreakpoint[];
-    bpo_old: ICarouzelCoreBreakpoint;
-    bpo: ICarouzelCoreBreakpoint;
     bPause: HTMLElement | null;
     bPlay: HTMLElement | null;
+    bpo_old: ICarouzelCoreBreakpoint;
+    bpo: ICarouzelCoreBreakpoint;
     ci: number;
     controlsW: HTMLElement | null;
     ct: number;
     eHandlers: any[];
-    goToNext: Function;
-    goToPrevious: Function;
-    goToSlide: Function;
     nav: HTMLElement | null;
     navW: HTMLElement | null;
+    opts: ICarouzelCoreSettings;
     pauseClk: boolean;
     paused: boolean;
     pi: number;
-    prependSlide: Function;
+    pSlide: Function;
     pts: IIndexHandler;
     root: HTMLElement | null;
-    opts: ICarouzelCoreSettings;
     sLen: number;
     sWid: number;
     trk: HTMLElement | null;
@@ -172,13 +181,16 @@ namespace Carouzel {
   interface ICoreInstance {
     [key: string]: ICore;
   }
+  interface ICoreGlobalInstance {
+    [key: string]: ICoreGlobal;
+  }
 
   interface ICarouzelEasing {
     [key: string]: Function;
   }
 
   let allLocalInstances: ICoreInstance = {};
-  let allGlobalInstances: IRoot = {};
+  let allGlobalInstances: ICoreGlobalInstance = {};
   let isWindowEventAttached = false;
   let windowResizeAny: any;
   let hashSlide: HTMLElement | null;
@@ -1372,10 +1384,14 @@ namespace Carouzel {
           ),
         };
       } else {
-        throw new TypeError(_duplicateBreakpointsTypeError);
+        // throw new TypeError(_duplicateBreakpointsTypeError);
+        return {};
+        console.error(_duplicateBreakpointsTypeError);
       }
     } catch (e) {
-      throw new TypeError(_breakpointsParseTypeError);
+      // throw new TypeError(_breakpointsParseTypeError);
+      return {};
+      console.error(_breakpointsParseTypeError);
     }
   };
 
@@ -1530,14 +1546,15 @@ namespace Carouzel {
    *
    */
   const init = (
-    core: ICore,
+    core: ICoreGlobal,
     root: HTMLElement,
     settings: ICarouzelSettings
   ) => {
     if (typeof settings.beforeInit === `function`) {
       settings.beforeInit();
     }
-    let _core: ICore = { ...core };
+    // let _core: ICore = { ...core };
+    let _core = <ICore>{};
     _core.root = core.root = root;
     _core.opts = mapSettings(settings);
 
@@ -1558,6 +1575,12 @@ namespace Carouzel {
     _core.trkO = root.querySelector(`${_Selectors.trkO}`);
     _core.trkW = root.querySelector(`${_Selectors.trkW}`);
     _core.opts.rtl = false;
+    _core._2Next = core.goToNext;
+    _core._2Prev = core.goToPrevious;
+    _core._2Slide = core.goToSlide;
+    _core.aSlide = core.appendSlide;
+    _core.pSlide = core.prependSlide;
+
     if (_core.root.hasAttribute(_Selectors.rtl.slice(1, -1))) {
       _core.opts.rtl = true;
     }
@@ -1663,16 +1686,28 @@ namespace Carouzel {
    * Class for every Carouzel instance.
    *
    */
-  class Core {
-    protected core: any = {};
+  class Core implements ICoreGlobal {
+    public goToNext: Function;
+    public goToPrevious: Function;
+    public goToSlide: Function;
+    public root: HTMLElement | null;
+    public appendSlide: Function;
+    public prependSlide: Function;
     constructor(
       thisid: string,
       root: HTMLElement,
       options?: ICarouzelSettings
     ) {
-      let initObj = init(this.core, root, { ..._Defaults, ...options });
-      this.core = initObj.global;
+      // let initObj = init(this.core, root, { ..._Defaults, ...options });
+      let initObj = init(<ICoreGlobal>{}, root, { ..._Defaults, ...options });
+      // this.core = initObj.global;
       allLocalInstances[thisid] = initObj.local;
+      this.goToNext = initObj.global.goToNext;
+      this.goToPrevious = initObj.global.goToPrevious;
+      this.goToSlide = initObj.global.goToSlide;
+      this.appendSlide = initObj.global.appendSlide;
+      this.prependSlide = initObj.global.prependSlide;
+      this.root = root;
     }
   }
 
@@ -1750,7 +1785,8 @@ namespace Carouzel {
                   stringTrim(autoDataAttr).replace(/'/g, `"`)
                 );
               } catch (e) {
-                throw new TypeError(_optionsParseTypeError);
+                // throw new TypeError(_optionsParseTypeError);
+                console.error(_optionsParseTypeError);
               }
             } else {
               newOptions = options;
@@ -1784,7 +1820,8 @@ namespace Carouzel {
         }
       } else {
         if (query !== _Selectors.rootAuto) {
-          throw new TypeError(_rootSelectorTypeError);
+          // throw new TypeError(_rootSelectorTypeError);
+          console.error(_rootSelectorTypeError);
         }
       }
     };
@@ -1803,9 +1840,28 @@ namespace Carouzel {
      * @param query - The CSS selector for which the Carouzel needs to be initialized.
      *
      */
-    protected getInstance = (query: string) => {
-      return allGlobalInstances[query.slice(1)];
+    protected getRoots = (query: string) => {
+      const roots = document?.querySelectorAll(query);
+      const rootsLen = roots.length;
+      let tempArr = <IRoot>[];
+      if (rootsLen > 0) {
+        for (let i = 0; i < rootsLen; i++) {
+          const id = roots[i].getAttribute(`id`);
+          if (id && allGlobalInstances[id]) {
+            tempArr.push(allGlobalInstances[id]);
+          }
+        }
+      }
+      return tempArr;
     };
+
+    /**
+     * Function to return count of all available carouzel objects
+     *
+     * @returns count of all available carouzel objects
+     *
+     */
+    protected getCount = () => Object.keys(allGlobalInstances).length;
 
     /**
      * Function to destroy the Carouzel plugin for provided query strings.
@@ -1814,11 +1870,10 @@ namespace Carouzel {
      *
      */
     protected destroy = (query: string) => {
-      const roots = document?.querySelectorAll(query);
-      const rootsLen = roots.length;
-      if (rootsLen > 0) {
-        for (let i = 0; i < rootsLen; i++) {
-          const id = roots[i].getAttribute(`id`);
+      const arr = this.getRoots(query);
+      if (arr.length > 0) {
+        for (let i = 0; i < arr.length; i++) {
+          const id = (arr[i] as ICoreGlobal).root?.getAttribute(`id`);
           if (id && allGlobalInstances[id]) {
             destroy(id);
             delete allGlobalInstances[id];
@@ -1828,7 +1883,8 @@ namespace Carouzel {
           window?.removeEventListener(`resize`, winResizeFn, false);
         }
       } else {
-        throw new TypeError(_rootSelectorTypeError);
+        // throw new TypeError(_rootSelectorTypeError);
+        console.error(_rootSelectorTypeError);
       }
     };
   }

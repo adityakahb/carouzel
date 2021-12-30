@@ -8,6 +8,9 @@
  *
  */
 declare namespace Carouzel {
+    interface IRoot {
+        [key: string]: any;
+    }
     interface ICarouzelBreakpoint {
         breakpoint: number | string;
         centerBetween: number;
@@ -97,7 +100,14 @@ declare namespace Carouzel {
          * @param query - The CSS selector for which the Carouzel needs to be initialized.
          *
          */
-        protected getInstance: (query: string) => any;
+        protected getRoots: (query: string) => IRoot;
+        /**
+         * Function to return count of all available carouzel objects
+         *
+         * @returns count of all available carouzel objects
+         *
+         */
+        protected getCount: () => number;
         /**
          * Function to destroy the Carouzel plugin for provided query strings.
          *

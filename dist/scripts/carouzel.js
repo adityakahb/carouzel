@@ -1094,11 +1094,15 @@ var Carouzel;
                 };
             }
             else {
-                throw new TypeError(_duplicateBreakpointsTypeError);
+                // throw new TypeError(_duplicateBreakpointsTypeError);
+                return {};
+                console.error(_duplicateBreakpointsTypeError);
             }
         }
         catch (e) {
-            throw new TypeError(_breakpointsParseTypeError);
+            // throw new TypeError(_breakpointsParseTypeError);
+            return {};
+            console.error(_breakpointsParseTypeError);
         }
     };
     /**
@@ -1252,7 +1256,8 @@ var Carouzel;
         if (typeof settings.beforeInit === "function") {
             settings.beforeInit();
         }
-        var _core = __assign({}, core);
+        // let _core: ICore = { ...core };
+        var _core = {};
         _core.root = core.root = root;
         _core.opts = mapSettings(settings);
         _core._ds = root.querySelectorAll("".concat(_Selectors.slide));
@@ -1272,6 +1277,11 @@ var Carouzel;
         _core.trkO = root.querySelector("".concat(_Selectors.trkO));
         _core.trkW = root.querySelector("".concat(_Selectors.trkW));
         _core.opts.rtl = false;
+        _core._2Next = core.goToNext;
+        _core._2Prev = core.goToPrevious;
+        _core._2Slide = core.goToSlide;
+        _core.aSlide = core.appendSlide;
+        _core.pSlide = core.prependSlide;
         if (_core.root.hasAttribute(_Selectors.rtl.slice(1, -1))) {
             _core.opts.rtl = true;
         }
@@ -1367,10 +1377,16 @@ var Carouzel;
      */
     var Core = /** @class */ (function () {
         function Core(thisid, root, options) {
-            this.core = {};
-            var initObj = init(this.core, root, __assign(__assign({}, _Defaults), options));
-            this.core = initObj.global;
+            // let initObj = init(this.core, root, { ..._Defaults, ...options });
+            var initObj = init({}, root, __assign(__assign({}, _Defaults), options));
+            // this.core = initObj.global;
             allLocalInstances[thisid] = initObj.local;
+            this.goToNext = initObj.global.goToNext;
+            this.goToPrevious = initObj.global.goToPrevious;
+            this.goToSlide = initObj.global.goToSlide;
+            this.appendSlide = initObj.global.appendSlide;
+            this.prependSlide = initObj.global.prependSlide;
+            this.root = root;
         }
         return Core;
     }());
@@ -1427,7 +1443,8 @@ var Carouzel;
                                     newOptions = JSON.parse(stringTrim(autoDataAttr).replace(/'/g, "\""));
                                 }
                                 catch (e) {
-                                    throw new TypeError(_optionsParseTypeError);
+                                    // throw new TypeError(_optionsParseTypeError);
+                                    console.error(_optionsParseTypeError);
                                 }
                             }
                             else {
@@ -1456,7 +1473,8 @@ var Carouzel;
                 }
                 else {
                     if (query !== _Selectors.rootAuto) {
-                        throw new TypeError(_rootSelectorTypeError);
+                        // throw new TypeError(_rootSelectorTypeError);
+                        console.error(_rootSelectorTypeError);
                     }
                 }
             };
@@ -1473,9 +1491,27 @@ var Carouzel;
              * @param query - The CSS selector for which the Carouzel needs to be initialized.
              *
              */
-            this.getInstance = function (query) {
-                return allGlobalInstances[query.slice(1)];
+            this.getRoots = function (query) {
+                var roots = document === null || document === void 0 ? void 0 : document.querySelectorAll(query);
+                var rootsLen = roots.length;
+                var tempArr = [];
+                if (rootsLen > 0) {
+                    for (var i = 0; i < rootsLen; i++) {
+                        var id = roots[i].getAttribute("id");
+                        if (id && allGlobalInstances[id]) {
+                            tempArr.push(allGlobalInstances[id]);
+                        }
+                    }
+                }
+                return tempArr;
             };
+            /**
+             * Function to return count of all available carouzel objects
+             *
+             * @returns count of all available carouzel objects
+             *
+             */
+            this.getCount = function () { return Object.keys(allGlobalInstances).length; };
             /**
              * Function to destroy the Carouzel plugin for provided query strings.
              *
@@ -1483,11 +1519,11 @@ var Carouzel;
              *
              */
             this.destroy = function (query) {
-                var roots = document === null || document === void 0 ? void 0 : document.querySelectorAll(query);
-                var rootsLen = roots.length;
-                if (rootsLen > 0) {
-                    for (var i = 0; i < rootsLen; i++) {
-                        var id = roots[i].getAttribute("id");
+                var _a;
+                var arr = _this.getRoots(query);
+                if (arr.length > 0) {
+                    for (var i = 0; i < arr.length; i++) {
+                        var id = (_a = arr[i].root) === null || _a === void 0 ? void 0 : _a.getAttribute("id");
                         if (id && allGlobalInstances[id]) {
                             destroy(id);
                             delete allGlobalInstances[id];
@@ -1498,7 +1534,8 @@ var Carouzel;
                     }
                 }
                 else {
-                    throw new TypeError(_rootSelectorTypeError);
+                    // throw new TypeError(_rootSelectorTypeError);
+                    console.error(_rootSelectorTypeError);
                 }
             };
         }
