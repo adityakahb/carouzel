@@ -1583,6 +1583,28 @@ namespace Carouzel {
     return _core;
   };
 
+  /**
+   * Function to get the Carouzel based on the query string provided.
+   *
+   * @param query - The CSS selector for which the Carouzel needs to be initialized.
+   *
+   * @returns an array of all available core instances on page
+   */
+  const getCores = (query: string) => {
+    const roots = document?.querySelectorAll(query);
+    const rootsLen = roots.length;
+    let tempArr = <IRoot>[];
+    if (rootsLen > 0) {
+      for (let i = 0; i < rootsLen; i++) {
+        const id = roots[i].getAttribute(`id`);
+        if (id && allLocalInstances[id]) {
+          tempArr.push(allLocalInstances[id]);
+        }
+      }
+    }
+    return tempArr;
+  };
+
   const destroy = (core: ICore) => {
     const id = core.root?.getAttribute('id');
     const allElems = (core.root as HTMLElement).querySelectorAll(`*`);
@@ -1658,34 +1680,12 @@ namespace Carouzel {
     }
 
     /**
-     * Function to get the Carouzel based on the query string provided.
-     *
-     * @param query - The CSS selector for which the Carouzel needs to be initialized.
-     *
-     * @returns an array of all available core instances on page
-     */
-    protected getCores = (query: string) => {
-      const roots = document?.querySelectorAll(query);
-      const rootsLen = roots.length;
-      let tempArr = <IRoot>[];
-      if (rootsLen > 0) {
-        for (let i = 0; i < rootsLen; i++) {
-          const id = roots[i].getAttribute(`id`);
-          if (id && allLocalInstances[id]) {
-            tempArr.push(allLocalInstances[id]);
-          }
-        }
-      }
-      return tempArr;
-    };
-
-    /**
      * Function to return count of all available carouzel objects
      *
      * @returns count of all available carouzel objects
      *
      */
-    protected totalCores = () => getCoreInstancesLength();
+    protected getLength = () => getCoreInstancesLength();
 
     /**
      * Function to initialize the Carouzel plugin for provided query strings.
@@ -1773,7 +1773,7 @@ namespace Carouzel {
      *
      */
     protected goToSlide = (query: string, target: string) => {
-      const cores = this.getCores(query);
+      const cores = getCores(query);
       if (cores.length > 0) {
         for (let i = 0; i < cores.length; i++) {
           if (_animationDirections.indexOf(target) !== -1) {
@@ -1803,7 +1803,7 @@ namespace Carouzel {
      *
      */
     protected destroy = (query: string) => {
-      const cores = this.getCores(query);
+      const cores = getCores(query);
       if (cores.length > 0) {
         for (let i = 0; i < cores.length; i++) {
           destroy(cores[i]);

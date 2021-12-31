@@ -1298,6 +1298,27 @@ var Carouzel;
         }
         return _core;
     };
+    /**
+     * Function to get the Carouzel based on the query string provided.
+     *
+     * @param query - The CSS selector for which the Carouzel needs to be initialized.
+     *
+     * @returns an array of all available core instances on page
+     */
+    var getCores = function (query) {
+        var roots = document === null || document === void 0 ? void 0 : document.querySelectorAll(query);
+        var rootsLen = roots.length;
+        var tempArr = [];
+        if (rootsLen > 0) {
+            for (var i = 0; i < rootsLen; i++) {
+                var id = roots[i].getAttribute("id");
+                if (id && allLocalInstances[id]) {
+                    tempArr.push(allLocalInstances[id]);
+                }
+            }
+        }
+        return tempArr;
+    };
     var destroy = function (core) {
         var _a;
         var id = (_a = core.root) === null || _a === void 0 ? void 0 : _a.getAttribute('id');
@@ -1352,33 +1373,12 @@ var Carouzel;
         function Root() {
             var _this = this;
             /**
-             * Function to get the Carouzel based on the query string provided.
-             *
-             * @param query - The CSS selector for which the Carouzel needs to be initialized.
-             *
-             * @returns an array of all available core instances on page
-             */
-            this.getCores = function (query) {
-                var roots = document === null || document === void 0 ? void 0 : document.querySelectorAll(query);
-                var rootsLen = roots.length;
-                var tempArr = [];
-                if (rootsLen > 0) {
-                    for (var i = 0; i < rootsLen; i++) {
-                        var id = roots[i].getAttribute("id");
-                        if (id && allLocalInstances[id]) {
-                            tempArr.push(allLocalInstances[id]);
-                        }
-                    }
-                }
-                return tempArr;
-            };
-            /**
              * Function to return count of all available carouzel objects
              *
              * @returns count of all available carouzel objects
              *
              */
-            this.totalCores = function () { return getCoreInstancesLength(); };
+            this.getLength = function () { return getCoreInstancesLength(); };
             /**
              * Function to initialize the Carouzel plugin for provided query strings.
              *
@@ -1460,7 +1460,7 @@ var Carouzel;
              *
              */
             this.goToSlide = function (query, target) {
-                var cores = _this.getCores(query);
+                var cores = getCores(query);
                 if (cores.length > 0) {
                     for (var i = 0; i < cores.length; i++) {
                         if (_animationDirections.indexOf(target) !== -1) {
@@ -1492,7 +1492,7 @@ var Carouzel;
              *
              */
             this.destroy = function (query) {
-                var cores = _this.getCores(query);
+                var cores = getCores(query);
                 if (cores.length > 0) {
                     for (var i = 0; i < cores.length; i++) {
                         destroy(cores[i]);

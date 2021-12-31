@@ -128,22 +128,22 @@ describe('Carouzel', function () {
 
   it('Should initialize Non-Existant Carouzel', function () {
     carouzelInstance.init('#__carouzel_0');
-    expect(carouzelInstance.getCount()).toBe(0);
+    expect(carouzelInstance.getLength()).toBe(0);
   });
 
   it('Should initialize 1st Navigation', function () {
     carouzelInstance.init('#__carouzel_1');
-    expect(carouzelInstance.getCount()).toBe(1);
+    expect(carouzelInstance.getLength()).toBe(1);
   });
 
   it('Should destroy 1st Navigation', function () {
     carouzelInstance.destroy('#__carouzel_1');
-    expect(carouzelInstance.getCount()).toBe(0);
+    expect(carouzelInstance.getLength()).toBe(0);
   });
 
   it('Should try re-init 1st Navigation', function () {
     carouzelInstance.init('#__carouzel_1');
-    expect(carouzelInstance.getCount()).toBe(1);
+    expect(carouzelInstance.getLength()).toBe(1);
   });
 
   // it('2nd Navigation should be automatically initiated', function () {
@@ -161,12 +161,7 @@ describe('Carouzel', function () {
 
   it('Should destroy Non-Existant Navigation', function () {
     carouzelInstance.destroy('#__carouzel_0');
-    expect(carouzelInstance.getCount()).toBe(1);
-  });
-
-  it('Should get the existing Carouzel Instance', function () {
-    var instance = carouzelInstance.getRoots('#__carouzel_1') || [];
-    expect(instance.length).toBe(1);
+    expect(carouzelInstance.getLength()).toBe(1);
   });
 
   // it('Should try focus on 0th Level Navigation', function () {

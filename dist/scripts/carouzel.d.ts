@@ -8,9 +8,6 @@
  *
  */
 declare namespace Carouzel {
-    interface IRoot {
-        [key: string]: any;
-    }
     interface IBreakpoint {
         breakpoint: number | string;
         centerBetween: number;
@@ -82,20 +79,12 @@ declare namespace Carouzel {
          */
         static getInstance(): Root;
         /**
-         * Function to get the Carouzel based on the query string provided.
-         *
-         * @param query - The CSS selector for which the Carouzel needs to be initialized.
-         *
-         * @returns an array of all available core instances on page
-         */
-        protected getCores: (query: string) => IRoot;
-        /**
          * Function to return count of all available carouzel objects
          *
          * @returns count of all available carouzel objects
          *
          */
-        protected totalCores: () => number;
+        protected getLength: () => number;
         /**
          * Function to initialize the Carouzel plugin for provided query strings.
          *
