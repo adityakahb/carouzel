@@ -346,6 +346,10 @@ var Carouzel;
                 core.ci = core.sLen - core.bpo._2Show;
             }
         }
+        /**
+         * Local function to perform post operations after slide animation
+         *
+         */
         var postAnimation = function () {
             if (core.ci >= core.sLen) {
                 core.ci = core.sLen - core.ci;
@@ -357,7 +361,7 @@ var Carouzel;
                 core.trk.style.transform = "translate3d(".concat(-core.pts[core.ci], "px, 0, 0)");
             }
             core.ct = -core._t.nextX;
-            updateAttributes(core);
+            // updateAttributes(core);
             setTimeout(function () {
                 if (core.opts._urlH && core.root) {
                     hashSlide = core.root.querySelector(".".concat(core.opts.activeCls));
@@ -371,6 +375,10 @@ var Carouzel;
                 }
             }, 0);
         };
+        /**
+         * Local function to update the css and data attributes on the carouzel instance
+         *
+         */
         updateAttributes(core);
         if (performance) {
             core._t.start = performance.now();
@@ -380,6 +388,10 @@ var Carouzel;
         }
         core._t.prevX = core.pts[core.pi];
         core._t.nextX = core.pts[core.ci];
+        /**
+         * Local function to perform scroll animation
+         *
+         */
         var scrollThisTrack = function (now) {
             core._t.elapsed = now - core._t.start;
             core._t.progress = _easingFunctions[core.opts.timeFn](core._t.elapsed / core._t.total);
@@ -417,6 +429,10 @@ var Carouzel;
                 core._t.id = requestAnimationFrame(scrollThisTrack);
             }
         }
+        /**
+         * Local function to perform fade animation
+         *
+         */
         var fadeThisTrack = function (now) {
             core._t.elapsed = now - core._t.start;
             core._t.progress = _easingFunctions[core.opts.timeFn](core._t.elapsed / core._t.total);
@@ -822,6 +838,10 @@ var Carouzel;
         var startY = 0;
         var threshold = core.opts.threshold || 100;
         var canFiniteAnimate = false;
+        /**
+         * Function to be triggered when the carouzel is touched the cursor is down on it
+         *
+         */
         var touchStart = function (e) {
             dragging = true;
             if (e.type === "touchstart") {
@@ -835,6 +855,10 @@ var Carouzel;
                 posX1 = e.clientX;
             }
         };
+        /**
+         * Function to be triggered when the carouzel is dragged through touch or cursor
+         *
+         */
         var touchMove = function (e) {
             if (dragging) {
                 if (e.type === "touchmove") {
@@ -867,6 +891,10 @@ var Carouzel;
                 posFinal = posX2;
             }
         };
+        /**
+         * Function to be triggered when the touch is ended or cursor is released
+         *
+         */
         var touchEnd = function (e) {
             if (dragging && core.trk) {
                 if (e.type === "touchend") {
@@ -1319,6 +1347,12 @@ var Carouzel;
         }
         return tempArr;
     };
+    /**
+     * Function to destroy the carouzel core and delete it from the root instance
+     *
+     * @param core - The carouzel core which needs to be deleted
+     *
+     */
     var destroy = function (core) {
         var _a;
         var id = (_a = core.root) === null || _a === void 0 ? void 0 : _a.getAttribute('id');

@@ -526,6 +526,10 @@ namespace Carouzel {
       }
     }
 
+    /**
+     * Local function to perform post operations after slide animation
+     *
+     */
     const postAnimation = () => {
       if (core.ci >= core.sLen) {
         core.ci = core.sLen - core.ci;
@@ -537,7 +541,7 @@ namespace Carouzel {
         core.trk.style.transform = `translate3d(${-core.pts[core.ci]}px, 0, 0)`;
       }
       core.ct = -core._t.nextX;
-      updateAttributes(core);
+      // updateAttributes(core);
       setTimeout(() => {
         if (core.opts._urlH && core.root) {
           hashSlide = core.root.querySelector(`.${core.opts.activeCls}`);
@@ -552,6 +556,10 @@ namespace Carouzel {
       }, 0);
     };
 
+    /**
+     * Local function to update the css and data attributes on the carouzel instance
+     *
+     */
     updateAttributes(core);
     if (performance as Performance) {
       core._t.start = performance.now();
@@ -561,6 +569,10 @@ namespace Carouzel {
     core._t.prevX = core.pts[core.pi];
     core._t.nextX = core.pts[core.ci];
 
+    /**
+     * Local function to perform scroll animation
+     *
+     */
     const scrollThisTrack = (now: number) => {
       core._t.elapsed = now - core._t.start;
       core._t.progress = _easingFunctions[core.opts.timeFn](
@@ -603,6 +615,10 @@ namespace Carouzel {
       }
     }
 
+    /**
+     * Local function to perform fade animation
+     *
+     */
     const fadeThisTrack = (now: number) => {
       core._t.elapsed = now - core._t.start;
       core._t.progress = _easingFunctions[core.opts.timeFn](
@@ -1044,6 +1060,10 @@ namespace Carouzel {
     let threshold = core.opts.threshold || 100;
     let canFiniteAnimate = false;
 
+    /**
+     * Function to be triggered when the carouzel is touched the cursor is down on it
+     *
+     */
     const touchStart = (e: Event) => {
       dragging = true;
       if (e.type === `touchstart`) {
@@ -1057,6 +1077,10 @@ namespace Carouzel {
       }
     };
 
+    /**
+     * Function to be triggered when the carouzel is dragged through touch or cursor
+     *
+     */
     const touchMove = (e: Event) => {
       if (dragging) {
         if (e.type === `touchmove`) {
@@ -1092,6 +1116,10 @@ namespace Carouzel {
       }
     };
 
+    /**
+     * Function to be triggered when the touch is ended or cursor is released
+     *
+     */
     const touchEnd = (e: Event) => {
       if (dragging && core.trk) {
         if (e.type === `touchend`) {
@@ -1605,6 +1633,12 @@ namespace Carouzel {
     return tempArr;
   };
 
+  /**
+   * Function to destroy the carouzel core and delete it from the root instance
+   *
+   * @param core - The carouzel core which needs to be deleted
+   *
+   */
   const destroy = (core: ICore) => {
     const id = core.root?.getAttribute('id');
     const allElems = (core.root as HTMLElement).querySelectorAll(`*`);
@@ -1622,10 +1656,12 @@ namespace Carouzel {
         `${core.opts.activeCls} ${core.opts.editCls} ${core.opts.disableCls} ${core.opts.dupCls}`
       );
     }
+
     removeClass(
       core.root as HTMLElement,
       `${core.opts.activeCls} ${core.opts.editCls} ${core.opts.disableCls} ${core.opts.dupCls}`
     );
+
     if (id) {
       delete allLocalInstances[id];
     }
