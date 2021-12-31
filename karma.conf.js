@@ -18,12 +18,6 @@ module.exports = function (config) {
       'spec/carouzel.spec.js',
     ],
 
-    // list of files / patterns to exclude
-    exclude: [
-      'dist/styles/site/index.css',
-      'dist/styles/carouzel/carouzel.css',
-    ],
-
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://www.npmjs.com/search?q=keywords:karma-preprocessor
     preprocessors: {

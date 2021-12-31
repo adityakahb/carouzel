@@ -76,7 +76,7 @@ const carouzelEnd = `</div>
 let carouzel1 = ``;
 let carouzel2 = ``;
 let carouzel3 = ``;
-describe('Carouzel', function () {
+describe(`Carouzel`, function () {
   let carouzelInstance;
   let evt;
 
@@ -110,48 +110,69 @@ describe('Carouzel', function () {
       (carouzelStart2 + carouzel2 + carouzelEnd);
     // + (carouzelStart3 + carouzel3 + carouzelEnd);
 
-    document.body.insertAdjacentHTML('afterbegin', fixture);
+    document.body.insertAdjacentHTML(`afterbegin`, fixture);
     carouzelInstance = Carouzel.Root.getInstance();
   });
 
   beforeEach(function () {
     jasmine.clock().install();
-    // outdiv = document.querySelector('#outdiv');
+    // outdiv = document.querySelector(`#outdiv`);
   });
   afterEach(function () {
     jasmine.clock().uninstall();
   });
 
-  it('Should validate the Carouzel Instance', function () {
+  it(`Should validate the Carouzel Instance`, function () {
     expect(carouzelInstance).not.toBe(null);
   });
 
-  it('Should initialize Non-Existant Carouzel', function () {
-    carouzelInstance.init('#__carouzel_0');
+  it(`Should initialize Non-Existant Carouzel`, function () {
+    carouzelInstance.init(`#__carouzel_0`);
     expect(carouzelInstance.getLength()).toBe(0);
   });
 
-  it('Should initialize 1st Navigation', function () {
-    carouzelInstance.init('#__carouzel_1');
+  it(`Should initialize 1st Navigation`, function () {
+    carouzelInstance.init(`#__carouzel_1`);
     expect(carouzelInstance.getLength()).toBe(1);
   });
 
-  it('Should destroy 1st Navigation', function () {
-    carouzelInstance.destroy('#__carouzel_1');
+  it(`Should destroy 1st Navigation`, function () {
+    carouzelInstance.destroy(`#__carouzel_1`);
     expect(carouzelInstance.getLength()).toBe(0);
   });
 
-  it('Should try re-init 1st Navigation', function () {
-    carouzelInstance.init('#__carouzel_1');
+  it(`Should re-init 1st Navigation`, function () {
+    carouzelInstance.init(`#__carouzel_1`);
     expect(carouzelInstance.getLength()).toBe(1);
   });
 
-  // it('2nd Navigation should be automatically initiated', function () {
-  //   expect(carouzelInstance.getCount()).toBe(1);
-  // });
+  it(`Should go to the next slide`, function () {
+    carouzelInstance.goToSlide(`#__carouzel_1`, `next`);
+    expect(carouzelInstance.getLength()).toBe(1);
+  });
 
-  // it('Should try re-init 2nd Navigation', function () {
-  //   carouzelInstance.init('.__amegmen_2', {
+  it(`Should go to the previous slide`, function () {
+    carouzelInstance.goToSlide(`#__carouzel_1`, `previous`);
+    expect(carouzelInstance.getLength()).toBe(1);
+  });
+
+  it(`Should go to the valid slide number`, function () {
+    carouzelInstance.goToSlide(`#__carouzel_1`, `10`);
+    expect(carouzelInstance.getLength()).toBe(1);
+  });
+
+  it(`Should go to the last slide when invalid slide number greater than number of slides is provided in count`, function () {
+    carouzelInstance.goToSlide(`#__carouzel_1`, `15`);
+    expect(carouzelInstance.getLength()).toBe(1);
+  });
+
+  it(`Should go to the first slide when invalid slide number less than 1 is provided in count`, function () {
+    carouzelInstance.goToSlide(`#__carouzel_1`, `-1`);
+    expect(carouzelInstance.getLength()).toBe(1);
+  });
+
+  // it(`Should try re-init 2nd Navigation`, function () {
+  //   carouzelInstance.init(`.__amegmen_2`, {
   //     isRTL: true,
   //     actOnHover: true,
   //     shiftColumns: true,
@@ -159,195 +180,195 @@ describe('Carouzel', function () {
   //   expect(Object.keys(carouzelInstance.instances || {}).length).toBe(2);
   // });
 
-  it('Should destroy Non-Existant Navigation', function () {
-    carouzelInstance.destroy('#__carouzel_0');
+  it(`Should destroy Non-Existant Navigation`, function () {
+    carouzelInstance.destroy(`#__carouzel_0`);
     expect(carouzelInstance.getLength()).toBe(1);
   });
 
-  // it('Should try focus on 0th Level Navigation', function () {
-  //   evt = document.createEvent('KeyboardEvent');
-  //   evt.initEvent('focus', true, true);
+  // it(`Should try focus on 0th Level Navigation`, function () {
+  //   evt = document.createEvent(`KeyboardEvent`);
+  //   evt.initEvent(`focus`, true, true);
   //   l0anchor.dispatchEvent(evt);
-  //   expect(l0anchor).toHaveClass('__amegmen-focus');
+  //   expect(l0anchor).toHaveClass(`__amegmen-focus`);
   // });
 
-  // it('Should try blur on 0th Level Navigation', function () {
-  //   evt = document.createEvent('KeyboardEvent');
-  //   evt.initEvent('blur', true, true);
+  // it(`Should try blur on 0th Level Navigation`, function () {
+  //   evt = document.createEvent(`KeyboardEvent`);
+  //   evt.initEvent(`blur`, true, true);
   //   l0anchor.dispatchEvent(evt);
-  //   expect(l0anchor).not.toHaveClass('__amegmen-focus');
+  //   expect(l0anchor).not.toHaveClass(`__amegmen-focus`);
   // });
 
-  // it('Should try mouseenter on 0th Level Navigation', function () {
-  //   evt = document.createEvent('MouseEvent');
-  //   evt.initEvent('mouseenter', true, true);
+  // it(`Should try mouseenter on 0th Level Navigation`, function () {
+  //   evt = document.createEvent(`MouseEvent`);
+  //   evt.initEvent(`mouseenter`, true, true);
   //   l0anchor.dispatchEvent(evt);
-  //   expect(l0anchor).toHaveClass('__amegmen-hover');
+  //   expect(l0anchor).toHaveClass(`__amegmen-hover`);
   // });
 
-  // it('Should try mouseleave on 0th Level Navigation', function () {
-  //   evt = document.createEvent('MouseEvent');
-  //   evt.initEvent('mouseleave', true, true);
+  // it(`Should try mouseleave on 0th Level Navigation`, function () {
+  //   evt = document.createEvent(`MouseEvent`);
+  //   evt.initEvent(`mouseleave`, true, true);
   //   l0anchor.dispatchEvent(evt);
-  //   expect(l0anchor).not.toHaveClass('__amegmen-hover');
+  //   expect(l0anchor).not.toHaveClass(`__amegmen-hover`);
   // });
 
-  // it('Should try click on 0th Level Navigation: part 1', function () {
+  // it(`Should try click on 0th Level Navigation: part 1`, function () {
   //   outdiv.click();
   //   l0anchor.click();
   //   jasmine.clock().tick(10000);
-  //   expect(l0panel).toHaveClass('__amegmen-active');
+  //   expect(l0panel).toHaveClass(`__amegmen-active`);
   // });
 
-  // it('Should try click on 0th Level Navigation: part 2', function () {
+  // it(`Should try click on 0th Level Navigation: part 2`, function () {
   //   outdiv.click();
   //   jasmine.clock().tick(10000);
-  //   expect(l0panel).not.toHaveClass('active');
+  //   expect(l0panel).not.toHaveClass(`active`);
   // });
 
-  // it('Should try focus on 0th Level Navigation Landing', function () {
+  // it(`Should try focus on 0th Level Navigation Landing`, function () {
   //   l0anchor.click();
-  //   evt = document.createEvent('KeyboardEvent');
-  //   evt.initEvent('focus', true, true);
+  //   evt = document.createEvent(`KeyboardEvent`);
+  //   evt.initEvent(`focus`, true, true);
   //   l0landing.dispatchEvent(evt);
-  //   expect(l0landing).toHaveClass('__amegmen-focus');
+  //   expect(l0landing).toHaveClass(`__amegmen-focus`);
   // });
 
-  // it('Should try blur on 0th Level Navigation Landing', function () {
-  //   evt = document.createEvent('KeyboardEvent');
-  //   evt.initEvent('blur', true, true);
+  // it(`Should try blur on 0th Level Navigation Landing`, function () {
+  //   evt = document.createEvent(`KeyboardEvent`);
+  //   evt.initEvent(`blur`, true, true);
   //   l0landing.dispatchEvent(evt);
-  //   expect(l0landing).not.toHaveClass('__amegmen-focus');
+  //   expect(l0landing).not.toHaveClass(`__amegmen-focus`);
   // });
 
-  // it('Should try mouseenter on 0th Level Navigation Landing', function () {
-  //   evt = document.createEvent('MouseEvent');
-  //   evt.initEvent('mouseenter', true, true);
+  // it(`Should try mouseenter on 0th Level Navigation Landing`, function () {
+  //   evt = document.createEvent(`MouseEvent`);
+  //   evt.initEvent(`mouseenter`, true, true);
   //   l0landing.dispatchEvent(evt);
-  //   expect(l0landing).toHaveClass('__amegmen-hover');
+  //   expect(l0landing).toHaveClass(`__amegmen-hover`);
   // });
 
-  // it('Should try mouseleave on 0th Level Navigation Landing', function () {
-  //   evt = document.createEvent('MouseEvent');
-  //   evt.initEvent('mouseleave', true, true);
+  // it(`Should try mouseleave on 0th Level Navigation Landing`, function () {
+  //   evt = document.createEvent(`MouseEvent`);
+  //   evt.initEvent(`mouseleave`, true, true);
   //   l0landing.dispatchEvent(evt);
-  //   expect(l0landing).not.toHaveClass('__amegmen-hover');
+  //   expect(l0landing).not.toHaveClass(`__amegmen-hover`);
   // });
 
-  // it('Should try focus on 1st Level Navigation', function () {
-  //   evt = document.createEvent('KeyboardEvent');
-  //   evt.initEvent('focus', true, true);
+  // it(`Should try focus on 1st Level Navigation`, function () {
+  //   evt = document.createEvent(`KeyboardEvent`);
+  //   evt.initEvent(`focus`, true, true);
   //   l1anchor.dispatchEvent(evt);
-  //   expect(l1anchor).toHaveClass('__amegmen-focus');
+  //   expect(l1anchor).toHaveClass(`__amegmen-focus`);
   // });
 
-  // it('Should try blur on 1st Level Navigation', function () {
-  //   evt = document.createEvent('KeyboardEvent');
-  //   evt.initEvent('blur', true, true);
+  // it(`Should try blur on 1st Level Navigation`, function () {
+  //   evt = document.createEvent(`KeyboardEvent`);
+  //   evt.initEvent(`blur`, true, true);
   //   l1anchor.dispatchEvent(evt);
-  //   expect(l1anchor).not.toHaveClass('__amegmen-focus');
+  //   expect(l1anchor).not.toHaveClass(`__amegmen-focus`);
   // });
 
-  // it('Should try mouseenter on 1st Level Navigation', function () {
-  //   evt = document.createEvent('MouseEvent');
-  //   evt.initEvent('mouseenter', true, true);
+  // it(`Should try mouseenter on 1st Level Navigation`, function () {
+  //   evt = document.createEvent(`MouseEvent`);
+  //   evt.initEvent(`mouseenter`, true, true);
   //   l1anchor.dispatchEvent(evt);
-  //   expect(l1anchor).toHaveClass('__amegmen-hover');
+  //   expect(l1anchor).toHaveClass(`__amegmen-hover`);
   // });
 
-  // it('Should try mouseleave on 1st Level Navigation', function () {
-  //   evt = document.createEvent('MouseEvent');
-  //   evt.initEvent('mouseleave', true, true);
+  // it(`Should try mouseleave on 1st Level Navigation`, function () {
+  //   evt = document.createEvent(`MouseEvent`);
+  //   evt.initEvent(`mouseleave`, true, true);
   //   l1anchor.dispatchEvent(evt);
-  //   expect(l1anchor).not.toHaveClass('__amegmen-hover');
+  //   expect(l1anchor).not.toHaveClass(`__amegmen-hover`);
   // });
 
-  // it('Should try click on 1st Level Navigation: part 1', function () {
+  // it(`Should try click on 1st Level Navigation: part 1`, function () {
   //   outdiv.click();
   //   l0anchor.click();
   //   l1anchor.click();
   //   jasmine.clock().tick(1000);
-  //   expect(l1panel).toHaveClass('__amegmen-active');
+  //   expect(l1panel).toHaveClass(`__amegmen-active`);
   // });
 
-  // it('Should try click on 1st Level Navigation: part 2', function () {
+  // it(`Should try click on 1st Level Navigation: part 2`, function () {
   //   outdiv.click();
   //   jasmine.clock().tick(1000);
-  //   expect(l1panel).not.toHaveClass('__amegmen-active');
+  //   expect(l1panel).not.toHaveClass(`__amegmen-active`);
   // });
 
-  // it('Should try focus on 2nd Level Navigation', function () {
+  // it(`Should try focus on 2nd Level Navigation`, function () {
   //   l0anchor.click();
   //   l1anchor.click();
-  //   evt = document.createEvent('KeyboardEvent');
-  //   evt.initEvent('focus', true, true);
+  //   evt = document.createEvent(`KeyboardEvent`);
+  //   evt.initEvent(`focus`, true, true);
   //   l2anchor.dispatchEvent(evt);
-  //   expect(l2anchor).toHaveClass('__amegmen-focus');
+  //   expect(l2anchor).toHaveClass(`__amegmen-focus`);
   // });
 
-  // it('Should try blur on 2nd Level Navigation', function () {
-  //   evt = document.createEvent('KeyboardEvent');
-  //   evt.initEvent('blur', true, true);
+  // it(`Should try blur on 2nd Level Navigation`, function () {
+  //   evt = document.createEvent(`KeyboardEvent`);
+  //   evt.initEvent(`blur`, true, true);
   //   l2anchor.dispatchEvent(evt);
-  //   expect(l2anchor).not.toHaveClass('__amegmen-focus');
+  //   expect(l2anchor).not.toHaveClass(`__amegmen-focus`);
   // });
 
-  // it('Should try mouseenter on 2nd Level Navigation', function () {
-  //   evt = document.createEvent('MouseEvent');
-  //   evt.initEvent('mouseenter', true, true);
+  // it(`Should try mouseenter on 2nd Level Navigation`, function () {
+  //   evt = document.createEvent(`MouseEvent`);
+  //   evt.initEvent(`mouseenter`, true, true);
   //   l2anchor.dispatchEvent(evt);
   //   jasmine.clock().tick(1000);
-  //   expect(l2anchor).toHaveClass('__amegmen-hover');
+  //   expect(l2anchor).toHaveClass(`__amegmen-hover`);
   // });
 
-  // it('Should try mouseleave on 2nd Level Navigation', function () {
-  //   evt = document.createEvent('MouseEvent');
-  //   evt.initEvent('mouseleave', true, true);
+  // it(`Should try mouseleave on 2nd Level Navigation`, function () {
+  //   evt = document.createEvent(`MouseEvent`);
+  //   evt.initEvent(`mouseleave`, true, true);
   //   l2anchor.dispatchEvent(evt);
   //   outdiv.click();
-  //   expect(l2anchor).not.toHaveClass('__amegmen-hover');
+  //   expect(l2anchor).not.toHaveClass(`__amegmen-hover`);
   // });
 
-  // it('Should open offcanvas on mobile using main toggle', function () {
+  // it(`Should open offcanvas on mobile using main toggle`, function () {
   //   viewport.set(375, 850);
   //   toggleBtn.click();
-  //   expect(offcanvas).toHaveClass('__amegmen-active');
+  //   expect(offcanvas).toHaveClass(`__amegmen-active`);
   // });
 
-  // it('Should close offcanvas on mobile main toggle', function () {
+  // it(`Should close offcanvas on mobile main toggle`, function () {
   //   viewport.set(375, 850);
   //   toggleBtn.click();
-  //   expect(offcanvas).not.toHaveClass('__amegmen-active');
+  //   expect(offcanvas).not.toHaveClass(`__amegmen-active`);
   // });
 
-  // it('Should open Level 1 on mobile', function () {
+  // it(`Should open Level 1 on mobile`, function () {
   //   viewport.set(375, 850);
   //   toggleBtn.click();
   //   l0anchor.click();
-  //   expect(l0panel).toHaveClass('__amegmen-active');
+  //   expect(l0panel).toHaveClass(`__amegmen-active`);
   // });
 
-  // it('Should open Level 2 on mobile', function () {
+  // it(`Should open Level 2 on mobile`, function () {
   //   viewport.set(375, 850);
   //   l1anchor.click();
-  //   expect(l1panel).toHaveClass('__amegmen-active');
+  //   expect(l1panel).toHaveClass(`__amegmen-active`);
   // });
 
-  // it('Should close Level 2 on mobile', function () {
+  // it(`Should close Level 2 on mobile`, function () {
   //   viewport.set(375, 850);
   //   backBtn.click();
-  //   expect(l1panel).not.toHaveClass('__amegmen-active');
+  //   expect(l1panel).not.toHaveClass(`__amegmen-active`);
   // });
 
-  // it('Should close Level 1 on mobile', function () {
+  // it(`Should close Level 1 on mobile`, function () {
   //   viewport.set(375, 850);
   //   mainBtn.click();
-  //   expect(l0panel).not.toHaveClass('__amegmen-active');
+  //   expect(l0panel).not.toHaveClass(`__amegmen-active`);
   // });
 
-  // it('Should close offcanvas on mobile', function () {
+  // it(`Should close offcanvas on mobile`, function () {
   //   viewport.set(375, 850);
   //   closeBtn.click();
-  //   expect(offcanvas).not.toHaveClass('__amegmen-active');
+  //   expect(offcanvas).not.toHaveClass(`__amegmen-active`);
   // });
 });
