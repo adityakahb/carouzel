@@ -35,6 +35,7 @@ namespace Carouzel {
     bpSLen: number;
     cntr: number;
     dots: Node[];
+    nav: HTMLElement | null;
     gutr: number;
     nDups: Node[];
     pDups: Node[];
@@ -241,7 +242,7 @@ namespace Carouzel {
     arrowN: `[data-carouzel-nextarrow]`,
     arrowP: `[data-carouzel-previousarrow]`,
     controlsW: `[data-carouzel-controlswrapper]`,
-    dot: `[data-carouzel-navbutton]`,
+    dot: `[data-carouzel-dot]`,
     nav: `[data-carouzel-navigation]`,
     navW: `[data-carouzel-navigationwrapper]`,
     pauseBtn: `[data-carouzel-pause]`,
@@ -494,7 +495,10 @@ namespace Carouzel {
         x = core.bpo.dots.length - 1;
       }
       if (core.bpo.dots[x]) {
-        addClass(core.bpo.dots[x] as Element, core.opts.activeCls);
+        addClass(
+          core.bpo.dots[x] as HTMLElement as Element,
+          core.opts.activeCls
+        );
       }
     }
   };
@@ -561,11 +565,10 @@ namespace Carouzel {
      *
      */
     updateAttributes(core);
-    if (performance as Performance) {
-      core._t.start = performance.now();
-    } else {
-      core._t.start = Date.now();
-    }
+
+    core._t.start = (performance as Performance)
+      ? performance.now()
+      : Date.now();
     core._t.prevX = core.pts[core.pi];
     core._t.nextX = core.pts[core.ci];
 
@@ -858,8 +861,8 @@ namespace Carouzel {
     if (core.ci !== slidenumber) {
       if (slidenumber >= core._ds.length) {
         slidenumber = core._ds.length - 1;
-      } else if (slidenumber < -1) {
-        slidenumber = -1;
+      } else if (slidenumber <= -1) {
+        slidenumber = 0;
       }
       core.pi = core.ci;
       core.ci = slidenumber * core.bpo._2Scroll;
@@ -942,7 +945,6 @@ namespace Carouzel {
               go2Next(core, 0);
               break;
             default:
-              keyCode = ``;
               break;
           }
         })
@@ -1317,10 +1319,12 @@ namespace Carouzel {
       }
       core.bpall[i].dots = [];
       let btnStr = ``;
+
       for (let j = 0; j < pageLength; j++) {
-        let elem = document?.createElement(`button`);
-        elem.setAttribute(_Selectors.dot.slice(1, -1), ``);
-        elem.setAttribute(`type`, `button`);
+        let liElem = document?.createElement(`li`);
+        let btnElem = document?.createElement(`button`);
+        liElem.setAttribute(_Selectors.dot.slice(1, -1), ``);
+        btnElem.setAttribute(`type`, `button`);
         btnStr = `<div class="${core.opts.dotNcls}">${j + 1}</div>`;
         if (
           core.opts.useTitle &&
@@ -1328,15 +1332,15 @@ namespace Carouzel {
           core._ds[j].getAttribute(_Selectors.stitle.slice(1, -1))
         ) {
           btnStr += core._ds[j].getAttribute(_Selectors.stitle.slice(1, -1));
-          addClass(elem, core.opts.dotCls);
+          addClass(liElem as HTMLElement, core.opts.dotCls);
         }
-        elem.innerHTML = btnStr;
-        navBtns.push(elem);
-      }
-      for (let j = 0; j < pageLength; j++) {
+        btnElem.innerHTML = btnStr;
+        liElem.appendChild(btnElem);
+        navBtns.push(liElem);
+
         core.eHandlers.push(
           eventHandler(
-            navBtns[j] as HTMLElement,
+            btnElem as HTMLElement,
             `click`,
             function (event: Event) {
               event.preventDefault();
@@ -1407,6 +1411,7 @@ namespace Carouzel {
       cntr: settings.cntr,
       dots: [],
       gutr: settings.gutr,
+      nav: null,
       nDups: [],
       pDups: [],
       swipe: settings.swipe,
@@ -1521,6 +1526,7 @@ namespace Carouzel {
           cntr: settings.responsive[i].centerBetween,
           dots: [],
           gutr: settings.responsive[i].spaceBetween,
+          nav: null,
           nDups: [],
           pDups: [],
           swipe: settings.responsive[i].hasTouchSwipe,
@@ -1793,7 +1799,7 @@ namespace Carouzel {
       } else {
         if (query !== _Selectors.rootAuto) {
           // throw new TypeError(_rootSelectorTypeError);
-          console.error(_rootSelectorTypeError);
+          console.error(`"${query}": ${_rootSelectorTypeError}`);
         }
       }
     };
@@ -1827,7 +1833,7 @@ namespace Carouzel {
         }
       } else {
         // throw new TypeError(_rootSelectorTypeError);
-        console.error(_rootSelectorTypeError);
+        console.error(`"${query}": ${_rootSelectorTypeError}`);
       }
     };
 
@@ -1848,7 +1854,7 @@ namespace Carouzel {
         }
       } else {
         // throw new TypeError(_rootSelectorTypeError);
-        console.error(_rootSelectorTypeError);
+        console.error(`"${query}": ${_rootSelectorTypeError}`);
       }
     };
 

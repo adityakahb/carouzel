@@ -86,7 +86,7 @@ var Carouzel;
         arrowN: "[data-carouzel-nextarrow]",
         arrowP: "[data-carouzel-previousarrow]",
         controlsW: "[data-carouzel-controlswrapper]",
-        dot: "[data-carouzel-navbutton]",
+        dot: "[data-carouzel-dot]",
         nav: "[data-carouzel-navigation]",
         navW: "[data-carouzel-navigationwrapper]",
         pauseBtn: "[data-carouzel-pause]",
@@ -380,12 +380,9 @@ var Carouzel;
          *
          */
         updateAttributes(core);
-        if (performance) {
-            core._t.start = performance.now();
-        }
-        else {
-            core._t.start = Date.now();
-        }
+        core._t.start = performance
+            ? performance.now()
+            : Date.now();
         core._t.prevX = core.pts[core.pi];
         core._t.nextX = core.pts[core.ci];
         /**
@@ -656,8 +653,8 @@ var Carouzel;
             if (slidenumber >= core._ds.length) {
                 slidenumber = core._ds.length - 1;
             }
-            else if (slidenumber < -1) {
-                slidenumber = -1;
+            else if (slidenumber <= -1) {
+                slidenumber = 0;
             }
             core.pi = core.ci;
             core.ci = slidenumber * core.bpo._2Scroll;
@@ -738,7 +735,6 @@ var Carouzel;
                         go2Next(core, 0);
                         break;
                     default:
-                        keyCode_1 = "";
                         break;
                 }
             }));
@@ -1045,22 +1041,22 @@ var Carouzel;
             }
             core.bpall[i].dots = [];
             var btnStr = "";
-            for (var j = 0; j < pageLength; j++) {
-                var elem = document === null || document === void 0 ? void 0 : document.createElement("button");
-                elem.setAttribute(_Selectors.dot.slice(1, -1), "");
-                elem.setAttribute("type", "button");
+            var _loop_2 = function (j) {
+                var liElem = document === null || document === void 0 ? void 0 : document.createElement("li");
+                var btnElem = document === null || document === void 0 ? void 0 : document.createElement("button");
+                liElem.setAttribute(_Selectors.dot.slice(1, -1), "");
+                btnElem.setAttribute("type", "button");
                 btnStr = "<div class=\"".concat(core.opts.dotNcls, "\">").concat(j + 1, "</div>");
                 if (core.opts.useTitle &&
                     core.bpall[i]._2Show === 1 &&
                     core._ds[j].getAttribute(_Selectors.stitle.slice(1, -1))) {
                     btnStr += core._ds[j].getAttribute(_Selectors.stitle.slice(1, -1));
-                    addClass(elem, core.opts.dotCls);
+                    addClass(liElem, core.opts.dotCls);
                 }
-                elem.innerHTML = btnStr;
-                navBtns.push(elem);
-            }
-            var _loop_2 = function (j) {
-                core.eHandlers.push(eventHandler(navBtns[j], "click", function (event) {
+                btnElem.innerHTML = btnStr;
+                liElem.appendChild(btnElem);
+                navBtns.push(liElem);
+                core.eHandlers.push(eventHandler(btnElem, "click", function (event) {
                     event.preventDefault();
                     core.pi = core.ci;
                     core.ci = j * core.bpall[i]._2Scroll;
@@ -1132,6 +1128,7 @@ var Carouzel;
             cntr: settings.cntr,
             dots: [],
             gutr: settings.gutr,
+            nav: null,
             nDups: [],
             pDups: [],
             swipe: settings.swipe
@@ -1244,6 +1241,7 @@ var Carouzel;
                     cntr: settings.responsive[i].centerBetween,
                     dots: [],
                     gutr: settings.responsive[i].spaceBetween,
+                    nav: null,
                     nDups: [],
                     pDups: [],
                     swipe: settings.responsive[i].hasTouchSwipe
@@ -1481,7 +1479,7 @@ var Carouzel;
                 else {
                     if (query !== _Selectors.rootAuto) {
                         // throw new TypeError(_rootSelectorTypeError);
-                        console.error(_rootSelectorTypeError);
+                        console.error("\"".concat(query, "\": ").concat(_rootSelectorTypeError));
                     }
                 }
             };
@@ -1515,7 +1513,7 @@ var Carouzel;
                 }
                 else {
                     // throw new TypeError(_rootSelectorTypeError);
-                    console.error(_rootSelectorTypeError);
+                    console.error("\"".concat(query, "\": ").concat(_rootSelectorTypeError));
                 }
             };
             /**
@@ -1536,7 +1534,7 @@ var Carouzel;
                 }
                 else {
                     // throw new TypeError(_rootSelectorTypeError);
-                    console.error(_rootSelectorTypeError);
+                    console.error("\"".concat(query, "\": ").concat(_rootSelectorTypeError));
                 }
             };
         }

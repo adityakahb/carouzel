@@ -76,12 +76,45 @@ const carouzelEnd = `</div>
 let carouzel1 = ``;
 let carouzel2 = ``;
 let carouzel3 = ``;
+
+let evtStr = ``;
+
+let optiosn1 = {
+  beforeInit: function () {
+    evtStr = `beforeInit`;
+  },
+  afterInit: function () {
+    evtStr = `afterInit`;
+  },
+  beforeScroll: function () {
+    evtStr = `beforeScroll`;
+  },
+  afterScroll: function () {
+    evtStr = `afterScroll`;
+  }
+};
+let options2 = {
+  slidesToShow: 1,
+  showNav: false,
+  responsive: [
+    {
+      breakpoint: 700,
+      slidesToScroll: 2,
+      slidesToShow: 2,
+      showNav: true,
+    },
+    {
+      breakpoint: 1100,
+      slidesToScroll: 4,
+      slidesToShow: 4,
+    },
+  ],
+};
+let options3 = {};
+
 describe(`Carouzel`, function () {
   let carouzelInstance;
   let evt;
-  let c1slides;
-  let c2slides;
-  let c3slides;
 
   beforeAll(function () {
     carouzel1 = ``;
@@ -149,45 +182,187 @@ describe(`Carouzel`, function () {
     expect(carouzelInstance.getLength()).toBe(1);
   });
 
-  it(`Should go to the next slide`, function () {
-    carouzelInstance.goToSlide(`#__carouzel_1`, `0`);
-    carouzelInstance.goToSlide(`#__carouzel_1`, `next`);
+  it(`Should re-init 1st Navigation just to verify single instance`, function () {
+    carouzelInstance.init(`#__carouzel_1`);
     expect(carouzelInstance.getLength()).toBe(1);
   });
-
-  it(`Should go to the previous slide`, function () {
-    carouzelInstance.goToSlide(`#__carouzel_1`, `previous`);
-    expect(carouzelInstance.getLength()).toBe(1);
-  });
-
-  it(`Should go to the valid slide number`, function () {
-    carouzelInstance.goToSlide(`#__carouzel_1`, `10`);
-    expect(carouzelInstance.getLength()).toBe(1);
-  });
-
-  it(`Should go to the last slide when invalid slide number greater than number of slides is provided in count`, function () {
-    carouzelInstance.goToSlide(`#__carouzel_1`, `15`);
-    expect(carouzelInstance.getLength()).toBe(1);
-  });
-
-  it(`Should go to the first slide when invalid slide number less than 1 is provided in count`, function () {
-    carouzelInstance.goToSlide(`#__carouzel_1`, `-1`);
-    expect(carouzelInstance.getLength()).toBe(1);
-  });
-
-  // it(`Should try re-init 2nd Navigation`, function () {
-  //   carouzelInstance.init(`.__amegmen_2`, {
-  //     isRTL: true,
-  //     actOnHover: true,
-  //     shiftColumns: true,
-  //   });
-  //   expect(Object.keys(carouzelInstance.instances || {}).length).toBe(2);
-  // });
 
   it(`Should destroy Non-Existant Navigation`, function () {
     carouzelInstance.destroy(`#__carouzel_0`);
     expect(carouzelInstance.getLength()).toBe(1);
   });
+
+  it(`Should go to the next slide`, function () {
+    carouzelInstance.goToSlide(`#__carouzel_1`, `next`);
+    const elements = document.querySelectorAll(`#__carouzel_1 [data-carouzel-slide]:not(.__carouzel-duplicate)`);
+    let index = -1;
+    for (let i=0; i<elements.length; i++) {
+      if (elements[i].classList.contains(`__carouzel-active`)) {
+        index = i;
+        break;
+      }
+    }
+    expect(index).toBe(1);
+  });
+
+  it(`Should go to the previous slide`, function () {
+    carouzelInstance.goToSlide(`#__carouzel_1`, `previous`);
+    const elements = document.querySelectorAll(`#__carouzel_1 [data-carouzel-slide]:not(.__carouzel-duplicate)`);
+    let index = -1;
+    for (let i=0; i<elements.length; i++) {
+      if (elements[i].classList.contains(`__carouzel-active`)) {
+        index = i;
+        break;
+      }
+    }
+    expect(index).toBe(0);
+  });
+
+  it(`Should go to the valid slide number`, function () {
+    carouzelInstance.goToSlide(`#__carouzel_1`, `10`);
+    const elements = document.querySelectorAll(`#__carouzel_1 [data-carouzel-slide]:not(.__carouzel-duplicate)`);
+    let index = -1;
+    for (let i=0; i<elements.length; i++) {
+      if (elements[i].classList.contains(`__carouzel-active`)) {
+        index = i;
+        break;
+      }
+    }
+    expect(index).toBe(9);
+  });
+
+  it(`Should go to the last slide when invalid slide number greater than number of slides is provided in count`, function () {
+    carouzelInstance.goToSlide(`#__carouzel_1`, `15`);
+    const elements = document.querySelectorAll(`#__carouzel_1 [data-carouzel-slide]:not(.__carouzel-duplicate)`);
+    let index = -1;
+    for (let i=0; i<elements.length; i++) {
+      if (elements[i].classList.contains(`__carouzel-active`)) {
+        index = i;
+        break;
+      }
+    }
+    expect(index).toBe(11);
+  });
+
+  it(`Should go to the first slide when invalid slide number less than 1 is provided in count`, function () {
+    carouzelInstance.goToSlide(`#__carouzel_1`, `-1`);
+    const elements = document.querySelectorAll(`#__carouzel_1 [data-carouzel-slide]:not(.__carouzel-duplicate)`);
+    let index = -1;
+    for (let i=0; i<elements.length; i++) {
+      if (elements[i].classList.contains(`__carouzel-active`)) {
+        index = i;
+        break;
+      }
+    }
+    expect(index).toBe(0);
+  });
+
+  it(`Should not navigate when non-existant slider is operated on`, function () {
+    carouzelInstance.goToSlide(`#__carouzel_0`, `5`);
+    const elements = document.querySelectorAll(`#__carouzel_0 [data-carouzel-slide]:not(.__carouzel-duplicate)`);
+    expect(elements.length).toBe(0);
+  });
+
+  it(`Should trigger click on next button`, function () {
+    carouzelInstance.goToSlide(`#__carouzel_1`, `0`);
+    const nextBtn = document.querySelector(`#__carouzel_1 [data-carouzel-nextarrow]`);
+    nextBtn.click();
+    const elements = document.querySelectorAll(`#__carouzel_1 [data-carouzel-slide]:not(.__carouzel-duplicate)`);
+    let index = -1;
+    for (let i=0; i<elements.length; i++) {
+      if (elements[i].classList.contains(`__carouzel-active`)) {
+        index = i;
+        break;
+      }
+    }
+    expect(index).toBe(1);
+  });
+
+  it(`Should trigger click on prev button`, function () {
+    const prevBtn = document.querySelector(`#__carouzel_1 [data-carouzel-previousarrow]`);
+    prevBtn.click();
+    const elements = document.querySelectorAll(`#__carouzel_1 [data-carouzel-slide]:not(.__carouzel-duplicate)`);
+    let index = -1;
+    for (let i=0; i<elements.length; i++) {
+      if (elements[i].classList.contains(`__carouzel-active`)) {
+        index = i;
+        break;
+      }
+    }
+    expect(index).toBe(0);
+  });
+
+  it(`Should trigger next arrow key down`, function () {
+    carouzelInstance.goToSlide(`#__carouzel_1`, `0`);
+
+    const parentEl = document.querySelector(`#__carouzel_1`);
+    evt = new KeyboardEvent(`keydown`, {
+      key: `arrowright`
+    });
+    parentEl.dispatchEvent(evt);
+
+    const elements = document.querySelectorAll(`#__carouzel_1 [data-carouzel-slide]:not(.__carouzel-duplicate)`);
+    let index = -1;
+    for (let i=0; i<elements.length; i++) {
+      if (elements[i].classList.contains(`__carouzel-active`)) {
+        index = i;
+        break;
+      }
+    }
+    expect(index).toBe(1);
+  });
+
+  it(`Should trigger previous arrow key down`, function () {
+    
+    const parentEl = document.querySelector(`#__carouzel_1`);
+    evt = new KeyboardEvent(`keydown`, {
+      key: `arrowleft`
+    });
+    parentEl.dispatchEvent(evt);
+
+    const elements = document.querySelectorAll(`#__carouzel_1 [data-carouzel-slide]:not(.__carouzel-duplicate)`);
+    let index = -1;
+    for (let i=0; i<elements.length; i++) {
+      if (elements[i].classList.contains(`__carouzel-active`)) {
+        index = i;
+        break;
+      }
+    }
+    expect(index).toBe(0);
+  });
+
+  it(`Should trigger up arrow key down`, function () {
+    
+    const parentEl = document.querySelector(`#__carouzel_1`);
+    evt = new KeyboardEvent(`keydown`, {
+      key: `arrowup`
+    });
+    parentEl.dispatchEvent(evt);
+
+    const elements = document.querySelectorAll(`#__carouzel_1 [data-carouzel-slide]:not(.__carouzel-duplicate)`);
+    let index = -1;
+    for (let i=0; i<elements.length; i++) {
+      if (elements[i].classList.contains(`__carouzel-active`)) {
+        index = i;
+        break;
+      }
+    }
+    expect(index).toBe(0);
+  });
+
+  // it(`Should trigger click on nav dot`, function () {
+  //   const prevBtn = document.querySelector(`#__carouzel_1 [data-carouzel-previousarrow]`);
+  //   prevBtn.click();
+  //   const elements = document.querySelectorAll(`#__carouzel_1 [data-carouzel-slide]:not(.__carouzel-duplicate)`);
+  //   let index = -1;
+  //   for (let i=0; i<elements.length; i++) {
+  //     if (elements[i].classList.contains(`__carouzel-active`)) {
+  //       index = i;
+  //       break;
+  //     }
+  //   }
+  //   expect(index).toBe(0);
+  // });
 
   // it(`Should try focus on 0th Level Navigation`, function () {
   //   evt = document.createEvent(`KeyboardEvent`);
