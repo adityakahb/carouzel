@@ -177,26 +177,53 @@ namespace Carouzel {
   let windowResizeAny: any;
   let hashSlide: HTMLElement | null;
 
+  /*
+   * Easing Functions - inspired from http://gizma.com/easing/
+   * only considering the t value for the range [0, 1] => [0, 1]
+   */
+  const _easingFunctions: ICarouzelEasing = {
+    // no easing, no acceleration
+    linear: (t: number) => t,
+    // accelerating from zero velocity
+    easeInQuad: (t: number) => t * t,
+    // decelerating to zero velocity
+    easeOutQuad: (t: number) => t * (2 - t),
+    // acceleration until halfway, then deceleration
+    easeInOutQuad: (t: number) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t),
+    // accelerating from zero velocity
+    easeInCubic: (t: number) => t * t * t,
+    // decelerating to zero velocity
+    easeOutCubic: (t: number) => --t * t * t + 1,
+    // acceleration until halfway, then deceleration
+    easeInOutCubic: (t: number) =>
+      t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1,
+    // accelerating from zero velocity
+    easeInQuart: (t: number) => t * t * t * t,
+    // decelerating to zero velocity
+    easeOutQuart: (t: number) => 1 - --t * t * t * t,
+    // acceleration until halfway, then deceleration
+    easeInOutQuart: (t: number) =>
+      t < 0.5 ? 8 * t * t * t * t : 1 - 8 * --t * t * t * t,
+    // accelerating from zero velocity
+    easeInQuint: (t: number) => t * t * t * t * t,
+    // decelerating to zero velocity
+    easeOutQuint: (t: number) => 1 + --t * t * t * t * t,
+    // acceleration until halfway, then deceleration
+    easeInOutQuint: (t: number) =>
+      t < 0.5 ? 16 * t * t * t * t * t : 1 + 16 * --t * t * t * t * t,
+    // elastic bounce effect at the beginning
+    easeInElastic: (t: number) => (0.04 - 0.04 / t) * Math.sin(25 * t) + 1,
+    // elastic bounce effect at the end
+    easeOutElastic: (t: number) => ((0.04 * t) / --t) * Math.sin(25 * t),
+    // elastic bounce effect at the beginning and end
+    easeInOutElastic: (t: number) =>
+      (t -= 0.5) < 0
+        ? (0.02 + 0.01 / t) * Math.sin(50 * t)
+        : (0.02 - 0.01 / t) * Math.sin(50 * t) + 1,
+  };
+
   const _animationDirections = [`previous`, `next`];
   const _animationEffects = [`scroll`, `fade`];
-  const _easingEffects = [
-    `linear`,
-    `easeInQuad`,
-    `easeOutQuad`,
-    `easeInOutQuad`,
-    `easeInCubic`,
-    `easeOutCubic`,
-    `easeInOutCubic`,
-    `easeInQuart`,
-    `easeOutQuart`,
-    `easeInOutQuart`,
-    `easeInQuint`,
-    `easeOutQuint`,
-    `easeInOutQuint`,
-    `easeInElastic`,
-    `easeOutElastic`,
-    `easeInOutElastic`,
-  ];
   const _rootSelectorTypeError = `Element(s) with the provided query do(es) not exist`;
   const _optionsParseTypeError = `Unable to parse the options string`;
   const _duplicateBreakpointsTypeError = `Duplicate breakpoints found`;
@@ -204,9 +231,11 @@ namespace Carouzel {
   const _noEffectFoundError = `Animation effect function not found in presets. Try using one from (${_animationEffects.join(
     ', '
   )}). Setting the animation effect to ${_animationEffects[0]}.`;
-  const _noEasingFoundError = `Easing function not found in presets. Try using one from (${_easingEffects.join(
-    ', '
-  )}). Setting the easing function to ${_easingEffects[0]}.`;
+  const _noEasingFoundError = `Easing function not found in presets. Try using one from [${Object.keys(
+    _easingFunctions
+  ).join(', ')}]. Setting the easing function to ${
+    Object.keys(_easingFunctions)[0]
+  }.`;
   const _useCapture = false;
   const _Selectors = {
     arrowN: `[data-carouzel-nextarrow]`,
@@ -258,51 +287,6 @@ namespace Carouzel {
     touchThreshold: 100,
     trackUrlHash: false,
     useTitlesAsDots: false,
-  };
-
-  /*
-   * Easing Functions - inspired from http://gizma.com/easing/
-   * only considering the t value for the range [0, 1] => [0, 1]
-   */
-  const _easingFunctions: ICarouzelEasing = {
-    // no easing, no acceleration
-    linear: (t: number) => t,
-    // accelerating from zero velocity
-    easeInQuad: (t: number) => t * t,
-    // decelerating to zero velocity
-    easeOutQuad: (t: number) => t * (2 - t),
-    // acceleration until halfway, then deceleration
-    easeInOutQuad: (t: number) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t),
-    // accelerating from zero velocity
-    easeInCubic: (t: number) => t * t * t,
-    // decelerating to zero velocity
-    easeOutCubic: (t: number) => --t * t * t + 1,
-    // acceleration until halfway, then deceleration
-    easeInOutCubic: (t: number) =>
-      t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1,
-    // accelerating from zero velocity
-    easeInQuart: (t: number) => t * t * t * t,
-    // decelerating to zero velocity
-    easeOutQuart: (t: number) => 1 - --t * t * t * t,
-    // acceleration until halfway, then deceleration
-    easeInOutQuart: (t: number) =>
-      t < 0.5 ? 8 * t * t * t * t : 1 - 8 * --t * t * t * t,
-    // accelerating from zero velocity
-    easeInQuint: (t: number) => t * t * t * t * t,
-    // decelerating to zero velocity
-    easeOutQuint: (t: number) => 1 + --t * t * t * t * t,
-    // acceleration until halfway, then deceleration
-    easeInOutQuint: (t: number) =>
-      t < 0.5 ? 16 * t * t * t * t * t : 1 + 16 * --t * t * t * t * t,
-    // elastic bounce effect at the beginning
-    easeInElastic: (t: number) => (0.04 - 0.04 / t) * Math.sin(25 * t) + 1,
-    // elastic bounce effect at the end
-    easeOutElastic: (t: number) => ((0.04 * t) / --t) * Math.sin(25 * t),
-    // elastic bounce effect at the beginning and end
-    easeInOutElastic: (t: number) =>
-      (t -= 0.5) < 0
-        ? (0.02 + 0.01 / t) * Math.sin(50 * t)
-        : (0.02 - 0.01 / t) * Math.sin(50 * t) + 1,
   };
 
   /**
@@ -1487,7 +1471,7 @@ namespace Carouzel {
           return settings.timingFunction;
         }
         console.warn(_noEasingFoundError);
-        return _easingEffects[0];
+        return Object.keys(_easingFunctions)[0];
       })(),
       useTitle: settings.useTitlesAsDots,
     };
@@ -1555,17 +1539,6 @@ namespace Carouzel {
     }
     _core._t = <ITimer>{};
     _core._t.total = _core.opts.speed;
-
-    // core.prependSlide = (slideElem: Node) => {
-    //   if (_core.trk) {
-    //     doInsertBefore(_core.trk, slideElem);
-    //   }
-    // };
-    // core.appendSlide = (slideElem: Node) => {
-    //   if (_core.trk) {
-    //     doInsertAfter(_core.trk, slideElem);
-    //   }
-    // };
 
     if (!_core._ds[_core.ci]) {
       _core.ci = settings.startAtIndex = 0;
@@ -1843,6 +1816,18 @@ namespace Carouzel {
         console.error(_rootSelectorTypeError);
       }
     };
+
+    // TODO: FUTURE IMPLEMENTATION
+    // protected prependSlide = (slideElem: Node) => {
+    //   if (_core.trk) {
+    //     doInsertBefore(_core.trk, slideElem);
+    //   }
+    // };
+    // protected appendSlide = (slideElem: Node) => {
+    //   if (_core.trk) {
+    //     doInsertAfter(_core.trk, slideElem);
+    //   }
+    // };
   }
 }
 Carouzel.Root.getInstance().globalInit();

@@ -25,32 +25,62 @@ var Carouzel;
     var isWindowEventAttached = false;
     var windowResizeAny;
     var hashSlide;
+    /*
+     * Easing Functions - inspired from http://gizma.com/easing/
+     * only considering the t value for the range [0, 1] => [0, 1]
+     */
+    var _easingFunctions = {
+        // no easing, no acceleration
+        linear: function (t) { return t; },
+        // accelerating from zero velocity
+        easeInQuad: function (t) { return t * t; },
+        // decelerating to zero velocity
+        easeOutQuad: function (t) { return t * (2 - t); },
+        // acceleration until halfway, then deceleration
+        easeInOutQuad: function (t) { return (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t); },
+        // accelerating from zero velocity
+        easeInCubic: function (t) { return t * t * t; },
+        // decelerating to zero velocity
+        easeOutCubic: function (t) { return --t * t * t + 1; },
+        // acceleration until halfway, then deceleration
+        easeInOutCubic: function (t) {
+            return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+        },
+        // accelerating from zero velocity
+        easeInQuart: function (t) { return t * t * t * t; },
+        // decelerating to zero velocity
+        easeOutQuart: function (t) { return 1 - --t * t * t * t; },
+        // acceleration until halfway, then deceleration
+        easeInOutQuart: function (t) {
+            return t < 0.5 ? 8 * t * t * t * t : 1 - 8 * --t * t * t * t;
+        },
+        // accelerating from zero velocity
+        easeInQuint: function (t) { return t * t * t * t * t; },
+        // decelerating to zero velocity
+        easeOutQuint: function (t) { return 1 + --t * t * t * t * t; },
+        // acceleration until halfway, then deceleration
+        easeInOutQuint: function (t) {
+            return t < 0.5 ? 16 * t * t * t * t * t : 1 + 16 * --t * t * t * t * t;
+        },
+        // elastic bounce effect at the beginning
+        easeInElastic: function (t) { return (0.04 - 0.04 / t) * Math.sin(25 * t) + 1; },
+        // elastic bounce effect at the end
+        easeOutElastic: function (t) { return ((0.04 * t) / --t) * Math.sin(25 * t); },
+        // elastic bounce effect at the beginning and end
+        easeInOutElastic: function (t) {
+            return (t -= 0.5) < 0
+                ? (0.02 + 0.01 / t) * Math.sin(50 * t)
+                : (0.02 - 0.01 / t) * Math.sin(50 * t) + 1;
+        }
+    };
     var _animationDirections = ["previous", "next"];
     var _animationEffects = ["scroll", "fade"];
-    var _easingEffects = [
-        "linear",
-        "easeInQuad",
-        "easeOutQuad",
-        "easeInOutQuad",
-        "easeInCubic",
-        "easeOutCubic",
-        "easeInOutCubic",
-        "easeInQuart",
-        "easeOutQuart",
-        "easeInOutQuart",
-        "easeInQuint",
-        "easeOutQuint",
-        "easeInOutQuint",
-        "easeInElastic",
-        "easeOutElastic",
-        "easeInOutElastic",
-    ];
     var _rootSelectorTypeError = "Element(s) with the provided query do(es) not exist";
     var _optionsParseTypeError = "Unable to parse the options string";
     var _duplicateBreakpointsTypeError = "Duplicate breakpoints found";
     var _breakpointsParseTypeError = "Error parsing breakpoints";
     var _noEffectFoundError = "Animation effect function not found in presets. Try using one from (".concat(_animationEffects.join(', '), "). Setting the animation effect to ").concat(_animationEffects[0], ".");
-    var _noEasingFoundError = "Easing function not found in presets. Try using one from (".concat(_easingEffects.join(', '), "). Setting the easing function to ").concat(_easingEffects[0], ".");
+    var _noEasingFoundError = "Easing function not found in presets. Try using one from [".concat(Object.keys(_easingFunctions).join(', '), "]. Setting the easing function to ").concat(Object.keys(_easingFunctions)[0], ".");
     var _useCapture = false;
     var _Selectors = {
         arrowN: "[data-carouzel-nextarrow]",
@@ -102,54 +132,6 @@ var Carouzel;
         touchThreshold: 100,
         trackUrlHash: false,
         useTitlesAsDots: false
-    };
-    /*
-     * Easing Functions - inspired from http://gizma.com/easing/
-     * only considering the t value for the range [0, 1] => [0, 1]
-     */
-    var _easingFunctions = {
-        // no easing, no acceleration
-        linear: function (t) { return t; },
-        // accelerating from zero velocity
-        easeInQuad: function (t) { return t * t; },
-        // decelerating to zero velocity
-        easeOutQuad: function (t) { return t * (2 - t); },
-        // acceleration until halfway, then deceleration
-        easeInOutQuad: function (t) { return (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t); },
-        // accelerating from zero velocity
-        easeInCubic: function (t) { return t * t * t; },
-        // decelerating to zero velocity
-        easeOutCubic: function (t) { return --t * t * t + 1; },
-        // acceleration until halfway, then deceleration
-        easeInOutCubic: function (t) {
-            return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
-        },
-        // accelerating from zero velocity
-        easeInQuart: function (t) { return t * t * t * t; },
-        // decelerating to zero velocity
-        easeOutQuart: function (t) { return 1 - --t * t * t * t; },
-        // acceleration until halfway, then deceleration
-        easeInOutQuart: function (t) {
-            return t < 0.5 ? 8 * t * t * t * t : 1 - 8 * --t * t * t * t;
-        },
-        // accelerating from zero velocity
-        easeInQuint: function (t) { return t * t * t * t * t; },
-        // decelerating to zero velocity
-        easeOutQuint: function (t) { return 1 + --t * t * t * t * t; },
-        // acceleration until halfway, then deceleration
-        easeInOutQuint: function (t) {
-            return t < 0.5 ? 16 * t * t * t * t * t : 1 + 16 * --t * t * t * t * t;
-        },
-        // elastic bounce effect at the beginning
-        easeInElastic: function (t) { return (0.04 - 0.04 / t) * Math.sin(25 * t) + 1; },
-        // elastic bounce effect at the end
-        easeOutElastic: function (t) { return ((0.04 * t) / --t) * Math.sin(25 * t); },
-        // elastic bounce effect at the beginning and end
-        easeInOutElastic: function (t) {
-            return (t -= 0.5) < 0
-                ? (0.02 + 0.01 / t) * Math.sin(50 * t)
-                : (0.02 - 0.01 / t) * Math.sin(50 * t) + 1;
-        }
     };
     /**
      * Function to trim whitespaces from a string
@@ -1212,7 +1194,7 @@ var Carouzel;
                     return settings.timingFunction;
                 }
                 console.warn(_noEasingFoundError);
-                return _easingEffects[0];
+                return Object.keys(_easingFunctions)[0];
             })(),
             useTitle: settings.useTitlesAsDots
         };
@@ -1276,16 +1258,6 @@ var Carouzel;
         }
         _core._t = {};
         _core._t.total = _core.opts.speed;
-        // core.prependSlide = (slideElem: Node) => {
-        //   if (_core.trk) {
-        //     doInsertBefore(_core.trk, slideElem);
-        //   }
-        // };
-        // core.appendSlide = (slideElem: Node) => {
-        //   if (_core.trk) {
-        //     doInsertAfter(_core.trk, slideElem);
-        //   }
-        // };
         if (!_core._ds[_core.ci]) {
             _core.ci = settings.startAtIndex = 0;
         }
