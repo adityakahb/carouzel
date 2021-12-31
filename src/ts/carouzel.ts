@@ -854,8 +854,13 @@ namespace Carouzel {
    * @param slidenumber - Slide index to which the carouzel should be scrolled to
    *
    */
-  const goToSlide = (core: ICore, slidenumber: number) => {
+  const go2Slide = (core: ICore, slidenumber: number) => {
     if (core.ci !== slidenumber) {
+      if (slidenumber >= core._ds.length) {
+        slidenumber = core._ds.length - 1;
+      } else if (slidenumber < -1) {
+        slidenumber = -1;
+      }
       core.pi = core.ci;
       core.ci = slidenumber * core.bpo._2Scroll;
       if (core._t.id) {
@@ -871,7 +876,7 @@ namespace Carouzel {
    * @param core - Carouzel instance core object
    *
    */
-  const goToPrev = (core: ICore, touchedPixel?: number) => {
+  const go2Prev = (core: ICore, touchedPixel?: number) => {
     core.pi = core.ci;
     core.ci -= core.bpo._2Scroll;
     if (core._t.id) {
@@ -898,7 +903,7 @@ namespace Carouzel {
    * @param core - Carouzel instance core object
    *
    */
-  const goToNext = (core: ICore, touchedPixel?: number) => {
+  const go2Next = (core: ICore, touchedPixel?: number) => {
     core.pi = core.ci;
     core.ci += core.bpo._2Scroll;
     if (core._t.id) {
@@ -931,10 +936,10 @@ namespace Carouzel {
           keyCode = (event as KeyboardEvent).key.toLowerCase();
           switch (keyCode) {
             case `arrowleft`:
-              goToPrev(core, 0);
+              go2Prev(core, 0);
               break;
             case `arrowright`:
-              goToNext(core, 0);
+              go2Next(core, 0);
               break;
             default:
               keyCode = ``;
@@ -990,7 +995,7 @@ namespace Carouzel {
     }
     core.autoT = setInterval(() => {
       if (!core.paused && !core.pauseClk) {
-        goToNext(core, 0);
+        go2Next(core, 0);
       }
     }, core.opts.autoS);
   };
@@ -1006,7 +1011,7 @@ namespace Carouzel {
       core.eHandlers.push(
         eventHandler(core.arrowP, `click`, (event: Event) => {
           event.preventDefault();
-          goToPrev(core, 0);
+          go2Prev(core, 0);
         })
       );
     }
@@ -1014,7 +1019,7 @@ namespace Carouzel {
       core.eHandlers.push(
         eventHandler(core.arrowN, `click`, (event: Event) => {
           event.preventDefault();
-          goToNext(core, 0);
+          go2Next(core, 0);
         })
       );
     }
@@ -1170,26 +1175,26 @@ namespace Carouzel {
               core.opts.effect === _animationEffects[0] &&
               (canFiniteAnimate || core.opts.inf)
             ) {
-              goToPrev(core, posFinal);
+              go2Prev(core, posFinal);
             }
             if (
               core.opts.effect === _animationEffects[1] &&
               (canFiniteAnimate || core.opts.inf)
             ) {
-              goToPrev(core, 1);
+              go2Prev(core, 1);
             }
           } else if (posFinal > threshold) {
             if (
               core.opts.effect === _animationEffects[0] &&
               (canFiniteAnimate || core.opts.inf)
             ) {
-              goToNext(core, posFinal);
+              go2Next(core, posFinal);
             }
             if (
               core.opts.effect === _animationEffects[1] &&
               (canFiniteAnimate || core.opts.inf)
             ) {
-              goToNext(core, 1);
+              go2Next(core, 1);
             }
           } else {
             if (core.opts.effect === _animationEffects[0]) {
@@ -1604,7 +1609,7 @@ namespace Carouzel {
           }
         }
         if (foundSlideIndex !== -1) {
-          goToSlide(_core, foundSlideIndex);
+          go2Slide(_core, foundSlideIndex);
         }
       }
     }
@@ -1814,16 +1819,10 @@ namespace Carouzel {
         for (let i = 0; i < cores.length; i++) {
           if (_animationDirections.indexOf(target) !== -1) {
             target === _animationDirections[0]
-              ? goToPrev(cores[i])
-              : goToNext(cores[i]);
-          } else {
-            try {
-              if (!isNaN(parseInt(target))) {
-                goToSlide(cores[i], parseInt(target) - 1);
-              }
-            } catch (e) {
-              console.error(e);
-            }
+              ? go2Prev(cores[i])
+              : go2Next(cores[i]);
+          } else if (!isNaN(parseInt(target))) {
+            go2Slide(cores[i], parseInt(target) - 1);
           }
         }
       } else {

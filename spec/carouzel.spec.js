@@ -79,6 +79,9 @@ let carouzel3 = ``;
 describe(`Carouzel`, function () {
   let carouzelInstance;
   let evt;
+  let c1slides;
+  let c2slides;
+  let c3slides;
 
   beforeAll(function () {
     carouzel1 = ``;
@@ -147,6 +150,7 @@ describe(`Carouzel`, function () {
   });
 
   it(`Should go to the next slide`, function () {
+    carouzelInstance.goToSlide(`#__carouzel_1`, `0`);
     carouzelInstance.goToSlide(`#__carouzel_1`, `next`);
     expect(carouzelInstance.getLength()).toBe(1);
   });
