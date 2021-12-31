@@ -14,7 +14,7 @@ namespace Carouzel {
     [key: string]: any;
   }
 
-  interface ICarouzelTimer {
+  interface ITimer {
     id: any;
     elapsed: number;
     nextX: number;
@@ -26,7 +26,7 @@ namespace Carouzel {
     total: number;
   }
 
-  interface ICarouzelCoreBreakpoint {
+  interface ICoreBreakpoint {
     _2Scroll: number;
     _2Show: number;
     _arrows: boolean;
@@ -41,7 +41,7 @@ namespace Carouzel {
     swipe: boolean;
   }
 
-  interface ICarouzelCoreSettings {
+  interface ICoreSettings {
     _2Scroll: number;
     _2Show: number;
     _arrows: boolean;
@@ -65,7 +65,7 @@ namespace Carouzel {
     inf: boolean;
     kb: boolean;
     pauseHov: boolean;
-    res?: ICarouzelCoreBreakpoint[];
+    res?: ICoreBreakpoint[];
     rtl: boolean;
     speed: number;
     startAt: number;
@@ -75,7 +75,7 @@ namespace Carouzel {
     useTitle: boolean;
   }
 
-  interface ICarouzelBreakpoint {
+  interface IBreakpoint {
     breakpoint: number | string;
     centerBetween: number;
     hasTouchSwipe: boolean;
@@ -86,7 +86,7 @@ namespace Carouzel {
     spaceBetween: number;
   }
 
-  interface ICarouzelSettings {
+  interface ISettings {
     activeClass: string;
     afterInit?: Function;
     afterScroll?: Function;
@@ -110,7 +110,7 @@ namespace Carouzel {
     isInfinite: boolean;
     isRTL: boolean;
     pauseOnHover: boolean;
-    responsive?: ICarouzelBreakpoint[];
+    responsive?: IBreakpoint[];
     showArrows: boolean;
     showNavigation: boolean;
     slidesToScroll: number;
@@ -132,42 +132,28 @@ namespace Carouzel {
     [key: number]: number;
   }
 
-  interface ICoreGlobal {
-    appendSlide: Function;
-    goToNext: Function;
-    goToPrevious: Function;
-    goToSlide: Function;
-    prependSlide: Function;
-    root: HTMLElement | null;
-  }
-
   interface ICore {
-    _2Next: Function;
-    _2Prev: Function;
-    _2Slide: Function;
     _as: NodeListOf<Element>;
     _ds: NodeListOf<Element>;
-    _t: ICarouzelTimer;
+    _t: ITimer;
     arrowN: HTMLElement | null;
     arrowP: HTMLElement | null;
-    aSlide: Function;
     autoT: any;
-    bpall: ICarouzelCoreBreakpoint[];
+    bpall: ICoreBreakpoint[];
     bPause: HTMLElement | null;
     bPlay: HTMLElement | null;
-    bpo_old: ICarouzelCoreBreakpoint;
-    bpo: ICarouzelCoreBreakpoint;
+    bpo_old: ICoreBreakpoint;
+    bpo: ICoreBreakpoint;
     ci: number;
     controlsW: HTMLElement | null;
     ct: number;
     eHandlers: any[];
     nav: HTMLElement | null;
     navW: HTMLElement | null;
-    opts: ICarouzelCoreSettings;
+    opts: ICoreSettings;
     pauseClk: boolean;
     paused: boolean;
     pi: number;
-    pSlide: Function;
     pts: IIndexHandler;
     root: HTMLElement | null;
     sLen: number;
@@ -181,20 +167,17 @@ namespace Carouzel {
   interface ICoreInstance {
     [key: string]: ICore;
   }
-  interface ICoreGlobalInstance {
-    [key: string]: ICoreGlobal;
-  }
 
   interface ICarouzelEasing {
     [key: string]: Function;
   }
 
   let allLocalInstances: ICoreInstance = {};
-  let allGlobalInstances: ICoreGlobalInstance = {};
   let isWindowEventAttached = false;
   let windowResizeAny: any;
   let hashSlide: HTMLElement | null;
 
+  const _animationDirections = [`previous`, `next`];
   const _animationEffects = [`scroll`, `fade`];
   const _easingEffects = [
     `linear`,
@@ -244,7 +227,7 @@ namespace Carouzel {
     trkO: `[data-carouzel-trackOuter]`,
     trkW: `[data-carouzel-trackWrapper]`,
   };
-  const _Defaults: ICarouzelSettings = {
+  const _Defaults: ISettings = {
     activeClass: `__carouzel-active`,
     animationEffect: _animationEffects[0],
     animationSpeed: 400,
@@ -429,14 +412,8 @@ namespace Carouzel {
    * Function to return the number of Instances created
    *
    */
-  const getInstancesLen = () => {
-    let instanceCount = 0;
-    for (let e in allGlobalInstances) {
-      if (allGlobalInstances.hasOwnProperty(e)) {
-        instanceCount++;
-      }
-    }
-    return instanceCount;
+  const getCoreInstancesLength = () => {
+    return Object.keys(allLocalInstances).length;
   };
 
   /**
@@ -544,7 +521,8 @@ namespace Carouzel {
    * @param core - Carouzel instance core object
    *
    */
-  const animateTrack = (core: ICore, touchedPixel = 0) => {
+  const animateTrack = (core: ICore, touchedPixel?: number) => {
+    touchedPixel = touchedPixel ? touchedPixel : 0;
     if (typeof core.opts.bFn === `function`) {
       core.opts.bFn();
     }
@@ -608,7 +586,7 @@ namespace Carouzel {
       if (core.ci > core.pi) {
         core._t.position =
           core._t.prevX +
-          touchedPixel +
+          (touchedPixel ? touchedPixel : 0) +
           core._t.progress * (core._t.nextX - core._t.prevX);
         if (core._t.position > core._t.nextX) {
           core._t.position = core._t.nextX;
@@ -617,7 +595,7 @@ namespace Carouzel {
       if (core.ci < core.pi) {
         core._t.position =
           core._t.prevX +
-          touchedPixel -
+          (touchedPixel ? touchedPixel : 0) -
           core._t.progress * (core._t.prevX - core._t.nextX);
         if (core._t.position < core.pts[core.ci]) {
           core._t.position = core.pts[core.ci];
@@ -740,7 +718,7 @@ namespace Carouzel {
    */
   const manageDuplicates = (
     track: HTMLElement,
-    bpo: ICarouzelCoreBreakpoint,
+    bpo: ICoreBreakpoint,
     duplicateClass: string
   ) => {
     let duplicates = track.querySelectorAll(`.` + duplicateClass);
@@ -865,7 +843,7 @@ namespace Carouzel {
           (i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr) +
           bpoptions.gutr;
       }
-      animateTrack(core, 0);
+      animateTrack(core);
     }
   };
 
@@ -883,7 +861,7 @@ namespace Carouzel {
       if (core._t.id) {
         cancelAnimationFrame(core._t.id);
       }
-      animateTrack(core, 0);
+      animateTrack(core);
     }
   };
 
@@ -893,7 +871,7 @@ namespace Carouzel {
    * @param core - Carouzel instance core object
    *
    */
-  const goToPrev = (core: ICore, touchedPixel: number) => {
+  const goToPrev = (core: ICore, touchedPixel?: number) => {
     core.pi = core.ci;
     core.ci -= core.bpo._2Scroll;
     if (core._t.id) {
@@ -920,7 +898,7 @@ namespace Carouzel {
    * @param core - Carouzel instance core object
    *
    */
-  const goToNext = (core: ICore, touchedPixel: number) => {
+  const goToNext = (core: ICore, touchedPixel?: number) => {
     core.pi = core.ci;
     core.ci += core.bpo._2Scroll;
     if (core._t.id) {
@@ -1352,7 +1330,7 @@ namespace Carouzel {
               } else {
                 core.ci = j * core.bpall[i]._2Scroll;
               }
-              animateTrack(core, 0);
+              animateTrack(core);
             }
           )
         );
@@ -1367,7 +1345,7 @@ namespace Carouzel {
    * @param breakpoints - Breakpoint settings array
    *
    */
-  const validateBreakpoints = (breakpoints: ICarouzelCoreBreakpoint[]) => {
+  const validateBreakpoints = (breakpoints: ICoreBreakpoint[]) => {
     try {
       let tempArr = [];
       let len = breakpoints.length;
@@ -1401,8 +1379,8 @@ namespace Carouzel {
    * @param settings - Core settings object containing merge of default and custom settings
    *
    */
-  const updateBreakpoints = (settings: ICarouzelCoreSettings) => {
-    const defaultBreakpoint: ICarouzelCoreBreakpoint = {
+  const updateBreakpoints = (settings: ICoreSettings) => {
+    const defaultBreakpoint: ICoreBreakpoint = {
       _2Scroll: settings._2Scroll,
       _2Show: settings._2Show,
       _arrows: settings._arrows,
@@ -1428,8 +1406,8 @@ namespace Carouzel {
     if (updatedArr.val) {
       let bpArr = [updatedArr.bp[0]];
       let bpLen = 1;
-      let bp1: ICarouzelCoreBreakpoint;
-      let bp2: ICarouzelCoreBreakpoint;
+      let bp1: ICoreBreakpoint;
+      let bp2: ICoreBreakpoint;
       while (bpLen < updatedArr.bp.length) {
         bp1 = bpArr[bpLen - 1];
         bp2 = { ...bp1, ...updatedArr.bp[bpLen] };
@@ -1468,8 +1446,8 @@ namespace Carouzel {
    * @param settings - Settings object containing merge of default and custom settings
    *
    */
-  const mapSettings = (settings: ICarouzelSettings) => {
-    let settingsobj: ICarouzelCoreSettings = {
+  const mapSettings = (settings: ISettings) => {
+    let settingsobj: ICoreSettings = {
       _2Scroll: settings.slidesToScroll,
       _2Show: settings.slidesToShow,
       _arrows: settings.showArrows,
@@ -1516,7 +1494,7 @@ namespace Carouzel {
 
     if (settings.responsive && settings.responsive.length > 0) {
       for (let i = 0; i < settings.responsive.length; i++) {
-        let obj: ICarouzelCoreBreakpoint = {
+        let obj: ICoreBreakpoint = {
           _2Scroll: settings.responsive[i].slidesToScroll,
           _2Show: settings.responsive[i].slidesToShow,
           _arrows: settings.responsive[i].showArrows,
@@ -1545,17 +1523,13 @@ namespace Carouzel {
    * @param core - Carouzel instance core object
    *
    */
-  const init = (
-    core: ICoreGlobal,
-    root: HTMLElement,
-    settings: ICarouzelSettings
-  ) => {
+  const init = (root: HTMLElement, settings: ISettings) => {
     if (typeof settings.beforeInit === `function`) {
       settings.beforeInit();
     }
     // let _core: ICore = { ...core };
     let _core = <ICore>{};
-    _core.root = core.root = root;
+    _core.root = root;
     _core.opts = mapSettings(settings);
 
     _core._ds = root.querySelectorAll(`${_Selectors.slide}`);
@@ -1575,39 +1549,23 @@ namespace Carouzel {
     _core.trkO = root.querySelector(`${_Selectors.trkO}`);
     _core.trkW = root.querySelector(`${_Selectors.trkW}`);
     _core.opts.rtl = false;
-    _core._2Next = core.goToNext;
-    _core._2Prev = core.goToPrevious;
-    _core._2Slide = core.goToSlide;
-    _core.aSlide = core.appendSlide;
-    _core.pSlide = core.prependSlide;
 
     if (_core.root.hasAttribute(_Selectors.rtl.slice(1, -1))) {
       _core.opts.rtl = true;
     }
-    _core._t = <ICarouzelTimer>{};
+    _core._t = <ITimer>{};
     _core._t.total = _core.opts.speed;
 
-    core.goToNext = () => {
-      goToNext(_core, 0);
-    };
-    core.goToPrevious = () => {
-      goToPrev(_core, 0);
-    };
-    core.goToSlide = (slidenumber: number) => {
-      if (!isNaN(slidenumber)) {
-        goToSlide(_core, slidenumber - 1);
-      }
-    };
-    core.prependSlide = (slideElem: Node) => {
-      if (_core.trk) {
-        doInsertBefore(_core.trk, slideElem);
-      }
-    };
-    core.appendSlide = (slideElem: Node) => {
-      if (_core.trk) {
-        doInsertAfter(_core.trk, slideElem);
-      }
-    };
+    // core.prependSlide = (slideElem: Node) => {
+    //   if (_core.trk) {
+    //     doInsertBefore(_core.trk, slideElem);
+    //   }
+    // };
+    // core.appendSlide = (slideElem: Node) => {
+    //   if (_core.trk) {
+    //     doInsertAfter(_core.trk, slideElem);
+    //   }
+    // };
 
     if (!_core._ds[_core.ci]) {
       _core.ci = settings.startAtIndex = 0;
@@ -1626,7 +1584,7 @@ namespace Carouzel {
       applyLayout(_core, _core.opts.rtl);
     }
 
-    addClass(core.root as Element, _core.opts.activeCls);
+    addClass(_core.root as HTMLElement, _core.opts.activeCls);
     if (typeof settings.afterInit === `function`) {
       settings.afterInit();
     }
@@ -1636,7 +1594,7 @@ namespace Carouzel {
         windowHash = windowHash.slice(1, windowHash.length);
       }
       if ((windowHash || '').length > 0) {
-        const thisSlides = core.root.querySelectorAll(`${_Selectors.slide}`);
+        const thisSlides = _core.root.querySelectorAll(`${_Selectors.slide}`);
         let foundSlideIndex: number = -1;
         for (let s = 0; s < thisSlides.length; s++) {
           if (thisSlides[s].getAttribute(`id`) === windowHash) {
@@ -1645,16 +1603,16 @@ namespace Carouzel {
           }
         }
         if (foundSlideIndex !== -1) {
-          core.goToSlide(foundSlideIndex);
+          goToSlide(_core, foundSlideIndex);
         }
       }
     }
-    return { global: core, local: _core };
+    return _core;
   };
 
-  const destroy = (thisid: string) => {
-    let allElems = document?.querySelectorAll(`#${thisid} *`);
-    let core = allLocalInstances[thisid];
+  const destroy = (core: ICore) => {
+    const id = core.root?.getAttribute('id');
+    const allElems = (core.root as HTMLElement).querySelectorAll(`*`);
     for (let i = 0; i < allElems.length; i++) {
       removeEventListeners(core, allElems[i]);
       if (core.trk && hasClass(allElems[i] as Element, core.opts.dupCls)) {
@@ -1673,7 +1631,9 @@ namespace Carouzel {
       core.root as HTMLElement,
       `${core.opts.activeCls} ${core.opts.editCls} ${core.opts.disableCls} ${core.opts.dupCls}`
     );
-    delete allLocalInstances[thisid];
+    if (id) {
+      delete allLocalInstances[id];
+    }
   };
 
   /**
@@ -1686,28 +1646,9 @@ namespace Carouzel {
    * Class for every Carouzel instance.
    *
    */
-  class Core implements ICoreGlobal {
-    public goToNext: Function;
-    public goToPrevious: Function;
-    public goToSlide: Function;
-    public root: HTMLElement | null;
-    public appendSlide: Function;
-    public prependSlide: Function;
-    constructor(
-      thisid: string,
-      root: HTMLElement,
-      options?: ICarouzelSettings
-    ) {
-      // let initObj = init(this.core, root, { ..._Defaults, ...options });
-      let initObj = init(<ICoreGlobal>{}, root, { ..._Defaults, ...options });
-      // this.core = initObj.global;
-      allLocalInstances[thisid] = initObj.local;
-      this.goToNext = initObj.global.goToNext;
-      this.goToPrevious = initObj.global.goToPrevious;
-      this.goToSlide = initObj.global.goToSlide;
-      this.appendSlide = initObj.global.appendSlide;
-      this.prependSlide = initObj.global.prependSlide;
-      this.root = root;
+  class Core {
+    constructor(thisid: string, root: HTMLElement, options?: ISettings) {
+      allLocalInstances[thisid] = init(root, { ..._Defaults, ...options });
     }
   }
 
@@ -1744,29 +1685,54 @@ namespace Carouzel {
     }
 
     /**
+     * Function to get the Carouzel based on the query string provided.
+     *
+     * @param query - The CSS selector for which the Carouzel needs to be initialized.
+     *
+     * @returns an array of all available core instances on page
+     */
+    protected getCores = (query: string) => {
+      const roots = document?.querySelectorAll(query);
+      const rootsLen = roots.length;
+      let tempArr = <IRoot>[];
+      if (rootsLen > 0) {
+        for (let i = 0; i < rootsLen; i++) {
+          const id = roots[i].getAttribute(`id`);
+          if (id && allLocalInstances[id]) {
+            tempArr.push(allLocalInstances[id]);
+          }
+        }
+      }
+      return tempArr;
+    };
+
+    /**
+     * Function to return count of all available carouzel objects
+     *
+     * @returns count of all available carouzel objects
+     *
+     */
+    protected totalCores = () => getCoreInstancesLength();
+
+    /**
      * Function to initialize the Carouzel plugin for provided query strings.
      *
      * @param query - The CSS selector for which the Carouzel needs to be initialized.
      * @param options - The optional object to customize every Carouzel instance.
      *
      */
-    public init = (query: string, options?: ICarouzelSettings) => {
-      const roots = document?.querySelectorAll(query);
-      const rootsLen = roots.length;
-      let instanceLength = 0;
+    public init = (query: string, options?: ISettings) => {
+      const elements = document?.querySelectorAll(query);
+      const elementsLength = elements.length;
+      const instanceLength = getCoreInstancesLength();
 
-      for (let i in allGlobalInstances) {
-        if (allGlobalInstances.hasOwnProperty(i)) {
-          instanceLength++;
-        }
-      }
-      if (rootsLen > 0) {
-        for (let i = 0; i < rootsLen; i++) {
-          const id = roots[i].getAttribute(`id`);
+      if (elementsLength > 0) {
+        for (let i = 0; i < elementsLength; i++) {
+          const id = elements[i].getAttribute(`id`);
           let isElementPresent = false;
           if (id) {
             for (let j = 0; j < instanceLength; j++) {
-              if (allGlobalInstances[id]) {
+              if (allLocalInstances[id]) {
                 isElementPresent = true;
                 break;
               }
@@ -1776,7 +1742,7 @@ namespace Carouzel {
           if (!isElementPresent) {
             let newOptions;
             let autoDataAttr =
-              (roots[i] as HTMLElement).getAttribute(
+              (elements[i] as HTMLElement).getAttribute(
                 _Selectors.rootAuto.slice(1, -1)
               ) || ``;
             if (autoDataAttr) {
@@ -1792,11 +1758,7 @@ namespace Carouzel {
               newOptions = options;
             }
             if (id) {
-              allGlobalInstances[id] = new Core(
-                id,
-                roots[i] as HTMLElement,
-                newOptions
-              );
+              new Core(id, elements[i] as HTMLElement, newOptions);
             } else {
               const thisid = id
                 ? id
@@ -1805,16 +1767,12 @@ namespace Carouzel {
                   new Date().getTime() +
                   `_root_` +
                   (i + 1);
-              roots[i].setAttribute(`id`, thisid);
-              allGlobalInstances[thisid] = new Core(
-                thisid,
-                roots[i] as HTMLElement,
-                newOptions
-              );
+              elements[i].setAttribute(`id`, thisid);
+              new Core(thisid, elements[i] as HTMLElement, newOptions);
             }
           }
         }
-        if (getInstancesLen() > 0 && !isWindowEventAttached) {
+        if (getCoreInstancesLength() > 0 && !isWindowEventAttached) {
           isWindowEventAttached = true;
           window?.addEventListener(`resize`, winResizeFn, false);
         }
@@ -1835,51 +1793,49 @@ namespace Carouzel {
     };
 
     /**
-     * Function to get the Carouzel based on the query string provided.
+     * Function to animate to a certain slide based on a provided direction or number
      *
-     * @param query - The CSS selector for which the Carouzel needs to be initialized.
+     * @param query - The CSS selector for which the Carouzels need to be animated
+     * @param target - Either the direction `previous` or `next`, or the slide index
      *
      */
-    protected getRoots = (query: string) => {
-      const roots = document?.querySelectorAll(query);
-      const rootsLen = roots.length;
-      let tempArr = <IRoot>[];
-      if (rootsLen > 0) {
-        for (let i = 0; i < rootsLen; i++) {
-          const id = roots[i].getAttribute(`id`);
-          if (id && allGlobalInstances[id]) {
-            tempArr.push(allGlobalInstances[id]);
+    protected goToSlide = (query: string, target: string) => {
+      const cores = this.getCores(query);
+      if (cores.length > 0) {
+        for (let i = 0; i < cores.length; i++) {
+          if (_animationDirections.indexOf(target) !== -1) {
+            target === _animationDirections[0]
+              ? goToPrev(cores[i])
+              : goToNext(cores[i]);
+          } else {
+            try {
+              if (!isNaN(parseInt(target))) {
+                goToSlide(cores[i], parseInt(target) - 1);
+              }
+            } catch (e) {
+              console.error(e);
+            }
           }
         }
+      } else {
+        // throw new TypeError(_rootSelectorTypeError);
+        console.error(_rootSelectorTypeError);
       }
-      return tempArr;
     };
-
-    /**
-     * Function to return count of all available carouzel objects
-     *
-     * @returns count of all available carouzel objects
-     *
-     */
-    protected getCount = () => Object.keys(allGlobalInstances).length;
 
     /**
      * Function to destroy the Carouzel plugin for provided query strings.
      *
-     * @param query - The CSS selector for which the Carouzel needs to be initialized.
+     * @param query - The CSS selector for which the Carouzel needs to be destroyed.
      *
      */
     protected destroy = (query: string) => {
-      const arr = this.getRoots(query);
-      if (arr.length > 0) {
-        for (let i = 0; i < arr.length; i++) {
-          const id = (arr[i] as ICoreGlobal).root?.getAttribute(`id`);
-          if (id && allGlobalInstances[id]) {
-            destroy(id);
-            delete allGlobalInstances[id];
-          }
+      const cores = this.getCores(query);
+      if (cores.length > 0) {
+        for (let i = 0; i < cores.length; i++) {
+          destroy(cores[i]);
         }
-        if (getInstancesLen() === 0) {
+        if (getCoreInstancesLength() === 0) {
           window?.removeEventListener(`resize`, winResizeFn, false);
         }
       } else {

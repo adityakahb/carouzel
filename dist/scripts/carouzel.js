@@ -22,10 +22,10 @@ var Carouzel;
 (function (Carouzel) {
     "use strict";
     var allLocalInstances = {};
-    var allGlobalInstances = {};
     var isWindowEventAttached = false;
     var windowResizeAny;
     var hashSlide;
+    var _animationDirections = ["previous", "next"];
     var _animationEffects = ["scroll", "fade"];
     var _easingEffects = [
         "linear",
@@ -251,14 +251,8 @@ var Carouzel;
      * Function to return the number of Instances created
      *
      */
-    var getInstancesLen = function () {
-        var instanceCount = 0;
-        for (var e in allGlobalInstances) {
-            if (allGlobalInstances.hasOwnProperty(e)) {
-                instanceCount++;
-            }
-        }
-        return instanceCount;
+    var getCoreInstancesLength = function () {
+        return Object.keys(allLocalInstances).length;
     };
     /**
      * Function to remove all local events assigned to the navigation elements.
@@ -352,7 +346,7 @@ var Carouzel;
      *
      */
     var animateTrack = function (core, touchedPixel) {
-        if (touchedPixel === void 0) { touchedPixel = 0; }
+        touchedPixel = touchedPixel ? touchedPixel : 0;
         if (typeof core.opts.bFn === "function") {
             core.opts.bFn();
         }
@@ -410,7 +404,7 @@ var Carouzel;
             if (core.ci > core.pi) {
                 core._t.position =
                     core._t.prevX +
-                        touchedPixel +
+                        (touchedPixel ? touchedPixel : 0) +
                         core._t.progress * (core._t.nextX - core._t.prevX);
                 if (core._t.position > core._t.nextX) {
                     core._t.position = core._t.nextX;
@@ -419,7 +413,7 @@ var Carouzel;
             if (core.ci < core.pi) {
                 core._t.position =
                     core._t.prevX +
-                        touchedPixel -
+                        (touchedPixel ? touchedPixel : 0) -
                         core._t.progress * (core._t.prevX - core._t.nextX);
                 if (core._t.position < core.pts[core.ci]) {
                     core._t.position = core.pts[core.ci];
@@ -649,7 +643,7 @@ var Carouzel;
                     (i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr) +
                         bpoptions.gutr;
             }
-            animateTrack(core, 0);
+            animateTrack(core);
         }
     };
     /**
@@ -666,7 +660,7 @@ var Carouzel;
             if (core._t.id) {
                 cancelAnimationFrame(core._t.id);
             }
-            animateTrack(core, 0);
+            animateTrack(core);
         }
     };
     /**
@@ -1060,7 +1054,7 @@ var Carouzel;
                     else {
                         core.ci = j * core.bpall[i]._2Scroll;
                     }
-                    animateTrack(core, 0);
+                    animateTrack(core);
                 }));
                 core.bpall[i].dots.push(navBtns[j]);
             };
@@ -1251,14 +1245,14 @@ var Carouzel;
      * @param core - Carouzel instance core object
      *
      */
-    var init = function (core, root, settings) {
+    var init = function (root, settings) {
         var _a;
         if (typeof settings.beforeInit === "function") {
             settings.beforeInit();
         }
         // let _core: ICore = { ...core };
         var _core = {};
-        _core.root = core.root = root;
+        _core.root = root;
         _core.opts = mapSettings(settings);
         _core._ds = root.querySelectorAll("".concat(_Selectors.slide));
         _core.arrowN = root.querySelector("".concat(_Selectors.arrowN));
@@ -1277,37 +1271,21 @@ var Carouzel;
         _core.trkO = root.querySelector("".concat(_Selectors.trkO));
         _core.trkW = root.querySelector("".concat(_Selectors.trkW));
         _core.opts.rtl = false;
-        _core._2Next = core.goToNext;
-        _core._2Prev = core.goToPrevious;
-        _core._2Slide = core.goToSlide;
-        _core.aSlide = core.appendSlide;
-        _core.pSlide = core.prependSlide;
         if (_core.root.hasAttribute(_Selectors.rtl.slice(1, -1))) {
             _core.opts.rtl = true;
         }
         _core._t = {};
         _core._t.total = _core.opts.speed;
-        core.goToNext = function () {
-            goToNext(_core, 0);
-        };
-        core.goToPrevious = function () {
-            goToPrev(_core, 0);
-        };
-        core.goToSlide = function (slidenumber) {
-            if (!isNaN(slidenumber)) {
-                goToSlide(_core, slidenumber - 1);
-            }
-        };
-        core.prependSlide = function (slideElem) {
-            if (_core.trk) {
-                doInsertBefore(_core.trk, slideElem);
-            }
-        };
-        core.appendSlide = function (slideElem) {
-            if (_core.trk) {
-                doInsertAfter(_core.trk, slideElem);
-            }
-        };
+        // core.prependSlide = (slideElem: Node) => {
+        //   if (_core.trk) {
+        //     doInsertBefore(_core.trk, slideElem);
+        //   }
+        // };
+        // core.appendSlide = (slideElem: Node) => {
+        //   if (_core.trk) {
+        //     doInsertAfter(_core.trk, slideElem);
+        //   }
+        // };
         if (!_core._ds[_core.ci]) {
             _core.ci = settings.startAtIndex = 0;
         }
@@ -1323,7 +1301,7 @@ var Carouzel;
             toggleTouchEvents(_core);
             applyLayout(_core, _core.opts.rtl);
         }
-        addClass(core.root, _core.opts.activeCls);
+        addClass(_core.root, _core.opts.activeCls);
         if (typeof settings.afterInit === "function") {
             settings.afterInit();
         }
@@ -1333,7 +1311,7 @@ var Carouzel;
                 windowHash = windowHash.slice(1, windowHash.length);
             }
             if ((windowHash || '').length > 0) {
-                var thisSlides = core.root.querySelectorAll("".concat(_Selectors.slide));
+                var thisSlides = _core.root.querySelectorAll("".concat(_Selectors.slide));
                 var foundSlideIndex = -1;
                 for (var s = 0; s < thisSlides.length; s++) {
                     if (thisSlides[s].getAttribute("id") === windowHash) {
@@ -1342,15 +1320,16 @@ var Carouzel;
                     }
                 }
                 if (foundSlideIndex !== -1) {
-                    core.goToSlide(foundSlideIndex);
+                    goToSlide(_core, foundSlideIndex);
                 }
             }
         }
-        return { global: core, local: _core };
+        return _core;
     };
-    var destroy = function (thisid) {
-        var allElems = document === null || document === void 0 ? void 0 : document.querySelectorAll("#".concat(thisid, " *"));
-        var core = allLocalInstances[thisid];
+    var destroy = function (core) {
+        var _a;
+        var id = (_a = core.root) === null || _a === void 0 ? void 0 : _a.getAttribute('id');
+        var allElems = core.root.querySelectorAll("*");
         for (var i = 0; i < allElems.length; i++) {
             removeEventListeners(core, allElems[i]);
             if (core.trk && hasClass(allElems[i], core.opts.dupCls)) {
@@ -1363,7 +1342,9 @@ var Carouzel;
             removeClass(allElems[i], "".concat(core.opts.activeCls, " ").concat(core.opts.editCls, " ").concat(core.opts.disableCls, " ").concat(core.opts.dupCls));
         }
         removeClass(core.root, "".concat(core.opts.activeCls, " ").concat(core.opts.editCls, " ").concat(core.opts.disableCls, " ").concat(core.opts.dupCls));
-        delete allLocalInstances[thisid];
+        if (id) {
+            delete allLocalInstances[id];
+        }
     };
     /**
      *  ██████  ██████  ██████  ███████
@@ -1377,16 +1358,7 @@ var Carouzel;
      */
     var Core = /** @class */ (function () {
         function Core(thisid, root, options) {
-            // let initObj = init(this.core, root, { ..._Defaults, ...options });
-            var initObj = init({}, root, __assign(__assign({}, _Defaults), options));
-            // this.core = initObj.global;
-            allLocalInstances[thisid] = initObj.local;
-            this.goToNext = initObj.global.goToNext;
-            this.goToPrevious = initObj.global.goToPrevious;
-            this.goToSlide = initObj.global.goToSlide;
-            this.appendSlide = initObj.global.appendSlide;
-            this.prependSlide = initObj.global.prependSlide;
-            this.root = root;
+            allLocalInstances[thisid] = init(root, __assign(__assign({}, _Defaults), options));
         }
         return Core;
     }());
@@ -1408,6 +1380,34 @@ var Carouzel;
         function Root() {
             var _this = this;
             /**
+             * Function to get the Carouzel based on the query string provided.
+             *
+             * @param query - The CSS selector for which the Carouzel needs to be initialized.
+             *
+             * @returns an array of all available core instances on page
+             */
+            this.getCores = function (query) {
+                var roots = document === null || document === void 0 ? void 0 : document.querySelectorAll(query);
+                var rootsLen = roots.length;
+                var tempArr = [];
+                if (rootsLen > 0) {
+                    for (var i = 0; i < rootsLen; i++) {
+                        var id = roots[i].getAttribute("id");
+                        if (id && allLocalInstances[id]) {
+                            tempArr.push(allLocalInstances[id]);
+                        }
+                    }
+                }
+                return tempArr;
+            };
+            /**
+             * Function to return count of all available carouzel objects
+             *
+             * @returns count of all available carouzel objects
+             *
+             */
+            this.totalCores = function () { return getCoreInstancesLength(); };
+            /**
              * Function to initialize the Carouzel plugin for provided query strings.
              *
              * @param query - The CSS selector for which the Carouzel needs to be initialized.
@@ -1415,21 +1415,16 @@ var Carouzel;
              *
              */
             this.init = function (query, options) {
-                var roots = document === null || document === void 0 ? void 0 : document.querySelectorAll(query);
-                var rootsLen = roots.length;
-                var instanceLength = 0;
-                for (var i in allGlobalInstances) {
-                    if (allGlobalInstances.hasOwnProperty(i)) {
-                        instanceLength++;
-                    }
-                }
-                if (rootsLen > 0) {
-                    for (var i = 0; i < rootsLen; i++) {
-                        var id = roots[i].getAttribute("id");
+                var elements = document === null || document === void 0 ? void 0 : document.querySelectorAll(query);
+                var elementsLength = elements.length;
+                var instanceLength = getCoreInstancesLength();
+                if (elementsLength > 0) {
+                    for (var i = 0; i < elementsLength; i++) {
+                        var id = elements[i].getAttribute("id");
                         var isElementPresent = false;
                         if (id) {
                             for (var j = 0; j < instanceLength; j++) {
-                                if (allGlobalInstances[id]) {
+                                if (allLocalInstances[id]) {
                                     isElementPresent = true;
                                     break;
                                 }
@@ -1437,7 +1432,7 @@ var Carouzel;
                         }
                         if (!isElementPresent) {
                             var newOptions = void 0;
-                            var autoDataAttr = roots[i].getAttribute(_Selectors.rootAuto.slice(1, -1)) || "";
+                            var autoDataAttr = elements[i].getAttribute(_Selectors.rootAuto.slice(1, -1)) || "";
                             if (autoDataAttr) {
                                 try {
                                     newOptions = JSON.parse(stringTrim(autoDataAttr).replace(/'/g, "\""));
@@ -1451,7 +1446,7 @@ var Carouzel;
                                 newOptions = options;
                             }
                             if (id) {
-                                allGlobalInstances[id] = new Core(id, roots[i], newOptions);
+                                new Core(id, elements[i], newOptions);
                             }
                             else {
                                 var thisid = id
@@ -1461,12 +1456,12 @@ var Carouzel;
                                         new Date().getTime() +
                                         "_root_" +
                                         (i + 1);
-                                roots[i].setAttribute("id", thisid);
-                                allGlobalInstances[thisid] = new Core(thisid, roots[i], newOptions);
+                                elements[i].setAttribute("id", thisid);
+                                new Core(thisid, elements[i], newOptions);
                             }
                         }
                     }
-                    if (getInstancesLen() > 0 && !isWindowEventAttached) {
+                    if (getCoreInstancesLength() > 0 && !isWindowEventAttached) {
                         isWindowEventAttached = true;
                         window === null || window === void 0 ? void 0 : window.addEventListener("resize", winResizeFn, false);
                     }
@@ -1486,50 +1481,51 @@ var Carouzel;
                 _this.init(_Selectors.rootAuto);
             };
             /**
-             * Function to get the Carouzel based on the query string provided.
+             * Function to animate to a certain slide based on a provided direction or number
              *
-             * @param query - The CSS selector for which the Carouzel needs to be initialized.
+             * @param query - The CSS selector for which the Carouzels need to be animated
+             * @param target - Either the direction `previous` or `next`, or the slide index
              *
              */
-            this.getRoots = function (query) {
-                var roots = document === null || document === void 0 ? void 0 : document.querySelectorAll(query);
-                var rootsLen = roots.length;
-                var tempArr = [];
-                if (rootsLen > 0) {
-                    for (var i = 0; i < rootsLen; i++) {
-                        var id = roots[i].getAttribute("id");
-                        if (id && allGlobalInstances[id]) {
-                            tempArr.push(allGlobalInstances[id]);
+            this.goToSlide = function (query, target) {
+                var cores = _this.getCores(query);
+                if (cores.length > 0) {
+                    for (var i = 0; i < cores.length; i++) {
+                        if (_animationDirections.indexOf(target) !== -1) {
+                            target === _animationDirections[0]
+                                ? goToPrev(cores[i])
+                                : goToNext(cores[i]);
+                        }
+                        else {
+                            try {
+                                if (!isNaN(parseInt(target))) {
+                                    goToSlide(cores[i], parseInt(target) - 1);
+                                }
+                            }
+                            catch (e) {
+                                console.error(e);
+                            }
                         }
                     }
                 }
-                return tempArr;
+                else {
+                    // throw new TypeError(_rootSelectorTypeError);
+                    console.error(_rootSelectorTypeError);
+                }
             };
-            /**
-             * Function to return count of all available carouzel objects
-             *
-             * @returns count of all available carouzel objects
-             *
-             */
-            this.getCount = function () { return Object.keys(allGlobalInstances).length; };
             /**
              * Function to destroy the Carouzel plugin for provided query strings.
              *
-             * @param query - The CSS selector for which the Carouzel needs to be initialized.
+             * @param query - The CSS selector for which the Carouzel needs to be destroyed.
              *
              */
             this.destroy = function (query) {
-                var _a;
-                var arr = _this.getRoots(query);
-                if (arr.length > 0) {
-                    for (var i = 0; i < arr.length; i++) {
-                        var id = (_a = arr[i].root) === null || _a === void 0 ? void 0 : _a.getAttribute("id");
-                        if (id && allGlobalInstances[id]) {
-                            destroy(id);
-                            delete allGlobalInstances[id];
-                        }
+                var cores = _this.getCores(query);
+                if (cores.length > 0) {
+                    for (var i = 0; i < cores.length; i++) {
+                        destroy(cores[i]);
                     }
-                    if (getInstancesLen() === 0) {
+                    if (getCoreInstancesLength() === 0) {
                         window === null || window === void 0 ? void 0 : window.removeEventListener("resize", winResizeFn, false);
                     }
                 }

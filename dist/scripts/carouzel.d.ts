@@ -11,7 +11,7 @@ declare namespace Carouzel {
     interface IRoot {
         [key: string]: any;
     }
-    interface ICarouzelBreakpoint {
+    interface IBreakpoint {
         breakpoint: number | string;
         centerBetween: number;
         hasTouchSwipe: boolean;
@@ -21,7 +21,7 @@ declare namespace Carouzel {
         slidesToShow: number;
         spaceBetween: number;
     }
-    interface ICarouzelSettings {
+    interface ISettings {
         activeClass: string;
         afterInit?: Function;
         afterScroll?: Function;
@@ -45,7 +45,7 @@ declare namespace Carouzel {
         isInfinite: boolean;
         isRTL: boolean;
         pauseOnHover: boolean;
-        responsive?: ICarouzelBreakpoint[];
+        responsive?: IBreakpoint[];
         showArrows: boolean;
         showNavigation: boolean;
         slidesToScroll: number;
@@ -82,36 +82,45 @@ declare namespace Carouzel {
          */
         static getInstance(): Root;
         /**
-         * Function to initialize the Carouzel plugin for provided query strings.
-         *
-         * @param query - The CSS selector for which the Carouzel needs to be initialized.
-         * @param options - The optional object to customize every Carouzel instance.
-         *
-         */
-        init: (query: string, options?: ICarouzelSettings | undefined) => void;
-        /**
-         * Function to initialize all the carouzel which have `data-carouzelauto` set
-         *
-         */
-        globalInit: () => void;
-        /**
          * Function to get the Carouzel based on the query string provided.
          *
          * @param query - The CSS selector for which the Carouzel needs to be initialized.
          *
+         * @returns an array of all available core instances on page
          */
-        protected getRoots: (query: string) => IRoot;
+        protected getCores: (query: string) => IRoot;
         /**
          * Function to return count of all available carouzel objects
          *
          * @returns count of all available carouzel objects
          *
          */
-        protected getCount: () => number;
+        protected totalCores: () => number;
+        /**
+         * Function to initialize the Carouzel plugin for provided query strings.
+         *
+         * @param query - The CSS selector for which the Carouzel needs to be initialized.
+         * @param options - The optional object to customize every Carouzel instance.
+         *
+         */
+        init: (query: string, options?: ISettings | undefined) => void;
+        /**
+         * Function to initialize all the carouzel which have `data-carouzelauto` set
+         *
+         */
+        globalInit: () => void;
+        /**
+         * Function to animate to a certain slide based on a provided direction or number
+         *
+         * @param query - The CSS selector for which the Carouzels need to be animated
+         * @param target - Either the direction `previous` or `next`, or the slide index
+         *
+         */
+        protected goToSlide: (query: string, target: string) => void;
         /**
          * Function to destroy the Carouzel plugin for provided query strings.
          *
-         * @param query - The CSS selector for which the Carouzel needs to be initialized.
+         * @param query - The CSS selector for which the Carouzel needs to be destroyed.
          *
          */
         protected destroy: (query: string) => void;

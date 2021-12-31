@@ -2343,7 +2343,7 @@
               </div>
 
               <div class="col-12">
-                <button type="submit" class="btn btn-secondary">Apply</button>
+                <button type="submit" class="btn btn-primary">Apply</button>
               </div>
             </form>
           </div>
@@ -2503,14 +2503,14 @@
                 <button
                   type="button"
                   id="__carouzel_14_btn"
-                  class="btn btn-success btn-sm mx-1 mb-2"
+                  class="btn btn-primary btn-sm mx-1 mb-2"
                 >
                   Add hash and refresh
                 </button>
                 <button
                   type="button"
                   id="__carouzel_14_btnrem"
-                  class="btn btn-secondary btn-sm mx-1 mb-2"
+                  class="btn btn-dark btn-sm mx-1 mb-2"
                 >
                   Remove hash and refresh
                 </button>
@@ -2737,7 +2737,7 @@
                                 preload="auto"
                                 width="640"
                                 height="264"
-                                poster="MY_VIDEO_POSTER.jpg"
+                                poster="assets/video-js-poster.jpg"
                                 data-setup="{}"
                               >
                                 <source
@@ -3134,7 +3134,6 @@
       };
 
       __carouzel_instance.init('#__carouzel_8', carouzel8Settings);
-      var instance8 = __carouzel_instance.getRoots('#__carouzel_8')[0];
       destroybtn.addEventListener('click', function () {
         destroybtn.setAttribute('hidden', 'true');
         initbtn.removeAttribute('hidden');
@@ -3160,19 +3159,13 @@
         __carouzel_instance.init('#__carouzel_8', carouzel8Settings);
       });
       gotonextbtn.addEventListener('click', function () {
-        if (instance8) {
-          instance8.goToNext();
-        }
+        __carouzel_instance.goToSlide('#__carouzel_8', 'next');
       });
       gotoprevbtn.addEventListener('click', function () {
-        if (instance8) {
-          instance8.goToPrevious();
-        }
+        __carouzel_instance.goToSlide('#__carouzel_8', 'previous');
       });
       gotoslideinput.addEventListener('change', function (event) {
-        if (instance8) {
-          instance8.goToSlide(event.target.value);
-        }
+        __carouzel_instance.goToSlide('#__carouzel_8', gotoslideinput.value);
       });
       var __carouzel_13form = document.getElementById('__carouzel_13form');
       var easingfnselect = document.getElementById('easingfnselect');
