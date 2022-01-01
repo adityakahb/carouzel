@@ -450,13 +450,12 @@ namespace Carouzel {
   };
 
   /**
-   * Function to update CSS classes on all respective elements
+   * Function to take care of active slides before and after animation
    *
    * @param core - Carouzel instance core object
    *
    */
-  const updateAttributes = (core: ICore) => {
-    let x;
+  const manageActiveSlides = (core: ICore) => {
     for (let i = 0; i < core._as.length; i++) {
       if (core._as[i]) {
         removeClass(core._as[i] as Element, core.opts.activeCls);
@@ -473,6 +472,16 @@ namespace Carouzel {
         core._as[i].removeAttribute(`aria-hidden`);
       }
     }
+  };
+
+  /**
+   * Function to update CSS classes on all respective elements
+   *
+   * @param core - Carouzel instance core object
+   *
+   */
+  const updateAttributes = (core: ICore) => {
+    let x;
     if (!core.opts.inf && core.ci === 0) {
       addClass(core.arrowP as Element, core.opts.disableCls || ``);
     } else {
@@ -546,6 +555,7 @@ namespace Carouzel {
       }
       core.ct = -core._t.nextX;
       // updateAttributes(core);
+      manageActiveSlides(core);
       setTimeout(() => {
         if (core.opts._urlH && core.root) {
           hashSlide = core.root.querySelector(`.${core.opts.activeCls}`);
@@ -560,10 +570,7 @@ namespace Carouzel {
       }, 0);
     };
 
-    /**
-     * Local function to update the css and data attributes on the carouzel instance
-     *
-     */
+    manageActiveSlides(core);
     updateAttributes(core);
 
     core._t.start = (performance as Performance)

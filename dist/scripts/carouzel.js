@@ -274,13 +274,12 @@ var Carouzel;
         return eventHandler;
     };
     /**
-     * Function to update CSS classes on all respective elements
+     * Function to take care of active slides before and after animation
      *
      * @param core - Carouzel instance core object
      *
      */
-    var updateAttributes = function (core) {
-        var x;
+    var manageActiveSlides = function (core) {
         for (var i = 0; i < core._as.length; i++) {
             if (core._as[i]) {
                 removeClass(core._as[i], core.opts.activeCls);
@@ -293,6 +292,15 @@ var Carouzel;
                 core._as[i].removeAttribute("aria-hidden");
             }
         }
+    };
+    /**
+     * Function to update CSS classes on all respective elements
+     *
+     * @param core - Carouzel instance core object
+     *
+     */
+    var updateAttributes = function (core) {
+        var x;
         if (!core.opts.inf && core.ci === 0) {
             addClass(core.arrowP, core.opts.disableCls || "");
         }
@@ -362,6 +370,7 @@ var Carouzel;
             }
             core.ct = -core._t.nextX;
             // updateAttributes(core);
+            manageActiveSlides(core);
             setTimeout(function () {
                 if (core.opts._urlH && core.root) {
                     hashSlide = core.root.querySelector(".".concat(core.opts.activeCls));
@@ -375,10 +384,7 @@ var Carouzel;
                 }
             }, 0);
         };
-        /**
-         * Local function to update the css and data attributes on the carouzel instance
-         *
-         */
+        manageActiveSlides(core);
         updateAttributes(core);
         core._t.start = performance
             ? performance.now()

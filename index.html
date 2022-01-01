@@ -154,6 +154,18 @@
                   Styled through SASS - Source included for customization.
                 </li>
                 <li class="my-2">
+                  Has 16 easing options to go with scroll and fade effects
+                </li>
+                <li class="my-2">
+                  Uses
+                  <a
+                    href="https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame"
+                    target="_blank"
+                    >requestAnimationFrame</a
+                  >
+                  for animation
+                </li>
+                <li class="my-2">
                   Object.assign polyfill is added by Typescript! No other
                   polyfills required.
                 </li>
@@ -234,9 +246,7 @@
                     >
                       <ul class="navbar-nav">
                         <li class="nav-item">
-                          <a class="nav-link" href="example_simple"
-                            >Simple</a
-                          >
+                          <a class="nav-link" href="example_simple">Simple</a>
                         </li>
                         <li class="nav-item">
                           <a class="nav-link" href="example_multiple"
@@ -264,9 +274,7 @@
                           >
                         </li>
                         <li class="nav-item">
-                          <a class="nav-link" href="example_finite"
-                            >Finite</a
-                          >
+                          <a class="nav-link" href="example_finite">Finite</a>
                         </li>
                         <li class="nav-item">
                           <a class="nav-link" href="example_events_methods"
@@ -294,9 +302,7 @@
                           >
                         </li>
                         <li class="nav-item">
-                          <a class="nav-link" href="example_easing"
-                            >Easing</a
-                          >
+                          <a class="nav-link" href="example_easing">Easing</a>
                         </li>
                         <li class="nav-item">
                           <a class="nav-link" href="example_hash_nav"
@@ -2657,7 +2663,7 @@
 
           <div class="row">
             <div class="col">
-              <section
+              <!-- <section
                 data-carouzel
                 id="__carouzel_15"
                 aria-roledescription="carousel"
@@ -2868,7 +2874,7 @@
                 <div data-carouzel-navigationwrapper>
                   <ul data-carouzel-navigation></ul>
                 </div>
-              </section>
+              </section> -->
             </div>
           </div>
 
@@ -3224,7 +3230,7 @@
         trackUrlHash: true,
         appendUrlHash: true,
       });
-      __carouzel_instance.init('#__carouzel_15');
+      // __carouzel_instance.init('#__carouzel_15');
       var navlinks = document.querySelectorAll('#topnav li a');
       for (var k = 0; k < navlinks.length; k++) {
         navlinks[k].addEventListener('click', function (event) {
