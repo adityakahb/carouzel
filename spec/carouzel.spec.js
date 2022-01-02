@@ -24,6 +24,7 @@ data-carouzel
 id="__carouzel_3"
 aria-roledescription="carousel"
 aria-label="Carouzel Implementation"
+data-carouzel-rtl
 >
 <div data-carouzel-trackwrapper>
   <div data-carouzel-trackmask>
@@ -105,16 +106,38 @@ let options2 = {
       breakpoint: 700,
       slidesToScroll: 2,
       slidesToShow: 2,
+      showArrows: false,
+      showNav: true,
+    },
+    {
+      breakpoint: 700,
+      slidesToScroll: 4,
+      slidesToShow: 4,
+      showNav: false,
+      showArrows: true,
+    },
+  ],
+};
+let options3 = {
+  slidesToShow: 1,
+  showNav: false,
+  responsive: [
+    {
+      breakpoint: 700,
+      slidesToScroll: 2,
+      slidesToShow: 2,
+      showArrows: false,
       showNav: true,
     },
     {
       breakpoint: 1100,
       slidesToScroll: 4,
       slidesToShow: 4,
+      showNav: false,
+      showArrows: true,
     },
   ],
 };
-let options3 = {};
 
 describe(`Carouzel`, function () {
   let carouzelInstance;
@@ -144,11 +167,21 @@ describe(`Carouzel`, function () {
         <div>${j + 1}</div>
       </div>`;
     }
+    for (let k = 0; k < 12; k++) {
+      carouzel3 += `<div
+        data-carouzel-slide
+        role="group"
+        aria-roledescription="slide"
+        aria-label="${k + 1} of 12"
+      >
+        <div>${k + 1}</div>
+      </div>`;
+    }
     let fixture =
       blankdiv +
       (carouzelStart1 + carouzel1 + carouzelEnd) +
-      (carouzelStart2 + carouzel2 + carouzelEnd);
-    // + (carouzelStart3 + carouzel3 + carouzelEnd);
+      (carouzelStart2 + carouzel2 + carouzelEnd) +
+      (carouzelStart3 + carouzel3 + carouzelEnd);
 
     document.body.insertAdjacentHTML(`afterbegin`, fixture);
     carouzelInstance = Carouzel.Root.getInstance();
@@ -401,10 +434,11 @@ describe(`Carouzel`, function () {
       `#__carouzel_1 [data-carouzel-nextarrow]`
     );
     nextBtn.click();
+    // jasmine.clock().tick(500);
     setTimeout(() => {
       expect(evtStrAfterScroll).toBe(`afterScroll`);
       done();
-    }, 5000);
+    }, 500);
   });
 
   it(`Should trigger click on nav dot`, function () {
@@ -423,6 +457,47 @@ describe(`Carouzel`, function () {
       }
     }
     expect(index).toBe(5);
+  });
+
+  it(`Should initialize 3rd carouzel (RTL)`, function () {
+    carouzelInstance.init(`#__carouzel_3`);
+    expect(carouzelInstance.getLength()).toBe(3);
+  });
+
+  it(`Should initialize 1st carouzel with responsive options but ignore duplicate breakpoints`, function () {
+    viewport.set(`desktop`);
+    carouzelInstance.destroy(`#__carouzel_1`);
+    carouzelInstance.init(`#__carouzel_1`, options2);
+    const elements = document.querySelectorAll(
+      `#__carouzel_1 [data-carouzel-slide].__carouzel-active`
+    );
+    expect(elements.length).toBe(2);
+  });
+
+  it(`Should initialize 1st carouzel with responsive options and test active slides on desktop`, function () {
+    viewport.set(`desktop`);
+    carouzelInstance.destroy(`#__carouzel_1`);
+    carouzelInstance.init(`#__carouzel_1`, options3);
+    const elements = document.querySelectorAll(
+      `#__carouzel_1 [data-carouzel-slide].__carouzel-active`
+    );
+    expect(elements.length).toBe(4);
+  });
+
+  it(`Should test active slides on tablet`, function () {
+    viewport.set(`tablet`);
+    const elements = document.querySelectorAll(
+      `#__carouzel_1 [data-carouzel-slide].__carouzel-active`
+    );
+    expect(elements.length).toBe(2);
+  });
+
+  it(`Should test active slides on mobile`, function () {
+    viewport.set(`mobile`);
+    const elements = document.querySelectorAll(
+      `#__carouzel_1 [data-carouzel-slide].__carouzel-active`
+    );
+    expect(elements.length).toBe(1);
   });
 
   // it(`Should try focus on 0th Level Navigation`, function () {

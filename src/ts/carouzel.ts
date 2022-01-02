@@ -456,6 +456,7 @@ namespace Carouzel {
    *
    */
   const manageActiveSlides = (core: ICore) => {
+    let x: number | null = null;
     for (let i = 0; i < core._as.length; i++) {
       if (core._as[i]) {
         removeClass(core._as[i] as Element, core.opts.activeCls);
@@ -467,9 +468,19 @@ namespace Carouzel {
       i < core.ci + core.bpo.pDups.length + core.bpo._2Show;
       i++
     ) {
-      if (core._as[i]) {
-        addClass(core._as[i] as Element, core.opts.activeCls);
-        core._as[i].removeAttribute(`aria-hidden`);
+      if (core.opts.rtl) {
+        x = core.ci + core.bpo.pDups.length + core.bpo._2Show - i - 1;
+        if (core._as[x]) {
+          addClass(core._as[x] as Element, core.opts.activeCls);
+          core._as[x].removeAttribute(`aria-hidden`);
+        }
+        x = null;
+      } else {
+        x = null;
+        if (core._as[i]) {
+          addClass(core._as[i] as Element, core.opts.activeCls);
+          core._as[i].removeAttribute(`aria-hidden`);
+        }
       }
     }
   };

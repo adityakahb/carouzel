@@ -8,7 +8,7 @@ module.exports = function (config) {
 
     // frameworks to use
     // available frameworks: https://www.npmjs.com/search?q=keywords:karma-adapter
-    frameworks: ['jasmine'],
+    frameworks: ['jasmine', 'viewport'],
 
     // list of files / patterns to load in the browser
     files: [
@@ -60,6 +60,33 @@ module.exports = function (config) {
       jasmine: {
         random: false, // disable the random running order
       },
+    },
+
+    // Viewport configuration
+    viewport: {
+      breakpoints: [
+        {
+          name: 'mobile',
+          size: {
+            width: 320,
+            height: 480,
+          },
+        },
+        {
+          name: 'tablet',
+          size: {
+            width: 768,
+            height: 1024,
+          },
+        },
+        {
+          name: 'desktop',
+          size: {
+            width: 1440,
+            height: 900,
+          },
+        },
+      ],
     },
 
     // optionally, configure the reporter
