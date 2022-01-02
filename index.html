@@ -146,15 +146,19 @@
                 </li>
                 <li class="my-2">Fully responsive.</li>
                 <li class="my-2">With bare minimum css</li>
+                <li class="my-2">Compiled through Typescript.</li>
                 <li class="my-2">
                   Can have multiple instances with multiple configurations.
                 </li>
-                <li class="my-2">Compiled through Typescript.</li>
                 <li class="my-2">
                   Styled through SASS - Source included for customization.
                 </li>
                 <li class="my-2">
-                  Has 16 easing options to go with scroll and fade effects
+                  Has 16 easing options to go with scroll and fade effects.
+                </li>
+                <li class="my-2">Can be navigated through keyboard arrows.</li>
+                <li class="my-2">
+                  Can be initiated manually or via `data-attribute`.
                 </li>
                 <li class="my-2">
                   Uses
@@ -163,7 +167,7 @@
                     target="_blank"
                     >requestAnimationFrame</a
                   >
-                  for animation
+                  for animation.
                 </li>
                 <li class="my-2">
                   Object.assign polyfill is added by Typescript! No other
@@ -218,7 +222,7 @@
       </div>
     </section>
     <section>
-      <div class="max-wrap text-center px-10">
+      <div class="max-wrap text-center px-2">
         <div class="container-fluid">
           <div class="grid">
             <div class="row">
@@ -328,10 +332,21 @@
     <section>
       <div class="max-wrap text-center px-5">
         <div class="container-fluid">
+          <div class="row mt-10">
+            <div class="col text-center">
+              <h2>Examples</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section>
+      <div class="max-wrap text-center px-5">
+        <div class="container-fluid">
           <div class="row my-4"></div>
           <div class="row">
             <div class="col text-center">
-              <h2 id="example_simple">Simple</h2>
+              <h3 id="example_simple">Simple</h3>
               <a
                 href="https://codesandbox.io/s/carouzel-simple-jt6g6?file=/index.html"
                 target="_blank"
@@ -458,7 +473,7 @@
 
           <div class="row">
             <div class="col text-center">
-              <h2 id="example_multiple">Multiple Items</h2>
+              <h3 id="example_multiple">Multiple Items</h3>
               <a
                 href="https://codesandbox.io/s/carouzel-multiple-rm53q?file=/index.html"
                 target="_blank"
@@ -585,7 +600,7 @@
 
           <div class="row">
             <div class="col text-center">
-              <h2 id="example_responsive">Responsive</h2>
+              <h3 id="example_responsive">Responsive</h3>
               <p class="lead">
                 Resize the window to see the change in number of displayed
                 slides
@@ -716,7 +731,7 @@
 
           <div class="row">
             <div class="col text-center">
-              <h2 id="example_fade">Fading Animation</h2>
+              <h3 id="example_fade">Fading Animation</h3>
               <a
                 href="https://codesandbox.io/s/carouzel-fading-animaton-9p9jh?file=/index.html"
                 target="_blank"
@@ -963,7 +978,7 @@
 
           <div class="row">
             <div class="col text-center">
-              <h2 id="example_data_attribute">Through data-attribute</h2>
+              <h3 id="example_data_attribute">Through data-attribute</h3>
               <p class="lead">Uses `data-carouzel-auto`</p>
               <a
                 href="https://codesandbox.io/s/carouzel-using-data-attribute-wqked?file=/index.html"
@@ -1128,7 +1143,7 @@
 
           <div class="row">
             <div class="col text-center">
-              <h2 id="example_autoplay">Autoplay</h2>
+              <h3 id="example_autoplay">Autoplay</h3>
               <p class="lead">With `pauseOnHover`</p>
               <a
                 href="https://codesandbox.io/s/carouzel-autoplay-k4tk4?file=/index.html"
@@ -1151,6 +1166,54 @@
                   <div data-carouzel-trackmask>
                     <div data-carouzel-trackouter>
                       <div data-carouzel-track aria-live="polite">
+                        <div
+                          data-carouzel-slide
+                          role="group"
+                          aria-roledescription="slide"
+                          aria-label="1 of 6"
+                        >
+                          <div>01</div>
+                        </div>
+                        <div
+                          data-carouzel-slide
+                          role="group"
+                          aria-roledescription="slide"
+                          aria-label="2 of 6"
+                        >
+                          <div>02</div>
+                        </div>
+                        <div
+                          data-carouzel-slide
+                          role="group"
+                          aria-roledescription="slide"
+                          aria-label="3 of 6"
+                        >
+                          <div>03</div>
+                        </div>
+                        <div
+                          data-carouzel-slide
+                          role="group"
+                          aria-roledescription="slide"
+                          aria-label="4 of 6"
+                        >
+                          <div>04</div>
+                        </div>
+                        <div
+                          data-carouzel-slide
+                          role="group"
+                          aria-roledescription="slide"
+                          aria-label="5 of 6"
+                        >
+                          <div>05</div>
+                        </div>
+                        <div
+                          data-carouzel-slide
+                          role="group"
+                          aria-roledescription="slide"
+                          aria-label="6 of 6"
+                        >
+                          <div>06</div>
+                        </div>
                         <div
                           data-carouzel-slide
                           role="group"
@@ -1289,7 +1352,7 @@
 
           <div class="row">
             <div class="col text-center">
-              <h2 id="example_finite">Finite</h2>
+              <h3 id="example_finite">Finite</h3>
               <a
                 href="https://codesandbox.io/s/carouzel-finite-3sy8r?file=/index.html"
                 target="_blank"
@@ -1416,7 +1479,7 @@
 
           <div class="row">
             <div class="col text-center">
-              <h2 id="example_events_methods">Events &amp; Methods</h2>
+              <h3 id="example_events_methods">Events &amp; Methods</h3>
               <a
                 href="https://codesandbox.io/s/carouzel-events-and-methods-0s52x?file=/index.html"
                 target="_blank"
@@ -1641,7 +1704,7 @@
 
           <div class="row">
             <div class="col text-center">
-              <h2 id="example_centered">Centered</h2>
+              <h3 id="example_centered">Centered</h3>
               <a
                 href="https://codesandbox.io/s/carouzel-centered-jmbr4?file=/index.html"
                 target="_blank"
@@ -1769,7 +1832,7 @@
 
           <div class="row">
             <div class="col text-center">
-              <h2 id="example_titles_as_nav">Slide titles as navigation</h2>
+              <h3 id="example_titles_as_nav">Slide titles as navigation</h3>
               <p class="lead">
                 Uses `data-carouzel-title` for each slide, works only when
                 slidesToShow is 1 and `useTitlesAsDots` is true
@@ -1907,7 +1970,7 @@
 
           <div class="row">
             <div class="col text-center">
-              <h2 id="example_gutter_space">Gutter Space</h2>
+              <h3 id="example_gutter_space">Gutter Space</h3>
               <a
                 href="https://codesandbox.io/s/carouzel-gutter-space-cltvd?file=/index.html"
                 target="_blank"
@@ -2082,7 +2145,7 @@
 
           <div class="row">
             <div class="col text-center">
-              <h2 id="example_right_to_left">Right To Left</h2>
+              <h3 id="example_right_to_left">Right To Left</h3>
               <a
                 href="https://codesandbox.io/s/carouzel-right-to-left-pop1y?file=/index.html"
                 target="_blank"
@@ -2289,7 +2352,7 @@
 
           <div class="row">
             <div class="col text-center">
-              <h2 id="example_easing">Easing</h2>
+              <h3 id="example_easing">Easing</h3>
               <a
                 href="https://codesandbox.io/s/carouzel-easing-vkuxo?file=/index.html"
                 target="_blank"
@@ -2488,7 +2551,7 @@
 
           <div class="row">
             <div class="col text-center">
-              <h2 id="example_hash_nav">Hash Navigation</h2>
+              <h3 id="example_hash_nav">Hash Navigation</h3>
               <a
                 href="https://codesandbox.io/s/carouzel-hash-navigation-wppyo?file=/index.html"
                 target="_blank"
@@ -2650,7 +2713,7 @@
 
           <div class="row">
             <div class="col text-center">
-              <h2 id="example_video">Video Carouzel</h2>
+              <h3 id="example_video">Video Carouzel</h3>
               <a
                 href="https://codesandbox.io/s/carouzel-hash-navigation-wppyo?file=/index.html"
                 target="_blank"
@@ -2886,7 +2949,32 @@
         </div>
       </div>
     </section>
-
+    <section>
+      <div class="max-wrap text-center px-5">
+        <div class="container-fluid">
+          <div class="row mt-10">
+            <div class="col text-center">
+              <h2>Installation</h2>
+            </div>
+          </div>
+          <div class="row mb-5">
+            <div class="col text-center">
+              <div class="alert alert-success m-0 d-inline-block">
+                <pre
+                  class="m-0"
+                ><samp><code>npm install carouzel</code></samp></pre>
+              </div>
+            </div>
+            <div class="col text-center"></div>
+          </div>
+          <div class="row my-5">
+            <div class="col text-center">
+              <hr />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
     <section>
       <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
         <div
