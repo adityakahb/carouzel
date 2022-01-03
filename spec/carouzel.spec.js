@@ -139,6 +139,10 @@ let options3 = {
   ],
 };
 
+let options4 = {
+  animationEffect: `fade`,
+};
+
 describe(`Carouzel`, function () {
   let carouzelInstance;
   let evt;
@@ -464,14 +468,14 @@ describe(`Carouzel`, function () {
     expect(carouzelInstance.getLength()).toBe(3);
   });
 
-  it(`Should initialize 1st carouzel with responsive options but ignore duplicate breakpoints`, function () {
+  it(`Should not initialize 1st carouzel with responsive options which has duplicate breakpoints`, function () {
     viewport.set(`desktop`);
     carouzelInstance.destroy(`#__carouzel_1`);
     carouzelInstance.init(`#__carouzel_1`, options2);
     const elements = document.querySelectorAll(
       `#__carouzel_1 [data-carouzel-slide].__carouzel-active`
     );
-    expect(elements.length).toBe(2);
+    expect(elements.length).toBe(0);
   });
 
   it(`Should initialize 1st carouzel with responsive options and test active slides on desktop`, function () {
@@ -486,6 +490,8 @@ describe(`Carouzel`, function () {
 
   it(`Should test active slides on tablet`, function () {
     viewport.set(`tablet`);
+    carouzelInstance.destroy(`#__carouzel_1`);
+    carouzelInstance.init(`#__carouzel_1`, options3);
     const elements = document.querySelectorAll(
       `#__carouzel_1 [data-carouzel-slide].__carouzel-active`
     );
@@ -494,10 +500,41 @@ describe(`Carouzel`, function () {
 
   it(`Should test active slides on mobile`, function () {
     viewport.set(`mobile`);
+    carouzelInstance.destroy(`#__carouzel_1`);
+    carouzelInstance.init(`#__carouzel_1`, options3);
     const elements = document.querySelectorAll(
       `#__carouzel_1 [data-carouzel-slide].__carouzel-active`
     );
     expect(elements.length).toBe(1);
+  });
+
+  it(`Should initiate the carouzel with fade effect`, function () {
+    viewport.reset();
+    carouzelInstance.destroy(`#__carouzel_1`);
+    carouzelInstance.init(`#__carouzel_1`, options4);
+    const elements = document.querySelectorAll(
+      `#__carouzel_1 [data-carouzel-slide].__carouzel-active`
+    );
+    expect(elements.length).toBe(1);
+  });
+
+  it(`Should trigger click on next button on the carouzel with fade effect`, function () {
+    carouzelInstance.goToSlide(`#__carouzel_1`, `0`);
+    const nextBtn = document.querySelector(
+      `#__carouzel_1 [data-carouzel-nextarrow]`
+    );
+    nextBtn.click();
+    const elements = document.querySelectorAll(
+      `#__carouzel_1 [data-carouzel-slide]:not(.__carouzel-duplicate)`
+    );
+    let index = -1;
+    for (let i = 0; i < elements.length; i++) {
+      if (elements[i].classList.contains(`__carouzel-active`)) {
+        index = i;
+        break;
+      }
+    }
+    expect(index).toBe(1);
   });
 
   // it(`Should try focus on 0th Level Navigation`, function () {

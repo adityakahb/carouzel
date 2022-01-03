@@ -778,7 +778,6 @@ namespace Carouzel {
       }
       len++;
     }
-
     if (
       core.root &&
       !hasClass(core.root, core.opts.editCls) &&
@@ -1402,13 +1401,13 @@ namespace Carouzel {
         };
       } else {
         // throw new TypeError(_duplicateBreakpointsTypeError);
-        return {};
         console.error(_duplicateBreakpointsTypeError);
+        return {};
       }
     } catch (e) {
       // throw new TypeError(_breakpointsParseTypeError);
-      return {};
       console.error(_breakpointsParseTypeError);
+      return {};
     }
   };
 
@@ -1443,6 +1442,7 @@ namespace Carouzel {
     }
     tempArr.push(defaultBreakpoint);
     let updatedArr = validateBreakpoints(tempArr);
+
     if (updatedArr.val) {
       let bpArr = [updatedArr.bp[0]];
       let bpLen = 1;
@@ -1607,11 +1607,13 @@ namespace Carouzel {
         toggleAutoplay(_core);
       }
       _core.bpall = updateBreakpoints(_core.opts);
-      toggleKeyboard(_core);
-      generateElements(_core);
-      toggleControlButtons(_core);
-      toggleTouchEvents(_core);
-      applyLayout(_core, _core.opts.rtl);
+      if (_core.bpall.length > 0) {
+        toggleKeyboard(_core);
+        generateElements(_core);
+        toggleControlButtons(_core);
+        toggleTouchEvents(_core);
+        applyLayout(_core, _core.opts.rtl);
+      }
     }
 
     addClass(_core.root as HTMLElement, _core.opts.activeCls);

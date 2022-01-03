@@ -1119,14 +1119,14 @@ var Carouzel;
             }
             else {
                 // throw new TypeError(_duplicateBreakpointsTypeError);
-                return {};
                 console.error(_duplicateBreakpointsTypeError);
+                return {};
             }
         }
         catch (e) {
             // throw new TypeError(_breakpointsParseTypeError);
-            return {};
             console.error(_breakpointsParseTypeError);
+            return {};
         }
     };
     /**
@@ -1317,11 +1317,13 @@ var Carouzel;
                 toggleAutoplay(_core);
             }
             _core.bpall = updateBreakpoints(_core.opts);
-            toggleKeyboard(_core);
-            generateElements(_core);
-            toggleControlButtons(_core);
-            toggleTouchEvents(_core);
-            applyLayout(_core, _core.opts.rtl);
+            if (_core.bpall.length > 0) {
+                toggleKeyboard(_core);
+                generateElements(_core);
+                toggleControlButtons(_core);
+                toggleTouchEvents(_core);
+                applyLayout(_core, _core.opts.rtl);
+            }
         }
         addClass(_core.root, _core.opts.activeCls);
         if (typeof settings.afterInit === "function") {
