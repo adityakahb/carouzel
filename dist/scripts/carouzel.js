@@ -336,6 +336,9 @@ var Carouzel;
             if (x < 0) {
                 x = core.bpo.dots.length - 1;
             }
+            if (x >= core.bpo.dots.length) {
+                x = 0;
+            }
             if (core.bpo.dots[x]) {
                 addClass(core.bpo.dots[x], core.opts.activeCls);
             }

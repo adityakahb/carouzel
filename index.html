@@ -2962,10 +2962,26 @@
           </div>
           <div class="row mb-5">
             <div class="col text-center">
-              <div class="alert alert-success m-0 d-inline-block">
-                <pre
-                  class="m-0"
-                ><samp><code>npm install carouzel</code></samp></pre>
+              <div
+                class="btn-group"
+                role="group"
+                aria-label="Basic mixed styles example"
+              >
+                <button
+                  type="button"
+                  class="btn btn-outline-dark btn-lg"
+                  id="clipbrd_click"
+                  data-clipboard="npm install carouzel"
+                >
+                  <span class="material-icons me-2"> content_copy </span>
+                  npm install carouzel
+                </button>
+                <a
+                  href="https://github.com/adityakahb/carouzel"
+                  target="_blank"
+                  class="btn btn-dark btn-lg"
+                  >Github</a
+                >
               </div>
             </div>
           </div>
@@ -2978,6 +2994,42 @@
       </div>
     </section>
     <section>
+      <div class="max-wrap text-center px-5">
+        <div class="container-fluid">
+          <div class="row mt-10">
+            <div class="col text-center">
+              <h2>Generate markup and script</h2>
+            </div>
+          </div>
+          <div class="row mb-5">
+            <div class="col text-center"></div>
+          </div>
+          <div class="row my-5">
+            <div class="col text-center">
+              <hr />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section>
+      <div
+        class="position-fixed top-0 start-50 p-3"
+        style="z-index: 13; transform: translateX(-50%)"
+      >
+        <div
+          id="clipcopied"
+          class="toast bg-success text-white w-auto"
+          role="alert"
+          aria-live="assertive"
+          aria-atomic="true"
+          data-bs-delay="2500"
+        >
+          <div class="toast-body">
+            <span class="material-icons me-2"> done </span> Copied
+          </div>
+        </div>
+      </div>
       <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
         <div
           id="beforeinit"
@@ -3330,6 +3382,16 @@
           }, 0);
         });
       }
+      var clipcopied = new bootstrap.Toast(
+        document.getElementById('clipcopied')
+      );
+      var clipbrd_click = document.getElementById('clipbrd_click');
+      clipbrd_click.addEventListener('click', function (event) {
+        navigator.clipboard.writeText(
+          event.target.getAttribute('data-clipboard')
+        );
+        clipcopied.show();
+      });
       document.addEventListener('DOMContentLoaded', function () {
         window.addEventListener('scroll', function () {
           if (
