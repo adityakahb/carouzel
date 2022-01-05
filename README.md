@@ -1,10 +1,13 @@
 # Carouzel
+
 Carouzel is an Keyboard accessible, jQuery-free and Framework-free carousel slider plugin which is fully responsive, and supports multiple configurations.
 
 ## Demo
+
 [https://adityakahb.github.io/carouzel](https://adityakahb.github.io/carouzel/)
 
 ## Features
+
 - Available in Vanilla Javascript and CommonJS module.
 - Framework-free.
 - Can be used as ES6 module import OR direct source.
@@ -22,66 +25,29 @@ Carouzel is an Keyboard accessible, jQuery-free and Framework-free carousel slid
 ```bash
 npm install amegmen
 ```
+
 **THEN**
+
 ```html
-<link href="node_modules/carouzel/dist/styles/carouzel/carouzel.min.css"/>
+<link href="node_modules/carouzel/dist/styles/carouzel/carouzel.min.css" />
 <script src="node_modules/carouzel/dist/scripts/carouzel.min.js"></script>
 ```
+
 **OR**
+
 ```javascript
 import Carouzel from 'carouzel';
 ```
+
 ```sass
 @import '~carouzel\src\carouzel\carouzel';
 ```
-
-### HTML
-
-```html
-<!-- Root Element -->
-<div data-carouzel id="__carouzel_1">
-  <div data-carouzeltrackouter>
-    <div data-carouzeltrackwrapper>
-      <div data-carouzeltrack>
-        <div data-carouzelslide>
-          <div>01</div>
-        </div>
-        <div data-carouzelslide>
-          <div>02</div>
-        </div>
-        
-      </div>
-    </div>
-    <div data-carouzelarrowswrapper>
-      <button type="button" data-carouzelpreviousarrow aria-label="Previous"></button>
-      <button type="button" data-carouzelnextarrow aria-label="Next"></button>
-    </div>
-  </div>
-  <div data-carouzelnavigationwrapper>
-    <div data-carouzelnavigation></div>
-  </div>
-</div>
-```
-
-### JavaScript
-
-```javascript
-var  carouzel_instance = Carouzel.Root.getInstance();
-var  carouzel_options = {};
-carouzel_instance.init("#__carouzel_root", carouzel_options);
-
-/* You can destroy it as well */
-carouzel_instance.destroy("#__carouzel_root");
-```
-
 
 ### Options
 
 **activeCls** - CSS Class
 Default: `active`
 Associated with the root element and its children which get a subnav panel opened or activated
-
-
 
 ### Methods
 
@@ -93,6 +59,6 @@ The Root element id or class to be passed to initialize the Megamenu. Example `#
 Parameters: CSS Selector
 The Root element id or class to be passed to destroy the Megamenu. Example `#root`, `.root`
 
-
 ### License
+
 MIT
