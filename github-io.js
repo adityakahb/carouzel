@@ -260,7 +260,7 @@ var loadIO = function () {
     trackUrlHash: true,
     appendUrlHash: true,
   });
-  // __carouzel_instance.init('#__carouzel_15');
+  __carouzel_instance.init('#__carouzel_15');
   var navlinks = document.querySelectorAll('#topnav li a');
   for (var k = 0; k < navlinks.length; k++) {
     navlinks[k].addEventListener('click', function (event) {

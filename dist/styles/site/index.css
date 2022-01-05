@@ -8448,9 +8448,8 @@ h4, .h4, .h4 {
   display: flex;
   font-size: 40px;
   font-weight: bold;
-  height: 200px;
+  min-height: 200px;
   justify-content: center;
-  user-select: none;
   width: 100%; }
 
 [data-carouzel]#__carouzel_4 [data-carouzel-slide] {

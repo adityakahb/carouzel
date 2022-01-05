@@ -36,6 +36,11 @@
 [data-carouzel] [data-carouzel-slide] {
   border: 1px solid transparent;
   width: 100%; }
+  [data-carouzel] [data-carouzel-slide] img {
+    display: block;
+    height: 100%;
+    object-fit: cover;
+    width: 100%; }
 
 [data-carouzel] [data-carouzel-previousarrow],
 [data-carouzel] [data-carouzel-nextarrow],
@@ -48,10 +53,10 @@
   cursor: pointer;
   font-size: 1px;
   height: 40px;
+  padding: 0;
   transition: all 250ms ease;
   width: 40px;
-  z-index: 1;
-  padding: 0; }
+  z-index: 1; }
   [data-carouzel] [data-carouzel-previousarrow] svg,
   [data-carouzel] [data-carouzel-nextarrow] svg,
   [data-carouzel] [data-carouzel-pause] svg,
@@ -171,17 +176,17 @@
 
 [data-carouzel] [data-carouzel-video] {
   height: 0;
-  position: relative;
   overflow: hidden;
-  padding-bottom: 56.25%; }
+  padding-bottom: 56.25%;
+  position: relative; }
   [data-carouzel] [data-carouzel-video] iframe,
   [data-carouzel] [data-carouzel-video] video,
   [data-carouzel] [data-carouzel-video] .video-js {
+    height: 100%;
+    left: 0;
     position: absolute;
     top: 0;
-    left: 0;
     width: 100%;
-    height: 100%;
     z-index: 1; }
   [data-carouzel] [data-carouzel-video] .vjs-loading-spinner,
   [data-carouzel] [data-carouzel-video] .vjs-big-play-button,

@@ -39,6 +39,12 @@
   [data-carouzel-slide] {
     border: 1px solid transparent;
     width: 100%;
+    img {
+      display: block;
+      height: 100%;
+      object-fit: cover;
+      width: 100%;
+    }
   }
   [data-carouzel-previousarrow],
   [data-carouzel-nextarrow],
@@ -51,10 +57,10 @@
     cursor: pointer;
     font-size: 1px;
     height: 40px;
+    padding: 0;
     transition: all 250ms ease;
     width: 40px;
     z-index: 1;
-    padding: 0;
     svg {
       cursor: pointer;
       height: 75%;
@@ -177,17 +183,17 @@
   }
   [data-carouzel-video] {
     height: 0;
-    position: relative;
     overflow: hidden;
     padding-bottom: 56.25%;
+    position: relative;
     iframe,
     video,
     .video-js {
+      height: 100%;
+      left: 0;
       position: absolute;
       top: 0;
-      left: 0;
       width: 100%;
-      height: 100%;
       z-index: 1;
     }
     .vjs-loading-spinner,

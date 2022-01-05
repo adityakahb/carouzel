@@ -1101,6 +1101,22 @@ var Carouzel;
         }
     };
     /**
+     * Function to remove ghost dragging from images
+     *
+     * @param core - Carouzel instance core object
+     *
+     */
+    var makeStuffUndraggable = function (core) {
+        if (core.root) {
+            var images = core.root.querySelectorAll("img");
+            for (var img = 0; img < images.length; img++) {
+                core.eHandlers.push(eventHandler(images[img], "dragstart", function (event) {
+                    event.preventDefault();
+                }));
+            }
+        }
+    };
+    /**
      * Function to validate all breakpoints to check duplicates
      *
      * @param breakpoints - Breakpoint settings array
@@ -1322,6 +1338,7 @@ var Carouzel;
             }
             _core.bpall = updateBreakpoints(_core.opts);
             if (_core.bpall.length > 0) {
+                makeStuffUndraggable(_core);
                 toggleKeyboard(_core);
                 generateElements(_core);
                 toggleControlButtons(_core);

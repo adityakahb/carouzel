@@ -1382,6 +1382,29 @@ namespace Carouzel {
   };
 
   /**
+   * Function to remove ghost dragging from images
+   *
+   * @param core - Carouzel instance core object
+   *
+   */
+  const makeStuffUndraggable = (core: ICore) => {
+    if (core.root) {
+      const images = core.root.querySelectorAll(`img`);
+      for (let img = 0; img < images.length; img++) {
+        core.eHandlers.push(
+          eventHandler(
+            images[img] as HTMLElement,
+            `dragstart`,
+            function (event: Event) {
+              event.preventDefault();
+            }
+          )
+        );
+      }
+    }
+  };
+
+  /**
    * Function to validate all breakpoints to check duplicates
    *
    * @param breakpoints - Breakpoint settings array
@@ -1612,6 +1635,7 @@ namespace Carouzel {
       }
       _core.bpall = updateBreakpoints(_core.opts);
       if (_core.bpall.length > 0) {
+        makeStuffUndraggable(_core);
         toggleKeyboard(_core);
         generateElements(_core);
         toggleControlButtons(_core);
@@ -1630,6 +1654,7 @@ namespace Carouzel {
         _core.root.setAttribute(_Selectors.cntr.slice(1, -1), ``);
       }
     }
+
     if (typeof settings.afterInit === `function`) {
       settings.afterInit();
     }

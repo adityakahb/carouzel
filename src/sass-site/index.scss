@@ -17,9 +17,8 @@
     display: flex;
     font-size: 40px;
     font-weight: bold;
-    height: 200px;
+    min-height: 200px;
     justify-content: center;
-    user-select: none;
     width: 100%;
   }
 }
