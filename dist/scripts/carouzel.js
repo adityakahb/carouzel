@@ -85,6 +85,7 @@ var Carouzel;
     var _Selectors = {
         arrowN: "[data-carouzel-nextarrow]",
         arrowP: "[data-carouzel-previousarrow]",
+        cntr: "[data-carouzel-centered]",
         controlsW: "[data-carouzel-controlswrapper]",
         dot: "[data-carouzel-dot]",
         nav: "[data-carouzel-navigation]",
@@ -1329,6 +1330,14 @@ var Carouzel;
             }
         }
         addClass(_core.root, _core.opts.activeCls);
+        if (!isNaN(_core.opts.cntr) && _core.opts.cntr > 0) {
+            _core.root.setAttribute(_Selectors.cntr.slice(1, -1), "");
+        }
+        for (var r = 0; r < _core.opts.res.length; r++) {
+            if (!isNaN(_core.opts.res[r].cntr) && _core.opts.res[r].cntr > 0) {
+                _core.root.setAttribute(_Selectors.cntr.slice(1, -1), "");
+            }
+        }
         if (typeof settings.afterInit === "function") {
             settings.afterInit();
         }
