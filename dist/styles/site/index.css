@@ -8463,6 +8463,7 @@ h4, .h4, .h4 {
 
 #__carouzel_15[data-carouzel] [data-carouzel-slide] {
   display: block;
-  height: auto;
   font-size: unset;
-  font-weight: normal; }
+  font-weight: normal;
+  height: auto;
+  min-height: auto; }
