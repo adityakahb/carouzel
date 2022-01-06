@@ -2939,84 +2939,148 @@
         <div class="container-fluid">
           <div class="row mt-10">
             <div class="col text-center">
-              <h2>Generate markup and script</h2>
+              <h2>Markup</h2>
             </div>
           </div>
           <div class="row mb-5">
             <div class="col">
-              <ul
-                class="nav nav-tabs justify-content-center"
-                id="myTab"
-                role="tablist"
-              >
-                <li class="nav-item" role="presentation">
-                  <button
-                    class="nav-link active"
-                    id="home-tab"
-                    data-bs-toggle="tab"
-                    data-bs-target="#home"
-                    type="button"
-                    role="tab"
-                    aria-controls="home"
-                    aria-selected="true"
-                  >
-                    Home
-                  </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                  <button
-                    class="nav-link"
-                    id="profile-tab"
-                    data-bs-toggle="tab"
-                    data-bs-target="#profile"
-                    type="button"
-                    role="tab"
-                    aria-controls="profile"
-                    aria-selected="false"
-                  >
-                    Profile
-                  </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                  <button
-                    class="nav-link"
-                    id="contact-tab"
-                    data-bs-toggle="tab"
-                    data-bs-target="#contact"
-                    type="button"
-                    role="tab"
-                    aria-controls="contact"
-                    aria-selected="false"
-                  >
-                    Contact
-                  </button>
-                </li>
-              </ul>
-              <div class="tab-content" id="myTabContent">
-                <div
-                  class="tab-pane fade show active"
-                  id="home"
-                  role="tabpanel"
-                  aria-labelledby="home-tab"
-                >
-                  ...
-                </div>
-                <div
-                  class="tab-pane fade"
-                  id="profile"
-                  role="tabpanel"
-                  aria-labelledby="profile-tab"
-                >
-                  ...
-                </div>
-                <div
-                  class="tab-pane fade"
-                  id="contact"
-                  role="tabpanel"
-                  aria-labelledby="contact-tab"
-                >
-                  ...
-                </div>
+              <h3>References</h3>
+              <div class="alert alert-warning text-start">
+                <pre class="m-0">
+                  <code>
+&lt;link href=&quot;../location/carouzel.min.css&quot; rel=&quot;stylesheet&quot;/&gt;
+&lt;script src=&quot;../location/carouzel.min.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+                  </code>
+                </pre>
+              </div>
+            </div>
+          </div>
+          <div class="row mb-5">
+            <div class="col">
+              <h3>HTML</h3>
+              <div class="alert alert-info text-start">
+                <pre class="m-0">
+                  <code>
+&lt;section
+  data-carouzel
+  id=&quot;__carouzel_id&quot;
+  aria-roledescription=&quot;carousel&quot;
+  aria-label=&quot;Carouzel Implementation&quot;
+&gt;
+  &lt;div data-carouzel-trackwrapper&gt;
+    &lt;div data-carouzel-trackmask&gt;
+      &lt;div data-carouzel-trackouter&gt;
+        &lt;div data-carouzel-track aria-live=&quot;polite&quot;&gt;
+          &lt;div
+            data-carouzel-slide
+            role=&quot;group&quot;
+            aria-roledescription=&quot;slide&quot;
+            aria-label=&quot;1 of 6&quot;
+          &gt;
+            01
+          &lt;/div&gt;
+          &lt;div
+            data-carouzel-slide
+            role=&quot;group&quot;
+            aria-roledescription=&quot;slide&quot;
+            aria-label=&quot;2 of 6&quot;
+          &gt;
+            02
+          &lt;/div&gt;
+          &lt;div
+            data-carouzel-slide
+            role=&quot;group&quot;
+            aria-roledescription=&quot;slide&quot;
+            aria-label=&quot;3 of 6&quot;
+          &gt;
+            03
+          &lt;/div&gt;
+          &lt;div
+            data-carouzel-slide
+            role=&quot;group&quot;
+            aria-roledescription=&quot;slide&quot;
+            aria-label=&quot;4 of 6&quot;
+          &gt;
+            04
+          &lt;/div&gt;
+          &lt;div
+            data-carouzel-slide
+            role=&quot;group&quot;
+            aria-roledescription=&quot;slide&quot;
+            aria-label=&quot;5 of 6&quot;
+          &gt;
+            05
+          &lt;/div&gt;
+          &lt;div
+            data-carouzel-slide
+            role=&quot;group&quot;
+            aria-roledescription=&quot;slide&quot;
+            aria-label=&quot;6 of 6&quot;
+          &gt;
+            06
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div data-carouzel-controlswrapper&gt;
+      &lt;button
+        type=&quot;button&quot;
+        data-carouzel-previousarrow
+        aria-label=&quot;Previous&quot;
+      &gt;
+        &lt;svg
+          xmlns=&quot;http://www.w3.org/2000/svg&quot;
+          height=&quot;24px&quot;
+          viewBox=&quot;0 0 24 24&quot;
+          width=&quot;24px&quot;
+          fill=&quot;#000000&quot;
+        &gt;
+          &lt;path d=&quot;M0 0h24v24H0V0z&quot; fill=&quot;none&quot; /&gt;
+          &lt;path
+            d=&quot;M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z&quot;
+          /&gt;
+        &lt;/svg&gt;
+      &lt;/button&gt;
+      &lt;button
+        type=&quot;button&quot;
+        data-carouzel-nextarrow
+        aria-label=&quot;Next&quot;
+      &gt;
+        &lt;svg
+          xmlns=&quot;http://www.w3.org/2000/svg&quot;
+          height=&quot;24px&quot;
+          viewBox=&quot;0 0 24 24&quot;
+          width=&quot;24px&quot;
+          fill=&quot;#000000&quot;
+        &gt;
+          &lt;path d=&quot;M0 0h24v24H0V0z&quot; fill=&quot;none&quot; /&gt;
+          &lt;path
+            d=&quot;M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6z&quot;
+          /&gt;
+        &lt;/svg&gt;
+      &lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div data-carouzel-navigationwrapper&gt;
+    &lt;ul data-carouzel-navigation&gt;&lt;/ul&gt;
+  &lt;/div&gt;
+&lt;/section&gt;
+                  </code>
+                </pre>
+              </div>
+            </div>
+          </div>
+          <div class="row mb-5">
+            <div class="col">
+              <h3>JavaScript</h3>
+              <div class="alert alert-dark text-start">
+                <pre class="m-0">
+                  <code>
+var __carouzel_instance = Carouzel.Root.getInstance();
+var __carouzel_options = {};
+__carouzel_instance.init('#__carouzel_1', __carouzel_options);
+                  </code>
+                </pre>
               </div>
             </div>
           </div>

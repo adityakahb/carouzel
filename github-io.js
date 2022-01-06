@@ -34,7 +34,6 @@ var loadIO = function () {
     toastAfterScroll.show();
   });
 
-  var __carouzel_instance = Carouzel.Root.getInstance();
   __carouzel_instance.init('#__carouzel_1');
   __carouzel_instance.init('#__carouzel_2', {
     slidesToShow: 3,
