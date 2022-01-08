@@ -2958,7 +2958,7 @@
           <div class="row mb-5">
             <div class="col">
               <h3>HTML</h3>
-              <div class="alert alert-info text-start">
+              <div class="alert alert-success text-start">
                 <pre class="m-0">
                   <code>
 &lt;section
@@ -3105,44 +3105,322 @@ __carouzel_instance.init('#__carouzel_1', __carouzel_options);
               <table class="table table-striped table-hover">
                 <tbody>
                   <tr>
-                    <th><kbd>slidesToShow</kbd></th>
-                    <td></td>
+                    <th><kbd>activeClass</kbd></th>
+                    <td class="bg-info bg-opacity-10">
+                      <span class="badge rounded-pill bg-info me-2">string</span
+                      ><span class="badge rounded-pill bg-light text-info me-2"
+                        >__carouzel-active</span
+                      >
+                    </td>
                   </tr>
                   <tr>
-                    <th><kbd>slidesToScroll</kbd></th>
-                    <td></td>
+                    <th><kbd>afterInit</kbd></th>
+                    <td class="bg-info bg-opacity-10">
+                      <span class="badge rounded-pill bg-info me-2"
+                        >function</span
+                      >
+                    </td>
                   </tr>
                   <tr>
-                    <th><kbd>showNav</kbd></th>
+                    <th><kbd>afterScroll</kbd></th>
+                    <td class="bg-info bg-opacity-10">
+                      <span class="badge rounded-pill bg-info me-2"
+                        >function</span
+                      >
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>animationEffect</kbd></th>
+                    <td class="bg-info bg-opacity-10">
+                      <span class="badge rounded-pill bg-info me-2">string</span
+                      ><span class="badge rounded-pill bg-light text-info me-2"
+                        >scroll</span
+                      >
+                      <br />
+                      <small>scroll, fade</small>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>animationSpeed</kbd></th>
+                    <td class="bg-info bg-opacity-10">
+                      <span class="badge rounded-pill bg-info me-2">number</span
+                      ><span class="badge rounded-pill bg-light text-info me-2"
+                        >500</span
+                      >
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>appendUrlHash</kbd></th>
+                    <td class="bg-info bg-opacity-10">
+                      <span class="badge rounded-pill bg-info me-2"
+                        >boolean</span
+                      ><span class="badge rounded-pill bg-light text-info me-2"
+                        >false</span
+                      >
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>autoplay</kbd></th>
+                    <td class="bg-info bg-opacity-10">
+                      <span class="badge rounded-pill bg-info me-2"
+                        >boolean</span
+                      ><span class="badge rounded-pill bg-light text-info me-2"
+                        >false</span
+                      >
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>autoplaySpeed</kbd></th>
+                    <td class="bg-info bg-opacity-10">
+                      <span class="badge rounded-pill bg-info me-2">number</span
+                      ><span class="badge rounded-pill bg-light text-info me-2"
+                        >5000</span
+                      >
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>beforeInit</kbd></th>
+                    <td class="bg-info bg-opacity-10">
+                      <span class="badge rounded-pill bg-info me-2"
+                        >function</span
+                      >
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>beforeScroll</kbd></th>
+                    <td class="bg-info bg-opacity-10">
+                      <span class="badge rounded-pill bg-info me-2"
+                        >function</span
+                      >
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>centerBetween</kbd></th>
+                    <td class="bg-info bg-opacity-10">
+                      <span class="badge rounded-pill bg-info me-2">number</span
+                      ><span class="badge rounded-pill bg-light text-info me-2"
+                        >0</span
+                      >
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>disabledClass</kbd></th>
+                    <td class="bg-info bg-opacity-10">
+                      <span class="badge rounded-pill bg-info me-2">string</span
+                      ><span class="badge rounded-pill bg-light text-info me-2"
+                        >__carouzel-disabled</span
+                      >
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>dotIndexClass</kbd></th>
+                    <td class="bg-info bg-opacity-10">
+                      <span class="badge rounded-pill bg-info me-2">string</span
+                      ><span class="badge rounded-pill bg-light text-info me-2"
+                        >__carouzel-pageindex</span
+                      >
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>dotTitleClass</kbd></th>
+                    <td class="bg-info bg-opacity-10">
+                      <span class="badge rounded-pill bg-info me-2">string</span
+                      ><span class="badge rounded-pill bg-light text-info me-2"
+                        >__carouzel-pagetitle</span
+                      >
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>duplicateClass</kbd></th>
+                    <td class="bg-info bg-opacity-10">
+                      <span class="badge rounded-pill bg-info me-2">string</span
+                      ><span class="badge rounded-pill bg-light text-info me-2"
+                        >__carouzel-duplicate</span
+                      >
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>editClass</kbd></th>
+                    <td class="bg-info bg-opacity-10">
+                      <span class="badge rounded-pill bg-info me-2">string</span
+                      ><span class="badge rounded-pill bg-light text-info me-2"
+                        >__carouzel-editmode</span
+                      >
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>enableKeyboard</kbd></th>
+                    <td class="bg-info bg-opacity-10">
+                      <span class="badge rounded-pill bg-info me-2"
+                        >boolean</span
+                      ><span class="badge rounded-pill bg-light text-info me-2"
+                        >true</span
+                      >
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>hasTouchSwipe</kbd></th>
+                    <td class="bg-info bg-opacity-10">
+                      <span class="badge rounded-pill bg-info me-2"
+                        >boolean</span
+                      ><span class="badge rounded-pill bg-light text-info me-2"
+                        >true</span
+                      >
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>hiddenClass</kbd></th>
+                    <td class="bg-info bg-opacity-10">
+                      <span class="badge rounded-pill bg-info me-2">string</span
+                      ><span class="badge rounded-pill bg-light text-info me-2"
+                        >__carouzel-hidden</span
+                      >
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>idPrefix</kbd></th>
+                    <td class="bg-info bg-opacity-10">
+                      <span class="badge rounded-pill bg-info me-2">string</span
+                      ><span class="badge rounded-pill bg-light text-info me-2"
+                        >__carouzel</span
+                      >
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>isInfinite</kbd></th>
+                    <td class="bg-info bg-opacity-10">
+                      <span class="badge rounded-pill bg-info me-2"
+                        >boolean</span
+                      ><span class="badge rounded-pill bg-light text-info me-2"
+                        >true</span
+                      >
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>isRTL</kbd></th>
+                    <td class="bg-info bg-opacity-10">
+                      <span class="badge rounded-pill bg-info me-2"
+                        >boolean</span
+                      ><span class="badge rounded-pill bg-light text-info me-2"
+                        >false</span
+                      >
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>pauseOnHover</kbd></th>
+                    <td class="bg-info bg-opacity-10">
+                      <span class="badge rounded-pill bg-info me-2"
+                        >boolean</span
+                      ><span class="badge rounded-pill bg-light text-info me-2"
+                        >true</span
+                      >
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>responsive</kbd></th>
                     <td></td>
                   </tr>
                   <tr>
                     <th><kbd>showArrows</kbd></th>
-                    <td></td>
+                    <td class="bg-info bg-opacity-10">
+                      <span class="badge rounded-pill bg-info me-2"
+                        >boolean</span
+                      ><span class="badge rounded-pill bg-light text-info me-2"
+                        >true</span
+                      >
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>showNavigation</kbd></th>
+                    <td class="bg-info bg-opacity-10">
+                      <span class="badge rounded-pill bg-info me-2"
+                        >boolean</span
+                      ><span class="badge rounded-pill bg-light text-info me-2"
+                        >true</span
+                      >
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>slidesToScroll</kbd></th>
+                    <td class="bg-info bg-opacity-10">
+                      <span class="badge rounded-pill bg-info me-2">number</span
+                      ><span class="badge rounded-pill bg-light text-info me-2"
+                        >1</span
+                      >
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>slidesToShow</kbd></th>
+                    <td class="bg-info bg-opacity-10">
+                      <span class="badge rounded-pill bg-info me-2">number</span
+                      ><span class="badge rounded-pill bg-light text-info me-2"
+                        >1</span
+                      >
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>spaceBetween</kbd></th>
+                    <td class="bg-info bg-opacity-10">
+                      <span class="badge rounded-pill bg-info me-2">number</span
+                      ><span class="badge rounded-pill bg-light text-info me-2"
+                        >0</span
+                      >
+                    </td>
                   </tr>
                   <tr>
                     <th><kbd>startAtIndex</kbd></th>
-                    <td></td>
+                    <td class="bg-info bg-opacity-10">
+                      <span class="badge rounded-pill bg-info me-2">number</span
+                      ><span class="badge rounded-pill bg-light text-info me-2"
+                        >0</span
+                      >
+                    </td>
                   </tr>
                   <tr>
-                    <th><kbd>slidesToScroll</kbd></th>
-                    <td></td>
+                    <th><kbd>timingFunction</kbd></th>
+                    <td class="bg-info bg-opacity-10">
+                      <span class="badge rounded-pill bg-info me-2">string</span
+                      ><span class="badge rounded-pill bg-light text-info me-2"
+                        >linear</span
+                      >
+                      <br />
+                      <small
+                        >linear, easeInQuad, easeOutQuad, easeInOutQuad,
+                        easeInCubic, easeOutCubic, easeInOutCubic, easeInQuart,
+                        easeOutQuart, easeInOutQuart, easeInQuint, easeOutQuint,
+                        easeInOutQuint, easeInElastic, easeOutElastic,
+                        easeInOutElastic</small
+                      >
+                    </td>
                   </tr>
                   <tr>
-                    <th><kbd>slidesToShow</kbd></th>
-                    <td></td>
+                    <th><kbd>touchThreshold</kbd></th>
+                    <td class="bg-info bg-opacity-10">
+                      <span class="badge rounded-pill bg-info me-2">number</span
+                      ><span class="badge rounded-pill bg-light text-info me-2"
+                        >125</span
+                      >
+                    </td>
                   </tr>
                   <tr>
-                    <th><kbd>slidesToScroll</kbd></th>
-                    <td></td>
+                    <th><kbd>trackUrlHash</kbd></th>
+                    <td class="bg-info bg-opacity-10">
+                      <span class="badge rounded-pill bg-info me-2"
+                        >boolean</span
+                      ><span class="badge rounded-pill bg-light text-info me-2"
+                        >false</span
+                      >
+                    </td>
                   </tr>
                   <tr>
-                    <th><kbd>slidesToShow</kbd></th>
-                    <td></td>
-                  </tr>
-                  <tr>
-                    <th><kbd>slidesToScroll</kbd></th>
-                    <td></td>
+                    <th><kbd>useTitlesAsDots</kbd></th>
+                    <td class="bg-info bg-opacity-10">
+                      <span class="badge rounded-pill bg-info me-2"
+                        >boolean</span
+                      ><span class="badge rounded-pill bg-light text-info me-2"
+                        >false</span
+                      >
+                    </td>
                   </tr>
                 </tbody>
               </table>

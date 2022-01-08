@@ -105,10 +105,10 @@ var Carouzel;
     var _Defaults = {
         activeClass: "__carouzel-active",
         animationEffect: _animationEffects[0],
-        animationSpeed: 400,
+        animationSpeed: 500,
         appendUrlHash: false,
         autoplay: false,
-        autoplaySpeed: 3000,
+        autoplaySpeed: 5000,
         centerBetween: 0,
         disabledClass: "__carouzel-disabled",
         dotIndexClass: "__carouzel-pageindex",
@@ -121,7 +121,7 @@ var Carouzel;
         idPrefix: "__carouzel",
         isInfinite: true,
         isRTL: false,
-        pauseOnHover: false,
+        pauseOnHover: true,
         responsive: [],
         showArrows: true,
         showNavigation: true,
@@ -130,7 +130,7 @@ var Carouzel;
         spaceBetween: 0,
         startAtIndex: 1,
         timingFunction: "linear",
-        touchThreshold: 100,
+        touchThreshold: 125,
         trackUrlHash: false,
         useTitlesAsDots: false
     };
