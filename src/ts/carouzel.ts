@@ -14,18 +14,6 @@ namespace Carouzel {
     [key: string]: any;
   }
 
-  interface ITimer {
-    id: any;
-    elapsed: number;
-    nextX: number;
-    o: number;
-    position: number;
-    prevX: number;
-    progress: number;
-    start: number;
-    total: number;
-  }
-
   interface ICoreBreakpoint {
     _2Scroll: number;
     _2Show: number;
@@ -58,6 +46,7 @@ namespace Carouzel {
     dotCls: string;
     dotNcls: string;
     dupCls: string;
+    easeFn: string;
     editCls: string;
     effect: string;
     gutr: number;
@@ -72,53 +61,52 @@ namespace Carouzel {
     startAt: number;
     swipe: boolean;
     threshold: number;
-    timeFn: string;
     useTitle: boolean;
   }
 
   interface IBreakpoint {
-    breakpoint: number | string;
+    atWidth: number | string;
     centerBetween: number;
-    hasTouchSwipe: boolean;
+    enableTouchSwipe: boolean;
     showArrows: boolean;
     showNavigation: boolean;
+    slideGutter: number;
     slidesToScroll: number;
     slidesToShow: number;
-    spaceBetween: number;
   }
 
   interface ISettings {
     activeClass: string;
-    afterInit?: Function;
-    afterScroll?: Function;
+    afterInitFn?: Function;
+    afterScrollFn?: Function;
     animationEffect: string;
     animationSpeed: number;
     appendUrlHash: boolean;
     autoplay: boolean;
     autoplaySpeed: number;
-    beforeInit?: Function;
-    beforeScroll?: Function;
+    beforeInitFn?: Function;
+    beforeScrollFn?: Function;
+    breakpoints?: IBreakpoint[];
     centerBetween: number;
     disabledClass: string;
     dotIndexClass: string;
     dotTitleClass: string;
     duplicateClass: string;
-    editClass: string;
+    easingFunction: string;
+    editModeClass: string;
     enableKeyboard: boolean;
-    hasTouchSwipe: boolean;
+    enableTouchSwipe: boolean;
     hiddenClass: string;
     idPrefix: string;
     isInfinite: boolean;
     isRTL: boolean;
     pauseOnHover: boolean;
-    responsive?: IBreakpoint[];
     showArrows: boolean;
     showNavigation: boolean;
+    slideGutter: number;
     slidesToScroll: number;
     slidesToShow: number;
-    spaceBetween: number;
     startAtIndex: number;
-    timingFunction: string;
     touchThreshold: number;
     trackUrlHash: boolean;
     useTitlesAsDots: boolean;
@@ -131,6 +119,18 @@ namespace Carouzel {
 
   interface IIndexHandler {
     [key: number]: number;
+  }
+
+  interface ITimer {
+    id: any;
+    elapsed: number;
+    nextX: number;
+    o: number;
+    position: number;
+    prevX: number;
+    progress: number;
+    start: number;
+    total: number;
   }
 
   interface ICore {
@@ -265,27 +265,27 @@ namespace Carouzel {
     appendUrlHash: false,
     autoplay: false,
     autoplaySpeed: 5000,
+    breakpoints: [],
     centerBetween: 0,
     disabledClass: `__carouzel-disabled`,
     dotIndexClass: `__carouzel-pageindex`,
     dotTitleClass: `__carouzel-pagetitle`,
     duplicateClass: `__carouzel-duplicate`,
-    editClass: `__carouzel-editmode`,
+    easingFunction: `linear`,
+    editModeClass: `__carouzel-editmode`,
     enableKeyboard: true,
-    hasTouchSwipe: true,
+    enableTouchSwipe: true,
     hiddenClass: `__carouzel-hidden`,
     idPrefix: `__carouzel`,
     isInfinite: true,
     isRTL: false,
-    pauseOnHover: true,
-    responsive: [],
+    pauseOnHover: false,
     showArrows: true,
     showNavigation: true,
+    slideGutter: 0,
     slidesToScroll: 1,
     slidesToShow: 1,
-    spaceBetween: 0,
     startAtIndex: 1,
-    timingFunction: `linear`,
     touchThreshold: 125,
     trackUrlHash: false,
     useTitlesAsDots: false,
@@ -600,7 +600,7 @@ namespace Carouzel {
      */
     const scrollThisTrack = (now: number) => {
       core._t.elapsed = now - core._t.start;
-      core._t.progress = _easingFunctions[core.opts.timeFn](
+      core._t.progress = _easingFunctions[core.opts.easeFn](
         core._t.elapsed / core._t.total
       );
 
@@ -646,7 +646,7 @@ namespace Carouzel {
      */
     const fadeThisTrack = (now: number) => {
       core._t.elapsed = now - core._t.start;
-      core._t.progress = _easingFunctions[core.opts.timeFn](
+      core._t.progress = _easingFunctions[core.opts.easeFn](
         core._t.elapsed / core._t.total
       );
       core._t.progress = core._t.progress > 1 ? 1 : core._t.progress;
@@ -1521,16 +1521,16 @@ namespace Carouzel {
       _nav: settings.showNavigation,
       _urlH: settings.appendUrlHash,
       activeCls: settings.activeClass,
-      aFn: settings.afterScroll,
+      aFn: settings.afterScrollFn,
       auto: settings.autoplay,
       autoS: settings.autoplaySpeed,
-      bFn: settings.beforeScroll,
+      bFn: settings.beforeScrollFn,
       cntr: settings.centerBetween,
       disableCls: settings.disabledClass,
       dotCls: settings.dotTitleClass,
       dotNcls: settings.dotIndexClass,
       dupCls: settings.duplicateClass,
-      editCls: settings.editClass,
+      editCls: settings.editModeClass,
       effect: (() => {
         if (_animationEffects.indexOf(settings.animationEffect) > -1) {
           return settings.animationEffect;
@@ -1538,7 +1538,7 @@ namespace Carouzel {
         console.warn(_noEffectFoundError);
         return _animationEffects[0];
       })(),
-      gutr: settings.spaceBetween,
+      gutr: settings.slideGutter,
       hidCls: settings.hiddenClass,
       inf: settings.isInfinite,
       rtl: settings.isRTL,
@@ -1547,11 +1547,11 @@ namespace Carouzel {
       res: [],
       speed: settings.animationSpeed,
       startAt: settings.animationSpeed,
-      swipe: settings.hasTouchSwipe,
+      swipe: settings.enableTouchSwipe,
       threshold: settings.touchThreshold,
-      timeFn: (() => {
-        if (_easingFunctions[settings.timingFunction]) {
-          return settings.timingFunction;
+      easeFn: (() => {
+        if (_easingFunctions[settings.easingFunction]) {
+          return settings.easingFunction;
         }
         console.warn(_noEasingFoundError);
         return Object.keys(_easingFunctions)[0];
@@ -1559,22 +1559,22 @@ namespace Carouzel {
       useTitle: settings.useTitlesAsDots,
     };
 
-    if (settings.responsive && settings.responsive.length > 0) {
-      for (let i = 0; i < settings.responsive.length; i++) {
+    if (settings.breakpoints && settings.breakpoints.length > 0) {
+      for (let i = 0; i < settings.breakpoints.length; i++) {
         let obj: ICoreBreakpoint = {
-          _2Scroll: settings.responsive[i].slidesToScroll,
-          _2Show: settings.responsive[i].slidesToShow,
-          _arrows: settings.responsive[i].showArrows,
-          _nav: settings.responsive[i].showNavigation,
-          bp: settings.responsive[i].breakpoint,
+          _2Scroll: settings.breakpoints[i].slidesToScroll,
+          _2Show: settings.breakpoints[i].slidesToShow,
+          _arrows: settings.breakpoints[i].showArrows,
+          _nav: settings.breakpoints[i].showNavigation,
+          bp: settings.breakpoints[i].atWidth,
           bpSLen: 0,
-          cntr: settings.responsive[i].centerBetween,
+          cntr: settings.breakpoints[i].centerBetween,
           dots: [],
-          gutr: settings.responsive[i].spaceBetween,
+          gutr: settings.breakpoints[i].slideGutter,
           nav: null,
           nDups: [],
           pDups: [],
-          swipe: settings.responsive[i].hasTouchSwipe,
+          swipe: settings.breakpoints[i].enableTouchSwipe,
         };
         if (settingsobj.res) {
           settingsobj.res.push(obj);
@@ -1592,8 +1592,8 @@ namespace Carouzel {
    *
    */
   const init = (root: HTMLElement, settings: ISettings) => {
-    if (typeof settings.beforeInit === `function`) {
-      settings.beforeInit();
+    if (typeof settings.beforeInitFn === `function`) {
+      settings.beforeInitFn();
     }
     // let _core: ICore = { ...core };
     let _core = <ICore>{};
@@ -1655,8 +1655,8 @@ namespace Carouzel {
       }
     }
 
-    if (typeof settings.afterInit === `function`) {
-      settings.afterInit();
+    if (typeof settings.afterInitFn === `function`) {
+      settings.afterInitFn();
     }
     if (settings.trackUrlHash && window?.location?.hash) {
       let windowHash = window.location.hash || ``;

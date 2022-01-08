@@ -41,16 +41,15 @@ var loadIO = function () {
   });
   __carouzel_instance.init('#__carouzel_3', {
     slidesToShow: 1,
-    showNav: false,
-    responsive: [
+    breakpoints: [
       {
-        breakpoint: 700,
+        atWidth: 700,
         slidesToScroll: 2,
         slidesToShow: 2,
         showNav: true,
       },
       {
-        breakpoint: 1100,
+        atWidth: 1100,
         slidesToScroll: 4,
         slidesToShow: 4,
       },
@@ -60,9 +59,9 @@ var loadIO = function () {
     slidesToShow: 1,
     animationEffect: 'fade',
     speed: 500,
-    responsive: [
+    breakpoints: [
       {
-        breakpoint: 700,
+        atWidth: 700,
         slidesToScroll: 3,
         slidesToShow: 3,
       },
@@ -72,14 +71,14 @@ var loadIO = function () {
     slidesToShow: 1,
     autoplay: true,
     pauseOnHover: true,
-    responsive: [
+    breakpoints: [
       {
-        breakpoint: 700,
+        atWidth: 700,
         slidesToScroll: 2,
         slidesToShow: 2,
       },
       {
-        breakpoint: 1100,
+        atWidth: 1100,
         slidesToScroll: 3,
         slidesToShow: 3,
       },
@@ -88,14 +87,14 @@ var loadIO = function () {
   __carouzel_instance.init('#__carouzel_7', {
     slidesToShow: 1,
     isInfinite: false,
-    responsive: [
+    breakpoints: [
       {
-        breakpoint: 700,
+        atWidth: 700,
         slidesToScroll: 2,
         slidesToShow: 2,
       },
       {
-        breakpoint: 1100,
+        atWidth: 1100,
         slidesToScroll: 3,
         slidesToShow: 3,
       },
@@ -109,18 +108,17 @@ var loadIO = function () {
   });
   __carouzel_instance.init('#__carouzel_11', {
     slidesToShow: 1,
-    showNav: false,
     spaceBetween: 20,
-    responsive: [
+    breakpoints: [
       {
-        breakpoint: 700,
+        atWidth: 700,
         slidesToScroll: 2,
         slidesToShow: 2,
         showNav: true,
         spaceBetween: 30,
       },
       {
-        breakpoint: 1100,
+        atWidth: 1100,
         slidesToScroll: 4,
         slidesToShow: 4,
         spaceBetween: 40,
@@ -129,17 +127,16 @@ var loadIO = function () {
   });
   __carouzel_instance.init('#__carouzel_12', {
     slidesToShow: 1,
-    showNav: false,
     isInfinite: false,
-    responsive: [
+    breakpoints: [
       {
-        breakpoint: 700,
+        atWidth: 700,
         slidesToScroll: 2,
         slidesToShow: 2,
         showNav: true,
       },
       {
-        breakpoint: 1100,
+        atWidth: 1100,
         slidesToScroll: 4,
         slidesToShow: 4,
       },
@@ -152,22 +149,21 @@ var loadIO = function () {
   var initbtn = document.getElementById('initbtn');
 
   var carouzel8Settings = {
-    showNav: false,
-    beforeInit: function () {
+    beforeInitFn: function () {
       toastBeforeInit.show();
     },
-    afterInit: function () {
+    afterInitFn: function () {
       toastAfterInit.show();
     },
-    beforeScroll: function () {
+    beforeScrollFn: function () {
       toastBeforeScroll.show();
     },
-    afterScroll: function () {
+    afterScrollFn: function () {
       toastAfterScroll.show();
     },
-    responsive: [
+    breakpoints: [
       {
-        breakpoint: 700,
+        atWidth: 700,
         showNav: true,
       },
     ],
@@ -213,21 +209,20 @@ var loadIO = function () {
   var easingNumText = document.getElementById('easingNumText');
   var carouzel_13settings = {
     slidesToShow: 1,
-    showNav: false,
     spaceBetween: 8,
-    timingFunction: 'linear',
+    easingFunction: 'linear',
     animationSpeed: 400,
     animationEffect: 'scroll',
-    responsive: [
+    breakpoints: [
       {
-        breakpoint: 700,
+        atWidth: 700,
         slidesToScroll: 2,
         slidesToShow: 2,
         showNav: true,
         spaceBetween: 16,
       },
       {
-        breakpoint: 1100,
+        atWidth: 1100,
         slidesToScroll: 4,
         slidesToShow: 4,
         spaceBetween: 24,
@@ -237,7 +232,7 @@ var loadIO = function () {
   __carouzel_instance.init('#__carouzel_13', carouzel_13settings);
   __carouzel_13form.addEventListener('submit', function (event) {
     event.preventDefault();
-    carouzel_13settings.timingFunction = easingfnselect.value;
+    carouzel_13settings.easingFunction = easingfnselect.value;
     carouzel_13settings.animationEffect = effectfnselect.value;
     carouzel_13settings.animationSpeed = easingNumText.value;
     __carouzel_instance.destroy('#__carouzel_13');

@@ -9,47 +9,47 @@
  */
 declare namespace Carouzel {
     interface IBreakpoint {
-        breakpoint: number | string;
+        atWidth: number | string;
         centerBetween: number;
-        hasTouchSwipe: boolean;
+        enableTouchSwipe: boolean;
         showArrows: boolean;
         showNavigation: boolean;
+        slideGutter: number;
         slidesToScroll: number;
         slidesToShow: number;
-        spaceBetween: number;
     }
     interface ISettings {
         activeClass: string;
-        afterInit?: Function;
-        afterScroll?: Function;
+        afterInitFn?: Function;
+        afterScrollFn?: Function;
         animationEffect: string;
         animationSpeed: number;
         appendUrlHash: boolean;
         autoplay: boolean;
         autoplaySpeed: number;
-        beforeInit?: Function;
-        beforeScroll?: Function;
+        beforeInitFn?: Function;
+        beforeScrollFn?: Function;
+        breakpoints?: IBreakpoint[];
         centerBetween: number;
         disabledClass: string;
         dotIndexClass: string;
         dotTitleClass: string;
         duplicateClass: string;
-        editClass: string;
+        easingFunction: string;
+        editModeClass: string;
         enableKeyboard: boolean;
-        hasTouchSwipe: boolean;
+        enableTouchSwipe: boolean;
         hiddenClass: string;
         idPrefix: string;
         isInfinite: boolean;
         isRTL: boolean;
         pauseOnHover: boolean;
-        responsive?: IBreakpoint[];
         showArrows: boolean;
         showNavigation: boolean;
+        slideGutter: number;
         slidesToScroll: number;
         slidesToShow: number;
-        spaceBetween: number;
         startAtIndex: number;
-        timingFunction: string;
         touchThreshold: number;
         trackUrlHash: boolean;
         useTitlesAsDots: boolean;

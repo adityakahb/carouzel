@@ -2379,7 +2379,7 @@
                   id="easingNumText"
                   type="number"
                   min="0"
-                  value="400"
+                  value="500"
                 />
               </div>
 
@@ -3114,7 +3114,7 @@ __carouzel_instance.init('#__carouzel_1', __carouzel_options);
                     </td>
                   </tr>
                   <tr>
-                    <th><kbd>afterInit</kbd></th>
+                    <th><kbd>afterInitFn</kbd></th>
                     <td class="bg-info bg-opacity-10">
                       <span class="badge rounded-pill bg-info me-2"
                         >function</span
@@ -3122,7 +3122,7 @@ __carouzel_instance.init('#__carouzel_1', __carouzel_options);
                     </td>
                   </tr>
                   <tr>
-                    <th><kbd>afterScroll</kbd></th>
+                    <th><kbd>afterScrollFn</kbd></th>
                     <td class="bg-info bg-opacity-10">
                       <span class="badge rounded-pill bg-info me-2"
                         >function</span
@@ -3179,7 +3179,7 @@ __carouzel_instance.init('#__carouzel_1', __carouzel_options);
                     </td>
                   </tr>
                   <tr>
-                    <th><kbd>beforeInit</kbd></th>
+                    <th><kbd>beforeInitFn</kbd></th>
                     <td class="bg-info bg-opacity-10">
                       <span class="badge rounded-pill bg-info me-2"
                         >function</span
@@ -3187,12 +3187,16 @@ __carouzel_instance.init('#__carouzel_1', __carouzel_options);
                     </td>
                   </tr>
                   <tr>
-                    <th><kbd>beforeScroll</kbd></th>
+                    <th><kbd>beforeScrollFn</kbd></th>
                     <td class="bg-info bg-opacity-10">
                       <span class="badge rounded-pill bg-info me-2"
                         >function</span
                       >
                     </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>breakpoints</kbd></th>
+                    <td></td>
                   </tr>
                   <tr>
                     <th><kbd>centerBetween</kbd></th>
@@ -3240,7 +3244,24 @@ __carouzel_instance.init('#__carouzel_1', __carouzel_options);
                     </td>
                   </tr>
                   <tr>
-                    <th><kbd>editClass</kbd></th>
+                    <th><kbd>easingFunction</kbd></th>
+                    <td class="bg-info bg-opacity-10">
+                      <span class="badge rounded-pill bg-info me-2">string</span
+                      ><span class="badge rounded-pill bg-light text-info me-2"
+                        >linear</span
+                      >
+                      <br />
+                      <small
+                        >linear, easeInQuad, easeOutQuad, easeInOutQuad,
+                        easeInCubic, easeOutCubic, easeInOutCubic, easeInQuart,
+                        easeOutQuart, easeInOutQuart, easeInQuint, easeOutQuint,
+                        easeInOutQuint, easeInElastic, easeOutElastic,
+                        easeInOutElastic</small
+                      >
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>editModeClass</kbd></th>
                     <td class="bg-info bg-opacity-10">
                       <span class="badge rounded-pill bg-info me-2">string</span
                       ><span class="badge rounded-pill bg-light text-info me-2"
@@ -3259,7 +3280,7 @@ __carouzel_instance.init('#__carouzel_1', __carouzel_options);
                     </td>
                   </tr>
                   <tr>
-                    <th><kbd>hasTouchSwipe</kbd></th>
+                    <th><kbd>enableTouchSwipe</kbd></th>
                     <td class="bg-info bg-opacity-10">
                       <span class="badge rounded-pill bg-info me-2"
                         >boolean</span
@@ -3317,10 +3338,6 @@ __carouzel_instance.init('#__carouzel_1', __carouzel_options);
                     </td>
                   </tr>
                   <tr>
-                    <th><kbd>responsive</kbd></th>
-                    <td></td>
-                  </tr>
-                  <tr>
                     <th><kbd>showArrows</kbd></th>
                     <td class="bg-info bg-opacity-10">
                       <span class="badge rounded-pill bg-info me-2"
@@ -3373,23 +3390,6 @@ __carouzel_instance.init('#__carouzel_1', __carouzel_options);
                       <span class="badge rounded-pill bg-info me-2">number</span
                       ><span class="badge rounded-pill bg-light text-info me-2"
                         >0</span
-                      >
-                    </td>
-                  </tr>
-                  <tr>
-                    <th><kbd>timingFunction</kbd></th>
-                    <td class="bg-info bg-opacity-10">
-                      <span class="badge rounded-pill bg-info me-2">string</span
-                      ><span class="badge rounded-pill bg-light text-info me-2"
-                        >linear</span
-                      >
-                      <br />
-                      <small
-                        >linear, easeInQuad, easeOutQuad, easeInOutQuad,
-                        easeInCubic, easeOutCubic, easeInOutCubic, easeInQuart,
-                        easeOutQuart, easeInOutQuart, easeInQuint, easeOutQuint,
-                        easeInOutQuint, easeInElastic, easeOutElastic,
-                        easeInOutElastic</small
                       >
                     </td>
                   </tr>

@@ -109,27 +109,27 @@ var Carouzel;
         appendUrlHash: false,
         autoplay: false,
         autoplaySpeed: 5000,
+        breakpoints: [],
         centerBetween: 0,
         disabledClass: "__carouzel-disabled",
         dotIndexClass: "__carouzel-pageindex",
         dotTitleClass: "__carouzel-pagetitle",
         duplicateClass: "__carouzel-duplicate",
-        editClass: "__carouzel-editmode",
+        easingFunction: "linear",
+        editModeClass: "__carouzel-editmode",
         enableKeyboard: true,
-        hasTouchSwipe: true,
+        enableTouchSwipe: true,
         hiddenClass: "__carouzel-hidden",
         idPrefix: "__carouzel",
         isInfinite: true,
         isRTL: false,
-        pauseOnHover: true,
-        responsive: [],
+        pauseOnHover: false,
         showArrows: true,
         showNavigation: true,
+        slideGutter: 0,
         slidesToScroll: 1,
         slidesToShow: 1,
-        spaceBetween: 0,
         startAtIndex: 1,
-        timingFunction: "linear",
         touchThreshold: 125,
         trackUrlHash: false,
         useTitlesAsDots: false
@@ -413,7 +413,7 @@ var Carouzel;
          */
         var scrollThisTrack = function (now) {
             core._t.elapsed = now - core._t.start;
-            core._t.progress = _easingFunctions[core.opts.timeFn](core._t.elapsed / core._t.total);
+            core._t.progress = _easingFunctions[core.opts.easeFn](core._t.elapsed / core._t.total);
             if (core.ci > core.pi) {
                 core._t.position =
                     core._t.prevX +
@@ -454,7 +454,7 @@ var Carouzel;
          */
         var fadeThisTrack = function (now) {
             core._t.elapsed = now - core._t.start;
-            core._t.progress = _easingFunctions[core.opts.timeFn](core._t.elapsed / core._t.total);
+            core._t.progress = _easingFunctions[core.opts.easeFn](core._t.elapsed / core._t.total);
             core._t.progress = core._t.progress > 1 ? 1 : core._t.progress;
             for (var i = 0; i < core._as.length; i++) {
                 if (i < core.ci + core.bpo._2Show && core.pi < core.ci) {
@@ -1230,16 +1230,16 @@ var Carouzel;
             _nav: settings.showNavigation,
             _urlH: settings.appendUrlHash,
             activeCls: settings.activeClass,
-            aFn: settings.afterScroll,
+            aFn: settings.afterScrollFn,
             auto: settings.autoplay,
             autoS: settings.autoplaySpeed,
-            bFn: settings.beforeScroll,
+            bFn: settings.beforeScrollFn,
             cntr: settings.centerBetween,
             disableCls: settings.disabledClass,
             dotCls: settings.dotTitleClass,
             dotNcls: settings.dotIndexClass,
             dupCls: settings.duplicateClass,
-            editCls: settings.editClass,
+            editCls: settings.editModeClass,
             effect: (function () {
                 if (_animationEffects.indexOf(settings.animationEffect) > -1) {
                     return settings.animationEffect;
@@ -1247,7 +1247,7 @@ var Carouzel;
                 console.warn(_noEffectFoundError);
                 return _animationEffects[0];
             })(),
-            gutr: settings.spaceBetween,
+            gutr: settings.slideGutter,
             hidCls: settings.hiddenClass,
             inf: settings.isInfinite,
             rtl: settings.isRTL,
@@ -1256,33 +1256,33 @@ var Carouzel;
             res: [],
             speed: settings.animationSpeed,
             startAt: settings.animationSpeed,
-            swipe: settings.hasTouchSwipe,
+            swipe: settings.enableTouchSwipe,
             threshold: settings.touchThreshold,
-            timeFn: (function () {
-                if (_easingFunctions[settings.timingFunction]) {
-                    return settings.timingFunction;
+            easeFn: (function () {
+                if (_easingFunctions[settings.easingFunction]) {
+                    return settings.easingFunction;
                 }
                 console.warn(_noEasingFoundError);
                 return Object.keys(_easingFunctions)[0];
             })(),
             useTitle: settings.useTitlesAsDots
         };
-        if (settings.responsive && settings.responsive.length > 0) {
-            for (var i = 0; i < settings.responsive.length; i++) {
+        if (settings.breakpoints && settings.breakpoints.length > 0) {
+            for (var i = 0; i < settings.breakpoints.length; i++) {
                 var obj = {
-                    _2Scroll: settings.responsive[i].slidesToScroll,
-                    _2Show: settings.responsive[i].slidesToShow,
-                    _arrows: settings.responsive[i].showArrows,
-                    _nav: settings.responsive[i].showNavigation,
-                    bp: settings.responsive[i].breakpoint,
+                    _2Scroll: settings.breakpoints[i].slidesToScroll,
+                    _2Show: settings.breakpoints[i].slidesToShow,
+                    _arrows: settings.breakpoints[i].showArrows,
+                    _nav: settings.breakpoints[i].showNavigation,
+                    bp: settings.breakpoints[i].atWidth,
                     bpSLen: 0,
-                    cntr: settings.responsive[i].centerBetween,
+                    cntr: settings.breakpoints[i].centerBetween,
                     dots: [],
-                    gutr: settings.responsive[i].spaceBetween,
+                    gutr: settings.breakpoints[i].slideGutter,
                     nav: null,
                     nDups: [],
                     pDups: [],
-                    swipe: settings.responsive[i].hasTouchSwipe
+                    swipe: settings.breakpoints[i].enableTouchSwipe
                 };
                 if (settingsobj.res) {
                     settingsobj.res.push(obj);
@@ -1299,8 +1299,8 @@ var Carouzel;
      */
     var init = function (root, settings) {
         var _a;
-        if (typeof settings.beforeInit === "function") {
-            settings.beforeInit();
+        if (typeof settings.beforeInitFn === "function") {
+            settings.beforeInitFn();
         }
         // let _core: ICore = { ...core };
         var _core = {};
@@ -1355,8 +1355,8 @@ var Carouzel;
                 _core.root.setAttribute(_Selectors.cntr.slice(1, -1), "");
             }
         }
-        if (typeof settings.afterInit === "function") {
-            settings.afterInit();
+        if (typeof settings.afterInitFn === "function") {
+            settings.afterInitFn();
         }
         if (settings.trackUrlHash && ((_a = window === null || window === void 0 ? void 0 : window.location) === null || _a === void 0 ? void 0 : _a.hash)) {
             var windowHash = window.location.hash || "";
