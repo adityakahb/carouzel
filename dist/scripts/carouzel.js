@@ -122,7 +122,7 @@ var Carouzel;
         hiddenClass: "__carouzel-hidden",
         idPrefix: "__carouzel",
         isInfinite: true,
-        isRTL: false,
+        isRtl: false,
         pauseOnHover: false,
         showArrows: true,
         showNavigation: true,
@@ -561,7 +561,7 @@ var Carouzel;
      * @param core - Carouzel instance core object
      *
      */
-    var applyLayout = function (core, isRTLFirstLoad) {
+    var applyLayout = function (core, isRtlFirstLoad) {
         var viewportWidth = window === null || window === void 0 ? void 0 : window.innerWidth;
         var bpoptions = core.bpall[0];
         var len = 0;
@@ -607,7 +607,7 @@ var Carouzel;
         else if (core.navW) {
             removeClass(core.navW, core.opts.hidCls);
         }
-        if (isRTLFirstLoad) {
+        if (isRtlFirstLoad) {
             core.ci = core.opts.startAt = core.sLen - bpoptions._2Scroll;
         }
         if (core.root && core.trkW && core.trkO && core.trk) {
@@ -1250,7 +1250,7 @@ var Carouzel;
             gutr: settings.slideGutter,
             hidCls: settings.hiddenClass,
             inf: settings.isInfinite,
-            rtl: settings.isRTL,
+            rtl: settings.isRtl,
             kb: settings.enableKeyboard,
             pauseHov: settings.pauseOnHover,
             res: [],
@@ -1302,7 +1302,6 @@ var Carouzel;
         if (typeof settings.beforeInitFn === "function") {
             settings.beforeInitFn();
         }
-        // let _core: ICore = { ...core };
         var _core = {};
         _core.root = root;
         _core.opts = mapSettings(settings);
@@ -1322,9 +1321,8 @@ var Carouzel;
         _core.trkM = root.querySelector("".concat(_Selectors.trkM));
         _core.trkO = root.querySelector("".concat(_Selectors.trkO));
         _core.trkW = root.querySelector("".concat(_Selectors.trkW));
-        _core.opts.rtl = false;
-        if (_core.root.hasAttribute(_Selectors.rtl.slice(1, -1))) {
-            _core.opts.rtl = true;
+        if (_core.opts.rtl) {
+            _core.root.setAttribute(_Selectors.rtl.slice(1, -1), 'true');
         }
         _core._t = {};
         _core._t.total = _core.opts.speed;

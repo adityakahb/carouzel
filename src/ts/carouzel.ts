@@ -99,7 +99,7 @@ namespace Carouzel {
     hiddenClass: string;
     idPrefix: string;
     isInfinite: boolean;
-    isRTL: boolean;
+    isRtl: boolean;
     pauseOnHover: boolean;
     showArrows: boolean;
     showNavigation: boolean;
@@ -278,7 +278,7 @@ namespace Carouzel {
     hiddenClass: `__carouzel-hidden`,
     idPrefix: `__carouzel`,
     isInfinite: true,
-    isRTL: false,
+    isRtl: false,
     pauseOnHover: false,
     showArrows: true,
     showNavigation: true,
@@ -764,7 +764,7 @@ namespace Carouzel {
    * @param core - Carouzel instance core object
    *
    */
-  const applyLayout = (core: ICore, isRTLFirstLoad: boolean) => {
+  const applyLayout = (core: ICore, isRtlFirstLoad: boolean) => {
     let viewportWidth = window?.innerWidth;
     let bpoptions = core.bpall[0];
     let len = 0;
@@ -814,7 +814,7 @@ namespace Carouzel {
     } else if (core.navW) {
       removeClass(core.navW, core.opts.hidCls);
     }
-    if (isRTLFirstLoad) {
+    if (isRtlFirstLoad) {
       core.ci = core.opts.startAt = core.sLen - bpoptions._2Scroll;
     }
     if (core.root && core.trkW && core.trkO && core.trk) {
@@ -1541,7 +1541,7 @@ namespace Carouzel {
       gutr: settings.slideGutter,
       hidCls: settings.hiddenClass,
       inf: settings.isInfinite,
-      rtl: settings.isRTL,
+      rtl: settings.isRtl,
       kb: settings.enableKeyboard,
       pauseHov: settings.pauseOnHover,
       res: [],
@@ -1595,7 +1595,7 @@ namespace Carouzel {
     if (typeof settings.beforeInitFn === `function`) {
       settings.beforeInitFn();
     }
-    // let _core: ICore = { ...core };
+
     let _core = <ICore>{};
     _core.root = root;
     _core.opts = mapSettings(settings);
@@ -1616,11 +1616,11 @@ namespace Carouzel {
     _core.trkM = root.querySelector(`${_Selectors.trkM}`);
     _core.trkO = root.querySelector(`${_Selectors.trkO}`);
     _core.trkW = root.querySelector(`${_Selectors.trkW}`);
-    _core.opts.rtl = false;
 
-    if (_core.root.hasAttribute(_Selectors.rtl.slice(1, -1))) {
-      _core.opts.rtl = true;
+    if (_core.opts.rtl) {
+      _core.root.setAttribute(_Selectors.rtl.slice(1, -1), 'true');
     }
+
     _core._t = <ITimer>{};
     _core._t.total = _core.opts.speed;
 

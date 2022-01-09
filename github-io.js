@@ -108,26 +108,27 @@ var loadIO = function () {
   });
   __carouzel_instance.init('#__carouzel_11', {
     slidesToShow: 1,
-    spaceBetween: 20,
+    slideGutter: 20,
     breakpoints: [
       {
         atWidth: 700,
         slidesToScroll: 2,
         slidesToShow: 2,
         showNav: true,
-        spaceBetween: 30,
+        slideGutter: 30,
       },
       {
         atWidth: 1100,
         slidesToScroll: 4,
         slidesToShow: 4,
-        spaceBetween: 40,
+        slideGutter: 40,
       },
     ],
   });
   __carouzel_instance.init('#__carouzel_12', {
     slidesToShow: 1,
     isInfinite: false,
+    isRtl: true,
     breakpoints: [
       {
         atWidth: 700,
@@ -209,7 +210,7 @@ var loadIO = function () {
   var easingNumText = document.getElementById('easingNumText');
   var carouzel_13settings = {
     slidesToShow: 1,
-    spaceBetween: 8,
+    slideGutter: 8,
     easingFunction: 'linear',
     animationSpeed: 400,
     animationEffect: 'scroll',
@@ -219,13 +220,13 @@ var loadIO = function () {
         slidesToScroll: 2,
         slidesToShow: 2,
         showNav: true,
-        spaceBetween: 16,
+        slideGutter: 16,
       },
       {
         atWidth: 1100,
         slidesToScroll: 4,
         slidesToShow: 4,
-        spaceBetween: 24,
+        slideGutter: 24,
       },
     ],
   };

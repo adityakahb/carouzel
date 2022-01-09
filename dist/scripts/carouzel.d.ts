@@ -42,7 +42,7 @@ declare namespace Carouzel {
         hiddenClass: string;
         idPrefix: string;
         isInfinite: boolean;
-        isRTL: boolean;
+        isRtl: boolean;
         pauseOnHover: boolean;
         showArrows: boolean;
         showNavigation: boolean;
