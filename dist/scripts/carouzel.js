@@ -998,27 +998,29 @@ var Carouzel;
                 dragging = false;
             }
         };
-        core.eHandlers.push(eventHandler(core.trk, "touchstart", function (event) {
-            touchStart(event);
-        }));
-        core.eHandlers.push(eventHandler(core.trk, "touchmove", function (event) {
-            touchMove(event);
-        }));
-        core.eHandlers.push(eventHandler(core.trk, "touchend", function (e) {
-            touchEnd(e);
-        }));
-        core.eHandlers.push(eventHandler(core.trk, "mousedown", function (event) {
-            touchStart(event);
-        }));
-        core.eHandlers.push(eventHandler(core.trk, "mouseup", function (e) {
-            touchEnd(e);
-        }));
-        core.eHandlers.push(eventHandler(core.trk, "mouseleave", function (e) {
-            touchEnd(e);
-        }));
-        core.eHandlers.push(eventHandler(core.trk, "mousemove", function (event) {
-            touchMove(event);
-        }));
+        if (core.opts.swipe) {
+            core.eHandlers.push(eventHandler(core.trk, "touchstart", function (event) {
+                touchStart(event);
+            }));
+            core.eHandlers.push(eventHandler(core.trk, "touchmove", function (event) {
+                touchMove(event);
+            }));
+            core.eHandlers.push(eventHandler(core.trk, "touchend", function (e) {
+                touchEnd(e);
+            }));
+            core.eHandlers.push(eventHandler(core.trk, "mousedown", function (event) {
+                touchStart(event);
+            }));
+            core.eHandlers.push(eventHandler(core.trk, "mouseup", function (e) {
+                touchEnd(e);
+            }));
+            core.eHandlers.push(eventHandler(core.trk, "mouseleave", function (e) {
+                touchEnd(e);
+            }));
+            core.eHandlers.push(eventHandler(core.trk, "mousemove", function (event) {
+                touchMove(event);
+            }));
+        }
     };
     /**
      * Function to generate duplicate elements and dot navigation before hand for all breakpoints
@@ -1508,7 +1510,7 @@ var Carouzel;
                             else {
                                 var thisid = id
                                     ? id
-                                    : __assign(__assign({}, newOptions), _Defaults).idPrefix +
+                                    : __assign(__assign({}, _Defaults), newOptions).idPrefix +
                                         "_" +
                                         new Date().getTime() +
                                         "_root_" +

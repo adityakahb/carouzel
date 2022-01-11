@@ -1235,57 +1235,63 @@ namespace Carouzel {
       }
     };
 
-    core.eHandlers.push(
-      eventHandler(
-        core.trk as HTMLElement,
-        `touchstart`,
-        function (event: Event) {
-          touchStart(event);
-        }
-      )
-    );
-    core.eHandlers.push(
-      eventHandler(
-        core.trk as HTMLElement,
-        `touchmove`,
-        function (event: Event) {
-          touchMove(event);
-        }
-      )
-    );
-    core.eHandlers.push(
-      eventHandler(core.trk as HTMLElement, `touchend`, function (e: Event) {
-        touchEnd(e);
-      })
-    );
-    core.eHandlers.push(
-      eventHandler(
-        core.trk as HTMLElement,
-        `mousedown`,
-        function (event: Event) {
-          touchStart(event);
-        }
-      )
-    );
-    core.eHandlers.push(
-      eventHandler(core.trk as HTMLElement, `mouseup`, function (e: Event) {
-        touchEnd(e);
-      })
-    );
-    core.eHandlers.push(
-      eventHandler(core.trk as HTMLElement, `mouseleave`, function (e: Event) {
-        touchEnd(e);
-      })
-    );
-    core.eHandlers.push(
-      eventHandler(
-        core.trk as HTMLElement,
-        `mousemove`,
-        function (event: Event) {
-          touchMove(event);
-        }
-      )
-    );
+    if (core.opts.swipe) {
+      core.eHandlers.push(
+        eventHandler(
+          core.trk as HTMLElement,
+          `touchstart`,
+          function (event: Event) {
+            touchStart(event);
+          }
+        )
+      );
+      core.eHandlers.push(
+        eventHandler(
+          core.trk as HTMLElement,
+          `touchmove`,
+          function (event: Event) {
+            touchMove(event);
+          }
+        )
+      );
+      core.eHandlers.push(
+        eventHandler(core.trk as HTMLElement, `touchend`, function (e: Event) {
+          touchEnd(e);
+        })
+      );
+      core.eHandlers.push(
+        eventHandler(
+          core.trk as HTMLElement,
+          `mousedown`,
+          function (event: Event) {
+            touchStart(event);
+          }
+        )
+      );
+      core.eHandlers.push(
+        eventHandler(core.trk as HTMLElement, `mouseup`, function (e: Event) {
+          touchEnd(e);
+        })
+      );
+      core.eHandlers.push(
+        eventHandler(
+          core.trk as HTMLElement,
+          `mouseleave`,
+          function (e: Event) {
+            touchEnd(e);
+          }
+        )
+      );
+      core.eHandlers.push(
+        eventHandler(
+          core.trk as HTMLElement,
+          `mousemove`,
+          function (event: Event) {
+            touchMove(event);
+          }
+        )
+      );
+    }
   };
 
   /**
@@ -1840,7 +1846,7 @@ namespace Carouzel {
             } else {
               const thisid = id
                 ? id
-                : { ...newOptions, ..._Defaults }.idPrefix +
+                : { ..._Defaults, ...newOptions }.idPrefix +
                   `_` +
                   new Date().getTime() +
                   `_root_` +
