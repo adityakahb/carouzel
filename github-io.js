@@ -43,13 +43,13 @@ var loadIO = function () {
     slidesToShow: 1,
     breakpoints: [
       {
-        atWidth: 700,
+        minWidth: 700,
         slidesToScroll: 2,
         slidesToShow: 2,
         showNav: true,
       },
       {
-        atWidth: 1100,
+        minWidth: 1100,
         slidesToScroll: 4,
         slidesToShow: 4,
       },
@@ -61,7 +61,7 @@ var loadIO = function () {
     speed: 500,
     breakpoints: [
       {
-        atWidth: 700,
+        minWidth: 700,
         slidesToScroll: 3,
         slidesToShow: 3,
       },
@@ -73,12 +73,12 @@ var loadIO = function () {
     pauseOnHover: true,
     breakpoints: [
       {
-        atWidth: 700,
+        minWidth: 700,
         slidesToScroll: 2,
         slidesToShow: 2,
       },
       {
-        atWidth: 1100,
+        minWidth: 1100,
         slidesToScroll: 3,
         slidesToShow: 3,
       },
@@ -89,12 +89,12 @@ var loadIO = function () {
     isInfinite: false,
     breakpoints: [
       {
-        atWidth: 700,
+        minWidth: 700,
         slidesToScroll: 2,
         slidesToShow: 2,
       },
       {
-        atWidth: 1100,
+        minWidth: 1100,
         slidesToScroll: 3,
         slidesToShow: 3,
       },
@@ -111,14 +111,14 @@ var loadIO = function () {
     slideGutter: 20,
     breakpoints: [
       {
-        atWidth: 700,
+        minWidth: 700,
         slidesToScroll: 2,
         slidesToShow: 2,
         showNav: true,
         slideGutter: 30,
       },
       {
-        atWidth: 1100,
+        minWidth: 1100,
         slidesToScroll: 4,
         slidesToShow: 4,
         slideGutter: 40,
@@ -131,13 +131,13 @@ var loadIO = function () {
     isRtl: true,
     breakpoints: [
       {
-        atWidth: 700,
+        minWidth: 700,
         slidesToScroll: 2,
         slidesToShow: 2,
         showNav: true,
       },
       {
-        atWidth: 1100,
+        minWidth: 1100,
         slidesToScroll: 4,
         slidesToShow: 4,
       },
@@ -164,7 +164,7 @@ var loadIO = function () {
     },
     breakpoints: [
       {
-        atWidth: 700,
+        minWidth: 700,
         showNav: true,
       },
     ],
@@ -216,14 +216,14 @@ var loadIO = function () {
     animationEffect: 'scroll',
     breakpoints: [
       {
-        atWidth: 700,
+        minWidth: 700,
         slidesToScroll: 2,
         slidesToShow: 2,
         showNav: true,
         slideGutter: 16,
       },
       {
-        atWidth: 1100,
+        minWidth: 1100,
         slidesToScroll: 4,
         slidesToShow: 4,
         slideGutter: 24,

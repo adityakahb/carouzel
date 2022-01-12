@@ -9,7 +9,7 @@
  */
 declare namespace Carouzel {
     interface IBreakpoint {
-        atWidth: number | string;
+        minWidth: number | string;
         centerBetween: number;
         enableTouchSwipe: boolean;
         showArrows: boolean;

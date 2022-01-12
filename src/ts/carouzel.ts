@@ -65,7 +65,7 @@ namespace Carouzel {
   }
 
   interface IBreakpoint {
-    atWidth: number | string;
+    minWidth: number | string;
     centerBetween: number;
     enableTouchSwipe: boolean;
     showArrows: boolean;
@@ -1572,7 +1572,7 @@ namespace Carouzel {
           _2Show: settings.breakpoints[i].slidesToShow,
           _arrows: settings.breakpoints[i].showArrows,
           _nav: settings.breakpoints[i].showNavigation,
-          bp: settings.breakpoints[i].atWidth,
+          bp: settings.breakpoints[i].minWidth,
           bpSLen: 0,
           cntr: settings.breakpoints[i].centerBetween,
           dots: [],

@@ -3113,6 +3113,12 @@ __carouzel_instance.init('#__carouzel_1', __carouzel_options);
                     </td>
                   </tr>
                   <tr>
+                    <td colspan="2">
+                      The CSS class applied to the shown/active elements in
+                      carouzel, such as shown slides and navigation dots.
+                    </td>
+                  </tr>
+                  <tr>
                     <th><kbd>afterInitFn</kbd></th>
                     <td class="bg-info bg-opacity-10">
                       <span class="badge rounded-pill bg-info me-2"
@@ -3121,11 +3127,24 @@ __carouzel_instance.init('#__carouzel_1', __carouzel_options);
                     </td>
                   </tr>
                   <tr>
+                    <td colspan="2">
+                      The event which can be fired after the carouzel is
+                      initialized. It takes a function as value.
+                    </td>
+                  </tr>
+                  <tr>
                     <th><kbd>afterScrollFn</kbd></th>
                     <td class="bg-info bg-opacity-10">
                       <span class="badge rounded-pill bg-info me-2"
                         >function</span
                       >
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2">
+                      The event which can be fired after the carouzel is
+                      animated to next set of slides. It takes a function as
+                      value.
                     </td>
                   </tr>
                   <tr>
@@ -3140,6 +3159,9 @@ __carouzel_instance.init('#__carouzel_1', __carouzel_options);
                     </td>
                   </tr>
                   <tr>
+                    <td colspan="2">Type of animation effect.</td>
+                  </tr>
+                  <tr>
                     <th><kbd>animationSpeed</kbd></th>
                     <td class="bg-info bg-opacity-10">
                       <span class="badge rounded-pill bg-info me-2">number</span
@@ -3149,6 +3171,9 @@ __carouzel_instance.init('#__carouzel_1', __carouzel_options);
                     </td>
                   </tr>
                   <tr>
+                    <td colspan="2">Animation speed in milliseconds.</td>
+                  </tr>
+                  <tr>
                     <th><kbd>appendUrlHash</kbd></th>
                     <td class="bg-info bg-opacity-10">
                       <span class="badge rounded-pill bg-info me-2"
@@ -3156,6 +3181,13 @@ __carouzel_instance.init('#__carouzel_1', __carouzel_options);
                       ><span class="badge rounded-pill bg-light text-info me-2"
                         >false</span
                       >
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2">
+                      If `true`, carouzel tries to append the id attribute
+                      attached to the first active `data-carouzel-slide` to the
+                      window url, after the scroll happens.
                     </td>
                   </tr>
                   <tr>
@@ -3169,12 +3201,24 @@ __carouzel_instance.init('#__carouzel_1', __carouzel_options);
                     </td>
                   </tr>
                   <tr>
+                    <td colspan="2">
+                      Toggles the autoplay feature of the carouzel.
+                    </td>
+                  </tr>
+                  <tr>
                     <th><kbd>autoplaySpeed</kbd></th>
                     <td class="bg-info bg-opacity-10">
                       <span class="badge rounded-pill bg-info me-2">number</span
                       ><span class="badge rounded-pill bg-light text-info me-2"
                         >5000</span
                       >
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2">
+                      Autoplay speed in milliseconds. If autoplay is enabled,
+                      the carouzel automatically animates to next set after this
+                      number of milliseconds.
                     </td>
                   </tr>
                   <tr>
@@ -3186,6 +3230,12 @@ __carouzel_instance.init('#__carouzel_1', __carouzel_options);
                     </td>
                   </tr>
                   <tr>
+                    <td colspan="2">
+                      The event which can be fired before the carouzel is
+                      initialized. It takes a function as value.
+                    </td>
+                  </tr>
+                  <tr>
                     <th><kbd>beforeScrollFn</kbd></th>
                     <td class="bg-info bg-opacity-10">
                       <span class="badge rounded-pill bg-info me-2"
@@ -3194,8 +3244,20 @@ __carouzel_instance.init('#__carouzel_1', __carouzel_options);
                     </td>
                   </tr>
                   <tr>
+                    <td colspan="2">
+                      The event which can be fired before the carouzel is
+                      animated to next set of slides. It takes a function as
+                      value.
+                    </td>
+                  </tr>
+                  <tr>
                     <th><kbd>breakpoints</kbd></th>
-                    <td></td>
+                    <td class="bg-info bg-opacity-10">
+                      <span class="badge rounded-pill bg-info me-2">array</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2"></td>
                   </tr>
                   <tr>
                     <th><kbd>centerBetween</kbd></th>
@@ -3204,6 +3266,13 @@ __carouzel_instance.init('#__carouzel_1', __carouzel_options);
                       ><span class="badge rounded-pill bg-light text-info me-2"
                         >0</span
                       >
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2">
+                      The number of slides which should show up on the left and
+                      right of the active slides. This number is divided in half
+                      to show up on both slides.
                     </td>
                   </tr>
                   <tr>
@@ -3216,12 +3285,25 @@ __carouzel_instance.init('#__carouzel_1', __carouzel_options);
                     </td>
                   </tr>
                   <tr>
+                    <td colspan="2">
+                      The CSS class applied to the disabled elements in
+                      carouzel, such as left and right arrows when there are no
+                      more scrollable slides.
+                    </td>
+                  </tr>
+                  <tr>
                     <th><kbd>dotIndexClass</kbd></th>
                     <td class="bg-info bg-opacity-10">
                       <span class="badge rounded-pill bg-info me-2">string</span
                       ><span class="badge rounded-pill bg-light text-info me-2"
                         >__carouzel-pageindex</span
                       >
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2">
+                      When the `useTitlesAsDots` is enabled, this CSS class is
+                      applied to the page number shown in the navigation dot.
                     </td>
                   </tr>
                   <tr>
@@ -3234,12 +3316,24 @@ __carouzel_instance.init('#__carouzel_1', __carouzel_options);
                     </td>
                   </tr>
                   <tr>
+                    <td colspan="2">
+                      When the `useTitlesAsDots` is enabled, this CSS class is
+                      applied to the page title shown in the navigation dot.
+                    </td>
+                  </tr>
+                  <tr>
                     <th><kbd>duplicateClass</kbd></th>
                     <td class="bg-info bg-opacity-10">
                       <span class="badge rounded-pill bg-info me-2">string</span
                       ><span class="badge rounded-pill bg-light text-info me-2"
                         >__carouzel-duplicate</span
                       >
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2">
+                      The CSS class is applied to the duplicate slides element
+                      created for infinite scroll implementation.
                     </td>
                   </tr>
                   <tr>
@@ -3260,12 +3354,23 @@ __carouzel_instance.init('#__carouzel_1', __carouzel_options);
                     </td>
                   </tr>
                   <tr>
+                    <td colspan="2">
+                      The easing function used for animation effect.
+                    </td>
+                  </tr>
+                  <tr>
                     <th><kbd>editModeClass</kbd></th>
                     <td class="bg-info bg-opacity-10">
                       <span class="badge rounded-pill bg-info me-2">string</span
                       ><span class="badge rounded-pill bg-light text-info me-2"
                         >__carouzel-editmode</span
                       >
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2">
+                      This class can be used for custom CSS when the carouzel is
+                      displayed in certain CMS (like Adobe AEM) edit mode.
                     </td>
                   </tr>
                   <tr>
@@ -3279,6 +3384,12 @@ __carouzel_instance.init('#__carouzel_1', __carouzel_options);
                     </td>
                   </tr>
                   <tr>
+                    <td colspan="2">
+                      If `false`, keyboard arrow events are not attached to the
+                      carouzel.
+                    </td>
+                  </tr>
+                  <tr>
                     <th><kbd>enableTouchSwipe</kbd></th>
                     <td class="bg-info bg-opacity-10">
                       <span class="badge rounded-pill bg-info me-2"
@@ -3286,6 +3397,12 @@ __carouzel_instance.init('#__carouzel_1', __carouzel_options);
                       ><span class="badge rounded-pill bg-light text-info me-2"
                         >true</span
                       >
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2">
+                      If `false`, touch swipe events are not attached to the
+                      carouzel.
                     </td>
                   </tr>
                   <tr>
@@ -3298,12 +3415,26 @@ __carouzel_instance.init('#__carouzel_1', __carouzel_options);
                     </td>
                   </tr>
                   <tr>
+                    <td colspan="2">
+                      This CSS class is used to hide the elements (like
+                      navigation or arrows) in certain breakpoint, works along
+                      with `showArrows` and `showNavigation`
+                    </td>
+                  </tr>
+                  <tr>
                     <th><kbd>idPrefix</kbd></th>
                     <td class="bg-info bg-opacity-10">
                       <span class="badge rounded-pill bg-info me-2">string</span
                       ><span class="badge rounded-pill bg-light text-info me-2"
                         >__carouzel</span
                       >
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2">
+                      If the id attribute is not assigned to the root element,
+                      this string can be used to generate and assign a random id
+                      attribute to the root element.
                     </td>
                   </tr>
                   <tr>
@@ -3317,6 +3448,13 @@ __carouzel_instance.init('#__carouzel_1', __carouzel_options);
                     </td>
                   </tr>
                   <tr>
+                    <td colspan="2">
+                      If the id attribute is not assigned to the root element,
+                      this string can be used to generate and assign a random id
+                      attribute to the root element.
+                    </td>
+                  </tr>
+                  <tr>
                     <th><kbd>isRTL</kbd></th>
                     <td class="bg-info bg-opacity-10">
                       <span class="badge rounded-pill bg-info me-2"
@@ -3324,6 +3462,11 @@ __carouzel_instance.init('#__carouzel_1', __carouzel_options);
                       ><span class="badge rounded-pill bg-light text-info me-2"
                         >false</span
                       >
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2">
+                      If `true`, the right-to-left implementation is enabled.
                     </td>
                   </tr>
                   <tr>
@@ -3337,6 +3480,13 @@ __carouzel_instance.init('#__carouzel_1', __carouzel_options);
                     </td>
                   </tr>
                   <tr>
+                    <td colspan="2">
+                      If `autoplay` is enabled, it can be paused when cursor is
+                      hovered on it. This behavior can be disabled by making
+                      this setting `false`.
+                    </td>
+                  </tr>
+                  <tr>
                     <th><kbd>showArrows</kbd></th>
                     <td class="bg-info bg-opacity-10">
                       <span class="badge rounded-pill bg-info me-2"
@@ -3344,6 +3494,12 @@ __carouzel_instance.init('#__carouzel_1', __carouzel_options);
                       ><span class="badge rounded-pill bg-light text-info me-2"
                         >true</span
                       >
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2">
+                      If `false`, the arrows are not shown in certain or all
+                      breakpoints.
                     </td>
                   </tr>
                   <tr>
@@ -3357,12 +3513,39 @@ __carouzel_instance.init('#__carouzel_1', __carouzel_options);
                     </td>
                   </tr>
                   <tr>
+                    <td colspan="2">
+                      If `false`, the navigation dots are not shown in certain
+                      or all breakpoints.
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>slideGutter</kbd></th>
+                    <td class="bg-info bg-opacity-10">
+                      <span class="badge rounded-pill bg-info me-2">number</span
+                      ><span class="badge rounded-pill bg-light text-info me-2"
+                        >0</span
+                      >
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2">
+                      The gutter space between slides in certain or all
+                      breakpoints.
+                    </td>
+                  </tr>
+                  <tr>
                     <th><kbd>slidesToScroll</kbd></th>
                     <td class="bg-info bg-opacity-10">
                       <span class="badge rounded-pill bg-info me-2">number</span
                       ><span class="badge rounded-pill bg-light text-info me-2"
                         >1</span
                       >
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2">
+                      The number of slides to scroll at once in certain or all
+                      breakpoints.
                     </td>
                   </tr>
                   <tr>
@@ -3375,12 +3558,9 @@ __carouzel_instance.init('#__carouzel_1', __carouzel_options);
                     </td>
                   </tr>
                   <tr>
-                    <th><kbd>spaceBetween</kbd></th>
-                    <td class="bg-info bg-opacity-10">
-                      <span class="badge rounded-pill bg-info me-2">number</span
-                      ><span class="badge rounded-pill bg-light text-info me-2"
-                        >0</span
-                      >
+                    <td colspan="2">
+                      The number of slides to show at once in certain or all
+                      breakpoints.
                     </td>
                   </tr>
                   <tr>
@@ -3390,6 +3570,12 @@ __carouzel_instance.init('#__carouzel_1', __carouzel_options);
                       ><span class="badge rounded-pill bg-light text-info me-2"
                         >0</span
                       >
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2">
+                      The number of slides to show at once in certain or all
+                      breakpoints.
                     </td>
                   </tr>
                   <tr>
