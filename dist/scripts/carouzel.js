@@ -860,7 +860,7 @@ var Carouzel;
         var ratioY = 0;
         var startX = 0;
         var startY = 0;
-        var threshold = core.opts.threshold || 100;
+        var threshold = core.opts.threshold || 125;
         var canFiniteAnimate = false;
         /**
          * Function to be triggered when the carouzel is touched the cursor is down on it

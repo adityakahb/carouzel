@@ -1085,7 +1085,7 @@ namespace Carouzel {
     let ratioY = 0;
     let startX = 0;
     let startY = 0;
-    let threshold = core.opts.threshold || 100;
+    let threshold = core.opts.threshold || 125;
     let canFiniteAnimate = false;
 
     /**
