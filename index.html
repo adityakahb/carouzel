@@ -972,21 +972,18 @@
               <section
                 data-carouzel
                 data-carouzel-auto="{
-                  'animationSpeed': 600,
+                  'animationSpeed': 1000,
                   'slidesToScroll': 1,
                   'slidesToShow': 1,
-                  'showArrows': true,
-                  'showNavigation': false,
-                  'responsive': [
+                  'breakpoints': [
                       {
-                        'breakpoint': 768,
+                        'minWidth': 768,
                         'slidesToScroll': 2,
                         'slidesToShow': 2,
-                        'showNavigation': true,
                         'centerBetween': 1
                       },
                       {
-                        'breakpoint': 1024,
+                        'minWidth': 1024,
                         'slidesToScroll': 3,
                         'slidesToShow': 3
                       }
@@ -3198,6 +3195,20 @@ __carouzel_instance.init('#__carouzel_id', __carouzel_options);
                     </td>
                   </tr>
                   <tr>
+                    <th><kbd>data-carouzel-play</kbd></th>
+                    <td class="bg-warning bg-opacity-10">
+                      Immediate child of `data-carouzel-controlswrapper`. Play
+                      button to control carouzel if `autoplay` is true.
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>data-carouzel-pause</kbd></th>
+                    <td class="bg-warning bg-opacity-10">
+                      Immediate child of `data-carouzel-controlswrapper`. Pause
+                      button to control carouzel if `autoplay` is true.
+                    </td>
+                  </tr>
+                  <tr>
                     <th><kbd>data-carouzel-navigationwrapper</kbd></th>
                     <td class="bg-warning bg-opacity-10">
                       Immediate child of `data-carouzel-carouzel`. Contains list
@@ -3408,11 +3419,11 @@ __carouzel_instance.init('#__carouzel_id', __carouzel_options);
                       Carouzel is `mobile-first` implementation. The default
                       settings are applied to all breakpoints, but as the
                       following array is populated, the mentioned settings are
-                      extended from the default configured.<br /><br />
+                      extended from the default or configured options.<br /><br />
                       <pre>
 [{
   <kbd>minWidth</kbd>: <span class="badge rounded-pill bg-info me-2">number</span
-    >;
+    >; The minimum device width at which the following settings need to be updated
   <kbd>centerBetween</kbd>: <span class="badge rounded-pill bg-info me-2">number</span
     >;
   <kbd>enableTouchSwipe</kbd>: <span class="badge rounded-pill bg-info me-2">boolean</span
