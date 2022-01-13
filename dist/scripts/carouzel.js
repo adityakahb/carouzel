@@ -1604,7 +1604,11 @@ var Carouzel;
     }());
     Carouzel.Root = Root;
 })(Carouzel || (Carouzel = {}));
-Carouzel.Root.getInstance().globalInit();
+if (window) {
+    window.addEventListener('DOMContentLoaded', function () {
+        Carouzel.Root.getInstance().globalInit();
+    });
+}
 if (typeof exports === "object" && typeof module !== "undefined") {
     module.exports = Carouzel;
 }
