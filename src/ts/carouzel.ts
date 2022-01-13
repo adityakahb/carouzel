@@ -1935,7 +1935,11 @@ namespace Carouzel {
     // };
   }
 }
-Carouzel.Root.getInstance().globalInit();
+if (window as Window) {
+  window.addEventListener('DOMContentLoaded', () => {
+    Carouzel.Root.getInstance().globalInit();
+  });
+}
 if (typeof exports === `object` && typeof module !== `undefined`) {
   module.exports = Carouzel;
 }

@@ -956,7 +956,6 @@
           <div class="row">
             <div class="col text-center">
               <h3 id="example_data_attribute">Through data-attribute</h3>
-              <p class="lead">Uses `data-carouzel-auto`</p>
               <a
                 href="https://codesandbox.io/s/carouzel-using-data-attribute-wqked?file=/index.html"
                 target="_blank"
@@ -1120,7 +1119,6 @@
           <div class="row">
             <div class="col text-center">
               <h3 id="example_autoplay">Autoplay</h3>
-              <p class="lead">With `pauseOnHover`</p>
               <a
                 href="https://codesandbox.io/s/carouzel-autoplay-k4tk4?file=/index.html"
                 target="_blank"
@@ -1808,10 +1806,6 @@
           <div class="row">
             <div class="col text-center">
               <h3 id="example_titles_as_nav">Slide titles as navigation</h3>
-              <p class="lead">
-                Uses `data-carouzel-title` for each slide, works only when
-                slidesToShow is 1 and `useTitlesAsDots` is true
-              </p>
               <a
                 href="https://codesandbox.io/s/carouzel-slide-titles-as-dots-tykcs?file=/index.html"
                 target="_blank"
@@ -3096,6 +3090,157 @@ __carouzel_instance.init('#__carouzel_1', __carouzel_options);
         <div class="container-fluid">
           <div class="row mt-10">
             <div class="col text-center">
+              <h2>data-attributes</h2>
+            </div>
+          </div>
+          <div class="row mb-5">
+            <div class="col">
+              <table class="table table-striped table-hover">
+                <tbody>
+                  <tr>
+                    <th><kbd>data-carouzel</kbd></th>
+                    <td class="bg-warning bg-opacity-10">
+                      Main attribute to be added to the root element
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>data-carouzel-auto</kbd></th>
+                    <td class="bg-warning bg-opacity-10">
+                      Attached to the root element along with `data-carouzel`.
+                      Takes the settings object as value and initializes the
+                      carouzel on window's `DOMContentLoaded` event.
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>data-carouzel-rtl</kbd></th>
+                    <td class="bg-warning bg-opacity-10">
+                      Attached programmatically to the root element along with
+                      `data-carouzel`, when `isRtl` is true.
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>data-carouzel-centered</kbd></th>
+                    <td class="bg-warning bg-opacity-10">
+                      Attached programmatically to the root element along with
+                      `data-carouzel`, when `centerBetween` is found to be
+                      greater than 0 in carouzel settings.
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>data-carouzel-trackwrapper</kbd></th>
+                    <td class="bg-warning bg-opacity-10">
+                      Immediate child of `data-carouzel` root element. Contains
+                      the main track, and left/right arrows elements.
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>data-carouzel-trackmask</kbd></th>
+                    <td class="bg-warning bg-opacity-10">
+                      Immediate child of `data-carouzel-trackwrapper` element.
+                      This acts as mask to hide the inactive/hidden slides on
+                      the track.
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>data-carouzel-trackouter</kbd></th>
+                    <td class="bg-warning bg-opacity-10">
+                      Immediate child of `data-carouzel-trackmask` element. This
+                      gets the calculated width based on the number of active
+                      slides to be shown at once.
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>data-carouzel-track</kbd></th>
+                    <td class="bg-warning bg-opacity-10">
+                      Immediate child of `data-carouzel-trackouter` element.
+                      This is the container which contains all slides as
+                      immediate children. This also gets transformed in X axis
+                      based on the scroll animation.
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>data-carouzel-slide</kbd></th>
+                    <td class="bg-warning bg-opacity-10">
+                      Immediate child of `data-carouzel-track` element. This is
+                      the slide element.
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>data-carouzel-title</kbd></th>
+                    <td class="bg-warning bg-opacity-10">
+                      Attaches along with `data-carouzel-slide`. Contains
+                      encoded HTML markup as value. This can be used to show on
+                      respective navigation dot if `useTitlesAsDots` is true and
+                      `slidesToShow` is 1.
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>data-carouzel-controlswrapper</kbd></th>
+                    <td class="bg-warning bg-opacity-10">
+                      Immediate child of `data-carouzel-trackwrapper`. Contains
+                      arrows for left/right navigation.
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>data-carouzel-previousarrow</kbd></th>
+                    <td class="bg-warning bg-opacity-10">
+                      Immediate child of `data-carouzel-controlswrapper`. Left
+                      arrow button.
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>data-carouzel-nextarrow</kbd></th>
+                    <td class="bg-warning bg-opacity-10">
+                      Immediate child of `data-carouzel-controlswrapper`. Right
+                      arrow button.
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>data-carouzel-navigationwrapper</kbd></th>
+                    <td class="bg-warning bg-opacity-10">
+                      Immediate child of `data-carouzel-carouzel`. Contains list
+                      of navigation dots.
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>data-carouzel-navigation</kbd></th>
+                    <td class="bg-warning bg-opacity-10">
+                      Immediate child of `data-carouzel-navigationwrapper`.
+                      Contains navigation dots list items.
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>data-carouzel-dot</kbd></th>
+                    <td class="bg-warning bg-opacity-10">
+                      Immediate child of `data-carouzel-navigation`. This
+                      element, and the child button element is generated
+                      programmatically.
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>data-carouzel-video</kbd></th>
+                    <td class="bg-warning bg-opacity-10">
+                      Immediate child of `data-carouzel-slide`. Helps in styling
+                      video elements/iframes/embeds.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="row my-5">
+            <div class="col text-center">
+              <hr />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section>
+      <div class="max-wrap px-1">
+        <div class="container-fluid">
+          <div class="row mt-10">
+            <div class="col text-center">
               <h2>Options</h2>
             </div>
           </div>
@@ -3257,7 +3402,31 @@ __carouzel_instance.init('#__carouzel_1', __carouzel_options);
                     </td>
                   </tr>
                   <tr>
-                    <td colspan="2"></td>
+                    <td colspan="2">
+                      Carouzel is `mobile-first` implementation. The default
+                      settings are applied to all breakpoints, but as the
+                      following array is populated, the mentioned settings are
+                      extended from the default configured.<br /><br />
+                      <pre>
+[{
+  <kbd>minWidth</kbd>: <span class="badge rounded-pill bg-info me-2">number</span
+    >;
+  <kbd>centerBetween</kbd>: <span class="badge rounded-pill bg-info me-2">number</span
+    >;
+  <kbd>enableTouchSwipe</kbd>: <span class="badge rounded-pill bg-info me-2">boolean</span
+    >;
+  <kbd>showArrows</kbd>: <span class="badge rounded-pill bg-info me-2">boolean</span
+    >;
+  <kbd>showNavigation</kbd>: <span class="badge rounded-pill bg-info me-2">boolean</span
+    >;
+  <kbd>slideGutter</kbd>: <span class="badge rounded-pill bg-info me-2">number</span
+    >;
+  <kbd>slidesToScroll</kbd>: <span class="badge rounded-pill bg-info me-2">number</span
+    >;
+  <kbd>slidesToShow</kbd>: <span class="badge rounded-pill bg-info me-2">number</span
+    >;
+}]</pre>
+                    </td>
                   </tr>
                   <tr>
                     <th><kbd>centerBetween</kbd></th>
@@ -3455,7 +3624,7 @@ __carouzel_instance.init('#__carouzel_1', __carouzel_options);
                     </td>
                   </tr>
                   <tr>
-                    <th><kbd>isRTL</kbd></th>
+                    <th><kbd>isRtl</kbd></th>
                     <td class="bg-info bg-opacity-10">
                       <span class="badge rounded-pill bg-info me-2"
                         >boolean</span
@@ -3587,6 +3756,12 @@ __carouzel_instance.init('#__carouzel_1', __carouzel_options);
                     </td>
                   </tr>
                   <tr>
+                    <td colspan="2">
+                      The distance in pixels between the start and end of the
+                      touch/cursor drag.
+                    </td>
+                  </tr>
+                  <tr>
                     <th><kbd>trackUrlHash</kbd></th>
                     <td class="bg-info bg-opacity-10">
                       <span class="badge rounded-pill bg-info me-2"
@@ -3597,6 +3772,13 @@ __carouzel_instance.init('#__carouzel_1', __carouzel_options);
                     </td>
                   </tr>
                   <tr>
+                    <td colspan="2">
+                      If `true`, the carouzel will try to read the hash
+                      parameter from the url and automatically scroll to the
+                      respective slide having the hash as its id.
+                    </td>
+                  </tr>
+                  <tr>
                     <th><kbd>useTitlesAsDots</kbd></th>
                     <td class="bg-info bg-opacity-10">
                       <span class="badge rounded-pill bg-info me-2"
@@ -3604,6 +3786,13 @@ __carouzel_instance.init('#__carouzel_1', __carouzel_options);
                       ><span class="badge rounded-pill bg-light text-info me-2"
                         >false</span
                       >
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2">
+                      If `true`, the carouzel will read `data-carouzel-title`
+                      attribute and put it as markup in respective navigation
+                      dot. It works only when `slidesToShow` is 1.
                     </td>
                   </tr>
                 </tbody>
@@ -3627,7 +3816,56 @@ __carouzel_instance.init('#__carouzel_1', __carouzel_options);
             </div>
           </div>
           <div class="row mb-5">
-            <div class="col"></div>
+            <div class="col">
+              <table class="table table-striped table-hover">
+                <tbody>
+                  <tr>
+                    <th><kbd>init</kbd></th>
+                    <td class="bg-warning bg-opacity-10">
+                      Initializes the instance
+                      <pre class="mt-2"><code>
+__carouzel_instance.init('cssSelector');
+                      </code></pre>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>goToSlide</kbd></th>
+                    <td class="bg-warning bg-opacity-10">
+                      <span class="badge rounded-pill bg-light text-info me-2"
+                        >`previous`</span
+                      ><span class="badge rounded-pill bg-light text-info me-2"
+                        >`next`</span
+                      ><span class="badge rounded-pill bg-light text-info me-2"
+                        >number</span
+                      >
+                      <pre class="mt-2"><code>
+__carouzel_instance.goToSlide('cssSelector', 'next');
+__carouzel_instance.goToSlide('cssSelector', 'previous');
+__carouzel_instance.goToSlide('cssSelector', 4);
+                        </code></pre>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>getLength</kbd></th>
+                    <td class="bg-warning bg-opacity-10">
+                      Gets the number of carouzel instances on the page
+                      <pre class="mt-2"><code>
+__carouzel_instance.getLength();
+                        </code></pre>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th><kbd>destroy</kbd></th>
+                    <td class="bg-warning bg-opacity-10">
+                      Destroys the instance
+                      <pre class="mt-2"><code>
+__carouzel_instance.destroy('cssSelector');
+                        </code></pre>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
           <div class="row my-5">
             <div class="col text-center">
@@ -3637,6 +3875,7 @@ __carouzel_instance.init('#__carouzel_1', __carouzel_options);
         </div>
       </div>
     </section>
+
     <section>
       <div
         class="position-fixed top-0 start-50 p-3"
