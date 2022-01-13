@@ -22,7 +22,7 @@ Carouzel is a framework free light-weight carousel plugin, which is responsive, 
 - [Right to Left](https://codesandbox.io/s/carouzel-right-to-left-pop1y?file=/index.html)
 - [Easing](https://codesandbox.io/s/carouzel-easing-vkuxo?file=/index.html)
 - [Hash navigation](https://codesandbox.io/s/carouzel-hash-navigation-wppyo?file=/index.html)
-- [Video](https://codesandbox.io/s/carouzel-hash-navigation-wppyo?file=/index.html)
+- [Video](https://codesandbox.io/s/carouzel-video-z6j56?file=/index.html)
 
 ## Features
 
