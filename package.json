@@ -1,7 +1,7 @@
 {
   "name": "carouzel",
-  "version": "1.0.1",
-  "description": "Carouzel is a framework free light-weight carousel plugin, which is responsive, handles multiple configurations. It uses DOM hardware acceleration for animation effects.",
+  "version": "1.0.2",
+  "description": "Carouzel is a framework free, light-weight carousel plugin, which is responsive and handles multiple configurations. It uses DOM hardware acceleration for animation effects.",
   "private": false,
   "scripts": {
     "generatedata": "node ./scripts/generatedata.js && node ./scripts/generatedata-2.js",
@@ -43,18 +43,18 @@
     "es6",
     "es3"
   ],
-  "author": "https://github.com/adityakahb",
+  "author": "adityakahb",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/adityakahb/carouzel/issues"
   },
   "homepage": "https://adityakahb.github.io/carouzel",
   "devDependencies": {
-    "@babel/core": "^7.16.5",
-    "@babel/preset-env": "^7.16.5",
+    "@babel/core": "^7.16.7",
+    "@babel/preset-env": "^7.16.8",
     "bootstrap": "^5.1.3",
-    "jasmine-core": "^3.10.1",
-    "karma": "^6.3.9",
+    "jasmine-core": "^4.0.0",
+    "karma": "^6.3.11",
     "karma-babel-preprocessor": "^8.0.1",
     "karma-chrome-launcher": "^3.1.0",
     "karma-coverage": "^2.1.0",
