@@ -1533,13 +1533,6 @@ var Carouzel;
                 }
             };
             /**
-             * Function to initialize all the carouzel which have `data-carouzelauto` set
-             *
-             */
-            this.globalInit = function () {
-                _this.init(_Selectors.rootAuto);
-            };
-            /**
              * Function to animate to a certain slide based on a provided direction or number
              *
              * @param query - The CSS selector for which the Carouzels need to be animated
@@ -1586,6 +1579,11 @@ var Carouzel;
                     console.error("\"".concat(query, "\": ").concat(_rootSelectorTypeError));
                 }
             };
+            if (window) {
+                window.addEventListener('DOMContentLoaded', function () {
+                    _this.init(_Selectors.rootAuto);
+                });
+            }
         }
         /**
          * Function to return single instance
@@ -1604,11 +1602,6 @@ var Carouzel;
     }());
     Carouzel.Root = Root;
 })(Carouzel || (Carouzel = {}));
-if (window) {
-    window.addEventListener('DOMContentLoaded', function () {
-        Carouzel.Root.getInstance().globalInit();
-    });
-}
 if (typeof exports === "object" && typeof module !== "undefined") {
     module.exports = Carouzel;
 }

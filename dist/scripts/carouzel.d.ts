@@ -94,11 +94,6 @@ declare namespace Carouzel {
          */
         init: (query: string, options?: ISettings | undefined) => void;
         /**
-         * Function to initialize all the carouzel which have `data-carouzelauto` set
-         *
-         */
-        globalInit: () => void;
-        /**
          * Function to animate to a certain slide based on a provided direction or number
          *
          * @param query - The CSS selector for which the Carouzels need to be animated

@@ -1776,7 +1776,13 @@ namespace Carouzel {
      * Constructor to initiate polyfills
      *
      */
-    constructor() {}
+    constructor() {
+      if (window as Window) {
+        window.addEventListener('DOMContentLoaded', () => {
+          this.init(_Selectors.rootAuto);
+        });
+      }
+    }
     /**
      * Function to return single instance
      *
@@ -1869,14 +1875,6 @@ namespace Carouzel {
     };
 
     /**
-     * Function to initialize all the carouzel which have `data-carouzelauto` set
-     *
-     */
-    public globalInit = () => {
-      this.init(_Selectors.rootAuto);
-    };
-
-    /**
      * Function to animate to a certain slide based on a provided direction or number
      *
      * @param query - The CSS selector for which the Carouzels need to be animated
@@ -1934,11 +1932,6 @@ namespace Carouzel {
     //   }
     // };
   }
-}
-if (window as Window) {
-  window.addEventListener('DOMContentLoaded', () => {
-    Carouzel.Root.getInstance().globalInit();
-  });
 }
 if (typeof exports === `object` && typeof module !== `undefined`) {
   module.exports = Carouzel;

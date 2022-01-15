@@ -14,6 +14,22 @@ data-carouzel
 aria-roledescription="carousel"
 aria-label="Carouzel Implementation"
 class="__carouzel-2"
+data-carouzel-auto="{
+  slidesToShow: 1,
+  isRtl: true,
+  breakpoints: [
+    {
+      minWidth: 700,
+      slidesToScroll: 2,
+      slidesToShow: 2
+    },
+    {
+      minWidth: 1100,
+      slidesToScroll: 4,
+      slidesToShow: 4
+    }
+  ]
+}"
 >
 <div data-carouzel-trackwrapper>
   <div data-carouzel-trackmask>
@@ -24,7 +40,6 @@ data-carouzel
 id="__carouzel_3"
 aria-roledescription="carousel"
 aria-label="Carouzel Implementation"
-data-carouzel-rtl
 >
 <div data-carouzel-trackwrapper>
   <div data-carouzel-trackmask>
@@ -85,67 +100,72 @@ let evtStrBeforeScroll = ``;
 let evtStrAfterScroll = ``;
 
 let options1 = {
-  beforeInit: function () {
+  beforeInitFn: function () {
     evtStrBeforeInit = `beforeInit`;
   },
-  afterInit: function () {
+  afterInitFn: function () {
     evtStrAfterInit = `afterInit`;
   },
-  beforeScroll: function () {
+  beforeScrollFn: function () {
     evtStrBeforeScroll = `beforeScroll`;
   },
-  afterScroll: function () {
+  afterScrollFn: function () {
     evtStrAfterScroll = `afterScroll`;
   },
 };
 let options2 = {
   slidesToShow: 1,
-  showNav: false,
-  responsive: [
+  breakpoints: [
     {
-      breakpoint: 700,
+      minWidth: 700,
       slidesToScroll: 2,
       slidesToShow: 2,
-      showArrows: false,
-      showNav: true,
     },
     {
-      breakpoint: 700,
+      minWidth: 700,
       slidesToScroll: 4,
       slidesToShow: 4,
-      showNav: false,
-      showArrows: true,
     },
   ],
 };
 let options3 = {
   slidesToShow: 1,
-  showNav: false,
-  responsive: [
+  isRtl: true,
+  breakpoints: [
     {
-      breakpoint: 700,
+      minWidth: 700,
       slidesToScroll: 2,
       slidesToShow: 2,
-      showArrows: false,
-      showNav: true,
     },
     {
-      breakpoint: 1100,
-      slidesToScroll: 4,
-      slidesToShow: 4,
-      showNav: false,
-      showArrows: true,
+      minWidth: 1100,
     },
   ],
 };
 
 let options4 = {
   animationEffect: `fade`,
+  slidesToShow: 1,
+  breakpoints: [
+    {
+      minWidth: 700,
+      slidesToScroll: 2,
+      slidesToShow: 2,
+    },
+    {
+      minWidth: 1100,
+      slidesToScroll: 4,
+      slidesToShow: 4,
+    },
+  ],
 };
 
 describe(`Carouzel`, function () {
   let carouzelInstance;
   let evt;
+
+  window.requestAnimationFrame = (fn) => window.setTimeout(fn, 1);
+  window.cancelAnimationFrame = (id) => window.clearTimeout(id);
 
   beforeAll(function () {
     carouzel1 = ``;
@@ -433,16 +453,13 @@ describe(`Carouzel`, function () {
     expect(evtStrBeforeScroll).toBe(`beforeScroll`);
   });
 
-  it(`Should trigger afterScroll method`, function (done) {
+  it(`Should trigger afterScroll method`, function () {
     const nextBtn = document.querySelector(
       `#__carouzel_1 [data-carouzel-nextarrow]`
     );
     nextBtn.click();
-    // jasmine.clock().tick(500);
-    setTimeout(() => {
-      expect(evtStrAfterScroll).toBe(`afterScroll`);
-      done();
-    }, 500);
+    jasmine.clock().tick(1000);
+    expect(evtStrAfterScroll).toBe(`afterScroll`);
   });
 
   it(`Should trigger click on nav dot`, function () {
@@ -464,8 +481,11 @@ describe(`Carouzel`, function () {
   });
 
   it(`Should initialize 3rd carouzel (RTL)`, function () {
-    carouzelInstance.init(`#__carouzel_3`);
-    expect(carouzelInstance.getLength()).toBe(3);
+    carouzelInstance.init(`#__carouzel_3`, options3);
+    var rootElemRtl = document
+      .querySelector('#__carouzel_3')
+      .getAttribute('data-carouzel-rtl');
+    expect(rootElemRtl).toBe('true');
   });
 
   it(`Should not initialize 1st carouzel with responsive options which has duplicate breakpoints`, function () {
@@ -479,9 +499,10 @@ describe(`Carouzel`, function () {
   });
 
   it(`Should initialize 1st carouzel with responsive options and test active slides on desktop`, function () {
+    viewport.reset();
     viewport.set(`desktop`);
     carouzelInstance.destroy(`#__carouzel_1`);
-    carouzelInstance.init(`#__carouzel_1`, options3);
+    carouzelInstance.init(`#__carouzel_1`, options4);
     const elements = document.querySelectorAll(
       `#__carouzel_1 [data-carouzel-slide].__carouzel-active`
     );
@@ -489,9 +510,10 @@ describe(`Carouzel`, function () {
   });
 
   it(`Should test active slides on tablet`, function () {
+    viewport.reset();
     viewport.set(`tablet`);
-    carouzelInstance.destroy(`#__carouzel_1`);
-    carouzelInstance.init(`#__carouzel_1`, options3);
+    // carouzelInstance.destroy(`#__carouzel_1`);
+    // carouzelInstance.init(`#__carouzel_1`, options3);
     const elements = document.querySelectorAll(
       `#__carouzel_1 [data-carouzel-slide].__carouzel-active`
     );
@@ -499,9 +521,10 @@ describe(`Carouzel`, function () {
   });
 
   it(`Should test active slides on mobile`, function () {
+    viewport.reset();
     viewport.set(`mobile`);
-    carouzelInstance.destroy(`#__carouzel_1`);
-    carouzelInstance.init(`#__carouzel_1`, options3);
+    // carouzelInstance.destroy(`#__carouzel_1`);
+    // carouzelInstance.init(`#__carouzel_1`, options3);
     const elements = document.querySelectorAll(
       `#__carouzel_1 [data-carouzel-slide].__carouzel-active`
     );
