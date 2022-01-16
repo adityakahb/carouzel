@@ -1,6 +1,11 @@
 let Carouzel;
 let carouzelInstance;
+
 jest.setTimeout(30000);
+const desktop = [1280, 800];
+const tablet = [768, 1024];
+const mobile = [375, 700];
+
 const blankdiv = `<div id="outdiv" style="border: 1px solid #ddd; height: 44px; border-radius: 8px;"></div>`;
 const carouzelStart1 = `<section
 data-carouzel
@@ -163,9 +168,9 @@ let options4 = {
   ],
 };
 
-const resizeWindow = (x, y) => {
-  window.innerWidth = x;
-  window.innerHeight = y;
+const resizeWindow = (device) => {
+  window.innerWidth = device[0];
+  window.innerHeight = device[1];
   window.dispatchEvent(new Event('resize'));
 };
 
@@ -508,33 +513,34 @@ describe(`Carouzel`, function () {
     expect(elements.length).toBe(0);
   });
 
-  it(`Should initialize 1st carouzel with responsive options and test active slides on desktop`, function () {
-    // resizeWindow();
+  it(`Should initialize 1st carouzel with responsive options and test active slides on desktop`, async function () {
     carouzelInstance.destroy(`#__carouzel_1`);
     carouzelInstance.init(`#__carouzel_1`, options4);
+    resizeWindow(desktop);
+    await new Promise((r) => setTimeout(r, 1000));
     const elements = document.querySelectorAll(
       `#__carouzel_1 [data-carouzel-slide].__carouzel-active`
     );
     expect(elements.length).toBe(4);
   });
 
-  // it(`Should test active slides on tablet`, function () {
-  //   viewport.set(`tablet`);
-  //   jasmine.clock().tick(5000);
-  //   const elements = document.querySelectorAll(
-  //     `#__carouzel_1 [data-carouzel-slide].__carouzel-active`
-  //   );
-  //   expect(elements.length).toBe(2);
-  // });
+  it(`Should test active slides on tablet`, async function () {
+    resizeWindow(tablet);
+    await new Promise((r) => setTimeout(r, 1000));
+    const elements = document.querySelectorAll(
+      `#__carouzel_1 [data-carouzel-slide].__carouzel-active`
+    );
+    expect(elements.length).toBe(2);
+  });
 
-  // it(`Should test active slides on mobile`, function () {
-  //   viewport.set(`mobile`);
-  //   jasmine.clock().tick(5000);
-  //   const elements = document.querySelectorAll(
-  //     `#__carouzel_1 [data-carouzel-slide].__carouzel-active`
-  //   );
-  //   expect(elements.length).toBe(1);
-  // });
+  it(`Should test active slides on mobile`, async function () {
+    resizeWindow(mobile);
+    await new Promise((r) => setTimeout(r, 1000));
+    const elements = document.querySelectorAll(
+      `#__carouzel_1 [data-carouzel-slide].__carouzel-active`
+    );
+    expect(elements.length).toBe(1);
+  });
 
   // it(`Should initiate the carouzel with fade effect`, function () {
   //   // viewport.set(`desktop`);
