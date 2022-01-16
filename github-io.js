@@ -1,5 +1,4 @@
 var loadIO = function () {
-  var isInit = '';
   var __carouzel_instance = Carouzel.Root.getInstance();
 
   var btnbeforeinit = document.getElementById('btnbeforeinit');

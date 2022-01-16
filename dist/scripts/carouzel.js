@@ -225,7 +225,7 @@ var Carouzel;
         windowResizeAny = setTimeout(function () {
             for (var e in allLocalInstances) {
                 if (allLocalInstances.hasOwnProperty(e)) {
-                    applyLayout(allLocalInstances[e], false);
+                    applyLayout(allLocalInstances[e], false, false);
                 }
             }
         }, 0);
@@ -349,11 +349,12 @@ var Carouzel;
      * Function to animate the track element based on the calculations
      *
      * @param core - Carouzel instance core object
+     * @param touchedPixel - Amount of pixels travelled using touch/cursor drag
+     * @param isFirstLoad - If this is the first load of the carouzel
      *
      */
-    var animateTrack = function (core, touchedPixel) {
-        touchedPixel = touchedPixel ? touchedPixel : 0;
-        if (typeof core.opts.bFn === "function") {
+    var animateTrack = function (core, touchedPixel, isFirstLoad) {
+        if (typeof core.opts.bFn === "function" && !isFirstLoad) {
             core.opts.bFn();
         }
         if (!core.pi) {
@@ -559,9 +560,11 @@ var Carouzel;
      * Function to find and apply the appropriate breakpoint settings based on the viewport
      *
      * @param core - Carouzel instance core object
+     * @param isRtlFirstLoad - If the carouzel is RTL and this is just first load
+     * @param isFirstLoad - If this is the first load for the carouzel
      *
      */
-    var applyLayout = function (core, isRtlFirstLoad) {
+    var applyLayout = function (core, isRtlFirstLoad, isFirstLoad) {
         var viewportWidth = window === null || window === void 0 ? void 0 : window.innerWidth;
         var bpoptions = core.bpall[0];
         var len = 0;
@@ -660,7 +663,7 @@ var Carouzel;
                     (i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr) +
                         bpoptions.gutr;
             }
-            animateTrack(core);
+            animateTrack(core, 0, isFirstLoad);
         }
     };
     /**
@@ -683,13 +686,14 @@ var Carouzel;
             if (core._t.id) {
                 cancelAnimationFrame(core._t.id);
             }
-            animateTrack(core);
+            animateTrack(core, 0, false);
         }
     };
     /**
      * Function to go to the previous set of slides
      *
      * @param core - Carouzel instance core object
+     * @param touchedPixel - The amount of pixels moved using touch/cursor drag
      *
      */
     var go2Prev = function (core, touchedPixel) {
@@ -711,12 +715,13 @@ var Carouzel;
                 core.pi = core.ci + core.bpo._2Scroll;
             }
         }
-        animateTrack(core, touchedPixel);
+        animateTrack(core, touchedPixel, false);
     };
     /**
      * Function to go to the next set of slides
      *
      * @param core - Carouzel instance core object
+     * @param touchedPixel - The amount of pixels moved using touch/cursor drag
      *
      */
     var go2Next = function (core, touchedPixel) {
@@ -734,7 +739,7 @@ var Carouzel;
                 core.pi = core.ci - core.bpo._2Scroll;
             }
         }
-        animateTrack(core, touchedPixel);
+        animateTrack(core, touchedPixel, false);
     };
     /**
      * Function to toggle keyboard navigation with left and right arrows
@@ -1090,7 +1095,7 @@ var Carouzel;
                     else {
                         core.ci = j * core.bpall[i]._2Scroll;
                     }
-                    animateTrack(core);
+                    animateTrack(core, 0, false);
                 }));
                 core.bpall[i].dots.push(navBtns[j]);
             };
@@ -1343,7 +1348,7 @@ var Carouzel;
                 generateElements(_core);
                 toggleControlButtons(_core);
                 toggleTouchEvents(_core);
-                applyLayout(_core, _core.opts.rtl);
+                applyLayout(_core, _core.opts.rtl, true);
             }
         }
         addClass(_core.root, _core.opts.activeCls);
@@ -1545,8 +1550,8 @@ var Carouzel;
                     for (var i = 0; i < cores.length; i++) {
                         if (_animationDirections.indexOf(target) !== -1) {
                             target === _animationDirections[0]
-                                ? go2Prev(cores[i])
-                                : go2Next(cores[i]);
+                                ? go2Prev(cores[i], 0)
+                                : go2Next(cores[i], 0);
                         }
                         else if (!isNaN(parseInt(target))) {
                             go2Slide(cores[i], parseInt(target) - 1);

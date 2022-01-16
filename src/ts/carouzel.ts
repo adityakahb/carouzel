@@ -388,7 +388,7 @@ namespace Carouzel {
     windowResizeAny = setTimeout(() => {
       for (let e in allLocalInstances) {
         if (allLocalInstances.hasOwnProperty(e)) {
-          applyLayout(allLocalInstances[e], false);
+          applyLayout(allLocalInstances[e], false, false);
         }
       }
     }, 0);
@@ -531,11 +531,16 @@ namespace Carouzel {
    * Function to animate the track element based on the calculations
    *
    * @param core - Carouzel instance core object
+   * @param touchedPixel - Amount of pixels travelled using touch/cursor drag
+   * @param isFirstLoad - If this is the first load of the carouzel
    *
    */
-  const animateTrack = (core: ICore, touchedPixel?: number) => {
-    touchedPixel = touchedPixel ? touchedPixel : 0;
-    if (typeof core.opts.bFn === `function`) {
+  const animateTrack = (
+    core: ICore,
+    touchedPixel: number,
+    isFirstLoad: boolean
+  ) => {
+    if (typeof core.opts.bFn === `function` && !isFirstLoad) {
       core.opts.bFn();
     }
 
@@ -762,9 +767,15 @@ namespace Carouzel {
    * Function to find and apply the appropriate breakpoint settings based on the viewport
    *
    * @param core - Carouzel instance core object
+   * @param isRtlFirstLoad - If the carouzel is RTL and this is just first load
+   * @param isFirstLoad - If this is the first load for the carouzel
    *
    */
-  const applyLayout = (core: ICore, isRtlFirstLoad: boolean) => {
+  const applyLayout = (
+    core: ICore,
+    isRtlFirstLoad: boolean,
+    isFirstLoad: boolean
+  ) => {
     let viewportWidth = window?.innerWidth;
     let bpoptions = core.bpall[0];
     let len = 0;
@@ -867,7 +878,7 @@ namespace Carouzel {
           (i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr) +
           bpoptions.gutr;
       }
-      animateTrack(core);
+      animateTrack(core, 0, isFirstLoad);
     }
   };
 
@@ -890,7 +901,7 @@ namespace Carouzel {
       if (core._t.id) {
         cancelAnimationFrame(core._t.id);
       }
-      animateTrack(core);
+      animateTrack(core, 0, false);
     }
   };
 
@@ -898,9 +909,10 @@ namespace Carouzel {
    * Function to go to the previous set of slides
    *
    * @param core - Carouzel instance core object
+   * @param touchedPixel - The amount of pixels moved using touch/cursor drag
    *
    */
-  const go2Prev = (core: ICore, touchedPixel?: number) => {
+  const go2Prev = (core: ICore, touchedPixel: number) => {
     core.pi = core.ci;
     core.ci -= core.bpo._2Scroll;
     if (core._t.id) {
@@ -918,16 +930,17 @@ namespace Carouzel {
         core.pi = core.ci + core.bpo._2Scroll;
       }
     }
-    animateTrack(core, touchedPixel);
+    animateTrack(core, touchedPixel, false);
   };
 
   /**
    * Function to go to the next set of slides
    *
    * @param core - Carouzel instance core object
+   * @param touchedPixel - The amount of pixels moved using touch/cursor drag
    *
    */
-  const go2Next = (core: ICore, touchedPixel?: number) => {
+  const go2Next = (core: ICore, touchedPixel: number) => {
     core.pi = core.ci;
     core.ci += core.bpo._2Scroll;
     if (core._t.id) {
@@ -941,7 +954,7 @@ namespace Carouzel {
         core.pi = core.ci - core.bpo._2Scroll;
       }
     }
-    animateTrack(core, touchedPixel);
+    animateTrack(core, touchedPixel, false);
   };
 
   /**
@@ -1378,7 +1391,7 @@ namespace Carouzel {
               } else {
                 core.ci = j * core.bpall[i]._2Scroll;
               }
-              animateTrack(core);
+              animateTrack(core, 0, false);
             }
           )
         );
@@ -1646,7 +1659,7 @@ namespace Carouzel {
         generateElements(_core);
         toggleControlButtons(_core);
         toggleTouchEvents(_core);
-        applyLayout(_core, _core.opts.rtl);
+        applyLayout(_core, _core.opts.rtl, true);
       }
     }
 
@@ -1887,8 +1900,8 @@ namespace Carouzel {
         for (let i = 0; i < cores.length; i++) {
           if (_animationDirections.indexOf(target) !== -1) {
             target === _animationDirections[0]
-              ? go2Prev(cores[i])
-              : go2Next(cores[i]);
+              ? go2Prev(cores[i], 0)
+              : go2Next(cores[i], 0);
           } else if (!isNaN(parseInt(target))) {
             go2Slide(cores[i], parseInt(target) - 1);
           }
