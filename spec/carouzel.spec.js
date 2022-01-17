@@ -1,11 +1,3 @@
-let Carouzel;
-let carouzelInstance;
-
-jest.setTimeout(30000);
-const desktop = [1280, 800];
-const tablet = [768, 1024];
-const mobile = [375, 700];
-
 const blankdiv = `<div id="outdiv" style="border: 1px solid #ddd; height: 44px; border-radius: 8px;"></div>`;
 const carouzelStart1 = `<section
 data-carouzel
@@ -22,22 +14,6 @@ data-carouzel
 aria-roledescription="carousel"
 aria-label="Carouzel Implementation"
 class="__carouzel-2"
-data-carouzel-auto="{
-  slidesToShow: 1,
-  isRtl: true,
-  breakpoints: [
-    {
-      minWidth: 700,
-      slidesToScroll: 2,
-      slidesToShow: 2
-    },
-    {
-      minWidth: 1100,
-      slidesToScroll: 4,
-      slidesToShow: 4
-    }
-  ]
-}"
 >
 <div data-carouzel-trackwrapper>
   <div data-carouzel-trackmask>
@@ -98,6 +74,15 @@ const carouzelEnd = `</div>
 <div data-carouzel-navigation></div>
 </div>
 </section>`;
+
+const delayFn = (timeInMs) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve('resolved');
+    }, timeInMs);
+  });
+};
+
 let carouzel1 = ``;
 let carouzel2 = ``;
 let carouzel3 = ``;
@@ -128,59 +113,41 @@ let options2 = {
       minWidth: 700,
       slidesToScroll: 2,
       slidesToShow: 2,
+      showArrows: false,
     },
     {
       minWidth: 700,
       slidesToScroll: 4,
       slidesToShow: 4,
+      showArrows: true,
     },
   ],
 };
 let options3 = {
   slidesToShow: 1,
-  isRtl: true,
   breakpoints: [
     {
       minWidth: 700,
       slidesToScroll: 2,
       slidesToShow: 2,
-    },
-    {
-      minWidth: 1100,
-    },
-  ],
-};
-
-let options4 = {
-  animationEffect: `fade`,
-  slidesToShow: 1,
-  breakpoints: [
-    {
-      minWidth: 700,
-      slidesToScroll: 2,
-      slidesToShow: 2,
+      showArrows: false,
     },
     {
       minWidth: 1100,
       slidesToScroll: 4,
       slidesToShow: 4,
+      showArrows: true,
     },
   ],
 };
 
-const resizeWindow = (device) => {
-  window.innerWidth = device[0];
-  window.innerHeight = device[1];
-  window.dispatchEvent(new Event('resize'));
-};
-
 describe(`Carouzel`, function () {
+  let carouzelInstance;
   let evt;
 
-  window.requestAnimationFrame = (fn) => window.setTimeout(fn, 1);
-  window.cancelAnimationFrame = (id) => window.clearTimeout(id);
-
   beforeAll(function () {
+    window.requestAnimationFrame = (fn) => window.setTimeout(fn, 1);
+    window.cancelAnimationFrame = (id) => window.clearTimeout(id);
     carouzel1 = ``;
     carouzel2 = ``;
     carouzel3 = ``;
@@ -219,24 +186,20 @@ describe(`Carouzel`, function () {
       (carouzelStart1 + carouzel1 + carouzelEnd) +
       (carouzelStart2 + carouzel2 + carouzelEnd) +
       (carouzelStart3 + carouzel3 + carouzelEnd);
-    document.body.innerHTML = fixture;
-    Carouzel = require('./../dist/scripts/carouzel');
+
+    document.body.insertAdjacentHTML(`afterbegin`, fixture);
+    carouzelInstance = Carouzel.Root.getInstance();
   });
 
   beforeEach(function () {
-    // jasmine.clock().install();
-    // outdiv = document.querySelector(`#outdiv`);
+    jasmine.clock().install();
   });
   afterEach(function () {
-    // jasmine.clock().uninstall();
+    jasmine.clock().uninstall();
   });
 
-  it(`Should validate the Carouzel plugin`, function () {
-    expect(Carouzel).not.toBe(undefined);
-  });
-  it(`Should validate the Carouzel instance`, function () {
-    carouzelInstance = Carouzel.Root.getInstance();
-    expect(carouzelInstance).not.toBe(undefined);
+  it(`Should validate the Carouzel Instance`, function () {
+    expect(carouzelInstance).not.toBe(null);
   });
 
   it(`Should initialize Non-Existant Carouzel`, function () {
@@ -474,79 +437,85 @@ describe(`Carouzel`, function () {
   });
 
   it(`Should trigger afterScroll method`, async function () {
-    await new Promise((r) => setTimeout(r, 1000));
+    await new Promise((r) => setTimeout(r, 5000));
+    // await new Promise((resolve) => {
+    //   setTimeout(() => {
+    //     resolve();
+    //   }, 1000);
+    // });
     expect(evtStrAfterScroll).toBe(`afterScroll`);
   });
 
-  it(`Should trigger click on nav dot`, function () {
-    const navBtns = document.querySelectorAll(
-      `#__carouzel_1 [data-carouzel-dot] button`
-    );
-    navBtns[5].click();
-    const elements = document.querySelectorAll(
-      `#__carouzel_1 [data-carouzel-slide]:not(.__carouzel-duplicate)`
-    );
-    let index = -1;
-    for (let i = 0; i < elements.length; i++) {
-      if (elements[i].classList.contains(`__carouzel-active`)) {
-        index = i;
-        break;
-      }
-    }
-    expect(index).toBe(5);
-  });
+  // it(`Should trigger click on nav dot`, function () {
+  //   const navBtns = document.querySelectorAll(
+  //     `#__carouzel_1 [data-carouzel-dot] button`
+  //   );
+  //   navBtns[5].click();
+  //   const elements = document.querySelectorAll(
+  //     `#__carouzel_1 [data-carouzel-slide]:not(.__carouzel-duplicate)`
+  //   );
+  //   let index = -1;
+  //   for (let i = 0; i < elements.length; i++) {
+  //     if (elements[i].classList.contains(`__carouzel-active`)) {
+  //       index = i;
+  //       break;
+  //     }
+  //   }
+  //   expect(index).toBe(5);
+  // });
 
-  it(`Should initialize 3rd carouzel (RTL)`, function () {
-    carouzelInstance.init(`#__carouzel_3`, options3);
-    var rootElemRtl = document
-      .querySelector('#__carouzel_3')
-      .getAttribute('data-carouzel-rtl');
-    expect(rootElemRtl).toBe('true');
-  });
+  // it(`Should not initialize 1st carouzel with responsive options which has duplicate breakpoints`, function () {
+  //   carouzelInstance.destroy(`#__carouzel_1`);
+  //   carouzelInstance.init(`#__carouzel_1`, options2);
+  //   const elements = document.querySelectorAll(
+  //     `#__carouzel_1 [data-carouzel-slide].__carouzel-active`
+  //   );
+  //   expect(elements.length).toBe(0);
+  // });
 
-  it(`Should not initialize 1st carouzel with responsive options which has duplicate breakpoints`, function () {
-    carouzelInstance.destroy(`#__carouzel_1`);
-    carouzelInstance.init(`#__carouzel_1`, options2);
-    const elements = document.querySelectorAll(
-      `#__carouzel_1 [data-carouzel-slide].__carouzel-active`
-    );
-    expect(elements.length).toBe(0);
-  });
+  // it(`Should initialize 3rd carouzel (RTL)`, function () {
+  //   carouzelInstance.init(`#__carouzel_3`, options4);
+  //   var rootElemRtl = document
+  //     .querySelector('#__carouzel_3')
+  //     .getAttribute('data-carouzel-rtl');
+  //   expect(rootElemRtl).toBe('true');
+  // });
 
-  it(`Should initialize 1st carouzel with responsive options and test active slides on desktop`, async function () {
-    carouzelInstance.destroy(`#__carouzel_1`);
-    carouzelInstance.init(`#__carouzel_1`, options4);
-    resizeWindow(desktop);
-    await new Promise((r) => setTimeout(r, 1000));
-    const elements = document.querySelectorAll(
-      `#__carouzel_1 [data-carouzel-slide].__carouzel-active`
-    );
-    expect(elements.length).toBe(4);
-  });
+  // it(`Should initialize 1st carouzel with responsive options and test active slides on desktop`, function () {
+  //   viewport.set(`desktop`);
+  //   carouzelInstance.destroy(`#__carouzel_1`);
+  //   carouzelInstance.init(`#__carouzel_1`, options3);
+  //   const elements = document.querySelectorAll(
+  //     `#__carouzel_1 [data-carouzel-slide].__carouzel-active`
+  //   );
+  //   console.log('=======elements.length', elements.length);
+  //   expect(elements.length).toBe(4);
+  // });
 
-  it(`Should test active slides on tablet`, async function () {
-    resizeWindow(tablet);
-    await new Promise((r) => setTimeout(r, 1000));
-    const elements = document.querySelectorAll(
-      `#__carouzel_1 [data-carouzel-slide].__carouzel-active`
-    );
-    expect(elements.length).toBe(2);
-  });
+  // it(`Should test active slides on tablet`, async function () {
+  //   viewport.set(`tablet`);
+  //   await new Promise((r) => setTimeout(r, 5000));
+  //   const elements = document.querySelectorAll(
+  //     `#__carouzel_1 [data-carouzel-slide].__carouzel-active`
+  //   );
+  //   console.log('=======elements.length', elements.length);
+  //   expect(elements.length).toBe(2);
+  // });
 
-  it(`Should test active slides on mobile`, async function () {
-    resizeWindow(mobile);
-    await new Promise((r) => setTimeout(r, 1000));
-    const elements = document.querySelectorAll(
-      `#__carouzel_1 [data-carouzel-slide].__carouzel-active`
-    );
-    expect(elements.length).toBe(1);
-  });
+  // it(`Should test active slides on mobile`, async function () {
+  //   viewport.set(`mobile`);
+  //   await new Promise((r) => setTimeout(r, 5000));
+  //   const elements = document.querySelectorAll(
+  //     `#__carouzel_1 [data-carouzel-slide].__carouzel-active`
+  //   );
+  //   console.log('=======elements.length', elements.length);
+  //   expect(elements.length).toBe(1);
+  // });
 
   // it(`Should initiate the carouzel with fade effect`, function () {
-  //   // viewport.set(`desktop`);
+  //   viewport.reset();
   //   carouzelInstance.destroy(`#__carouzel_1`);
   //   carouzelInstance.init(`#__carouzel_1`, options4);
-  //   jasmine.clock().tick(1000);
   //   const elements = document.querySelectorAll(
   //     `#__carouzel_1 [data-carouzel-slide].__carouzel-active`
   //   );
