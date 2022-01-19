@@ -388,18 +388,16 @@ var Carouzel;
             core.ct = -core._t.nextX;
             // updateAttributes(core);
             manageActiveSlides(core);
-            setTimeout(function () {
-                if (core.opts._urlH && core.root) {
-                    hashSlide = core.root.querySelector(".".concat(core.opts.activeCls));
-                    if (hashSlide && (window === null || window === void 0 ? void 0 : window.location)) {
-                        window.location.hash = hashSlide.getAttribute("id") || "";
-                    }
-                    hashSlide = null;
+            if (core.opts._urlH && core.root) {
+                hashSlide = core.root.querySelector(".".concat(core.opts.activeCls));
+                if (hashSlide && (window === null || window === void 0 ? void 0 : window.location)) {
+                    window.location.hash = hashSlide.getAttribute("id") || "";
                 }
-                if (typeof core.opts.aFn === "function") {
-                    core.opts.aFn();
-                }
-            }, 0);
+                hashSlide = null;
+            }
+            if (typeof core.opts.aFn === "function") {
+                core.opts.aFn();
+            }
         };
         manageActiveSlides(core);
         updateAttributes(core);

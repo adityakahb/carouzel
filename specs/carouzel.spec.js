@@ -75,14 +75,6 @@ const carouzelEnd = `</div>
 </div>
 </section>`;
 
-const delayFn = (timeInMs) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve('resolved');
-    }, timeInMs);
-  });
-};
-
 let carouzel1 = ``;
 let carouzel2 = ``;
 let carouzel3 = ``;
@@ -146,8 +138,9 @@ describe(`Carouzel`, function () {
   let evt;
 
   beforeAll(function () {
-    window.requestAnimationFrame = (fn) => window.setTimeout(fn, 1);
-    window.cancelAnimationFrame = (id) => window.clearTimeout(id);
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 999999;
+    // window.requestAnimationFrame = (fn) => window.setTimeout(fn, 1);
+    // window.cancelAnimationFrame = (id) => window.clearTimeout(id);
     carouzel1 = ``;
     carouzel2 = ``;
     carouzel3 = ``;
@@ -434,17 +427,18 @@ describe(`Carouzel`, function () {
     );
     nextBtn.click();
     expect(evtStrBeforeScroll).toBe(`beforeScroll`);
+    return new Promise(function (resolve, reject) {
+      setTimeout(() => {
+        resolve();
+      }, 1000);
+    }).then(() => {
+      expect(evtStrAfterScroll).toBe(`afterScroll`);
+    });
   });
 
-  it(`Should trigger afterScroll method`, async function () {
-    await new Promise((r) => setTimeout(r, 5000));
-    // await new Promise((resolve) => {
-    //   setTimeout(() => {
-    //     resolve();
-    //   }, 1000);
-    // });
-    expect(evtStrAfterScroll).toBe(`afterScroll`);
-  });
+  // it(`Should trigger afterScroll method`, function (done) {
+
+  // });
 
   // it(`Should trigger click on nav dot`, function () {
   //   const navBtns = document.querySelectorAll(

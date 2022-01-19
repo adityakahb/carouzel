@@ -576,18 +576,16 @@ namespace Carouzel {
       core.ct = -core._t.nextX;
       // updateAttributes(core);
       manageActiveSlides(core);
-      setTimeout(() => {
-        if (core.opts._urlH && core.root) {
-          hashSlide = core.root.querySelector(`.${core.opts.activeCls}`);
-          if (hashSlide && window?.location) {
-            window.location.hash = hashSlide.getAttribute(`id`) || ``;
-          }
-          hashSlide = null;
+      if (core.opts._urlH && core.root) {
+        hashSlide = core.root.querySelector(`.${core.opts.activeCls}`);
+        if (hashSlide && window?.location) {
+          window.location.hash = hashSlide.getAttribute(`id`) || ``;
         }
-        if (typeof core.opts.aFn === `function`) {
-          core.opts.aFn();
-        }
-      }, 0);
+        hashSlide = null;
+      }
+      if (typeof core.opts.aFn === `function`) {
+        core.opts.aFn();
+      }
     };
 
     manageActiveSlides(core);

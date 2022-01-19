@@ -1,5 +1,5 @@
 // Karma configuration
-// Generated on Thu Dec 30 2021 16:06:50 GMT+0530 (India Standard Time)
+// Generated on Wed Jan 19 2022 19:52:33 GMT+0530 (India Standard Time)
 
 module.exports = function (config) {
   config.set({
@@ -15,7 +15,7 @@ module.exports = function (config) {
       'dist/styles/site/index.css',
       'dist/styles/carouzel/carouzel.css',
       'dist/scripts/carouzel.js',
-      'spec/carouzel.spec.js',
+      'specs/carouzel.spec.js',
     ],
 
     // preprocess matching files before serving them to the browser
@@ -31,36 +31,6 @@ module.exports = function (config) {
 
     // web server port
     port: 9876,
-
-    // enable / disable colors in the output (reporters and logs)
-    colors: true,
-
-    // level of logging
-    // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
-    logLevel: config.LOG_INFO,
-
-    // enable / disable watching file and executing tests whenever any file changes
-    autoWatch: true,
-
-    // start these browsers
-    // available browser launchers: https://www.npmjs.com/search?q=keywords:karma-launcher
-    // browsers: ['Chrome', 'Firefox', 'IE', 'PhantomJS'],
-    browsers: ['Chrome'],
-
-    // Continuous Integration mode
-    // if true, Karma captures browsers, runs the tests and exits
-    singleRun: false,
-
-    // Concurrency level
-    // how many browser instances should be started simultaneously
-    concurrency: Infinity,
-
-    client: {
-      clearContext: false,
-      jasmine: {
-        random: false, // disable the random running order
-      },
-    },
 
     // Viewport configuration
     viewport: {
@@ -89,12 +59,31 @@ module.exports = function (config) {
       ],
     },
 
-    // optionally, configure the reporter
-    coverageReporter: {
-      type: 'html',
-      dir: 'coverage/',
-      instrumenterOptions: {
-        istanbul: { noCompact: true },
+    // enable / disable colors in the output (reporters and logs)
+    colors: true,
+
+    // level of logging
+    // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
+    logLevel: config.LOG_INFO,
+
+    // enable / disable watching file and executing tests whenever any file changes
+    autoWatch: true,
+
+    // start these browsers
+    // available browser launchers: https://www.npmjs.com/search?q=keywords:karma-launcher
+    browsers: ['Chrome'],
+
+    // Continuous Integration mode
+    // if true, Karma captures browsers, runs the tests and exits
+    singleRun: false,
+
+    // Concurrency level
+    // how many browser instances should be started simultaneously
+    concurrency: Infinity,
+    client: {
+      clearContext: false,
+      jasmine: {
+        random: false, // disable the random running order
       },
     },
   });
