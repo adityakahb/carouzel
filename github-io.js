@@ -254,7 +254,9 @@ var loadIO = function () {
     trackUrlHash: true,
     appendUrlHash: true,
   });
-  __carouzel_instance.init('#__carouzel_15');
+  if (document.querySelectorAll('#__carouzel_15').length > 0) {
+    __carouzel_instance.init('#__carouzel_15');
+  }
   var navlinks = document.querySelectorAll('#topnav li a');
   for (var k = 0; k < navlinks.length; k++) {
     navlinks[k].addEventListener('click', function (event) {
