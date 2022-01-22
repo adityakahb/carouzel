@@ -15,7 +15,8 @@
     "build:dev": "npm run compile:ts && npm run compile:sass",
     "build:prod": "npm run build:dev && npm run uglify:js && npm run uglify:css && npm run compile:sitesass",
     "compile:sitesass": "node-sass src/sass-site/ -o dist/styles/site && uglifycss dist/styles/site/index.css --output dist/styles/site/index.min.css",
-    "test": "jest"
+    "test:parcel": "parcel tests/fixture.html",
+    "test:jest": "jest"
   },
   "main": "dist/scripts/carouzel.js",
   "repository": {
@@ -60,6 +61,7 @@
     "jest-puppeteer": "^6.0.3",
     "jest-puppeteer-istanbul": "^0.5.3",
     "node-sass": "^7.0.1",
+    "parcel": "^2.2.1",
     "puppeteer": "^13.1.1",
     "tsc-watch": "^4.6.0",
     "typescript": "^4.5.4",

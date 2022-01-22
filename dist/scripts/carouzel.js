@@ -1461,7 +1461,6 @@ var Carouzel;
          *
          */
         function Root() {
-            var _this = this;
             /**
              * Function to return count of all available carouzel objects
              *
@@ -1582,11 +1581,7 @@ var Carouzel;
                     console.error("\"".concat(query, "\": ").concat(_rootSelectorTypeError));
                 }
             };
-            if (window) {
-                window.addEventListener('DOMContentLoaded', function () {
-                    _this.init(_Selectors.rootAuto);
-                });
-            }
+            this.init(_Selectors.rootAuto);
         }
         /**
          * Function to return single instance

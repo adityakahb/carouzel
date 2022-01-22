@@ -1788,11 +1788,7 @@ namespace Carouzel {
      *
      */
     constructor() {
-      if (window as Window) {
-        window.addEventListener('DOMContentLoaded', () => {
-          this.init(_Selectors.rootAuto);
-        });
-      }
+      this.init(_Selectors.rootAuto);
     }
     /**
      * Function to return single instance
