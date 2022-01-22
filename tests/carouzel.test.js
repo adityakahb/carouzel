@@ -206,4 +206,112 @@ describe('Carouzel', () => {
     expect(leftClass.indexOf('__carouzel-disabled')).toBe(-1);
     expect(nextClass.indexOf('__carouzel-disabled')).not.toBe(-1);
   });
+
+  test.only('The Carouzel events', async () => {
+    let beforeInit = '';
+    let afterInit = '';
+    let beforeScroll = '';
+    let afterScroll = '';
+    const carouzel8Settings = {
+      beforeInitFn: function () {
+        beforeInit = 'beforeInit';
+      },
+      afterInitFn: function () {
+        afterInit = 'afterInit';
+      },
+      beforeScrollFn: function () {
+        beforeScroll = 'beforeScroll';
+      },
+      afterScrollFn: function () {
+        afterScroll = 'afterScroll';
+      },
+    };
+
+    await page.setViewport(desktop);
+    let newLength = await page.evaluate(() => {
+      const __carouzel_instance = Carouzel.Root.getInstance();
+      return __carouzel_instance.getLength();
+    });
+    expect(newLength).toBe(1); // 7
+    await page.evaluate((carouzel8Settings) => {
+      let __carouzel_instance = Carouzel.Root.getInstance();
+      __carouzel_instance.init('#__carouzel_8', carouzel8Settings);
+    });
+    newLength = await page.evaluate(() => {
+      const __carouzel_instance = Carouzel.Root.getInstance();
+      return __carouzel_instance.getLength();
+    });
+    expect(newLength).toBe(2); // 8
+    let index = -1;
+    let classList = '';
+    let __carouzelSlides = await page.$$('#__carouzel_8 [data-carouzel-slide]');
+    for (let i = 0; i < __carouzelSlides.length; i++) {
+      classList = (await GetProperty(__carouzelSlides[i], 'className')) || '';
+      if (classList.indexOf(`__carouzel-active`) !== -1) {
+        index = i;
+        break;
+      }
+    }
+    expect(index).toBe(1);
+    await page.evaluate(() => {
+      let __carouzel_instance = Carouzel.Root.getInstance();
+      let gotonextbtn = document.getElementById('gotonextbtn');
+      gotonextbtn.addEventListener('click', function () {
+        __carouzel_instance.goToSlide('#__carouzel_8', 'next');
+      });
+      gotonextbtn.click();
+    });
+    index = -1;
+    classList = '';
+    await new Promise((r) => setTimeout(r, 5500));
+    __carouzelSlides = await page.$$('#__carouzel_8 [data-carouzel-slide]');
+    for (let i = 0; i < __carouzelSlides.length; i++) {
+      classList = (await GetProperty(__carouzelSlides[i], 'className')) || '';
+      if (classList.indexOf(`__carouzel-active`) !== -1) {
+        index = i;
+        break;
+      }
+    }
+    expect(index).toBe(2);
+    await page.evaluate(() => {
+      let __carouzel_instance = Carouzel.Root.getInstance();
+      let gotoprevbtn = document.getElementById('gotoprevbtn');
+      gotoprevbtn.addEventListener('click', function () {
+        __carouzel_instance.goToSlide('#__carouzel_8', 'previous');
+      });
+      gotoprevbtn.click();
+    });
+    index = -1;
+    classList = '';
+    await new Promise((r) => setTimeout(r, 5500));
+    __carouzelSlides = await page.$$('#__carouzel_8 [data-carouzel-slide]');
+    for (let i = 0; i < __carouzelSlides.length; i++) {
+      classList = (await GetProperty(__carouzelSlides[i], 'className')) || '';
+      if (classList.indexOf(`__carouzel-active`) !== -1) {
+        index = i;
+        break;
+      }
+    }
+    expect(index).toBe(1);
+    await page.evaluate(() => {
+      let __carouzel_instance = Carouzel.Root.getInstance();
+      let gotoslideinput = document.getElementById('gotoslideinput');
+      gotoslideinput.addEventListener('change', function () {
+        __carouzel_instance.goToSlide('#__carouzel_8', gotoslideinput.value);
+      });
+      gotoslideinput.value = 5;
+    });
+    index = -1;
+    classList = '';
+    await new Promise((r) => setTimeout(r, 5500));
+    __carouzelSlides = await page.$$('#__carouzel_8 [data-carouzel-slide]');
+    for (let i = 0; i < __carouzelSlides.length; i++) {
+      classList = (await GetProperty(__carouzelSlides[i], 'className')) || '';
+      if (classList.indexOf(`__carouzel-active`) !== -1) {
+        index = i;
+        break;
+      }
+    }
+    expect(index).toBe(6);
+  });
 });

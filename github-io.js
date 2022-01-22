@@ -161,12 +161,6 @@ var loadIO = function () {
     afterScrollFn: function () {
       toastAfterScroll.show();
     },
-    breakpoints: [
-      {
-        minWidth: 700,
-        showNav: true,
-      },
-    ],
   };
 
   __carouzel_instance.init('#__carouzel_8', carouzel8Settings);
@@ -200,7 +194,7 @@ var loadIO = function () {
   gotoprevbtn.addEventListener('click', function () {
     __carouzel_instance.goToSlide('#__carouzel_8', 'previous');
   });
-  gotoslideinput.addEventListener('change', function (event) {
+  gotoslideinput.addEventListener('change', function () {
     __carouzel_instance.goToSlide('#__carouzel_8', gotoslideinput.value);
   });
   var __carouzel_13form = document.getElementById('__carouzel_13form');
