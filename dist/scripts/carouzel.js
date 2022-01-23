@@ -759,8 +759,6 @@ var Carouzel;
                     case "arrowright":
                         go2Next(core, 0);
                         break;
-                    default:
-                        break;
                 }
             }));
         }
@@ -1351,11 +1349,11 @@ var Carouzel;
         }
         addClass(_core.root, _core.opts.activeCls);
         if (!isNaN(_core.opts.cntr) && _core.opts.cntr > 0) {
-            _core.root.setAttribute(_Selectors.cntr.slice(1, -1), "");
+            _core.root.setAttribute(_Selectors.cntr.slice(1, -1), "true");
         }
         for (var r = 0; r < _core.opts.res.length; r++) {
             if (!isNaN(_core.opts.res[r].cntr) && _core.opts.res[r].cntr > 0) {
-                _core.root.setAttribute(_Selectors.cntr.slice(1, -1), "");
+                _core.root.setAttribute(_Selectors.cntr.slice(1, -1), "true");
             }
         }
         if (typeof settings.afterInitFn === "function") {
@@ -1530,7 +1528,7 @@ var Carouzel;
                 else {
                     if (query !== _Selectors.rootAuto) {
                         // throw new TypeError(_rootSelectorTypeError);
-                        console.error("\"".concat(query, "\": ").concat(_rootSelectorTypeError));
+                        console.error("init() \"".concat(query, "\": ").concat(_rootSelectorTypeError));
                     }
                 }
             };
@@ -1557,7 +1555,7 @@ var Carouzel;
                 }
                 else {
                     // throw new TypeError(_rootSelectorTypeError);
-                    console.error("\"".concat(query, "\": ").concat(_rootSelectorTypeError));
+                    console.error("goToSlide() \"".concat(query, "\": ").concat(_rootSelectorTypeError));
                 }
             };
             /**
@@ -1578,7 +1576,7 @@ var Carouzel;
                 }
                 else {
                     // throw new TypeError(_rootSelectorTypeError);
-                    console.error("\"".concat(query, "\": ").concat(_rootSelectorTypeError));
+                    console.error("destroy() \"".concat(query, "\": ").concat(_rootSelectorTypeError));
                 }
             };
             this.init(_Selectors.rootAuto);

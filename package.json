@@ -15,6 +15,7 @@
     "build:dev": "npm run compile:ts && npm run compile:sass",
     "build:prod": "npm run build:dev && npm run uglify:js && npm run uglify:css && npm run compile:sitesass",
     "compile:sitesass": "node-sass src/sass-site/ -o dist/styles/site && uglifycss dist/styles/site/index.css --output dist/styles/site/index.min.css",
+    "build:parcel": "parcel build tests/fixture.html",
     "test:parcel": "parcel tests/fixture.html",
     "test:jest": "jest"
   },

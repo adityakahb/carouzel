@@ -976,8 +976,6 @@ namespace Carouzel {
             case `arrowright`:
               go2Next(core, 0);
               break;
-            default:
-              break;
           }
         })
       );
@@ -1664,11 +1662,11 @@ namespace Carouzel {
     addClass(_core.root as HTMLElement, _core.opts.activeCls);
 
     if (!isNaN(_core.opts.cntr) && _core.opts.cntr > 0) {
-      _core.root.setAttribute(_Selectors.cntr.slice(1, -1), ``);
+      _core.root.setAttribute(_Selectors.cntr.slice(1, -1), `true`);
     }
     for (let r = 0; r < _core.opts.res.length; r++) {
       if (!isNaN(_core.opts.res[r].cntr) && _core.opts.res[r].cntr > 0) {
-        _core.root.setAttribute(_Selectors.cntr.slice(1, -1), ``);
+        _core.root.setAttribute(_Selectors.cntr.slice(1, -1), `true`);
       }
     }
 
@@ -1876,7 +1874,7 @@ namespace Carouzel {
       } else {
         if (query !== _Selectors.rootAuto) {
           // throw new TypeError(_rootSelectorTypeError);
-          console.error(`"${query}": ${_rootSelectorTypeError}`);
+          console.error(`init() "${query}": ${_rootSelectorTypeError}`);
         }
       }
     };
@@ -1902,7 +1900,7 @@ namespace Carouzel {
         }
       } else {
         // throw new TypeError(_rootSelectorTypeError);
-        console.error(`"${query}": ${_rootSelectorTypeError}`);
+        console.error(`goToSlide() "${query}": ${_rootSelectorTypeError}`);
       }
     };
 
@@ -1923,7 +1921,7 @@ namespace Carouzel {
         }
       } else {
         // throw new TypeError(_rootSelectorTypeError);
-        console.error(`"${query}": ${_rootSelectorTypeError}`);
+        console.error(`destroy() "${query}": ${_rootSelectorTypeError}`);
       }
     };
 
