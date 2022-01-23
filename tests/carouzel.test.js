@@ -134,7 +134,7 @@ describe('Carouzel', () => {
         slidesToShow: 2,
         autoplay: true,
         pauseOnHover: true,
-        animationSpeed: 100,
+        animationSpeed: 200,
         autoplaySpeed: 200,
       });
     });
@@ -149,7 +149,7 @@ describe('Carouzel', () => {
       }
     }
     expect(index).toBe(2);
-    await new Promise((r) => setTimeout(r, 210));
+    await new Promise((r) => setTimeout(r, 250));
     __carouzelSlides = await page.$$('#__carouzel_6 [data-carouzel-slide]');
     index = -1;
     classList = '';
@@ -161,7 +161,7 @@ describe('Carouzel', () => {
       }
     }
     expect(index).toBe(4);
-    await new Promise((r) => setTimeout(r, 210));
+    await new Promise((r) => setTimeout(r, 250));
     __carouzelSlides = await page.$$('#__carouzel_6 [data-carouzel-slide]');
     index = -1;
     classList = '';
@@ -247,6 +247,7 @@ describe('Carouzel', () => {
       };
       let __carouzel_instance = Carouzel.Root.getInstance();
       __carouzel_instance.init('#__carouzel_8', carouzel8Settings);
+      __carouzel_instance.init('#__carouzel_xyz');
       await new Promise((r) => setTimeout(r, 1000));
       document.querySelector('#__carouzel_8 [data-carouzel-nextarrow]').click();
       document
@@ -308,6 +309,7 @@ describe('Carouzel', () => {
       let __carouzel_instance = Carouzel.Root.getInstance();
       let gotoprevbtn = document.getElementById('gotoprevbtn');
       gotoprevbtn.addEventListener('click', function () {
+        __carouzel_instance.goToSlide('#__carouzel_xyz', 'previous');
         __carouzel_instance.goToSlide('#__carouzel_8', 'previous');
       });
       gotoprevbtn.click();
@@ -436,6 +438,7 @@ describe('Carouzel', () => {
       let __carouzel_instance = Carouzel.Root.getInstance();
       let destroybtn = document.getElementById('destroybtn');
       destroybtn.addEventListener('click', function () {
+        __carouzel_instance.destroy('#__carouzel_xyz');
         __carouzel_instance.destroy('#__carouzel_8');
       });
       destroybtn.click();

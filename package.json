@@ -17,7 +17,7 @@
     "compile:sitesass": "node-sass src/sass-site/ -o dist/styles/site && uglifycss dist/styles/site/index.css --output dist/styles/site/index.min.css",
     "build:parcel": "parcel build tests/fixture.html",
     "test:parcel": "parcel tests/fixture.html",
-    "test:jest": "jest"
+    "test:jest": "jest --runInBand"
   },
   "main": "dist/scripts/carouzel.js",
   "repository": {
