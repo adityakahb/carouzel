@@ -95,6 +95,10 @@ var Carouzel;
         root: "[data-carouzel]",
         rootAuto: "[data-carouzel-auto]",
         rtl: "[data-carouzel-rtl]",
+        scbar: "[data-carouzel-hasscrollbar]",
+        scbarW: "[data-carouzel-scrollbarwrapper]",
+        scbarT: "[data-carouzel-scrollbartrack]",
+        scbarB: "[data-carouzel-scrollbarthumb]",
         slide: "[data-carouzel-slide]",
         stitle: "[data-carouzel-title]",
         trk: "[data-carouzel-track]",
@@ -118,6 +122,7 @@ var Carouzel;
         easingFunction: "linear",
         editModeClass: "__carouzel-editmode",
         enableKeyboard: true,
+        enableScrollbar: false,
         enableTouchSwipe: true,
         hiddenClass: "__carouzel-hidden",
         idPrefix: "__carouzel",
@@ -1109,6 +1114,20 @@ var Carouzel;
      * @param core - Carouzel instance core object
      *
      */
+    var generateScrollbar = function (core) {
+        if (core.opts.scbar && core.root) {
+            core.scbarW = core.root.querySelector("".concat(_Selectors.scbarW));
+            core.scbarT = core.root.querySelector("".concat(_Selectors.scbarT));
+            core.scbarB = core.root.querySelector("".concat(_Selectors.scbarB));
+            core.root.setAttribute(_Selectors.scbar.slice(1, -1), "true");
+        }
+    };
+    /**
+     * Function to remove ghost dragging from images
+     *
+     * @param core - Carouzel instance core object
+     *
+     */
     var makeStuffUndraggable = function (core) {
         if (core.root) {
             var images = core.root.querySelectorAll("img");
@@ -1257,6 +1276,7 @@ var Carouzel;
             kb: settings.enableKeyboard,
             pauseHov: settings.pauseOnHover,
             res: [],
+            scbar: settings.enableScrollbar,
             speed: settings.animationSpeed,
             startAt: settings.animationSpeed,
             swipe: settings.enableTouchSwipe,
@@ -1325,7 +1345,7 @@ var Carouzel;
         _core.trkO = root.querySelector("".concat(_Selectors.trkO));
         _core.trkW = root.querySelector("".concat(_Selectors.trkW));
         if (_core.opts.rtl) {
-            _core.root.setAttribute(_Selectors.rtl.slice(1, -1), 'true');
+            _core.root.setAttribute(_Selectors.rtl.slice(1, -1), "true");
         }
         _core._t = {};
         _core._t.total = _core.opts.speed;
@@ -1342,6 +1362,7 @@ var Carouzel;
                 makeStuffUndraggable(_core);
                 toggleKeyboard(_core);
                 generateElements(_core);
+                generateScrollbar(_core);
                 toggleControlButtons(_core);
                 toggleTouchEvents(_core);
                 applyLayout(_core, _core.opts.rtl, true);
@@ -1364,7 +1385,7 @@ var Carouzel;
             if (windowHash.charAt(0) === "#") {
                 windowHash = windowHash.slice(1, windowHash.length);
             }
-            if ((windowHash || '').length > 0) {
+            if ((windowHash || "").length > 0) {
                 var thisSlides = _core.root.querySelectorAll("".concat(_Selectors.slide));
                 var foundSlideIndex = -1;
                 for (var s = 0; s < thisSlides.length; s++) {
@@ -1409,7 +1430,7 @@ var Carouzel;
      */
     var destroy = function (core) {
         var _a;
-        var id = (_a = core.root) === null || _a === void 0 ? void 0 : _a.getAttribute('id');
+        var id = (_a = core.root) === null || _a === void 0 ? void 0 : _a.getAttribute("id");
         var allElems = core.root.querySelectorAll("*");
         for (var i = 0; i < allElems.length; i++) {
             removeEventListeners(core, allElems[i]);

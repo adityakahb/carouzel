@@ -43,7 +43,7 @@ Carouzel is a framework free light-weight carousel plugin, which is responsive, 
 ## NPM
 
 ```bash
-npm install amegmen
+npm install carouzel
 ```
 
 ## Installation

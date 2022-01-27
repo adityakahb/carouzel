@@ -57,6 +57,7 @@ namespace Carouzel {
     pauseHov: boolean;
     res: ICoreBreakpoint[];
     rtl: boolean;
+    scbar: boolean;
     speed: number;
     startAt: number;
     swipe: boolean;
@@ -95,6 +96,7 @@ namespace Carouzel {
     easingFunction: string;
     editModeClass: string;
     enableKeyboard: boolean;
+    enableScrollbar: boolean;
     enableTouchSwipe: boolean;
     hiddenClass: string;
     idPrefix: string;
@@ -157,6 +159,9 @@ namespace Carouzel {
     pi: number;
     pts: IIndexHandler;
     root: HTMLElement | null;
+    scbarB: HTMLElement | null;
+    scbarT: HTMLElement | null;
+    scbarW: HTMLElement | null;
     sLen: number;
     sWid: number;
     trk: HTMLElement | null;
@@ -251,6 +256,10 @@ namespace Carouzel {
     root: `[data-carouzel]`,
     rootAuto: `[data-carouzel-auto]`,
     rtl: `[data-carouzel-rtl]`,
+    scbar: `[data-carouzel-hasscrollbar]`,
+    scbarW: `[data-carouzel-scrollbarwrapper]`,
+    scbarT: `[data-carouzel-scrollbartrack]`,
+    scbarB: `[data-carouzel-scrollbarthumb]`,
     slide: `[data-carouzel-slide]`,
     stitle: `[data-carouzel-title]`,
     trk: `[data-carouzel-track]`,
@@ -274,6 +283,7 @@ namespace Carouzel {
     easingFunction: `linear`,
     editModeClass: `__carouzel-editmode`,
     enableKeyboard: true,
+    enableScrollbar: false,
     enableTouchSwipe: true,
     hiddenClass: `__carouzel-hidden`,
     idPrefix: `__carouzel`,
@@ -1402,6 +1412,21 @@ namespace Carouzel {
    * @param core - Carouzel instance core object
    *
    */
+  const generateScrollbar = (core: ICore) => {
+    if (core.opts.scbar && core.root) {
+      core.scbarW = core.root.querySelector(`${_Selectors.scbarW}`);
+      core.scbarT = core.root.querySelector(`${_Selectors.scbarT}`);
+      core.scbarB = core.root.querySelector(`${_Selectors.scbarB}`);
+      core.root.setAttribute(_Selectors.scbar.slice(1, -1), `true`);
+    }
+  };
+
+  /**
+   * Function to remove ghost dragging from images
+   *
+   * @param core - Carouzel instance core object
+   *
+   */
   const makeStuffUndraggable = (core: ICore) => {
     if (core.root) {
       const images = core.root.querySelectorAll(`img`);
@@ -1560,6 +1585,7 @@ namespace Carouzel {
       kb: settings.enableKeyboard,
       pauseHov: settings.pauseOnHover,
       res: [],
+      scbar: settings.enableScrollbar,
       speed: settings.animationSpeed,
       startAt: settings.animationSpeed,
       swipe: settings.enableTouchSwipe,
@@ -1633,7 +1659,7 @@ namespace Carouzel {
     _core.trkW = root.querySelector(`${_Selectors.trkW}`);
 
     if (_core.opts.rtl) {
-      _core.root.setAttribute(_Selectors.rtl.slice(1, -1), 'true');
+      _core.root.setAttribute(_Selectors.rtl.slice(1, -1), `true`);
     }
 
     _core._t = <ITimer>{};
@@ -1653,6 +1679,7 @@ namespace Carouzel {
         makeStuffUndraggable(_core);
         toggleKeyboard(_core);
         generateElements(_core);
+        generateScrollbar(_core);
         toggleControlButtons(_core);
         toggleTouchEvents(_core);
         applyLayout(_core, _core.opts.rtl, true);
@@ -1678,7 +1705,7 @@ namespace Carouzel {
       if (windowHash.charAt(0) === `#`) {
         windowHash = windowHash.slice(1, windowHash.length);
       }
-      if ((windowHash || '').length > 0) {
+      if ((windowHash || ``).length > 0) {
         const thisSlides = _core.root.querySelectorAll(`${_Selectors.slide}`);
         let foundSlideIndex: number = -1;
         for (let s = 0; s < thisSlides.length; s++) {
@@ -1724,7 +1751,7 @@ namespace Carouzel {
    *
    */
   const destroy = (core: ICore) => {
-    const id = core.root?.getAttribute('id');
+    const id = core.root?.getAttribute(`id`);
     const allElems = (core.root as HTMLElement).querySelectorAll(`*`);
     for (let i = 0; i < allElems.length; i++) {
       removeEventListeners(core, allElems[i]);
