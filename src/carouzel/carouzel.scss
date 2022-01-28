@@ -169,33 +169,29 @@ $timeInMilliseconds: 250ms;
       flex-direction: row-reverse;
     }
   }
-  &[data-carouzel-hasscrollbar] {
-    // [data-carouzel-trackmask] {
-    //   overflow-x: scroll;
-    //   overflow-y: hidden;
-    // }
-    [data-carouzel-scrollbarwrapper] {
-      margin: 1em 0;
-    }
-    [data-carouzel-scrollbartrack] {
-      border: 1px solid transparent;
-      height: 10px;
-      position: relative;
-      z-index: 1;
-    }
-    [data-carouzel-scrollbarthumb] {
-      background-color: rgba(#000, 0.25);
-      border-radius: 8px;
-      border: 1px solid rgba(#000, 0.25);
-      font-size: 0;
-      height: 8px;
-      margin: 0;
-      padding: 0;
-      position: absolute;
-      width: 100px;
-      z-index: 2;
-    }
-  }
+  // &[data-carouzel-hasscrollbar] {
+  //   [data-carouzel-scrollbarwrapper] {
+  //     margin: 1em 0;
+  //   }
+  //   [data-carouzel-scrollbartrack] {
+  //     border: 1px solid transparent;
+  //     height: 10px;
+  //     position: relative;
+  //     z-index: 1;
+  //   }
+  //   [data-carouzel-scrollbarthumb] {
+  //     background-color: rgba(#000, 0.25);
+  //     border-radius: 8px;
+  //     border: 1px solid rgba(#000, 0.25);
+  //     font-size: 0;
+  //     height: 8px;
+  //     margin: 0;
+  //     padding: 0;
+  //     position: absolute;
+  //     width: 100px;
+  //     z-index: 2;
+  //   }
+  // }
   &.__carouzel-editmode {
     [data-carouzel-trackouter] {
       width: 100% !important;

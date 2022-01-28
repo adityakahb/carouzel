@@ -99,23 +99,6 @@ var loadIO = function () {
       },
     ],
   });
-  __carouzel_instance.init('#__carouzel_16', {
-    slidesToShow: 1,
-    isInfinite: false,
-    enableScrollbar: true,
-    breakpoints: [
-      {
-        minWidth: 700,
-        slidesToScroll: 2,
-        slidesToShow: 2,
-      },
-      {
-        minWidth: 1100,
-        slidesToScroll: 3,
-        slidesToShow: 3,
-      },
-    ],
-  });
   __carouzel_instance.init('#__carouzel_9', {
     centerBetween: 1,
   });
