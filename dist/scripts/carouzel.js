@@ -1115,15 +1115,13 @@ var Carouzel;
      *
      */
     // TODO: FUTURE SCROLLBAR IMPLEMENTATION
-    var generateScrollbar = function () {
-        // (core: ICore) => {
-        return;
-        // if (core.opts.scbar && core.root) {
-        //   core.scbarW = core.root.querySelector(`${_Selectors.scbarW}`);
-        //   core.scbarT = core.root.querySelector(`${_Selectors.scbarT}`);
-        //   core.scbarB = core.root.querySelector(`${_Selectors.scbarB}`);
-        //   core.root.setAttribute(_Selectors.scbar.slice(1, -1), `true`);
-        // }
+    var generateScrollbar = function (core) {
+        if (core.opts.scbar && core.root) {
+            core.scbarW = core.root.querySelector("".concat(_Selectors.scbarW));
+            core.scbarT = core.root.querySelector("".concat(_Selectors.scbarT));
+            core.scbarB = core.root.querySelector("".concat(_Selectors.scbarB));
+            core.root.setAttribute(_Selectors.scbar.slice(1, -1), "true");
+        }
     };
     /**
      * Function to remove ghost dragging from images
@@ -1365,8 +1363,7 @@ var Carouzel;
                 makeStuffUndraggable(_core);
                 toggleKeyboard(_core);
                 generateElements(_core);
-                // generateScrollbar(_core);
-                generateScrollbar();
+                generateScrollbar(_core);
                 toggleControlButtons(_core);
                 toggleTouchEvents(_core);
                 applyLayout(_core, _core.opts.rtl, true);

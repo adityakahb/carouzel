@@ -1413,15 +1413,13 @@ namespace Carouzel {
    *
    */
   // TODO: FUTURE SCROLLBAR IMPLEMENTATION
-  const generateScrollbar = () => {
-    // (core: ICore) => {
-    return;
-    // if (core.opts.scbar && core.root) {
-    //   core.scbarW = core.root.querySelector(`${_Selectors.scbarW}`);
-    //   core.scbarT = core.root.querySelector(`${_Selectors.scbarT}`);
-    //   core.scbarB = core.root.querySelector(`${_Selectors.scbarB}`);
-    //   core.root.setAttribute(_Selectors.scbar.slice(1, -1), `true`);
-    // }
+  const generateScrollbar = (core: ICore) => {
+    if (core.opts.scbar && core.root) {
+      core.scbarW = core.root.querySelector(`${_Selectors.scbarW}`);
+      core.scbarT = core.root.querySelector(`${_Selectors.scbarT}`);
+      core.scbarB = core.root.querySelector(`${_Selectors.scbarB}`);
+      core.root.setAttribute(_Selectors.scbar.slice(1, -1), `true`);
+    }
   };
 
   /**
@@ -1682,8 +1680,7 @@ namespace Carouzel {
         makeStuffUndraggable(_core);
         toggleKeyboard(_core);
         generateElements(_core);
-        // generateScrollbar(_core);
-        generateScrollbar();
+        generateScrollbar(_core);
         toggleControlButtons(_core);
         toggleTouchEvents(_core);
         applyLayout(_core, _core.opts.rtl, true);
