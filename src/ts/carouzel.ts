@@ -218,14 +218,14 @@ namespace Carouzel {
     easeInOutQuint: (t: number) =>
       t < 0.5 ? 16 * t * t * t * t * t : 1 + 16 * --t * t * t * t * t,
     // elastic bounce effect at the beginning
-    easeInElastic: (t: number) => (0.04 - 0.04 / t) * Math.sin(25 * t) + 1,
+    // easeInElastic: (t: number) => (0.04 - 0.04 / t) * Math.sin(25 * t) + 1,
     // elastic bounce effect at the end
-    easeOutElastic: (t: number) => ((0.04 * t) / --t) * Math.sin(25 * t),
+    // easeOutElastic: (t: number) => ((0.04 * t) / --t) * Math.sin(25 * t),
     // elastic bounce effect at the beginning and end
-    easeInOutElastic: (t: number) =>
-      (t -= 0.5) < 0
-        ? (0.02 + 0.01 / t) * Math.sin(50 * t)
-        : (0.02 - 0.01 / t) * Math.sin(50 * t) + 1,
+    // easeInOutElastic: (t: number) =>
+    //   (t -= 0.5) < 0
+    //     ? (0.02 + 0.01 / t) * Math.sin(50 * t)
+    //     : (0.02 - 0.01 / t) * Math.sin(50 * t) + 1,
   };
 
   const _animationDirections = [`previous`, `next`];
