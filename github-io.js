@@ -68,7 +68,7 @@ var loadIO = function () {
   });
   __carouzel_instance.init('#__carouzel_6', {
     slidesToShow: 1,
-    autoplay: false,
+    autoplay: true,
     pauseOnHover: true,
     breakpoints: [
       {
@@ -85,7 +85,6 @@ var loadIO = function () {
   });
   __carouzel_instance.init('#__carouzel_7', {
     slidesToShow: 1,
-    isInfinite: false,
     breakpoints: [
       {
         minWidth: 700,
@@ -272,25 +271,25 @@ var loadIO = function () {
     slidesToShow: 1,
     slidesToScroll: 1,
     isVertical: true,
-    verticalHeight: 300,
-    showNavigation: false,
+    autoplay: true,
+    verticalHeight: 360,
     threshold: 100,
     slideGutter: 20,
-    isInfinite: false,
+    pauseOnHover: true,
     breakpoints: [
       {
         minWidth: 700,
         slidesToShow: 2,
         slidesToScroll: 2,
-        verticalHeight: 450,
+        verticalHeight: 400,
         slideGutter: 40,
       },
       {
         minWidth: 1100,
         slidesToShow: 3,
         slidesToScroll: 3,
-        verticalHeight: 600,
-        slideGutter: 60,
+        verticalHeight: 450,
+        slideGutter: 50,
       },
     ],
   });

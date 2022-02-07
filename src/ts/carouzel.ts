@@ -176,6 +176,8 @@ namespace Carouzel {
     trkM: HTMLElement | null;
     trkO: HTMLElement | null;
     trkW: HTMLElement | null;
+    totp: HTMLElement | null;
+    curp: HTMLElement | null;
   }
 
   interface ICoreInstance {
@@ -256,6 +258,7 @@ namespace Carouzel {
     arrowP: `[data-carouzel-previousarrow]`,
     cntr: `[data-carouzel-centered]`,
     controlsW: `[data-carouzel-controlswrapper]`,
+    curp: `[data-carouzel-currentpage]`,
     dot: `[data-carouzel-dot]`,
     nav: `[data-carouzel-navigation]`,
     navW: `[data-carouzel-navigationwrapper]`,
@@ -265,11 +268,12 @@ namespace Carouzel {
     rootAuto: `[data-carouzel-auto]`,
     rtl: `[data-carouzel-rtl]`,
     scbar: `[data-carouzel-hasscrollbar]`,
-    scbarW: `[data-carouzel-scrollbarwrapper]`,
-    scbarT: `[data-carouzel-scrollbartrack]`,
     scbarB: `[data-carouzel-scrollbarthumb]`,
+    scbarT: `[data-carouzel-scrollbartrack]`,
+    scbarW: `[data-carouzel-scrollbarwrapper]`,
     slide: `[data-carouzel-slide]`,
     stitle: `[data-carouzel-title]`,
+    totp: `[data-carouzel-totalpages]`,
     trk: `[data-carouzel-track]`,
     trkM: `[data-carouzel-trackMask]`,
     trkO: `[data-carouzel-trackOuter]`,
@@ -538,6 +542,9 @@ namespace Carouzel {
       }
       if (x >= core.bpo.dots.length) {
         x = 0;
+      }
+      if (core.curp) {
+        core.curp.innerHTML = `${x + 1}`;
       }
       if (core.bpo.dots[x]) {
         addClass(
@@ -947,6 +954,10 @@ namespace Carouzel {
         core.pts[i] =
           (i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr) +
           bpoptions.gutr;
+      }
+
+      if (core.totp) {
+        core.totp.innerHTML = `${bpoptions.dots.length}`;
       }
     }
     animateTrack(core, 0, isFirstLoad);
@@ -1745,6 +1756,8 @@ namespace Carouzel {
     _core.trkM = root.querySelector(`${_Selectors.trkM}`);
     _core.trkO = root.querySelector(`${_Selectors.trkO}`);
     _core.trkW = root.querySelector(`${_Selectors.trkW}`);
+    _core.curp = root.querySelector(`${_Selectors.curp}`);
+    _core.totp = root.querySelector(`${_Selectors.totp}`);
 
     if (_core.opts.rtl) {
       _core.root.setAttribute(_Selectors.rtl.slice(1, -1), `true`);

@@ -102,7 +102,8 @@ $timeInMilliseconds: 250ms;
   [data-carouzel-nextarrow] {
     right: -48px;
   }
-  [data-carouzel-navigation] {
+  [data-carouzel-navigation],
+  [data-carouzel-pageinfo] {
     align-items: center;
     display: flex;
     justify-content: center;
@@ -111,7 +112,8 @@ $timeInMilliseconds: 250ms;
     padding: 0;
     width: 100%;
   }
-  [data-carouzel-navigationwrapper] {
+  [data-carouzel-navigationwrapper],
+  [data-carouzel-pageinfo] {
     margin: 1em 0;
   }
   [data-carouzel-dot] {
@@ -153,6 +155,15 @@ $timeInMilliseconds: 250ms;
     &.__carouzel-active > button {
       background-color: #ced4da;
     }
+  }
+  [data-carouzel-pageinfo] {
+    font-weight: bold;
+  }
+  [data-carouzel-currentpage],
+  [data-carouzel-totalpages] {
+    display: inline-block;
+    padding: 0 0.5em;
+    vertical-align: top;
   }
   &[data-carouzel-centered] {
     [data-carouzel-trackmask] {
@@ -245,6 +256,9 @@ $timeInMilliseconds: 250ms;
     }
     [data-carouzel-nextarrow] {
       bottom: -48px;
+    }
+    [data-carouzel-pageinfo] {
+      margin: 4em 0 1em 0;
     }
   }
   &.__carouzel-editmode {

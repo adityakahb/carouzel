@@ -77,6 +77,7 @@ var Carouzel;
         arrowP: "[data-carouzel-previousarrow]",
         cntr: "[data-carouzel-centered]",
         controlsW: "[data-carouzel-controlswrapper]",
+        curp: "[data-carouzel-currentpage]",
         dot: "[data-carouzel-dot]",
         nav: "[data-carouzel-navigation]",
         navW: "[data-carouzel-navigationwrapper]",
@@ -86,11 +87,12 @@ var Carouzel;
         rootAuto: "[data-carouzel-auto]",
         rtl: "[data-carouzel-rtl]",
         scbar: "[data-carouzel-hasscrollbar]",
-        scbarW: "[data-carouzel-scrollbarwrapper]",
-        scbarT: "[data-carouzel-scrollbartrack]",
         scbarB: "[data-carouzel-scrollbarthumb]",
+        scbarT: "[data-carouzel-scrollbartrack]",
+        scbarW: "[data-carouzel-scrollbarwrapper]",
         slide: "[data-carouzel-slide]",
         stitle: "[data-carouzel-title]",
+        totp: "[data-carouzel-totalpages]",
         trk: "[data-carouzel-track]",
         trkM: "[data-carouzel-trackMask]",
         trkO: "[data-carouzel-trackOuter]",
@@ -337,6 +339,9 @@ var Carouzel;
             }
             if (x >= core.bpo.dots.length) {
                 x = 0;
+            }
+            if (core.curp) {
+                core.curp.innerHTML = "".concat(x + 1);
             }
             if (core.bpo.dots[x]) {
                 addClass(core.bpo.dots[x], core.opts.activeCls);
@@ -710,6 +715,9 @@ var Carouzel;
                 core.pts[i] =
                     (i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr) +
                         bpoptions.gutr;
+            }
+            if (core.totp) {
+                core.totp.innerHTML = "".concat(bpoptions.dots.length);
             }
         }
         animateTrack(core, 0, isFirstLoad);
@@ -1412,6 +1420,8 @@ var Carouzel;
         _core.trkM = root.querySelector("".concat(_Selectors.trkM));
         _core.trkO = root.querySelector("".concat(_Selectors.trkO));
         _core.trkW = root.querySelector("".concat(_Selectors.trkW));
+        _core.curp = root.querySelector("".concat(_Selectors.curp));
+        _core.totp = root.querySelector("".concat(_Selectors.totp));
         if (_core.opts.rtl) {
             _core.root.setAttribute(_Selectors.rtl.slice(1, -1), "true");
         }
