@@ -181,10 +181,17 @@ $timeInMilliseconds: 250ms;
     }
   }
   &[data-carouzel-hasscrollbar] {
-    // [data-carouzel-trackmask] {
-    //   overflow-x: scroll;
-    //   overflow-y: hidden;
-    // }
+    [data-carouzel-trackmask] {
+      margin-bottom: -15px;
+    }
+    [data-carouzel-trackouter] {
+      -ms-overflow-style: none;
+      overflow: auto;
+      scrollbar-width: none;
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
     [data-carouzel-scrollbarwrapper] {
       margin: 1em 0;
     }
@@ -193,6 +200,9 @@ $timeInMilliseconds: 250ms;
       height: 10px;
       position: relative;
       z-index: 1;
+    }
+    [data-carouzel-track] {
+      padding-bottom: 15px;
     }
     [data-carouzel-scrollbarthumb] {
       background-color: rgba(#000, 0.25);

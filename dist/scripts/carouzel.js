@@ -720,7 +720,11 @@ var Carouzel;
                 core.totp.innerHTML = "".concat(bpoptions.dots.length);
             }
         }
-        animateTrack(core, 0, isFirstLoad);
+        if (core.opts.scbar) {
+        }
+        else {
+            animateTrack(core, 0, isFirstLoad);
+        }
     };
     /**
      * Function to go to the specific slide number
@@ -1072,7 +1076,16 @@ var Carouzel;
                 dragging = false;
             }
         };
-        if (core.opts.swipe) {
+        var logTrackScroll = function () {
+            var _a;
+            console.log('==========core.trkO', (_a = core.trkO) === null || _a === void 0 ? void 0 : _a.scrollLeft);
+        };
+        if (core.opts.scbar) {
+            core.eHandlers.push(eventHandler(core.trkO, "scroll", function () {
+                logTrackScroll();
+            }));
+        }
+        if (core.opts.swipe && !core.opts.scbar) {
             core.eHandlers.push(eventHandler(core.trk, "touchstart", function (event) {
                 touchStart(event);
             }));
@@ -1342,7 +1355,7 @@ var Carouzel;
             })(),
             gutr: settings.slideGutter,
             hidCls: settings.hiddenClass,
-            inf: settings.isInfinite,
+            inf: settings.enableScrollbar ? false : settings.isInfinite,
             rtl: settings.isRtl,
             kb: settings.enableKeyboard,
             pauseHov: settings.pauseOnHover,

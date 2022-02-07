@@ -960,7 +960,10 @@ namespace Carouzel {
         core.totp.innerHTML = `${bpoptions.dots.length}`;
       }
     }
-    animateTrack(core, 0, isFirstLoad);
+    if (core.opts.scbar) {
+    } else {
+      animateTrack(core, 0, isFirstLoad);
+    }
   };
 
   /**
@@ -1345,7 +1348,19 @@ namespace Carouzel {
       }
     };
 
-    if (core.opts.swipe) {
+    const logTrackScroll = () => {
+      console.log('==========core.trkO', core.trkO?.scrollLeft);
+    };
+
+    if (core.opts.scbar) {
+      core.eHandlers.push(
+        eventHandler(core.trkO as HTMLElement, `scroll`, function () {
+          logTrackScroll();
+        })
+      );
+    }
+
+    if (core.opts.swipe && !core.opts.scbar) {
       core.eHandlers.push(
         eventHandler(
           core.trk as HTMLElement,
@@ -1674,7 +1689,7 @@ namespace Carouzel {
       })(),
       gutr: settings.slideGutter,
       hidCls: settings.hiddenClass,
-      inf: settings.isInfinite,
+      inf: settings.enableScrollbar ? false : settings.isInfinite,
       rtl: settings.isRtl,
       kb: settings.enableKeyboard,
       pauseHov: settings.pauseOnHover,

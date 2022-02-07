@@ -175,6 +175,16 @@
 [data-carouzel][data-carouzel-rtl] [data-carouzel-navigation] {
   flex-direction: row-reverse; }
 
+[data-carouzel][data-carouzel-hasscrollbar] [data-carouzel-trackmask] {
+  margin-bottom: -15px; }
+
+[data-carouzel][data-carouzel-hasscrollbar] [data-carouzel-trackouter] {
+  -ms-overflow-style: none;
+  overflow: auto;
+  scrollbar-width: none; }
+  [data-carouzel][data-carouzel-hasscrollbar] [data-carouzel-trackouter]::-webkit-scrollbar {
+    display: none; }
+
 [data-carouzel][data-carouzel-hasscrollbar] [data-carouzel-scrollbarwrapper] {
   margin: 1em 0; }
 
@@ -183,6 +193,9 @@
   height: 10px;
   position: relative;
   z-index: 1; }
+
+[data-carouzel][data-carouzel-hasscrollbar] [data-carouzel-track] {
+  padding-bottom: 15px; }
 
 [data-carouzel][data-carouzel-hasscrollbar] [data-carouzel-scrollbarthumb] {
   background-color: rgba(0, 0, 0, 0.25);
