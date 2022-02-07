@@ -8,6 +8,7 @@
     "compile:sass": "node-sass --source-map true src/carouzel/ -o dist/styles/carouzel",
     "compile:ts": "tsc",
     "compile:tswatch": "tsc-watch --onFailure \"echo Beep! Compilation Failed\"",
+    "compile:sasswatch": "npm run compile:sass && node-sass --source-map true src/carouzel/ -wo dist/styles/carouzel",
     "uglify:js": "uglifyjs dist/scripts/carouzel.js -o dist/scripts/carouzel.min.js -c -m",
     "uglify:css": "uglifycss dist/styles/carouzel/carouzel.css --output dist/styles/carouzel/carouzel.min.css",
     "only:js": "npm run compile:ts && npm run uglify:js",

@@ -45,7 +45,7 @@ var loadIO = function () {
         minWidth: 700,
         slidesToScroll: 2,
         slidesToShow: 2,
-        showNav: true,
+        showNavigation: true,
       },
       {
         minWidth: 1100,
@@ -68,7 +68,7 @@ var loadIO = function () {
   });
   __carouzel_instance.init('#__carouzel_6', {
     slidesToShow: 1,
-    autoplay: true,
+    autoplay: false,
     pauseOnHover: true,
     breakpoints: [
       {
@@ -130,7 +130,7 @@ var loadIO = function () {
         minWidth: 700,
         slidesToScroll: 2,
         slidesToShow: 2,
-        showNav: true,
+        showNavigation: true,
         slideGutter: 30,
       },
       {
@@ -150,7 +150,7 @@ var loadIO = function () {
         minWidth: 700,
         slidesToScroll: 2,
         slidesToShow: 2,
-        showNav: true,
+        showNavigation: true,
       },
       {
         minWidth: 1100,
@@ -229,7 +229,7 @@ var loadIO = function () {
         minWidth: 700,
         slidesToScroll: 2,
         slidesToShow: 2,
-        showNav: true,
+        showNavigation: true,
         slideGutter: 16,
       },
       {
@@ -268,6 +268,24 @@ var loadIO = function () {
   if (document.querySelectorAll('#__carouzel_15').length > 0) {
     __carouzel_instance.init('#__carouzel_15');
   }
+  __carouzel_instance.init('#__carouzel_17', {
+    slidesToShow: 1,
+    isVertical: true,
+    verticalHeight: 400,
+    showNavigation: false,
+    slideGutter: 20,
+    threshold: 100,
+    breakpoints: [
+      {
+        minWidth: 700,
+        slidesToShow: 2,
+      },
+      {
+        minWidth: 1100,
+        slidesToShow: 3,
+      },
+    ],
+  });
   var navlinks = document.querySelectorAll('#topnav li a');
   for (var k = 0; k < navlinks.length; k++) {
     navlinks[k].addEventListener('click', function (event) {

@@ -17,6 +17,7 @@ declare namespace Carouzel {
         slideGutter: number;
         slidesToScroll: number;
         slidesToShow: number;
+        verticalHeight: number;
     }
     interface ISettings {
         activeClass: string;
@@ -44,6 +45,7 @@ declare namespace Carouzel {
         idPrefix: string;
         isInfinite: boolean;
         isRtl: boolean;
+        isVertical: boolean;
         pauseOnHover: boolean;
         showArrows: boolean;
         showNavigation: boolean;
@@ -54,6 +56,7 @@ declare namespace Carouzel {
         touchThreshold: number;
         trackUrlHash: boolean;
         useTitlesAsDots: boolean;
+        verticalHeight: number;
     }
     /**
      * ██████   ██████   ██████  ████████
