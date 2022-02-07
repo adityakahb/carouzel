@@ -569,21 +569,19 @@ namespace Carouzel {
       core.pi = 0;
     }
 
-    if (core.opts.inf && core.trk) {
-      core.trk.style.transform = core.opts.ver
-        ? `translate3d(0, ${-core.pts[core.pi]}px, 0)`
-        : `translate3d(${-core.pts[core.pi]}px, 0, 0)`;
-      // core.trk.style.transform = `translate3d(${-core.pts[core.pi]}px, 0, 0)`;
-    } else {
+    if (!core.opts.inf) {
       if (core.ci < 0) {
         core.ci = 0;
       }
-      if (core.opts.ver) {
-      } else {
-        if (core.ci + core.bpo._2Show >= core.sLen) {
-          core.ci = core.sLen - core.bpo._2Show;
-        }
+      if (core.ci + core.bpo._2Show >= core.sLen) {
+        core.ci = core.sLen - core.bpo._2Show;
       }
+    }
+
+    if (core.trk) {
+      core.trk.style.transform = core.opts.ver
+        ? `translate3d(0, ${-core.pts[core.pi]}px, 0)`
+        : `translate3d(${-core.pts[core.pi]}px, 0, 0)`;
     }
 
     /**
@@ -591,23 +589,16 @@ namespace Carouzel {
      *
      */
     const postAnimation = () => {
-      if (core.opts.ver) {
-        if (core.ci < 0) {
-          core.ci = core.opts.verP - 3;
-        }
-      } else {
-        if (core.ci < 0) {
-          core.ci = core.sLen + core.ci;
-        }
-        if (core.ci >= core.sLen) {
-          core.ci = core.sLen - core.ci;
-        }
+      if (core.ci >= core.sLen) {
+        core.ci = core.sLen - core.ci;
+      }
+      if (core.ci < 0) {
+        core.ci = core.sLen + core.ci;
       }
       if (core.trk) {
         core.trk.style.transform = core.opts.ver
           ? `translate3d(0, ${-core.pts[core.ci]}px, 0)`
           : `translate3d(${-core.pts[core.ci]}px, 0, 0)`;
-        // core.trk.style.transform = `translate3d(${-core.pts[core.ci]}px, 0, 0)`;
       }
       core.ct = -core._t.nextX;
       // updateAttributes(core);
@@ -664,7 +655,6 @@ namespace Carouzel {
 
       if (core._t.position && core.trk) {
         core._t.position = Math.round(core._t.position);
-        // core.trk.style.transform = `translate3d(${-core._t.position}px, 0, 0)`;
         core.trk.style.transform = core.opts.ver
           ? `translate3d(0, ${-core._t.position}px, 0)`
           : `translate3d(${-core._t.position}px, 0, 0)`;
@@ -726,7 +716,6 @@ namespace Carouzel {
       core.trk.style.transform = core.opts.ver
         ? `translate3d(0, ${-core._t.nextX}px, 0)`
         : `translate3d(${-core._t.nextX}px, 0, 0)`;
-      // core.trk.style.transform = `translate3d(${-core._t.nextX}px, 0, 0)`;
       for (let i = 0; i < core._as.length; i++) {
         if (hasClass(core._as[i], core.opts.activeCls)) {
           (core._as[i] as HTMLElement).style.visibility = `visible`;
@@ -736,20 +725,14 @@ namespace Carouzel {
           (core._as[i] as HTMLElement).style.visibility = `hidden`;
           (core._as[i] as HTMLElement).style.opacity = `0`;
           if (i < core.ci + core.bpo._2Show) {
-            core.trk.style.transform = core.opts.ver
-              ? `translate3d(0, ${-core.pts[0]}px, 0)`
+            (core._as[i] as HTMLElement).style.transform = core.opts.ver
+              ? `translate3d(0, ${core.pts[0] - core.bpo.gutr}px, 0)`
               : `translate3d(${core.pts[0] - core.bpo.gutr}px, 0, 0)`;
-            // (core._as[i] as HTMLElement).style.transform = `translate3d(${
-            //   core.pts[0] - core.bpo.gutr
-            // }px, 0, 0)`;
           }
           if (i > core.ci + core.bpo._2Show) {
-            core.trk.style.transform = core.opts.ver
-              ? `translate3d(0, ${-core.pts[0]}px, 0)`
-              : `translate3d(${core.pts[0] - core.bpo.gutr}px, 0, 0)`;
-            // (core._as[i] as HTMLElement).style.transform = `translate3d(${-(
-            //   core.pts[0] - core.bpo.gutr
-            // )}px, 0, 0)`;
+            (core._as[i] as HTMLElement).style.transform = core.opts.ver
+              ? `translate3d(0, ${-(core.pts[0] - core.bpo.gutr)}px, 0)`
+              : `translate3d(${-(core.pts[0] - core.bpo.gutr)}px, 0, 0)`;
           }
         }
       }
@@ -828,7 +811,6 @@ namespace Carouzel {
     let slideWidth = 0;
     let trkWidth = 0;
     let temp = 0;
-    let verticalPages = 1;
 
     while (len < core.bpall.length) {
       if (
@@ -877,9 +859,15 @@ namespace Carouzel {
     }
     if (core.root && core.trkW && core.trkO && core.trk) {
       core.pts = {};
-      slideWidth =
-        (core.trkW.clientWidth - (bpoptions._2Show - 1) * bpoptions.gutr) /
-        (bpoptions._2Show + bpoptions.cntr);
+      if (core.opts.ver) {
+        slideWidth =
+          (bpoptions.verH - (-bpoptions._2Show - 1) * bpoptions.gutr) /
+          (bpoptions._2Show + bpoptions.cntr);
+      } else {
+        slideWidth =
+          (core.trkW.clientWidth - (bpoptions._2Show - 1) * bpoptions.gutr) /
+          (bpoptions._2Show + bpoptions.cntr);
+      }
       core.sWid = slideWidth;
       temp =
         core.sLen >= bpoptions._2Show ? bpoptions.bpSLen : bpoptions._2Show;
@@ -887,97 +875,78 @@ namespace Carouzel {
       core._as = core.trkO.querySelectorAll(_Selectors.slide);
       trkWidth = slideWidth * temp + bpoptions.gutr * (temp + 1);
 
-      core.trk.style.width = toFixed4(trkWidth) + `px`;
-      core.trkO.style.width =
-        toFixed4(
-          bpoptions._2Show * slideWidth +
-            bpoptions.gutr * (bpoptions._2Show - 1)
-        ) + `px`;
-
-      for (let i = 0; i < core._as.length; i++) {
-        (core._as[i] as HTMLElement).style.width = toFixed4(slideWidth) + `px`;
-        if (i === 0) {
-          (core._as[i] as HTMLElement).style.marginLeft =
-            toFixed4(bpoptions.gutr) + `px`;
-          (core._as[i] as HTMLElement).style.marginRight =
-            toFixed4(bpoptions.gutr / 2) + `px`;
-        } else if (i === core._as.length - 1) {
-          (core._as[i] as HTMLElement).style.marginLeft =
-            toFixed4(bpoptions.gutr / 2) + `px`;
-          (core._as[i] as HTMLElement).style.marginRight =
-            toFixed4(bpoptions.gutr) + `px`;
-        } else {
-          (core._as[i] as HTMLElement).style.marginLeft =
-            toFixed4(bpoptions.gutr / 2) + `px`;
-          (core._as[i] as HTMLElement).style.marginRight =
-            toFixed4(bpoptions.gutr / 2) + `px`;
-        }
+      if (core.opts.ver) {
+        core.trk.style.height = toFixed4(trkWidth) + `px`;
+        core.trkO.style.height =
+          toFixed4(
+            bpoptions._2Show * slideWidth +
+              bpoptions.gutr * (bpoptions._2Show - 1)
+          ) + `px`;
+      } else {
+        core.trk.style.width = toFixed4(trkWidth) + `px`;
+        core.trkO.style.width =
+          toFixed4(
+            bpoptions._2Show * slideWidth +
+              bpoptions.gutr * (bpoptions._2Show - 1)
+          ) + `px`;
       }
 
-      if (core.opts.ver) {
-        slideWidth =
-          (core.trkW.clientWidth - (bpoptions._2Show - 1) * bpoptions.gutr) /
-          (bpoptions._2Show + bpoptions.cntr);
-        core.sWid = slideWidth;
-        core.trk.style.width = core.trkW.clientWidth + `px`;
-        core.trkO.style.width = core.trkW.clientWidth + `px`;
-
-        const slideHeight = bpoptions.verH;
-
-        verticalPages =
-          (core.opts.inf ? core._as.length : core._ds.length) /
-          bpoptions._2Show;
-
-        core.trkO.style.height = slideHeight + `px`;
-
-        for (let i = 0; i < core._as.length; i++) {
+      for (let i = 0; i < core._as.length; i++) {
+        if (core.opts.ver) {
           (core._as[i] as HTMLElement).style.height =
-            toFixed4(slideHeight) + `px`;
-        }
-        for (let i = 0; i < core._as.length; i++) {
+            toFixed4(slideWidth) + `px`;
+          if (i === 0) {
+            (core._as[i] as HTMLElement).style.marginTop =
+              toFixed4(bpoptions.gutr) + `px`;
+            (core._as[i] as HTMLElement).style.marginBottom =
+              toFixed4(bpoptions.gutr / 2) + `px`;
+          } else if (i === core._as.length - 1) {
+            (core._as[i] as HTMLElement).style.marginTop =
+              toFixed4(bpoptions.gutr / 2) + `px`;
+            (core._as[i] as HTMLElement).style.marginBottom =
+              toFixed4(bpoptions.gutr) + `px`;
+          } else {
+            (core._as[i] as HTMLElement).style.marginTop =
+              toFixed4(bpoptions.gutr / 2) + `px`;
+            (core._as[i] as HTMLElement).style.marginBottom =
+              toFixed4(bpoptions.gutr / 2) + `px`;
+          }
+        } else {
           (core._as[i] as HTMLElement).style.width =
             toFixed4(slideWidth) + `px`;
-          (core._as[i] as HTMLElement).style.marginRight =
-            toFixed4(bpoptions.gutr / 2) + `px`;
-          (core._as[i] as HTMLElement).style.marginLeft =
-            toFixed4(bpoptions.gutr / 2) + `px`;
-          if (i % bpoptions._2Show === 0) {
-            (core._as[i] as HTMLElement).style.marginLeft = `0px`;
+          if (i === 0) {
+            (core._as[i] as HTMLElement).style.marginLeft =
+              toFixed4(bpoptions.gutr) + `px`;
+            (core._as[i] as HTMLElement).style.marginRight =
+              toFixed4(bpoptions.gutr / 2) + `px`;
+          } else if (i === core._as.length - 1) {
+            (core._as[i] as HTMLElement).style.marginLeft =
+              toFixed4(bpoptions.gutr / 2) + `px`;
+            (core._as[i] as HTMLElement).style.marginRight =
+              toFixed4(bpoptions.gutr) + `px`;
+          } else {
+            (core._as[i] as HTMLElement).style.marginLeft =
+              toFixed4(bpoptions.gutr / 2) + `px`;
             (core._as[i] as HTMLElement).style.marginRight =
               toFixed4(bpoptions.gutr / 2) + `px`;
           }
-          if ((i + 1) % bpoptions._2Show === 0) {
-            (core._as[i] as HTMLElement).style.marginRight = `0px`;
-            (core._as[i] as HTMLElement).style.marginLeft =
-              toFixed4(bpoptions.gutr / 2) + `px`;
-          }
         }
-
-        core.trk.style.height = verticalPages * slideHeight + `px`;
       }
 
-      if (core.opts.ver) {
-        core.pts[-1] = 0;
-        for (let i = 0; i < verticalPages; i++) {
-          core.pts[i] = i * bpoptions.verH + bpoptions.verH;
-        }
-        core.opts.verP = verticalPages;
-      } else {
-        for (let i = bpoptions.pDups.length; i > 0; i--) {
-          core.pts[-i] =
-            (-i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr) +
-            bpoptions.gutr;
-        }
-        for (let i = 0; i < core.sLen; i++) {
-          core.pts[i] =
-            (i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr) +
-            bpoptions.gutr;
-        }
-        for (let i = core.sLen; i < core.sLen + bpoptions.nDups.length; i++) {
-          core.pts[i] =
-            (i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr) +
-            bpoptions.gutr;
-        }
+      for (let i = bpoptions.pDups.length; i > 0; i--) {
+        core.pts[-i] =
+          (-i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr) +
+          bpoptions.gutr;
+      }
+      for (let i = 0; i < core.sLen; i++) {
+        core.pts[i] =
+          (i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr) +
+          bpoptions.gutr;
+      }
+      for (let i = core.sLen; i < core.sLen + bpoptions.nDups.length; i++) {
+        core.pts[i] =
+          (i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr) +
+          bpoptions.gutr;
       }
     }
     animateTrack(core, 0, isFirstLoad);
@@ -992,18 +961,13 @@ namespace Carouzel {
    */
   const go2Slide = (core: ICore, slidenumber: number) => {
     if (core.ci !== slidenumber) {
-      if (core.opts.ver) {
-        core.pi = core.ci;
-        core.ci = slidenumber;
-      } else {
-        if (slidenumber >= core._ds.length) {
-          slidenumber = core._ds.length - 1;
-        } else if (slidenumber <= -1) {
-          slidenumber = 0;
-        }
-        core.pi = core.ci;
-        core.ci = slidenumber * core.bpo._2Scroll;
+      if (slidenumber >= core._ds.length) {
+        slidenumber = core._ds.length - 1;
+      } else if (slidenumber <= -1) {
+        slidenumber = 0;
       }
+      core.pi = core.ci;
+      core.ci = slidenumber * core.bpo._2Scroll;
       if (core._t.id) {
         cancelAnimationFrame(core._t.id);
       }
@@ -1020,27 +984,20 @@ namespace Carouzel {
    */
   const go2Prev = (core: ICore, touchedPixel: number) => {
     core.pi = core.ci;
-    core.ci -= core.opts.ver ? 1 : core.bpo._2Scroll;
+    core.ci -= core.bpo._2Scroll;
     if (core._t.id) {
       cancelAnimationFrame(core._t.id);
     }
     if (core.opts.inf) {
-      if (core.opts.ver) {
-        if (typeof core.pts[core.ci] === `undefined`) {
-          core.ci = core.opts.verP - 2;
-        }
-        core.pi = core.ci + 1;
+      if (typeof core.pts[core.ci] === `undefined`) {
+        core.pi =
+          core.sLen -
+          (core.sLen % core.bpo._2Scroll > 0
+            ? core.sLen % core.bpo._2Scroll
+            : core.bpo._2Scroll);
+        core.ci = core.pi - core.bpo._2Scroll;
       } else {
-        if (typeof core.pts[core.ci] === `undefined`) {
-          core.pi =
-            core.sLen -
-            (core.sLen % core.bpo._2Scroll > 0
-              ? core.sLen % core.bpo._2Scroll
-              : core.bpo._2Scroll);
-          core.ci = core.pi - core.bpo._2Scroll;
-        } else {
-          core.pi = core.ci + core.bpo._2Scroll;
-        }
+        core.pi = core.ci + core.bpo._2Scroll;
       }
     }
     animateTrack(core, touchedPixel, false);
@@ -1055,25 +1012,16 @@ namespace Carouzel {
    */
   const go2Next = (core: ICore, touchedPixel: number) => {
     core.pi = core.ci;
-    core.ci += core.opts.ver ? 1 : core.bpo._2Scroll;
+    core.ci += core.bpo._2Scroll;
     if (core._t.id) {
       cancelAnimationFrame(core._t.id);
     }
     if (core.opts.inf) {
-      if (core.opts.ver) {
-        if (typeof core.pts[core.ci + 1] === `undefined`) {
-          core.pi = 0;
-          core.ci = 1;
-        } else {
-          core.pi = core.ci - 1;
-        }
+      if (typeof core.pts[core.ci + core.bpo._2Show] === `undefined`) {
+        core.pi = core.pi - core.sLen;
+        core.ci = 0;
       } else {
-        if (typeof core.pts[core.ci + core.bpo._2Show] === `undefined`) {
-          core.pi = core.pi - core.sLen;
-          core.ci = 0;
-        } else {
-          core.pi = core.ci - core.bpo._2Scroll;
-        }
+        core.pi = core.ci - core.bpo._2Scroll;
       }
     }
     animateTrack(core, touchedPixel, false);
@@ -1272,13 +1220,11 @@ namespace Carouzel {
             core.trk.style.transform = `translate3d(${
               core.ct - posX2
             }px, 0, 0)`;
-            posFinal = posX2;
           }
           if (ratioX < ratioY && core.opts.ver) {
             core.trk.style.transform = `translate3d(0, ${
               core.ct - posY2
             }px, 0)`;
-            posFinal = posY2;
           }
         }
         if (core.trk && core.opts.effect === _animationEffects[1]) {
@@ -1286,6 +1232,7 @@ namespace Carouzel {
             (core._as[k] as HTMLElement).style.opacity = `1`;
           }
         }
+        posFinal = core.opts.ver ? posY2 : posX2;
       }
     };
 
@@ -1315,45 +1262,29 @@ namespace Carouzel {
           ratioX !== ratioY
         ) {
           canFiniteAnimate = false;
-          if (core.opts.ver) {
-            if (!core.opts.inf) {
-              if (diffY > 0) {
-                if (Math.abs(core.ct) <= 0) {
-                  core.trk.style.transform = `translate3d(0, ${core.ct}px, 0)`;
-                } else {
-                  canFiniteAnimate = true;
-                }
-              } else if (diffX < 0) {
-                if (
-                  Math.abs(core.ct) + core.bpo.verH >=
-                  core.bpo.verH * core.bpo.verP
-                ) {
-                  core.trk.style.transform = `translate3d(0, ${core.ct}px, 0)`;
-                } else {
-                  canFiniteAnimate = true;
-                }
+          if (!core.opts.inf) {
+            if ((core.opts.ver ? diffY : diffX) > 0) {
+              if (Math.abs(core.ct) <= 0) {
+                core.trk.style.transform = core.opts.ver
+                  ? `translate3d(0, ${core.ct}px, 0)`
+                  : `translate3d(${core.ct}px, 0, 0)`;
+              } else {
+                canFiniteAnimate = true;
               }
-            }
-          } else {
-            if (!core.opts.inf) {
-              if (diffX > 0) {
-                if (Math.abs(core.ct) <= 0) {
-                  core.trk.style.transform = `translate3d(${core.ct}px, 0, 0)`;
-                } else {
-                  canFiniteAnimate = true;
-                }
-              } else if (diffX < 0) {
-                if (
-                  Math.abs(core.ct) + core.sWid * core.bpo._2Show >=
-                  core.sWid * core._as.length
-                ) {
-                  core.trk.style.transform = `translate3d(${core.ct}px, 0, 0)`;
-                } else {
-                  canFiniteAnimate = true;
-                }
+            } else if ((core.opts.ver ? diffY : diffX) < 0) {
+              if (
+                Math.abs(core.ct) + core.sWid * core.bpo._2Show >=
+                core.sWid * core._as.length
+              ) {
+                core.trk.style.transform = core.opts.ver
+                  ? `translate3d(0, ${core.ct}px, 0)`
+                  : `translate3d(${core.ct}px, 0, 0)`;
+              } else {
+                canFiniteAnimate = true;
               }
             }
           }
+
           if (core.opts.effect === _animationEffects[1]) {
             for (let k = 0; k < core._as.length; k++) {
               (core._as[k] as HTMLElement).style.opacity = `0`;
@@ -1707,9 +1638,7 @@ namespace Carouzel {
    */
   const mapSettings = (settings: ISettings) => {
     let settingsobj: ICoreSettings = {
-      _2Scroll: settings.isVertical
-        ? settings.slidesToShow
-        : settings.slidesToScroll,
+      _2Scroll: settings.slidesToScroll,
       _2Show: settings.slidesToShow,
       _arrows: settings.showArrows,
       _nav: settings.showNavigation,
@@ -1760,9 +1689,7 @@ namespace Carouzel {
     if (settings.breakpoints && settings.breakpoints.length > 0) {
       for (let i = 0; i < settings.breakpoints.length; i++) {
         let obj: ICoreBreakpoint = {
-          _2Scroll: settings.isVertical
-            ? settings.breakpoints[i].slidesToShow
-            : settings.breakpoints[i].slidesToScroll,
+          _2Scroll: settings.breakpoints[i].slidesToScroll,
           _2Show: settings.breakpoints[i].slidesToShow,
           _arrows: settings.breakpoints[i].showArrows,
           _nav: settings.breakpoints[i].showNavigation,

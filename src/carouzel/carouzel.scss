@@ -231,7 +231,7 @@ $timeInMilliseconds: 250ms;
   &[data-carouzel-vertical] {
     padding: 48px 0;
     [data-carouzel-track] {
-      flex-wrap: wrap;
+      flex-direction: column;
     }
     [data-carouzel-previousarrow],
     [data-carouzel-nextarrow] {

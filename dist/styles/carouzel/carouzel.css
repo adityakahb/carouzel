@@ -217,7 +217,7 @@
 [data-carouzel][data-carouzel-vertical] {
   padding: 48px 0; }
   [data-carouzel][data-carouzel-vertical] [data-carouzel-track] {
-    flex-wrap: wrap; }
+    flex-direction: column; }
   [data-carouzel][data-carouzel-vertical] [data-carouzel-previousarrow],
   [data-carouzel][data-carouzel-vertical] [data-carouzel-nextarrow] {
     position: absolute;
