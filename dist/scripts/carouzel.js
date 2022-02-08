@@ -1076,15 +1076,6 @@ var Carouzel;
                 dragging = false;
             }
         };
-        var logTrackScroll = function () {
-            var _a;
-            console.log('==========core.trkO', (_a = core.trkO) === null || _a === void 0 ? void 0 : _a.scrollLeft);
-        };
-        if (core.opts.scbar) {
-            core.eHandlers.push(eventHandler(core.trkO, "scroll", function () {
-                logTrackScroll();
-            }));
-        }
         if (core.opts.swipe && !core.opts.scbar) {
             core.eHandlers.push(eventHandler(core.trk, "touchstart", function (event) {
                 touchStart(event);
@@ -1199,6 +1190,14 @@ var Carouzel;
             core.scbarT = core.root.querySelector("".concat(_Selectors.scbarT));
             core.scbarB = core.root.querySelector("".concat(_Selectors.scbarB));
             core.root.setAttribute(_Selectors.scbar.slice(1, -1), "true");
+        }
+        var logTrackScroll = function () {
+            // console.log('==========core.trkO', core.trkO?.scrollLeft);
+        };
+        if (core.opts.scbar) {
+            core.eHandlers.push(eventHandler(core.trkO, "scroll", function () {
+                logTrackScroll();
+            }));
         }
     };
     /**

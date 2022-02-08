@@ -1348,18 +1348,6 @@ namespace Carouzel {
       }
     };
 
-    const logTrackScroll = () => {
-      console.log('==========core.trkO', core.trkO?.scrollLeft);
-    };
-
-    if (core.opts.scbar) {
-      core.eHandlers.push(
-        eventHandler(core.trkO as HTMLElement, `scroll`, function () {
-          logTrackScroll();
-        })
-      );
-    }
-
     if (core.opts.swipe && !core.opts.scbar) {
       core.eHandlers.push(
         eventHandler(
@@ -1522,6 +1510,18 @@ namespace Carouzel {
       core.scbarT = core.root.querySelector(`${_Selectors.scbarT}`);
       core.scbarB = core.root.querySelector(`${_Selectors.scbarB}`);
       core.root.setAttribute(_Selectors.scbar.slice(1, -1), `true`);
+    }
+
+    const logTrackScroll = () => {
+      // console.log('==========core.trkO', core.trkO?.scrollLeft);
+    };
+
+    if (core.opts.scbar) {
+      core.eHandlers.push(
+        eventHandler(core.trkO as HTMLElement, `scroll`, function () {
+          logTrackScroll();
+        })
+      );
     }
   };
 
