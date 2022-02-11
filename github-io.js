@@ -85,6 +85,7 @@ var loadIO = function () {
   });
   __carouzel_instance.init('#__carouzel_7', {
     slidesToShow: 1,
+    isInfinite: false,
     breakpoints: [
       {
         minWidth: 700,

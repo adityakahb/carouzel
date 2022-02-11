@@ -521,13 +521,17 @@ namespace Carouzel {
     let x;
     if (!core.opts.inf && core.ci === 0) {
       addClass(core.arrowP as Element, core.opts.disableCls || ``);
+      (core.arrowP as Element).setAttribute(`disabled`, `disabled`);
     } else {
       removeClass(core.arrowP as Element, core.opts.disableCls || ``);
+      (core.arrowP as Element).removeAttribute(`disabled`);
     }
     if (!core.opts.inf && core.ci === core.sLen - core.bpo._2Show) {
       addClass(core.arrowN as Element, core.opts.disableCls || ``);
+      (core.arrowN as Element).setAttribute(`disabled`, `disabled`);
     } else {
       removeClass(core.arrowN as Element, core.opts.disableCls || ``);
+      (core.arrowN as Element).removeAttribute(`disabled`);
     }
     if (core.bpo.dots.length > 0) {
       for (let i = 0; i < core.bpo.dots.length; i++) {
@@ -1885,6 +1889,9 @@ namespace Carouzel {
         allElems[i] as HTMLElement,
         `${core.opts.activeCls} ${core.opts.editCls} ${core.opts.disableCls} ${core.opts.dupCls}`
       );
+      if ((allElems[i] as HTMLElement).hasAttribute(`disabled`)) {
+        (allElems[i] as HTMLElement).removeAttribute(`disabled`);
+      }
     }
 
     removeClass(

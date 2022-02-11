@@ -316,15 +316,19 @@ var Carouzel;
         var x;
         if (!core.opts.inf && core.ci === 0) {
             addClass(core.arrowP, core.opts.disableCls || "");
+            core.arrowP.setAttribute("disabled", "disabled");
         }
         else {
             removeClass(core.arrowP, core.opts.disableCls || "");
+            core.arrowP.removeAttribute("disabled");
         }
         if (!core.opts.inf && core.ci === core.sLen - core.bpo._2Show) {
             addClass(core.arrowN, core.opts.disableCls || "");
+            core.arrowN.setAttribute("disabled", "disabled");
         }
         else {
             removeClass(core.arrowN, core.opts.disableCls || "");
+            core.arrowN.removeAttribute("disabled");
         }
         if (core.bpo.dots.length > 0) {
             for (var i = 0; i < core.bpo.dots.length; i++) {
@@ -1535,6 +1539,9 @@ var Carouzel;
             }
             allElems[i].removeAttribute("style");
             removeClass(allElems[i], "".concat(core.opts.activeCls, " ").concat(core.opts.editCls, " ").concat(core.opts.disableCls, " ").concat(core.opts.dupCls));
+            if (allElems[i].hasAttribute("disabled")) {
+                allElems[i].removeAttribute("disabled");
+            }
         }
         removeClass(core.root, "".concat(core.opts.activeCls, " ").concat(core.opts.editCls, " ").concat(core.opts.disableCls, " ").concat(core.opts.dupCls));
         if (id) {
