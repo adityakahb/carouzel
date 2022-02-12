@@ -314,21 +314,25 @@ var Carouzel;
      */
     var updateAttributes = function (core) {
         var x;
-        if (!core.opts.inf && core.ci === 0) {
-            addClass(core.arrowP, core.opts.disableCls || "");
-            core.arrowP.setAttribute("disabled", "disabled");
+        if (core.arrowP) {
+            if (!core.opts.inf && core.ci === 0) {
+                addClass(core.arrowP, core.opts.disableCls || "");
+                core.arrowP.setAttribute("disabled", "disabled");
+            }
+            else {
+                removeClass(core.arrowP, core.opts.disableCls || "");
+                core.arrowP.removeAttribute("disabled");
+            }
         }
-        else {
-            removeClass(core.arrowP, core.opts.disableCls || "");
-            core.arrowP.removeAttribute("disabled");
-        }
-        if (!core.opts.inf && core.ci === core.sLen - core.bpo._2Show) {
-            addClass(core.arrowN, core.opts.disableCls || "");
-            core.arrowN.setAttribute("disabled", "disabled");
-        }
-        else {
-            removeClass(core.arrowN, core.opts.disableCls || "");
-            core.arrowN.removeAttribute("disabled");
+        if (core.arrowN) {
+            if (!core.opts.inf && core.ci === core.sLen - core.bpo._2Show) {
+                addClass(core.arrowN, core.opts.disableCls || "");
+                core.arrowN.setAttribute("disabled", "disabled");
+            }
+            else {
+                removeClass(core.arrowN, core.opts.disableCls || "");
+                core.arrowN.removeAttribute("disabled");
+            }
         }
         if (core.bpo.dots.length > 0) {
             for (var i = 0; i < core.bpo.dots.length; i++) {
