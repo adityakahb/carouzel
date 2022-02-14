@@ -58,6 +58,7 @@ var loadIO = function () {
     slidesToShow: 1,
     animationEffect: 'fade',
     speed: 500,
+    isInfinite: true,
     breakpoints: [
       {
         minWidth: 700,
@@ -68,7 +69,7 @@ var loadIO = function () {
   });
   __carouzel_instance.init('#__carouzel_6', {
     slidesToShow: 1,
-    autoplay: true,
+    autoplay: false,
     pauseOnHover: true,
     breakpoints: [
       {
@@ -272,7 +273,7 @@ var loadIO = function () {
     slidesToShow: 1,
     slidesToScroll: 1,
     isVertical: true,
-    autoplay: true,
+    autoplay: false,
     verticalHeight: 360,
     threshold: 100,
     slideGutter: 20,

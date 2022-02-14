@@ -368,8 +368,8 @@ var Carouzel;
         if (typeof core.opts.bFn === "function" && !isFirstLoad) {
             core.opts.bFn();
         }
-        if (!core.pi) {
-            core.pi = 0;
+        if (typeof core.pi === 'undefined') {
+            core.pi = core.opts.inf ? -core.bpo._2Show : 0;
         }
         if (!core.opts.inf) {
             if (core.ci < 0) {
@@ -379,10 +379,10 @@ var Carouzel;
                 core.ci = core.sLen - core.bpo._2Show;
             }
         }
-        if (core.trk) {
+        if (core.trk && isFirstLoad) {
             core.trk.style.transform = core.opts.ver
-                ? "translate3d(0, ".concat(-core.pts[core.pi], "px, 0)")
-                : "translate3d(".concat(-core.pts[core.pi], "px, 0, 0)");
+                ? "translate3d(0, ".concat(-core.pts[core.ci], "px, 0)")
+                : "translate3d(".concat(-core.pts[core.ci], "px, 0, 0)");
         }
         /**
          * Local function to perform post operations after slide animation
@@ -459,7 +459,7 @@ var Carouzel;
                 postAnimation();
             }
         };
-        if (core.opts.effect === _animationEffects[0] && core.trk) {
+        if (core.opts.effect === _animationEffects[0] && core.trk && !isFirstLoad) {
             if (core._t.start && core._t.total && core.ci !== core.pi) {
                 core._t.id = requestAnimationFrame(scrollThisTrack);
             }
@@ -473,18 +473,13 @@ var Carouzel;
             core._t.progress = _easingFunctions[core.opts.easeFn](core._t.elapsed / core._t.total);
             core._t.progress = core._t.progress > 1 ? 1 : core._t.progress;
             for (var i = 0; i < core._as.length; i++) {
-                if (i < core.ci + core.bpo._2Show && core.pi < core.ci) {
-                    core._as[i].style.visibility = "visible";
-                }
-                if (i > core.ci + core.bpo._2Show && core.pi > core.ci) {
-                    core._as[i].style.visibility = "visible";
-                }
-                if (hasClass(core._as[i], core.opts.activeCls)) {
-                    core._as[i].style.opacity = "" + core._t.progress;
-                }
-                else {
-                    core._as[i].style.opacity =
+                if (i >= core.pi && i < core.pi + core.bpo._2Show) {
+                    core._as[i + core.bpo._2Show].style.opacity =
                         "" + (1 - core._t.progress);
+                }
+                if (i >= core.ci && i < core.ci + core.bpo._2Show) {
+                    core._as[i + core.bpo._2Show].style.opacity =
+                        "" + core._t.progress;
                 }
             }
             if (core._t.progress < 1) {
@@ -493,44 +488,49 @@ var Carouzel;
             else {
                 postAnimation();
                 for (var i = 0; i < core._as.length; i++) {
-                    core._as[i].style.transform = "translate3d(0, 0, 0)";
-                    if (hasClass(core._as[i], core.opts.activeCls)) {
-                        core._as[i].style.opacity = "1";
-                    }
-                    else {
-                        core._as[i].style.visibility = "hidden";
-                        core._as[i].style.opacity = "0";
+                    if (i >= core.pi && i < core.pi + core.bpo._2Show) {
+                        if (core._as[i + core.bpo._2Show]) {
+                            core._as[i + core.bpo._2Show].style.transform = "translate3d(0, 0, 0)";
+                        }
                     }
                 }
+                // for (let i = 0; i < core._as.length; i++) {
+                //   (core._as[i] as HTMLElement).style.transform = `translate3d(0, 0, 0)`;
+                //   if (hasClass(core._as[i], core.opts.activeCls)) {
+                //     (core._as[i] as HTMLElement).style.opacity = `1`;
+                //   } else {
+                //     (core._as[i] as HTMLElement).style.visibility = `hidden`;
+                //     (core._as[i] as HTMLElement).style.opacity = `0.4`;
+                //   }
+                // }
             }
         };
-        if (core.opts.effect === _animationEffects[1] && core.trk) {
+        if (core.opts.effect === _animationEffects[1] && core.trk && !isFirstLoad) {
+            for (var i = 0; i < core._as.length; i++) {
+                // (core._as[i] as HTMLElement).style.visibility = `hidden`;
+                core._as[i].style.opacity = "1";
+                core._as[i].style.transform = "translate3d(0, 0, 0)";
+            }
             core.trk.style.transform = core.opts.ver
                 ? "translate3d(0, ".concat(-core._t.nextX, "px, 0)")
                 : "translate3d(".concat(-core._t.nextX, "px, 0, 0)");
+            console.log('============core.pts', core.pts);
             for (var i = 0; i < core._as.length; i++) {
-                if (hasClass(core._as[i], core.opts.activeCls)) {
-                    core._as[i].style.visibility = "visible";
-                    core._as[i].style.opacity = "1";
-                    core._as[i].style.transform = "translate3d(0, 0, 0)";
-                }
-                else {
-                    core._as[i].style.visibility = "hidden";
-                    core._as[i].style.opacity = "0";
-                    if (i < core.ci + core.bpo._2Show) {
-                        core._as[i].style.transform = core.opts.ver
-                            ? "translate3d(0, ".concat(core.pts[0] - core.bpo.gutr, "px, 0)")
-                            : "translate3d(".concat(core.pts[0] - core.bpo.gutr, "px, 0, 0)");
-                    }
-                    if (i > core.ci + core.bpo._2Show) {
-                        core._as[i].style.transform = core.opts.ver
-                            ? "translate3d(0, ".concat(-(core.pts[0] - core.bpo.gutr), "px, 0)")
-                            : "translate3d(".concat(-(core.pts[0] - core.bpo.gutr), "px, 0, 0)");
+                if (i >= core.pi && i < core.pi + core.bpo._2Show) {
+                    if (core._as[i + core.bpo._2Show]) {
+                        core._as[i + core.bpo._2Show].style.transform =
+                            core.opts.ver
+                                ? "translate3d(0, ".concat(core.pts[core.pi] - core.bpo.gutr, "px, 0)")
+                                : "translate3d(".concat(core.pts[core.pi] - core.bpo.gutr, "px, 0, 0)");
+                        // (
+                        //   core._as[i + core.bpo._2Show] as HTMLElement
+                        // ).style.visibility = `visible`;
+                        core._as[i + core.bpo._2Show].style.opacity = "1";
                     }
                 }
             }
             if (core._t.start && core._t.total && core.ci !== core.pi) {
-                core._t.id = requestAnimationFrame(fadeThisTrack);
+                // core._t.id = requestAnimationFrame(fadeThisTrack);
             }
         }
     };
@@ -742,7 +742,7 @@ var Carouzel;
      *
      */
     var go2Slide = function (core, slidenumber) {
-        if (core.ci !== slidenumber) {
+        if (core.ci !== slidenumber * core.bpo._2Scroll) {
             if (slidenumber >= core._ds.length) {
                 slidenumber = core._ds.length - 1;
             }
