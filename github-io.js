@@ -68,7 +68,7 @@ var loadIO = function () {
   });
   __carouzel_instance.init('#__carouzel_6', {
     slidesToShow: 1,
-    autoplay: false,
+    autoplay: true,
     pauseOnHover: true,
     breakpoints: [
       {
@@ -272,7 +272,7 @@ var loadIO = function () {
     slidesToShow: 1,
     slidesToScroll: 1,
     isVertical: true,
-    autoplay: false,
+    autoplay: true,
     verticalHeight: 360,
     threshold: 100,
     slideGutter: 20,

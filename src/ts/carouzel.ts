@@ -712,10 +712,14 @@ namespace Carouzel {
         postAnimation();
         for (let i = 0; i < core._as.length; i++) {
           if (i >= core.pi && i < core.pi + core.bpo._2Show) {
-            (
-              core._as[i] as HTMLElement
-            ).style.transform = `translate3d(0, 0, 0)`;
-            (core._as[i] as HTMLElement).style.visibility = `hidden`;
+            if (core._as[i + core.bpo._2Show]) {
+              (
+                core._as[i + core.bpo._2Show] as HTMLElement
+              ).style.transform = `translate3d(0, 0, 0)`;
+              (
+                core._as[i + core.bpo._2Show] as HTMLElement
+              ).style.visibility = `hidden`;
+            }
           }
         }
       }
@@ -738,6 +742,7 @@ namespace Carouzel {
 
       transformVal =
         core.ci > core.pi ? core.pts[transformVal] : -core.pts[transformVal];
+
       for (let i = 0; i < core._as.length; i++) {
         if (i >= core.pi && i < core.pi + core.bpo._2Show) {
           if (core._as[i + core.bpo._2Show]) {
@@ -980,7 +985,15 @@ namespace Carouzel {
         core.totp.innerHTML = `${bpoptions.dots.length}`;
       }
     }
-    if (core.opts.scbar) {
+    if (core.opts.scbar && core.scbarB && core.scbarT && core.trkO) {
+      core.scbarT.style.width =
+        core.trkO.clientWidth -
+        toFixed4(core.trkO.clientWidth / core._as.length) +
+        `px`;
+      core.scbarT.style.marginRight =
+        toFixed4(core.trkO.clientWidth / core._as.length) + `px`;
+      core.scbarB.style.width =
+        toFixed4(core.trkO.clientWidth / core._as.length) + `px`;
     } else {
       animateTrack(core, 0, isFirstLoad);
     }
@@ -1533,7 +1546,13 @@ namespace Carouzel {
     }
 
     const logTrackScroll = () => {
-      // console.log('==========core.trkO', core.trkO?.scrollLeft);
+      // if (core.trkO && core.scbarT && core.scbarB) {
+      //   console.log(
+      //     '==========core.trkO',
+      //     (core.trkO.scrollLeft / core.scbarT.clientWidth) *
+      //       core.scbarB.clientWidth
+      //   );
+      // }
     };
 
     if (core.opts.scbar) {
@@ -1684,7 +1703,7 @@ namespace Carouzel {
    */
   const mapSettings = (settings: ISettings) => {
     let settingsobj: ICoreSettings = {
-      _2Scroll: settings.slidesToScroll,
+      _2Scroll: settings.enableScrollbar ? 1 : settings.slidesToScroll,
       _2Show: settings.slidesToShow,
       _arrows: settings.showArrows,
       _nav: settings.showNavigation,
@@ -1735,7 +1754,9 @@ namespace Carouzel {
     if (settings.breakpoints && settings.breakpoints.length > 0) {
       for (let i = 0; i < settings.breakpoints.length; i++) {
         let obj: ICoreBreakpoint = {
-          _2Scroll: settings.breakpoints[i].slidesToScroll,
+          _2Scroll: settings.enableScrollbar
+            ? 1
+            : settings.breakpoints[i].slidesToScroll,
           _2Show: settings.breakpoints[i].slidesToShow,
           _arrows: settings.breakpoints[i].showArrows,
           _nav: settings.breakpoints[i].showNavigation,
