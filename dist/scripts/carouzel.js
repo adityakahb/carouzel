@@ -25,6 +25,7 @@ var Carouzel;
     var isWindowEventAttached = false;
     var windowResizeAny;
     var hashSlide;
+    var transformVal;
     /*
      * Easing Functions - inspired from http://gizma.com/easing/
      * only considering the t value for the range [0, 1] => [0, 1]
@@ -212,7 +213,7 @@ var Carouzel;
      *
      */
     var toFixed4 = function (num) {
-        return num.toFixed(4);
+        return parseFloat(num.toFixed(4));
     };
     /**
      * Function to apply the settings to all the instances w.r.t. applicable breakpoint
@@ -489,48 +490,48 @@ var Carouzel;
                 postAnimation();
                 for (var i = 0; i < core._as.length; i++) {
                     if (i >= core.pi && i < core.pi + core.bpo._2Show) {
-                        if (core._as[i + core.bpo._2Show]) {
-                            core._as[i + core.bpo._2Show].style.transform = "translate3d(0, 0, 0)";
-                        }
+                        core._as[i].style.transform = "translate3d(0, 0, 0)";
+                        core._as[i].style.visibility = "hidden";
                     }
                 }
-                // for (let i = 0; i < core._as.length; i++) {
-                //   (core._as[i] as HTMLElement).style.transform = `translate3d(0, 0, 0)`;
-                //   if (hasClass(core._as[i], core.opts.activeCls)) {
-                //     (core._as[i] as HTMLElement).style.opacity = `1`;
-                //   } else {
-                //     (core._as[i] as HTMLElement).style.visibility = `hidden`;
-                //     (core._as[i] as HTMLElement).style.opacity = `0.4`;
-                //   }
-                // }
             }
         };
         if (core.opts.effect === _animationEffects[1] && core.trk && !isFirstLoad) {
+            transformVal = null;
             for (var i = 0; i < core._as.length; i++) {
-                // (core._as[i] as HTMLElement).style.visibility = `hidden`;
-                core._as[i].style.opacity = "1";
+                core._as[i].style.visibility = "hidden";
+                core._as[i].style.opacity = "0";
                 core._as[i].style.transform = "translate3d(0, 0, 0)";
             }
             core.trk.style.transform = core.opts.ver
                 ? "translate3d(0, ".concat(-core._t.nextX, "px, 0)")
                 : "translate3d(".concat(-core._t.nextX, "px, 0, 0)");
-            console.log('============core.pts', core.pts);
+            transformVal =
+                core.ci > core.pi
+                    ? Math.abs(core.ci - core.pi - core.bpo._2Show)
+                    : Math.abs(core.pi - core.ci - core.bpo._2Show);
+            transformVal =
+                core.ci > core.pi ? core.pts[transformVal] : -core.pts[transformVal];
             for (var i = 0; i < core._as.length; i++) {
                 if (i >= core.pi && i < core.pi + core.bpo._2Show) {
                     if (core._as[i + core.bpo._2Show]) {
                         core._as[i + core.bpo._2Show].style.transform =
                             core.opts.ver
-                                ? "translate3d(0, ".concat(core.pts[core.pi] - core.bpo.gutr, "px, 0)")
-                                : "translate3d(".concat(core.pts[core.pi] - core.bpo.gutr, "px, 0, 0)");
-                        // (
-                        //   core._as[i + core.bpo._2Show] as HTMLElement
-                        // ).style.visibility = `visible`;
+                                ? "translate3d(0, ".concat(transformVal - core.bpo.gutr, "px, 0)")
+                                : "translate3d(".concat(transformVal - core.bpo.gutr, "px, 0, 0)");
+                        core._as[i + core.bpo._2Show].style.visibility = "visible";
                         core._as[i + core.bpo._2Show].style.opacity = "1";
+                    }
+                }
+                if (i >= core.ci && i < core.ci + core.bpo._2Show) {
+                    if (core._as[i + core.bpo._2Show]) {
+                        core._as[i + core.bpo._2Show].style.visibility = "visible";
                     }
                 }
             }
             if (core._t.start && core._t.total && core.ci !== core.pi) {
-                // core._t.id = requestAnimationFrame(fadeThisTrack);
+                core._t.id = requestAnimationFrame(fadeThisTrack);
+                transformVal = null;
             }
         }
     };
@@ -710,19 +711,16 @@ var Carouzel;
                 }
             }
             for (var i = bpoptions.pDups.length; i > 0; i--) {
-                core.pts[-i] =
-                    (-i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr) +
-                        bpoptions.gutr;
+                core.pts[-i] = toFixed4((-i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr) +
+                    bpoptions.gutr);
             }
             for (var i = 0; i < core.sLen; i++) {
-                core.pts[i] =
-                    (i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr) +
-                        bpoptions.gutr;
+                core.pts[i] = toFixed4((i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr) +
+                    bpoptions.gutr);
             }
             for (var i = core.sLen; i < core.sLen + bpoptions.nDups.length; i++) {
-                core.pts[i] =
-                    (i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr) +
-                        bpoptions.gutr;
+                core.pts[i] = toFixed4((i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr) +
+                    bpoptions.gutr);
             }
             if (core.totp) {
                 core.totp.innerHTML = "".concat(bpoptions.dots.length);

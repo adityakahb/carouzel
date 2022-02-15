@@ -192,6 +192,7 @@ namespace Carouzel {
   let isWindowEventAttached = false;
   let windowResizeAny: any;
   let hashSlide: HTMLElement | null;
+  let transformVal: number | null;
 
   /*
    * Easing Functions - inspired from http://gizma.com/easing/
@@ -399,7 +400,7 @@ namespace Carouzel {
    *
    */
   const toFixed4 = (num: number) => {
-    return num.toFixed(4);
+    return parseFloat(num.toFixed(4));
   };
 
   /**
@@ -711,51 +712,56 @@ namespace Carouzel {
         postAnimation();
         for (let i = 0; i < core._as.length; i++) {
           if (i >= core.pi && i < core.pi + core.bpo._2Show) {
-            if (core._as[i + core.bpo._2Show]) {
-              (
-                core._as[i + core.bpo._2Show] as HTMLElement
-              ).style.transform = `translate3d(0, 0, 0)`;
-            }
+            (
+              core._as[i] as HTMLElement
+            ).style.transform = `translate3d(0, 0, 0)`;
+            (core._as[i] as HTMLElement).style.visibility = `hidden`;
           }
         }
-        // for (let i = 0; i < core._as.length; i++) {
-        //   (core._as[i] as HTMLElement).style.transform = `translate3d(0, 0, 0)`;
-        //   if (hasClass(core._as[i], core.opts.activeCls)) {
-        //     (core._as[i] as HTMLElement).style.opacity = `1`;
-        //   } else {
-        //     (core._as[i] as HTMLElement).style.visibility = `hidden`;
-        //     (core._as[i] as HTMLElement).style.opacity = `0.4`;
-        //   }
-        // }
       }
     };
 
     if (core.opts.effect === _animationEffects[1] && core.trk && !isFirstLoad) {
+      transformVal = null;
       for (let i = 0; i < core._as.length; i++) {
-        // (core._as[i] as HTMLElement).style.visibility = `hidden`;
-        (core._as[i] as HTMLElement).style.opacity = `1`;
+        (core._as[i] as HTMLElement).style.visibility = `hidden`;
+        (core._as[i] as HTMLElement).style.opacity = `0`;
         (core._as[i] as HTMLElement).style.transform = `translate3d(0, 0, 0)`;
       }
       core.trk.style.transform = core.opts.ver
         ? `translate3d(0, ${-core._t.nextX}px, 0)`
         : `translate3d(${-core._t.nextX}px, 0, 0)`;
-      console.log('============core.pts', core.pts);
+      transformVal =
+        core.ci > core.pi
+          ? Math.abs(core.ci - core.pi - core.bpo._2Show)
+          : Math.abs(core.pi - core.ci - core.bpo._2Show);
+
+      transformVal =
+        core.ci > core.pi ? core.pts[transformVal] : -core.pts[transformVal];
       for (let i = 0; i < core._as.length; i++) {
         if (i >= core.pi && i < core.pi + core.bpo._2Show) {
           if (core._as[i + core.bpo._2Show]) {
             (core._as[i + core.bpo._2Show] as HTMLElement).style.transform =
               core.opts.ver
-                ? `translate3d(0, ${core.pts[core.pi] - core.bpo.gutr}px, 0)`
-                : `translate3d(${core.pts[core.pi] - core.bpo.gutr}px, 0, 0)`;
-            // (
-            //   core._as[i + core.bpo._2Show] as HTMLElement
-            // ).style.visibility = `visible`;
+                ? `translate3d(0, ${transformVal - core.bpo.gutr}px, 0)`
+                : `translate3d(${transformVal - core.bpo.gutr}px, 0, 0)`;
+            (
+              core._as[i + core.bpo._2Show] as HTMLElement
+            ).style.visibility = `visible`;
             (core._as[i + core.bpo._2Show] as HTMLElement).style.opacity = `1`;
+          }
+        }
+        if (i >= core.ci && i < core.ci + core.bpo._2Show) {
+          if (core._as[i + core.bpo._2Show]) {
+            (
+              core._as[i + core.bpo._2Show] as HTMLElement
+            ).style.visibility = `visible`;
           }
         }
       }
       if (core._t.start && core._t.total && core.ci !== core.pi) {
-        // core._t.id = requestAnimationFrame(fadeThisTrack);
+        core._t.id = requestAnimationFrame(fadeThisTrack);
+        transformVal = null;
       }
     }
   };
@@ -952,19 +958,22 @@ namespace Carouzel {
       }
 
       for (let i = bpoptions.pDups.length; i > 0; i--) {
-        core.pts[-i] =
+        core.pts[-i] = toFixed4(
           (-i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr) +
-          bpoptions.gutr;
+            bpoptions.gutr
+        );
       }
       for (let i = 0; i < core.sLen; i++) {
-        core.pts[i] =
+        core.pts[i] = toFixed4(
           (i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr) +
-          bpoptions.gutr;
+            bpoptions.gutr
+        );
       }
       for (let i = core.sLen; i < core.sLen + bpoptions.nDups.length; i++) {
-        core.pts[i] =
+        core.pts[i] = toFixed4(
           (i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr) +
-          bpoptions.gutr;
+            bpoptions.gutr
+        );
       }
 
       if (core.totp) {

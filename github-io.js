@@ -58,7 +58,6 @@ var loadIO = function () {
     slidesToShow: 1,
     animationEffect: 'fade',
     speed: 500,
-    isInfinite: true,
     breakpoints: [
       {
         minWidth: 700,
