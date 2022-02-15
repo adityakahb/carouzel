@@ -193,6 +193,8 @@ namespace Carouzel {
   let windowResizeAny: any;
   let hashSlide: HTMLElement | null;
   let transformVal: number | null;
+  let newCi: number | null;
+  let newPi: number | null;
 
   /*
    * Easing Functions - inspired from http://gizma.com/easing/
@@ -598,6 +600,19 @@ namespace Carouzel {
         : `translate3d(${-core.pts[core.ci]}px, 0, 0)`;
     }
 
+    manageActiveSlides(core);
+    updateAttributes(core);
+
+    core._t.start = (performance as Performance)
+      ? performance.now()
+      : Date.now();
+    core._t.prevX = core.pts[core.pi];
+    core._t.nextX = core.pts[core.ci];
+
+    if (core.opts.effect === _animationEffects[1] && core.ci < 0) {
+      core._t.nextX = core.pts[core.sLen + core.ci];
+    }
+
     /**
      * Local function to perform post operations after slide animation
      *
@@ -629,14 +644,6 @@ namespace Carouzel {
       }
     };
 
-    manageActiveSlides(core);
-    updateAttributes(core);
-
-    core._t.start = (performance as Performance)
-      ? performance.now()
-      : Date.now();
-    core._t.prevX = core.pts[core.pi];
-    core._t.nextX = core.pts[core.ci];
     /**
      * Local function to perform scroll animation
      *
@@ -696,11 +703,11 @@ namespace Carouzel {
       );
       core._t.progress = core._t.progress > 1 ? 1 : core._t.progress;
       for (let i = 0; i < core._as.length; i++) {
-        if (i >= core.pi && i < core.pi + core.bpo._2Show) {
+        if (newPi !== null && i >= newPi && i < newPi + core.bpo._2Show) {
           (core._as[i + core.bpo._2Show] as HTMLElement).style.opacity =
             `` + (1 - core._t.progress);
         }
-        if (i >= core.ci && i < core.ci + core.bpo._2Show) {
+        if (newCi !== null && i >= newCi && i < newCi + core.bpo._2Show) {
           (core._as[i + core.bpo._2Show] as HTMLElement).style.opacity =
             `` + core._t.progress;
         }
@@ -711,7 +718,7 @@ namespace Carouzel {
       } else {
         postAnimation();
         for (let i = 0; i < core._as.length; i++) {
-          if (i >= core.pi && i < core.pi + core.bpo._2Show) {
+          if (newPi !== null && i >= newPi && i < newPi + core.bpo._2Show) {
             if (core._as[i + core.bpo._2Show]) {
               (
                 core._as[i + core.bpo._2Show] as HTMLElement
@@ -726,7 +733,7 @@ namespace Carouzel {
     };
 
     if (core.opts.effect === _animationEffects[1] && core.trk && !isFirstLoad) {
-      transformVal = null;
+      transformVal = newCi = newPi = null;
       for (let i = 0; i < core._as.length; i++) {
         (core._as[i] as HTMLElement).style.visibility = `hidden`;
         (core._as[i] as HTMLElement).style.opacity = `0`;
@@ -735,16 +742,20 @@ namespace Carouzel {
       core.trk.style.transform = core.opts.ver
         ? `translate3d(0, ${-core._t.nextX}px, 0)`
         : `translate3d(${-core._t.nextX}px, 0, 0)`;
-      transformVal =
-        core.ci > core.pi
-          ? Math.abs(core.ci - core.pi - core.bpo._2Show)
-          : Math.abs(core.pi - core.ci - core.bpo._2Show);
+
+      newCi = core.ci < 0 ? core.sLen + core.ci : core.ci;
+      newPi = core.pi < 0 ? core.sLen + core.pi : core.pi;
 
       transformVal =
-        core.ci > core.pi ? core.pts[transformVal] : -core.pts[transformVal];
+        newCi > newPi
+          ? Math.abs(newCi - newPi - core.bpo._2Show)
+          : Math.abs(newPi - newCi - core.bpo._2Show);
+
+      transformVal =
+        newCi > newPi ? core.pts[transformVal] : -core.pts[transformVal];
 
       for (let i = 0; i < core._as.length; i++) {
-        if (i >= core.pi && i < core.pi + core.bpo._2Show) {
+        if (i >= newPi && i < newPi + core.bpo._2Show) {
           if (core._as[i + core.bpo._2Show]) {
             (core._as[i + core.bpo._2Show] as HTMLElement).style.transform =
               core.opts.ver
@@ -756,7 +767,7 @@ namespace Carouzel {
             (core._as[i + core.bpo._2Show] as HTMLElement).style.opacity = `1`;
           }
         }
-        if (i >= core.ci && i < core.ci + core.bpo._2Show) {
+        if (i >= newCi && i < newCi + core.bpo._2Show) {
           if (core._as[i + core.bpo._2Show]) {
             (
               core._as[i + core.bpo._2Show] as HTMLElement
@@ -766,7 +777,6 @@ namespace Carouzel {
       }
       if (core._t.start && core._t.total && core.ci !== core.pi) {
         core._t.id = requestAnimationFrame(fadeThisTrack);
-        transformVal = null;
       }
     }
   };
@@ -1008,8 +1018,8 @@ namespace Carouzel {
    */
   const go2Slide = (core: ICore, slidenumber: number) => {
     if (core.ci !== slidenumber * core.bpo._2Scroll) {
-      if (slidenumber >= core._ds.length) {
-        slidenumber = core._ds.length - 1;
+      if (slidenumber >= core.sLen) {
+        slidenumber = core.sLen - 1;
       } else if (slidenumber <= -1) {
         slidenumber = 0;
       }

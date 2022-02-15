@@ -26,6 +26,8 @@ var Carouzel;
     var windowResizeAny;
     var hashSlide;
     var transformVal;
+    var newCi;
+    var newPi;
     /*
      * Easing Functions - inspired from http://gizma.com/easing/
      * only considering the t value for the range [0, 1] => [0, 1]
@@ -385,6 +387,16 @@ var Carouzel;
                 ? "translate3d(0, ".concat(-core.pts[core.ci], "px, 0)")
                 : "translate3d(".concat(-core.pts[core.ci], "px, 0, 0)");
         }
+        manageActiveSlides(core);
+        updateAttributes(core);
+        core._t.start = performance
+            ? performance.now()
+            : Date.now();
+        core._t.prevX = core.pts[core.pi];
+        core._t.nextX = core.pts[core.ci];
+        if (core.opts.effect === _animationEffects[1] && core.ci < 0) {
+            core._t.nextX = core.pts[core.sLen + core.ci];
+        }
         /**
          * Local function to perform post operations after slide animation
          *
@@ -415,13 +427,6 @@ var Carouzel;
                 core.opts.aFn();
             }
         };
-        manageActiveSlides(core);
-        updateAttributes(core);
-        core._t.start = performance
-            ? performance.now()
-            : Date.now();
-        core._t.prevX = core.pts[core.pi];
-        core._t.nextX = core.pts[core.ci];
         /**
          * Local function to perform scroll animation
          *
@@ -474,11 +479,11 @@ var Carouzel;
             core._t.progress = _easingFunctions[core.opts.easeFn](core._t.elapsed / core._t.total);
             core._t.progress = core._t.progress > 1 ? 1 : core._t.progress;
             for (var i = 0; i < core._as.length; i++) {
-                if (i >= core.pi && i < core.pi + core.bpo._2Show) {
+                if (newPi !== null && i >= newPi && i < newPi + core.bpo._2Show) {
                     core._as[i + core.bpo._2Show].style.opacity =
                         "" + (1 - core._t.progress);
                 }
-                if (i >= core.ci && i < core.ci + core.bpo._2Show) {
+                if (newCi !== null && i >= newCi && i < newCi + core.bpo._2Show) {
                     core._as[i + core.bpo._2Show].style.opacity =
                         "" + core._t.progress;
                 }
@@ -489,7 +494,7 @@ var Carouzel;
             else {
                 postAnimation();
                 for (var i = 0; i < core._as.length; i++) {
-                    if (i >= core.pi && i < core.pi + core.bpo._2Show) {
+                    if (newPi !== null && i >= newPi && i < newPi + core.bpo._2Show) {
                         if (core._as[i + core.bpo._2Show]) {
                             core._as[i + core.bpo._2Show].style.transform = "translate3d(0, 0, 0)";
                             core._as[i + core.bpo._2Show].style.visibility = "hidden";
@@ -499,7 +504,7 @@ var Carouzel;
             }
         };
         if (core.opts.effect === _animationEffects[1] && core.trk && !isFirstLoad) {
-            transformVal = null;
+            transformVal = newCi = newPi = null;
             for (var i = 0; i < core._as.length; i++) {
                 core._as[i].style.visibility = "hidden";
                 core._as[i].style.opacity = "0";
@@ -508,14 +513,16 @@ var Carouzel;
             core.trk.style.transform = core.opts.ver
                 ? "translate3d(0, ".concat(-core._t.nextX, "px, 0)")
                 : "translate3d(".concat(-core._t.nextX, "px, 0, 0)");
+            newCi = core.ci < 0 ? core.sLen + core.ci : core.ci;
+            newPi = core.pi < 0 ? core.sLen + core.pi : core.pi;
             transformVal =
-                core.ci > core.pi
-                    ? Math.abs(core.ci - core.pi - core.bpo._2Show)
-                    : Math.abs(core.pi - core.ci - core.bpo._2Show);
+                newCi > newPi
+                    ? Math.abs(newCi - newPi - core.bpo._2Show)
+                    : Math.abs(newPi - newCi - core.bpo._2Show);
             transformVal =
-                core.ci > core.pi ? core.pts[transformVal] : -core.pts[transformVal];
+                newCi > newPi ? core.pts[transformVal] : -core.pts[transformVal];
             for (var i = 0; i < core._as.length; i++) {
-                if (i >= core.pi && i < core.pi + core.bpo._2Show) {
+                if (i >= newPi && i < newPi + core.bpo._2Show) {
                     if (core._as[i + core.bpo._2Show]) {
                         core._as[i + core.bpo._2Show].style.transform =
                             core.opts.ver
@@ -525,7 +532,7 @@ var Carouzel;
                         core._as[i + core.bpo._2Show].style.opacity = "1";
                     }
                 }
-                if (i >= core.ci && i < core.ci + core.bpo._2Show) {
+                if (i >= newCi && i < newCi + core.bpo._2Show) {
                     if (core._as[i + core.bpo._2Show]) {
                         core._as[i + core.bpo._2Show].style.visibility = "visible";
                     }
@@ -533,7 +540,6 @@ var Carouzel;
             }
             if (core._t.start && core._t.total && core.ci !== core.pi) {
                 core._t.id = requestAnimationFrame(fadeThisTrack);
-                transformVal = null;
             }
         }
     };
@@ -751,8 +757,8 @@ var Carouzel;
      */
     var go2Slide = function (core, slidenumber) {
         if (core.ci !== slidenumber * core.bpo._2Scroll) {
-            if (slidenumber >= core._ds.length) {
-                slidenumber = core._ds.length - 1;
+            if (slidenumber >= core.sLen) {
+                slidenumber = core.sLen - 1;
             }
             else if (slidenumber <= -1) {
                 slidenumber = 0;
