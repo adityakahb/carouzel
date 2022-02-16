@@ -158,7 +158,7 @@ var Carouzel;
      *
      */
     var hasClass = function (element, cls) {
-        if (element && typeof element.className === "string") {
+        if (typeof (element === null || element === void 0 ? void 0 : element.className) === "string") {
             var clsarr = element.className.split(" ");
             return clsarr.indexOf(cls) > -1 ? true : false;
         }
@@ -172,7 +172,7 @@ var Carouzel;
      *
      */
     var addClass = function (element, cls) {
-        if (element && typeof element.className === "string") {
+        if (typeof (element === null || element === void 0 ? void 0 : element.className) === "string") {
             var clsarr = cls.split(" ");
             var clsarrLength = clsarr.length;
             for (var i = 0; i < clsarrLength; i++) {
@@ -192,7 +192,7 @@ var Carouzel;
      *
      */
     var removeClass = function (element, cls) {
-        if (element && typeof element.className === "string") {
+        if (typeof (element === null || element === void 0 ? void 0 : element.className) === "string") {
             var clsarr = cls.split(" ");
             var curclass = element.className.split(" ");
             var curclassLen = curclass.length;
@@ -228,7 +228,7 @@ var Carouzel;
         windowResizeAny = setTimeout(function () {
             for (var e in allLocalInstances) {
                 if (allLocalInstances.hasOwnProperty(e)) {
-                    applyLayout(allLocalInstances[e], false, false);
+                    applyLayout(allLocalInstances[e]);
                 }
             }
         }, 0);
@@ -367,8 +367,8 @@ var Carouzel;
      * @param isFirstLoad - If this is the first load of the carouzel
      *
      */
-    var animateTrack = function (core, touchedPixel, isFirstLoad) {
-        if (typeof core.opts.bFn === "function" && !isFirstLoad) {
+    var animateTrack = function (core, touchedPixel) {
+        if (typeof core.opts.bFn === "function" && !core.fLoad) {
             core.opts.bFn();
         }
         if (typeof core.pi === 'undefined') {
@@ -382,7 +382,7 @@ var Carouzel;
                 core.ci = core.sLen - core.bpo._2Show;
             }
         }
-        if (core.trk && isFirstLoad) {
+        if (core.trk && core.fLoad) {
             core.trk.style.transform = core.opts.ver
                 ? "translate3d(0, ".concat(-core.pts[core.ci], "px, 0)")
                 : "translate3d(".concat(-core.pts[core.ci], "px, 0, 0)");
@@ -465,7 +465,7 @@ var Carouzel;
                 postAnimation();
             }
         };
-        if (core.opts.effect === _animationEffects[0] && core.trk && !isFirstLoad) {
+        if (core.opts.effect === _animationEffects[0] && core.trk && !core.fLoad) {
             if (core._t.start && core._t.total && core.ci !== core.pi) {
                 core._t.id = requestAnimationFrame(scrollThisTrack);
             }
@@ -503,7 +503,7 @@ var Carouzel;
                 }
             }
         };
-        if (core.opts.effect === _animationEffects[1] && core.trk && !isFirstLoad) {
+        if (core.opts.effect === _animationEffects[1] && core.trk && !core.fLoad) {
             transformVal = newCi = newPi = null;
             for (var i = 0; i < core._as.length; i++) {
                 core._as[i].style.visibility = "hidden";
@@ -590,11 +590,9 @@ var Carouzel;
      * Function to find and apply the appropriate breakpoint settings based on the viewport
      *
      * @param core - Carouzel instance core object
-     * @param isRtlFirstLoad - If the carouzel is RTL and this is just first load
-     * @param isFirstLoad - If this is the first load for the carouzel
      *
      */
-    var applyLayout = function (core, isRtlFirstLoad, isFirstLoad) {
+    var applyLayout = function (core) {
         var viewportWidth = window === null || window === void 0 ? void 0 : window.innerWidth;
         var bpoptions = core.bpall[0];
         var len = 0;
@@ -640,7 +638,7 @@ var Carouzel;
         else if (core.navW) {
             removeClass(core.navW, core.opts.hidCls);
         }
-        if (isRtlFirstLoad) {
+        if (core.fLoad && core.opts.rtl) {
             core.ci = core.opts.startAt = core.sLen - bpoptions._2Scroll;
         }
         if (core.root && core.trkW && core.trkO && core.trk) {
@@ -745,7 +743,7 @@ var Carouzel;
                 toFixed4(core.trkO.clientWidth / core._as.length) + "px";
         }
         else {
-            animateTrack(core, 0, isFirstLoad);
+            animateTrack(core, 0);
         }
     };
     /**
@@ -768,7 +766,10 @@ var Carouzel;
             if (core._t.id) {
                 cancelAnimationFrame(core._t.id);
             }
-            animateTrack(core, 0, false);
+            if (core.fLoad) {
+                core.fLoad = false;
+            }
+            animateTrack(core, 0);
         }
     };
     /**
@@ -797,7 +798,10 @@ var Carouzel;
                 core.pi = core.ci + core.bpo._2Scroll;
             }
         }
-        animateTrack(core, touchedPixel, false);
+        if (core.fLoad) {
+            core.fLoad = false;
+        }
+        animateTrack(core, touchedPixel);
     };
     /**
      * Function to go to the next set of slides
@@ -821,7 +825,10 @@ var Carouzel;
                 core.pi = core.ci - core.bpo._2Scroll;
             }
         }
-        animateTrack(core, touchedPixel, false);
+        if (core.fLoad) {
+            core.fLoad = false;
+        }
+        animateTrack(core, touchedPixel);
     };
     /**
      * Function to toggle keyboard navigation with left and right arrows
@@ -1464,6 +1471,7 @@ var Carouzel;
         _core.trkW = root.querySelector("".concat(_Selectors.trkW));
         _core.curp = root.querySelector("".concat(_Selectors.curp));
         _core.totp = root.querySelector("".concat(_Selectors.totp));
+        _core.fLoad = true;
         if (_core.opts.rtl) {
             _core.root.setAttribute(_Selectors.rtl.slice(1, -1), "true");
         }
@@ -1485,7 +1493,7 @@ var Carouzel;
                 generateScrollbar(_core);
                 toggleControlButtons(_core);
                 toggleTouchEvents(_core);
-                applyLayout(_core, _core.opts.rtl, true);
+                applyLayout(_core);
             }
         }
         addClass(_core.root, _core.opts.activeCls);

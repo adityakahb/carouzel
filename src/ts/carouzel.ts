@@ -158,7 +158,9 @@ namespace Carouzel {
     ci: number;
     controlsW: HTMLElement | null;
     ct: number;
+    curp: HTMLElement | null;
     eHandlers: any[];
+    fLoad: boolean;
     nav: HTMLElement | null;
     navW: HTMLElement | null;
     opts: ICoreSettings;
@@ -172,12 +174,11 @@ namespace Carouzel {
     scbarW: HTMLElement | null;
     sLen: number;
     sWid: number;
+    totp: HTMLElement | null;
     trk: HTMLElement | null;
     trkM: HTMLElement | null;
     trkO: HTMLElement | null;
     trkW: HTMLElement | null;
-    totp: HTMLElement | null;
-    curp: HTMLElement | null;
   }
 
   interface ICoreInstance {
@@ -341,7 +342,7 @@ namespace Carouzel {
    *
    */
   const hasClass = (element: Element, cls: string) => {
-    if (element && typeof element.className === `string`) {
+    if (typeof element?.className === `string`) {
       const clsarr = element.className.split(` `);
       return clsarr.indexOf(cls) > -1 ? true : false;
     }
@@ -357,7 +358,7 @@ namespace Carouzel {
    *
    */
   const addClass = (element: Element, cls: string) => {
-    if (element && typeof element.className === `string`) {
+    if (typeof element?.className === `string`) {
       let clsarr = cls.split(` `);
       let clsarrLength = clsarr.length;
       for (let i = 0; i < clsarrLength; i++) {
@@ -378,7 +379,7 @@ namespace Carouzel {
    *
    */
   const removeClass = (element: Element, cls: string) => {
-    if (element && typeof element.className === `string`) {
+    if (typeof element?.className === `string`) {
       let clsarr = cls.split(` `);
       let curclass = element.className.split(` `);
       let curclassLen = curclass.length;
@@ -416,7 +417,7 @@ namespace Carouzel {
     windowResizeAny = setTimeout(() => {
       for (let e in allLocalInstances) {
         if (allLocalInstances.hasOwnProperty(e)) {
-          applyLayout(allLocalInstances[e], false, false);
+          applyLayout(allLocalInstances[e]);
         }
       }
     }, 0);
@@ -574,12 +575,8 @@ namespace Carouzel {
    * @param isFirstLoad - If this is the first load of the carouzel
    *
    */
-  const animateTrack = (
-    core: ICore,
-    touchedPixel: number,
-    isFirstLoad: boolean
-  ) => {
-    if (typeof core.opts.bFn === `function` && !isFirstLoad) {
+  const animateTrack = (core: ICore, touchedPixel: number) => {
+    if (typeof core.opts.bFn === `function` && !core.fLoad) {
       core.opts.bFn();
     }
     if (typeof core.pi === 'undefined') {
@@ -594,7 +591,7 @@ namespace Carouzel {
       }
     }
 
-    if (core.trk && isFirstLoad) {
+    if (core.trk && core.fLoad) {
       core.trk.style.transform = core.opts.ver
         ? `translate3d(0, ${-core.pts[core.ci]}px, 0)`
         : `translate3d(${-core.pts[core.ci]}px, 0, 0)`;
@@ -686,7 +683,7 @@ namespace Carouzel {
       }
     };
 
-    if (core.opts.effect === _animationEffects[0] && core.trk && !isFirstLoad) {
+    if (core.opts.effect === _animationEffects[0] && core.trk && !core.fLoad) {
       if (core._t.start && core._t.total && core.ci !== core.pi) {
         core._t.id = requestAnimationFrame(scrollThisTrack);
       }
@@ -732,7 +729,7 @@ namespace Carouzel {
       }
     };
 
-    if (core.opts.effect === _animationEffects[1] && core.trk && !isFirstLoad) {
+    if (core.opts.effect === _animationEffects[1] && core.trk && !core.fLoad) {
       transformVal = newCi = newPi = null;
       for (let i = 0; i < core._as.length; i++) {
         (core._as[i] as HTMLElement).style.visibility = `hidden`;
@@ -835,15 +832,9 @@ namespace Carouzel {
    * Function to find and apply the appropriate breakpoint settings based on the viewport
    *
    * @param core - Carouzel instance core object
-   * @param isRtlFirstLoad - If the carouzel is RTL and this is just first load
-   * @param isFirstLoad - If this is the first load for the carouzel
    *
    */
-  const applyLayout = (
-    core: ICore,
-    isRtlFirstLoad: boolean,
-    isFirstLoad: boolean
-  ) => {
+  const applyLayout = (core: ICore) => {
     let viewportWidth = window?.innerWidth;
     let bpoptions = core.bpall[0];
     let len = 0;
@@ -893,7 +884,7 @@ namespace Carouzel {
     } else if (core.navW) {
       removeClass(core.navW, core.opts.hidCls);
     }
-    if (isRtlFirstLoad) {
+    if (core.fLoad && core.opts.rtl) {
       core.ci = core.opts.startAt = core.sLen - bpoptions._2Scroll;
     }
     if (core.root && core.trkW && core.trkO && core.trk) {
@@ -1005,7 +996,7 @@ namespace Carouzel {
       core.scbarB.style.width =
         toFixed4(core.trkO.clientWidth / core._as.length) + `px`;
     } else {
-      animateTrack(core, 0, isFirstLoad);
+      animateTrack(core, 0);
     }
   };
 
@@ -1028,7 +1019,10 @@ namespace Carouzel {
       if (core._t.id) {
         cancelAnimationFrame(core._t.id);
       }
-      animateTrack(core, 0, false);
+      if (core.fLoad) {
+        core.fLoad = false;
+      }
+      animateTrack(core, 0);
     }
   };
 
@@ -1057,7 +1051,10 @@ namespace Carouzel {
         core.pi = core.ci + core.bpo._2Scroll;
       }
     }
-    animateTrack(core, touchedPixel, false);
+    if (core.fLoad) {
+      core.fLoad = false;
+    }
+    animateTrack(core, touchedPixel);
   };
 
   /**
@@ -1081,7 +1078,10 @@ namespace Carouzel {
         core.pi = core.ci - core.bpo._2Scroll;
       }
     }
-    animateTrack(core, touchedPixel, false);
+    if (core.fLoad) {
+      core.fLoad = false;
+    }
+    animateTrack(core, touchedPixel);
   };
 
   /**
@@ -1824,6 +1824,7 @@ namespace Carouzel {
     _core.trkW = root.querySelector(`${_Selectors.trkW}`);
     _core.curp = root.querySelector(`${_Selectors.curp}`);
     _core.totp = root.querySelector(`${_Selectors.totp}`);
+    _core.fLoad = true;
 
     if (_core.opts.rtl) {
       _core.root.setAttribute(_Selectors.rtl.slice(1, -1), `true`);
@@ -1849,7 +1850,7 @@ namespace Carouzel {
         generateScrollbar(_core);
         toggleControlButtons(_core);
         toggleTouchEvents(_core);
-        applyLayout(_core, _core.opts.rtl, true);
+        applyLayout(_core);
       }
     }
 
