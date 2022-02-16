@@ -11,14 +11,14 @@ describe('Carouzel', () => {
   jest.setTimeout(90000);
   beforeAll(async () => {
     // const indexPath = `file://${process.cwd()}/tests/fixture.html`;
-    const indexPath = `http://localhost:1234`;
+    const indexPath = `http://localhost:3001`;
     await page.goto(indexPath, {
       waitUntil: 'load',
       timeout: 54321,
     });
     page.on('console', (msg) => {
       for (let i = 0; i < msg.args().length; i++) {
-        console.log(msg.args()[i]);
+        // console.log(msg.args()[i]);
       }
     });
   });

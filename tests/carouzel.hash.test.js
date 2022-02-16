@@ -5,14 +5,14 @@ const GetProperty2 = async (element, property) => {
 describe('Carouzel', () => {
   jest.setTimeout(1800000);
   beforeAll(async () => {
-    const indexPath = `http://localhost:1234#__carouzel_14_id_3`;
+    const indexPath = `http://localhost:3001#__carouzel_14_id_3`;
     await page.goto(indexPath, {
       waitUntil: 'load',
       timeout: 54321,
     });
     page.on('console', (msg) => {
       for (let i = 0; i < msg.args().length; i++) {
-        console.log(msg.args()[i]);
+        // console.log(msg.args()[i]);
       }
     });
   });

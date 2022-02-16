@@ -111,8 +111,8 @@ var loadIO = function () {
       },
       {
         minWidth: 1100,
-        slidesToScroll: 3,
-        slidesToShow: 3,
+        slidesToScroll: 4,
+        slidesToShow: 4,
       },
     ],
   });

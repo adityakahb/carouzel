@@ -115,4 +115,3 @@ declare namespace Carouzel {
     }
     export {};
 }
-//# sourceMappingURL=carouzel.d.ts.map

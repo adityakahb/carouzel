@@ -5,16 +5,12 @@
 
 module.exports = {
   collectCoverage: true,
+  collectCoverageFrom: ['./tests/resources/carouzel.js'],
   coverageDirectory: 'coverage',
-  // globals: {
-  //   URL: '<http://localhost:3000>',
-  // },
-  preset: 'jest-puppeteer',
-  roots: ['tests'],
-  verbose: true,
-  collectCoverageFrom: ['dist/scripts/carouzel.js'],
   coverageReporters: ['text', 'lcov', 'json', 'json-summary'],
   preset: 'jest-puppeteer',
-  setupFilesAfterEnv: ['jest-puppeteer-istanbul/lib/setup'],
   reporters: ['default', 'jest-puppeteer-istanbul/lib/reporter'],
+  roots: ['tests'],
+  setupFilesAfterEnv: ['jest-puppeteer-istanbul/lib/setup'],
+  verbose: true,
 };
