@@ -51,7 +51,6 @@ gulp.task(`uglifyjs`, function () {
           warning_level: 'VERBOSE',
           language_in: 'ECMASCRIPT3',
           language_out: 'ECMASCRIPT3',
-          output_wrapper: '(function(){\n%output%\n}).call(this)',
           js_output_file: 'carouzel.min.js',
         },
         {

@@ -572,7 +572,6 @@ namespace Carouzel {
    *
    * @param core - Carouzel instance core object
    * @param touchedPixel - Amount of pixels travelled using touch/cursor drag
-   * @param isFirstLoad - If this is the first load of the carouzel
    *
    */
   const animateTrack = (core: ICore, touchedPixel: number) => {
@@ -1799,7 +1798,8 @@ namespace Carouzel {
   /**
    * Function to initialize the carouzel core object and assign respective events
    *
-   * @param core - Carouzel instance core object
+   * @param root - The root element which needs to be initialized as Carouzel slider
+   * @param settings - The options applicable to the same Carouzel slider
    *
    */
   const init = (root: HTMLElement, settings: ISettings) => {
@@ -1968,6 +1968,10 @@ namespace Carouzel {
    *
    */
   class Core {
+    /**
+     * Constructor
+     * @constructor
+     */
     constructor(thisid: string, root: HTMLElement, options?: ISettings) {
       allLocalInstances[thisid] = init(root, { ..._Defaults, ...options });
     }
@@ -1988,11 +1992,11 @@ namespace Carouzel {
     protected static instance: Root | null = null;
 
     /**
-     * Constructor to initiate polyfills
-     *
+     * Constructor
+     * @constructor
      */
     constructor() {
-      this.init(_Selectors.rootAuto);
+      this.init(_Selectors.rootAuto, {} as ISettings);
     }
     /**
      * Function to return single instance
@@ -2073,9 +2077,9 @@ namespace Carouzel {
             }
           }
         }
-        if (getCoreInstancesLength() > 0 && !isWindowEventAttached) {
+        if (window && getCoreInstancesLength() > 0 && !isWindowEventAttached) {
           isWindowEventAttached = true;
-          window?.addEventListener(`resize`, winResizeFn, false);
+          window.addEventListener(`resize`, winResizeFn, false);
         }
       } else {
         if (query !== _Selectors.rootAuto) {
@@ -2100,8 +2104,8 @@ namespace Carouzel {
             target === _animationDirections[0]
               ? go2Prev(cores[i], 0)
               : go2Next(cores[i], 0);
-          } else if (!isNaN(parseInt(target))) {
-            go2Slide(cores[i], parseInt(target) - 1);
+          } else if (!isNaN(parseInt(target, 10))) {
+            go2Slide(cores[i], parseInt(target, 10) - 1);
           }
         }
       } else {
@@ -2122,8 +2126,8 @@ namespace Carouzel {
         for (let i = 0; i < cores.length; i++) {
           destroy(cores[i]);
         }
-        if (getCoreInstancesLength() === 0) {
-          window?.removeEventListener(`resize`, winResizeFn, false);
+        if (window && getCoreInstancesLength() === 0) {
+          window.removeEventListener(`resize`, winResizeFn, false);
         }
       } else {
         // throw new TypeError(_rootSelectorTypeError);

@@ -71,8 +71,8 @@ declare namespace Carouzel {
     export class Root {
         protected static instance: Root | null;
         /**
-         * Constructor to initiate polyfills
-         *
+         * Constructor
+         * @constructor
          */
         constructor();
         /**

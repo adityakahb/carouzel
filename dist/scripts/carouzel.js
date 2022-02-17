@@ -365,7 +365,6 @@ var Carouzel;
      *
      * @param core - Carouzel instance core object
      * @param touchedPixel - Amount of pixels travelled using touch/cursor drag
-     * @param isFirstLoad - If this is the first load of the carouzel
      *
      */
     var animateTrack = function (core, touchedPixel) {
@@ -1446,7 +1445,8 @@ var Carouzel;
     /**
      * Function to initialize the carouzel core object and assign respective events
      *
-     * @param core - Carouzel instance core object
+     * @param root - The root element which needs to be initialized as Carouzel slider
+     * @param settings - The options applicable to the same Carouzel slider
      *
      */
     var init = function (root, settings) {
@@ -1597,6 +1597,10 @@ var Carouzel;
      *
      */
     var Core = /** @class */ (function () {
+        /**
+         * Constructor
+         * @constructor
+         */
         function Core(thisid, root, options) {
             allLocalInstances[thisid] = init(root, __assign(__assign({}, _Defaults), options));
         }
@@ -1614,8 +1618,8 @@ var Carouzel;
      */
     var Root = /** @class */ (function () {
         /**
-         * Constructor to initiate polyfills
-         *
+         * Constructor
+         * @constructor
          */
         function Root() {
             /**
@@ -1679,9 +1683,9 @@ var Carouzel;
                             }
                         }
                     }
-                    if (getCoreInstancesLength() > 0 && !isWindowEventAttached) {
+                    if (window && getCoreInstancesLength() > 0 && !isWindowEventAttached) {
                         isWindowEventAttached = true;
-                        window === null || window === void 0 ? void 0 : window.addEventListener("resize", winResizeFn, false);
+                        window.addEventListener("resize", winResizeFn, false);
                     }
                 }
                 else {
@@ -1707,8 +1711,8 @@ var Carouzel;
                                 ? go2Prev(cores[i], 0)
                                 : go2Next(cores[i], 0);
                         }
-                        else if (!isNaN(parseInt(target))) {
-                            go2Slide(cores[i], parseInt(target) - 1);
+                        else if (!isNaN(parseInt(target, 10))) {
+                            go2Slide(cores[i], parseInt(target, 10) - 1);
                         }
                     }
                 }
@@ -1729,8 +1733,8 @@ var Carouzel;
                     for (var i = 0; i < cores.length; i++) {
                         destroy(cores[i]);
                     }
-                    if (getCoreInstancesLength() === 0) {
-                        window === null || window === void 0 ? void 0 : window.removeEventListener("resize", winResizeFn, false);
+                    if (window && getCoreInstancesLength() === 0) {
+                        window.removeEventListener("resize", winResizeFn, false);
                     }
                 }
                 else {
@@ -1738,7 +1742,7 @@ var Carouzel;
                     console.error("destroy() \"".concat(query, "\": ").concat(_rootSelectorTypeError));
                 }
             };
-            this.init(_Selectors.rootAuto);
+            this.init(_Selectors.rootAuto, {});
         }
         /**
          * Function to return single instance
