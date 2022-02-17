@@ -99,23 +99,25 @@ var loadIO = function () {
       },
     ],
   });
-  __carouzel_instance.init('#__carouzel_16', {
-    slidesToShow: 1,
-    isInfinite: false,
-    enableScrollbar: true,
-    breakpoints: [
-      {
-        minWidth: 700,
-        slidesToScroll: 2,
-        slidesToShow: 2,
-      },
-      {
-        minWidth: 1100,
-        slidesToScroll: 4,
-        slidesToShow: 4,
-      },
-    ],
-  });
+  if (document.getElementById('__carouzel_16')) {
+    __carouzel_instance.init('#__carouzel_16', {
+      slidesToShow: 1,
+      isInfinite: false,
+      enableScrollbar: true,
+      breakpoints: [
+        {
+          minWidth: 700,
+          slidesToScroll: 2,
+          slidesToShow: 2,
+        },
+        {
+          minWidth: 1100,
+          slidesToScroll: 4,
+          slidesToShow: 4,
+        },
+      ],
+    });
+  }
   __carouzel_instance.init('#__carouzel_9', {
     centerBetween: 1,
   });
@@ -291,6 +293,27 @@ var loadIO = function () {
         slidesToScroll: 3,
         verticalHeight: 450,
         slideGutter: 50,
+      },
+    ],
+  });
+  __carouzel_instance.init('#__carouzel_18', {
+    animationEffect: 'fade',
+    syncWith: '__carouzel_19',
+    isInfinite: false,
+  });
+  __carouzel_instance.init('#__carouzel_19', {
+    slidesToShow: 1,
+    centerBetween: 1,
+    syncWith: '__carouzel_18',
+    isInfinite: false,
+    breakpoints: [
+      {
+        minWidth: 700,
+        centerBetween: 3,
+      },
+      {
+        minWidth: 1100,
+        centerBetween: 5,
       },
     ],
   });

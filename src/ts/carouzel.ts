@@ -116,6 +116,7 @@ namespace Carouzel {
     slidesToScroll: number;
     slidesToShow: number;
     startAtIndex: number;
+    syncWith: string;
     touchThreshold: number;
     trackUrlHash: boolean;
     useTitlesAsDots: boolean;
@@ -174,6 +175,7 @@ namespace Carouzel {
     scbarW: HTMLElement | null;
     sLen: number;
     sWid: number;
+    sync: string | null;
     totp: HTMLElement | null;
     trk: HTMLElement | null;
     trkM: HTMLElement | null;
@@ -314,6 +316,7 @@ namespace Carouzel {
     slidesToScroll: 1,
     slidesToShow: 1,
     startAtIndex: 1,
+    syncWith: '',
     touchThreshold: 125,
     trackUrlHash: false,
     useTitlesAsDots: false,
@@ -577,6 +580,18 @@ namespace Carouzel {
   const animateTrack = (core: ICore, touchedPixel: number) => {
     if (typeof core.opts.bFn === `function` && !core.fLoad) {
       core.opts.bFn();
+    }
+    if (core.sync && allLocalInstances[core.sync]) {
+      if (core.ci < 0) {
+        go2Slide(
+          allLocalInstances[core.sync],
+          core.sLen - core.bpo._2Scroll - 1
+        );
+      } else if (core.ci >= core.sLen) {
+        go2Slide(allLocalInstances[core.sync], 0);
+      } else {
+        go2Slide(allLocalInstances[core.sync], core.ci);
+      }
     }
     if (typeof core.pi === 'undefined') {
       core.pi = core.opts.inf ? -core.bpo._2Show : 0;
@@ -1211,9 +1226,10 @@ namespace Carouzel {
    * Function to add touch events to the track
    *
    * @param core - Carouzel instance core object
+   * @param el - Determines if the touch events need to be added to the carousel track or the scrollbar thumb
    *
    */
-  const toggleTouchEvents = (core: ICore) => {
+  const toggleTouchEvents = (core: ICore, el: string) => {
     let diffX = 0;
     let diffY = 0;
     let dragging = false;
@@ -1235,7 +1251,7 @@ namespace Carouzel {
      * Function to be triggered when the carouzel is touched the cursor is down on it
      *
      */
-    const touchStart = (e: Event) => {
+    const touchStartTrack = (e: Event) => {
       dragging = true;
       if (e.type === `touchstart`) {
         startX = (e as TouchEvent).changedTouches[0].screenX;
@@ -1254,7 +1270,7 @@ namespace Carouzel {
      * Function to be triggered when the carouzel is dragged through touch or cursor
      *
      */
-    const touchMove = (e: Event) => {
+    const touchMoveTrack = (e: Event) => {
       if (dragging) {
         if (e.type === `touchmove`) {
           endX = (e as TouchEvent).changedTouches[0].screenX;
@@ -1300,7 +1316,7 @@ namespace Carouzel {
      * Function to be triggered when the touch is ended or cursor is released
      *
      */
-    const touchEnd = (e: Event) => {
+    const touchEndTrack = (e: Event) => {
       if (dragging && core.trk) {
         if (e.type === `touchend`) {
           endX = (e as TouchEvent).changedTouches[0].screenX;
@@ -1394,59 +1410,180 @@ namespace Carouzel {
       }
     };
 
-    if (core.opts.swipe && !core.opts.scbar) {
+    const touchStartScb = (e: Event) => {
+      dragging = true;
+      if (e.type === `touchstart`) {
+        startX = (e as TouchEvent).changedTouches[0].screenX;
+        startY = (e as TouchEvent).changedTouches[0].screenY;
+        posX1 = (e as TouchEvent).changedTouches[0].screenX;
+        posY1 = (e as TouchEvent).changedTouches[0].screenY;
+      } else {
+        startX = (e as MouseEvent).clientX;
+        startY = (e as MouseEvent).clientY;
+        posX1 = (e as MouseEvent).clientX;
+        posY1 = (e as MouseEvent).clientY;
+      }
+    };
+    const touchMoveScb = (e: Event) => {
+      if (dragging) {
+        if (e.type === `touchmove`) {
+          endX = (e as TouchEvent).changedTouches[0].screenX;
+          endY = (e as TouchEvent).changedTouches[0].screenY;
+          posX2 = posX1 - (e as TouchEvent).changedTouches[0].screenX;
+          posY2 = posY1 - (e as TouchEvent).changedTouches[0].screenY;
+        } else {
+          endX = (e as MouseEvent).clientX;
+          endY = (e as MouseEvent).clientY;
+          posX2 = posX1 - (e as MouseEvent).clientX;
+          posY2 = posY1 - (e as MouseEvent).clientY;
+        }
+        diffX = endX - startX;
+        diffY = endY - startY;
+        ratioX = Math.abs(diffX / diffY);
+        ratioY = Math.abs(diffY / diffX);
+
+        if (
+          core.scbarB &&
+          core.scbarT &&
+          -posX2 >= 0 &&
+          -posX2 <= core.scbarT.clientWidth
+        ) {
+          core.scbarB.style.transform = `translateX(${-posX2}px)`;
+        }
+        // if (core.trkO && core.scbarT && core.scbarB && core.trk) {
+        //   transformVal =
+        //     (core.trkO.scrollLeft /
+        //       (core.trk.clientWidth - core.trkO.clientWidth)) *
+        //     core.scbarT.clientWidth;
+        //   core.scbarB.style.left = transformVal + `px`;
+        //   transformVal = null;
+        // }
+        posFinal = core.opts.ver ? posY2 : posX2;
+      }
+    };
+    const touchEndScb = (e: Event) => {
+      if (dragging && core.trk) {
+        if (e.type === `touchend`) {
+          endX = (e as TouchEvent).changedTouches[0].screenX;
+          endY = (e as TouchEvent).changedTouches[0].screenY;
+        } else {
+          endX = (e as MouseEvent).clientX;
+          endY = (e as MouseEvent).clientY;
+        }
+        diffX = endX - startX;
+        diffY = endY - startY;
+        ratioX = Math.abs(diffX / diffY);
+        ratioY = Math.abs(diffY / diffX);
+
+        if (
+          !isNaN(ratioX) &&
+          !isNaN(ratioY) &&
+          ratioY !== Infinity &&
+          ratioX !== Infinity &&
+          ratioX !== ratioY
+        ) {
+          if (core.scbarB && core.scbarT) {
+            console.log('===========-diffX', -diffX);
+
+            core.scbarB.style.transform = `translateX(${-diffX}px)`;
+          }
+        }
+        posX1 = posX2 = posY1 = posY2 = posFinal = 0;
+        dragging = false;
+      }
+    };
+
+    if (core.opts.swipe && !core.opts.scbar && el === 'sl') {
+      core.eHandlers.push(
+        eventHandler(core.trk as HTMLElement, `touchstart`, (event: Event) => {
+          touchStartTrack(event);
+        })
+      );
+      core.eHandlers.push(
+        eventHandler(core.trk as HTMLElement, `touchmove`, (event: Event) => {
+          touchMoveTrack(event);
+        })
+      );
+      core.eHandlers.push(
+        eventHandler(core.trk as HTMLElement, `touchend`, (event: Event) => {
+          touchEndTrack(event);
+        })
+      );
+      core.eHandlers.push(
+        eventHandler(core.trk as HTMLElement, `mousedown`, (event: Event) => {
+          touchStartTrack(event);
+        })
+      );
+      core.eHandlers.push(
+        eventHandler(core.trk as HTMLElement, `mouseup`, (event: Event) => {
+          touchEndTrack(event);
+        })
+      );
+      core.eHandlers.push(
+        eventHandler(core.trk as HTMLElement, `mouseleave`, (event: Event) => {
+          touchEndTrack(event);
+        })
+      );
+      core.eHandlers.push(
+        eventHandler(core.trk as HTMLElement, `mousemove`, (event: Event) => {
+          touchMoveTrack(event);
+        })
+      );
+    }
+
+    if (core.opts.scbar && core.scbarB && el === 'sb') {
       core.eHandlers.push(
         eventHandler(
-          core.trk as HTMLElement,
+          core.scbarB as HTMLElement,
           `touchstart`,
-          function (event: Event) {
-            touchStart(event);
+          (event: Event) => {
+            touchStartScb(event);
           }
         )
       );
       core.eHandlers.push(
         eventHandler(
-          core.trk as HTMLElement,
+          core.scbarB as HTMLElement,
           `touchmove`,
-          function (event: Event) {
-            touchMove(event);
+          (event: Event) => {
+            touchMoveScb(event);
           }
         )
       );
       core.eHandlers.push(
-        eventHandler(core.trk as HTMLElement, `touchend`, function (e: Event) {
-          touchEnd(e);
+        eventHandler(core.scbarB as HTMLElement, `touchend`, (event: Event) => {
+          touchEndScb(event);
         })
       );
       core.eHandlers.push(
         eventHandler(
-          core.trk as HTMLElement,
+          core.scbarB as HTMLElement,
           `mousedown`,
-          function (event: Event) {
-            touchStart(event);
+          (event: Event) => {
+            touchStartScb(event);
           }
         )
       );
       core.eHandlers.push(
-        eventHandler(core.trk as HTMLElement, `mouseup`, function (e: Event) {
-          touchEnd(e);
+        eventHandler(core.scbarB as HTMLElement, `mouseup`, (event: Event) => {
+          touchEndScb(event);
         })
       );
       core.eHandlers.push(
         eventHandler(
-          core.trk as HTMLElement,
+          core.scbarB as HTMLElement,
           `mouseleave`,
-          function (e: Event) {
-            touchEnd(e);
+          (event: Event) => {
+            touchEndScb(event);
           }
         )
       );
       core.eHandlers.push(
         eventHandler(
-          core.trk as HTMLElement,
+          core.scbarB as HTMLElement,
           `mousemove`,
-          function (event: Event) {
-            touchMove(event);
+          (event: Event) => {
+            touchMoveScb(event);
           }
         )
       );
@@ -1564,17 +1701,20 @@ namespace Carouzel {
           (core.trkO.scrollLeft /
             (core.trk.clientWidth - core.trkO.clientWidth)) *
           core.scbarT.clientWidth;
-        core.scbarB.style.left = transformVal + `px`;
+        core.scbarB.style.transform = `translateX(${transformVal}px)`;
         transformVal = null;
       }
     };
 
-    if (core.opts.scbar) {
+    if (core.trkO) {
       core.eHandlers.push(
         eventHandler(core.trkO as HTMLElement, `scroll`, function () {
           logTrackScroll();
         })
       );
+    }
+    if (core.scbarB) {
+      toggleTouchEvents(core, 'sb');
     }
   };
 
@@ -1831,6 +1971,10 @@ namespace Carouzel {
     _core.totp = root.querySelector(`${_Selectors.totp}`);
     _core.fLoad = true;
 
+    if ((settings.syncWith || ``).length > 0) {
+      _core.sync = settings.syncWith;
+    }
+
     if (_core.opts.rtl) {
       _core.root.setAttribute(_Selectors.rtl.slice(1, -1), `true`);
     }
@@ -1854,7 +1998,7 @@ namespace Carouzel {
         generateElements(_core);
         generateScrollbar(_core);
         toggleControlButtons(_core);
-        toggleTouchEvents(_core);
+        toggleTouchEvents(_core, 'sl');
         applyLayout(_core);
       }
     }

@@ -16,14 +16,35 @@
     display: flex;
     font-size: 40px;
     font-weight: bold;
-    min-height: 200px;
     justify-content: center;
+    min-height: 200px;
     width: 100%;
+    > div {
+      min-height: 200px;
+      overflow: hidden;
+      position: relative;
+      width: 100%;
+      img {
+        left: 50%;
+        min-height: 100.5%;
+        min-width: 100.5%;
+        position: absolute;
+        top: 50%;
+        transform: translate(-50%, -50%);
+      }
+    }
   }
 }
 [data-carouzel]#__carouzel_4 {
   [data-carouzel-slide] {
     border: 0;
+  }
+}
+[data-carouzel]#__carouzel_18 {
+  [data-carouzel-slide] {
+    > div {
+      min-height: 400px;
+    }
   }
 }
 #__carouzel_10[data-carouzel] {

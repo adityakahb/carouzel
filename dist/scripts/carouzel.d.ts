@@ -53,6 +53,7 @@ declare namespace Carouzel {
         slidesToScroll: number;
         slidesToShow: number;
         startAtIndex: number;
+        syncWith: string;
         touchThreshold: number;
         trackUrlHash: boolean;
         useTitlesAsDots: boolean;

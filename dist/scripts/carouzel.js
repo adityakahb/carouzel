@@ -133,6 +133,7 @@ var Carouzel;
         slidesToScroll: 1,
         slidesToShow: 1,
         startAtIndex: 1,
+        syncWith: '',
         touchThreshold: 125,
         trackUrlHash: false,
         useTitlesAsDots: false,
@@ -370,6 +371,17 @@ var Carouzel;
     var animateTrack = function (core, touchedPixel) {
         if (typeof core.opts.bFn === "function" && !core.fLoad) {
             core.opts.bFn();
+        }
+        if (core.sync && allLocalInstances[core.sync]) {
+            if (core.ci < 0) {
+                go2Slide(allLocalInstances[core.sync], core.sLen - core.bpo._2Scroll - 1);
+            }
+            else if (core.ci >= core.sLen) {
+                go2Slide(allLocalInstances[core.sync], 0);
+            }
+            else {
+                go2Slide(allLocalInstances[core.sync], core.ci);
+            }
         }
         if (typeof core.pi === 'undefined') {
             core.pi = core.opts.inf ? -core.bpo._2Show : 0;
@@ -939,9 +951,10 @@ var Carouzel;
      * Function to add touch events to the track
      *
      * @param core - Carouzel instance core object
+     * @param el - Determines if the touch events need to be added to the carousel track or the scrollbar thumb
      *
      */
-    var toggleTouchEvents = function (core) {
+    var toggleTouchEvents = function (core, el) {
         var diffX = 0;
         var diffY = 0;
         var dragging = false;
@@ -962,7 +975,7 @@ var Carouzel;
          * Function to be triggered when the carouzel is touched the cursor is down on it
          *
          */
-        var touchStart = function (e) {
+        var touchStartTrack = function (e) {
             dragging = true;
             if (e.type === "touchstart") {
                 startX = e.changedTouches[0].screenX;
@@ -981,7 +994,7 @@ var Carouzel;
          * Function to be triggered when the carouzel is dragged through touch or cursor
          *
          */
-        var touchMove = function (e) {
+        var touchMoveTrack = function (e) {
             if (dragging) {
                 if (e.type === "touchmove") {
                     endX = e.changedTouches[0].screenX;
@@ -1022,7 +1035,7 @@ var Carouzel;
          * Function to be triggered when the touch is ended or cursor is released
          *
          */
-        var touchEnd = function (e) {
+        var touchEndTrack = function (e) {
             if (dragging && core.trk) {
                 if (e.type === "touchend") {
                     endX = e.changedTouches[0].screenX;
@@ -1107,27 +1120,128 @@ var Carouzel;
                 dragging = false;
             }
         };
-        if (core.opts.swipe && !core.opts.scbar) {
+        var touchStartScb = function (e) {
+            dragging = true;
+            if (e.type === "touchstart") {
+                startX = e.changedTouches[0].screenX;
+                startY = e.changedTouches[0].screenY;
+                posX1 = e.changedTouches[0].screenX;
+                posY1 = e.changedTouches[0].screenY;
+            }
+            else {
+                startX = e.clientX;
+                startY = e.clientY;
+                posX1 = e.clientX;
+                posY1 = e.clientY;
+            }
+        };
+        var touchMoveScb = function (e) {
+            if (dragging) {
+                if (e.type === "touchmove") {
+                    endX = e.changedTouches[0].screenX;
+                    endY = e.changedTouches[0].screenY;
+                    posX2 = posX1 - e.changedTouches[0].screenX;
+                    posY2 = posY1 - e.changedTouches[0].screenY;
+                }
+                else {
+                    endX = e.clientX;
+                    endY = e.clientY;
+                    posX2 = posX1 - e.clientX;
+                    posY2 = posY1 - e.clientY;
+                }
+                diffX = endX - startX;
+                diffY = endY - startY;
+                ratioX = Math.abs(diffX / diffY);
+                ratioY = Math.abs(diffY / diffX);
+                if (core.scbarB &&
+                    core.scbarT &&
+                    -posX2 >= 0 &&
+                    -posX2 <= core.scbarT.clientWidth) {
+                    core.scbarB.style.transform = "translateX(".concat(-posX2, "px)");
+                }
+                // if (core.trkO && core.scbarT && core.scbarB && core.trk) {
+                //   transformVal =
+                //     (core.trkO.scrollLeft /
+                //       (core.trk.clientWidth - core.trkO.clientWidth)) *
+                //     core.scbarT.clientWidth;
+                //   core.scbarB.style.left = transformVal + `px`;
+                //   transformVal = null;
+                // }
+                posFinal = core.opts.ver ? posY2 : posX2;
+            }
+        };
+        var touchEndScb = function (e) {
+            if (dragging && core.trk) {
+                if (e.type === "touchend") {
+                    endX = e.changedTouches[0].screenX;
+                    endY = e.changedTouches[0].screenY;
+                }
+                else {
+                    endX = e.clientX;
+                    endY = e.clientY;
+                }
+                diffX = endX - startX;
+                diffY = endY - startY;
+                ratioX = Math.abs(diffX / diffY);
+                ratioY = Math.abs(diffY / diffX);
+                if (!isNaN(ratioX) &&
+                    !isNaN(ratioY) &&
+                    ratioY !== Infinity &&
+                    ratioX !== Infinity &&
+                    ratioX !== ratioY) {
+                    if (core.scbarB && core.scbarT) {
+                        console.log('===========-diffX', -diffX);
+                        core.scbarB.style.transform = "translateX(".concat(-diffX, "px)");
+                    }
+                }
+                posX1 = posX2 = posY1 = posY2 = posFinal = 0;
+                dragging = false;
+            }
+        };
+        if (core.opts.swipe && !core.opts.scbar && el === 'sl') {
             core.eHandlers.push(eventHandler(core.trk, "touchstart", function (event) {
-                touchStart(event);
+                touchStartTrack(event);
             }));
             core.eHandlers.push(eventHandler(core.trk, "touchmove", function (event) {
-                touchMove(event);
+                touchMoveTrack(event);
             }));
-            core.eHandlers.push(eventHandler(core.trk, "touchend", function (e) {
-                touchEnd(e);
+            core.eHandlers.push(eventHandler(core.trk, "touchend", function (event) {
+                touchEndTrack(event);
             }));
             core.eHandlers.push(eventHandler(core.trk, "mousedown", function (event) {
-                touchStart(event);
+                touchStartTrack(event);
             }));
-            core.eHandlers.push(eventHandler(core.trk, "mouseup", function (e) {
-                touchEnd(e);
+            core.eHandlers.push(eventHandler(core.trk, "mouseup", function (event) {
+                touchEndTrack(event);
             }));
-            core.eHandlers.push(eventHandler(core.trk, "mouseleave", function (e) {
-                touchEnd(e);
+            core.eHandlers.push(eventHandler(core.trk, "mouseleave", function (event) {
+                touchEndTrack(event);
             }));
             core.eHandlers.push(eventHandler(core.trk, "mousemove", function (event) {
-                touchMove(event);
+                touchMoveTrack(event);
+            }));
+        }
+        if (core.opts.scbar && core.scbarB && el === 'sb') {
+            core.eHandlers.push(eventHandler(core.scbarB, "touchstart", function (event) {
+                touchStartScb(event);
+            }));
+            core.eHandlers.push(eventHandler(core.scbarB, "touchmove", function (event) {
+                touchMoveScb(event);
+            }));
+            core.eHandlers.push(eventHandler(core.scbarB, "touchend", function (event) {
+                touchEndScb(event);
+            }));
+            core.eHandlers.push(eventHandler(core.scbarB, "mousedown", function (event) {
+                touchStartScb(event);
+            }));
+            core.eHandlers.push(eventHandler(core.scbarB, "mouseup", function (event) {
+                touchEndScb(event);
+            }));
+            core.eHandlers.push(eventHandler(core.scbarB, "mouseleave", function (event) {
+                touchEndScb(event);
+            }));
+            core.eHandlers.push(eventHandler(core.scbarB, "mousemove", function (event) {
+                touchMoveScb(event);
             }));
         }
     };
@@ -1228,14 +1342,17 @@ var Carouzel;
                     (core.trkO.scrollLeft /
                         (core.trk.clientWidth - core.trkO.clientWidth)) *
                         core.scbarT.clientWidth;
-                core.scbarB.style.left = transformVal + "px";
+                core.scbarB.style.transform = "translateX(".concat(transformVal, "px)");
                 transformVal = null;
             }
         };
-        if (core.opts.scbar) {
+        if (core.trkO) {
             core.eHandlers.push(eventHandler(core.trkO, "scroll", function () {
                 logTrackScroll();
             }));
+        }
+        if (core.scbarB) {
+            toggleTouchEvents(core, 'sb');
         }
     };
     /**
@@ -1476,6 +1593,9 @@ var Carouzel;
         _core.curp = root.querySelector("".concat(_Selectors.curp));
         _core.totp = root.querySelector("".concat(_Selectors.totp));
         _core.fLoad = true;
+        if ((settings.syncWith || "").length > 0) {
+            _core.sync = settings.syncWith;
+        }
         if (_core.opts.rtl) {
             _core.root.setAttribute(_Selectors.rtl.slice(1, -1), "true");
         }
@@ -1496,7 +1616,7 @@ var Carouzel;
                 generateElements(_core);
                 generateScrollbar(_core);
                 toggleControlButtons(_core);
-                toggleTouchEvents(_core);
+                toggleTouchEvents(_core, 'sl');
                 applyLayout(_core);
             }
         }

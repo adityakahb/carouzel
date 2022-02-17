@@ -122,9 +122,6 @@
   padding: 0;
   width: 100%;
 }
-[data-carouzel] [data-carouzel-navigation] {
-  flex-wrap: wrap;
-}
 [data-carouzel] [data-carouzel-navigationwrapper],
 [data-carouzel] [data-carouzel-pageinfo] {
   margin: 1em 0;
