@@ -3,8 +3,7 @@ const cleanCSS = require(`gulp-clean-css`);
 const fileinclude = require(`gulp-file-include`);
 const gulp = require(`gulp`);
 const gulpCopy = require('gulp-copy');
-// const jest = require('gulp-jest').default;
-const jest = require('jest-cli');
+const jest = require('gulp-jest').default;
 const rename = require(`gulp-rename`);
 const sass = require(`gulp-sass`)(require(`sass`));
 const sourcemaps = require(`gulp-sourcemaps`);
@@ -131,19 +130,9 @@ gulp.task(`copy-for-test`, function () {
     .pipe(gulp.dest('./tests/resources'));
 });
 
-async function testJS() {
-  const testResults = await jest.runCLI({ json: false }, ['./tests']);
-  const { results } = testResults;
-  const isTestFailed = !results.success;
-  if (isTestFailed) {
-    console.log('You have some failed test cases, kindly fix');
-    process.exit(); // Breaks Gulp Pipe
-  }
-}
-
 gulp.task(
   `test`,
   gulp.series('copy-for-test', 'browserSync-for-test', function () {
-    return gulp.src('./tests').pipe(jest());
+    return gulp.src('tests').pipe(jest({ ...jestconfig }));
   })
 );

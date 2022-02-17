@@ -13,4 +13,5 @@ module.exports = {
   roots: ['tests'],
   setupFilesAfterEnv: ['jest-puppeteer-istanbul/lib/setup'],
   verbose: true,
+  testURL: 'http://localhost:3001',
 };
