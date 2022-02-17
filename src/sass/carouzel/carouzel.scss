@@ -102,6 +102,9 @@ $timeInMilliseconds: 250ms;
   [data-carouzel-nextarrow] {
     right: -48px;
   }
+  [data-carouzel-navigation] {
+    flex-wrap: wrap;
+  }
   [data-carouzel-navigation],
   [data-carouzel-pageinfo] {
     align-items: center;

@@ -50,6 +50,7 @@
 #__carouzel_10[data-carouzel] {
   [data-carouzel-navigation] {
     flex-direction: column;
+    flex-wrap: nowrap;
     @media (min-width: 1024px) {
       flex-direction: row;
     }

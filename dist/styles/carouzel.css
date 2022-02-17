@@ -112,6 +112,9 @@
 [data-carouzel] [data-carouzel-nextarrow] {
   right: -48px;
 }
+[data-carouzel] [data-carouzel-navigation] {
+  flex-wrap: wrap;
+}
 [data-carouzel] [data-carouzel-navigation],
 [data-carouzel] [data-carouzel-pageinfo] {
   align-items: center;

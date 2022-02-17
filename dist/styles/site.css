@@ -12163,6 +12163,7 @@ h4, .h4 {
 
 #__carouzel_10[data-carouzel] [data-carouzel-navigation] {
   flex-direction: column;
+  flex-wrap: nowrap;
 }
 @media (min-width: 1024px) {
   #__carouzel_10[data-carouzel] [data-carouzel-navigation] {
