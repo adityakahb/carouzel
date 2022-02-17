@@ -122,13 +122,16 @@
   padding: 0;
   width: 100%;
 }
+[data-carouzel] [data-carouzel-navigation] {
+  flex-wrap: wrap;
+}
 [data-carouzel] [data-carouzel-navigationwrapper],
 [data-carouzel] [data-carouzel-pageinfo] {
   margin: 1em 0;
 }
 [data-carouzel] [data-carouzel-dot] {
   display: inline-flex;
-  margin: 0 2.5px;
+  margin: 2.5px;
 }
 [data-carouzel] [data-carouzel-dot] > button {
   background-color: #fff;
@@ -206,6 +209,7 @@
   border: 1px solid rgba(0, 0, 0, 0.25);
   font-size: 0;
   height: 40px;
+  left: 0;
   margin: 0;
   padding: 0;
   position: absolute;

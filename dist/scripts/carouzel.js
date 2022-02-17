@@ -732,15 +732,17 @@ var Carouzel;
                 core.totp.innerHTML = "".concat(bpoptions.dots.length);
             }
         }
-        if (core.opts.scbar && core.scbarB && core.scbarT && core.trkO) {
-            core.scbarT.style.width =
-                core.trkO.clientWidth -
-                    toFixed4(core.trkO.clientWidth / core._as.length) +
-                    "px";
-            core.scbarT.style.marginRight =
-                toFixed4(core.trkO.clientWidth / core._as.length) + "px";
-            core.scbarB.style.width =
-                toFixed4(core.trkO.clientWidth / core._as.length) + "px";
+        if (core.opts.scbar &&
+            core.scbarB &&
+            core.scbarT &&
+            core.trkO &&
+            core.trk) {
+            transformVal =
+                (core.trkO.clientWidth / core.trk.clientWidth) * core.trkO.clientWidth;
+            core.scbarT.style.width = core.trkO.clientWidth - transformVal + "px";
+            core.scbarT.style.marginRight = transformVal + "px";
+            core.scbarB.style.width = transformVal + "px";
+            transformVal = null;
         }
         else {
             animateTrack(core, 0);
@@ -1221,13 +1223,14 @@ var Carouzel;
             core.root.setAttribute(_Selectors.scbar.slice(1, -1), "true");
         }
         var logTrackScroll = function () {
-            // if (core.trkO && core.scbarT && core.scbarB) {
-            //   console.log(
-            //     '==========core.trkO',
-            //     (core.trkO.scrollLeft / core.scbarT.clientWidth) *
-            //       core.scbarB.clientWidth
-            //   );
-            // }
+            if (core.trkO && core.scbarT && core.scbarB && core.trk) {
+                transformVal =
+                    (core.trkO.scrollLeft /
+                        (core.trk.clientWidth - core.trkO.clientWidth)) *
+                        core.scbarT.clientWidth;
+                core.scbarB.style.left = transformVal + "px";
+                transformVal = null;
+            }
         };
         if (core.opts.scbar) {
             core.eHandlers.push(eventHandler(core.trkO, "scroll", function () {

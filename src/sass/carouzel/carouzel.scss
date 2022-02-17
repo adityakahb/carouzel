@@ -112,13 +112,16 @@ $timeInMilliseconds: 250ms;
     padding: 0;
     width: 100%;
   }
+  [data-carouzel-navigation] {
+    flex-wrap: wrap;
+  }
   [data-carouzel-navigationwrapper],
   [data-carouzel-pageinfo] {
     margin: 1em 0;
   }
   [data-carouzel-dot] {
     display: inline-flex;
-    margin: 0 2.5px;
+    margin: 2.5px;
     > button {
       background-color: #fff;
       border-radius: 100%;
@@ -213,6 +216,7 @@ $timeInMilliseconds: 250ms;
       border: 1px solid rgba(#000, 0.25);
       font-size: 0;
       height: 40px;
+      left: 0;
       margin: 0;
       padding: 0;
       position: absolute;
