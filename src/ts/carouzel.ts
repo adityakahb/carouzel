@@ -196,6 +196,7 @@ namespace Carouzel {
   let windowResizeAny: any;
   let hashSlide: HTMLElement | null;
   let transformVal: number | null;
+  let extraSlideCount: number | null;
   let newCi: number | null;
   let newPi: number | null;
 
@@ -714,12 +715,22 @@ namespace Carouzel {
       );
       core._t.progress = core._t.progress > 1 ? 1 : core._t.progress;
       for (let i = 0; i < core._as.length; i++) {
-        if (newPi !== null && i >= newPi && i < newPi + core.bpo._2Show) {
-          (core._as[i + core.bpo._2Show] as HTMLElement).style.opacity =
+        if (
+          extraSlideCount !== null &&
+          newPi !== null &&
+          i >= newPi &&
+          i < newPi + core.bpo._2Show
+        ) {
+          (core._as[i + extraSlideCount] as HTMLElement).style.opacity =
             `` + (1 - core._t.progress);
         }
-        if (newCi !== null && i >= newCi && i < newCi + core.bpo._2Show) {
-          (core._as[i + core.bpo._2Show] as HTMLElement).style.opacity =
+        if (
+          extraSlideCount !== null &&
+          newCi !== null &&
+          i >= newCi &&
+          i < newCi + core.bpo._2Show
+        ) {
+          (core._as[i + extraSlideCount] as HTMLElement).style.opacity =
             `` + core._t.progress;
         }
       }
@@ -729,13 +740,18 @@ namespace Carouzel {
       } else {
         postAnimation();
         for (let i = 0; i < core._as.length; i++) {
-          if (newPi !== null && i >= newPi && i < newPi + core.bpo._2Show) {
-            if (core._as[i + core.bpo._2Show]) {
+          if (
+            extraSlideCount !== null &&
+            newPi !== null &&
+            i >= newPi &&
+            i < newPi + core.bpo._2Show
+          ) {
+            if (core._as[i + extraSlideCount]) {
               (
-                core._as[i + core.bpo._2Show] as HTMLElement
+                core._as[i + extraSlideCount] as HTMLElement
               ).style.transform = `translate3d(0, 0, 0)`;
               (
-                core._as[i + core.bpo._2Show] as HTMLElement
+                core._as[i + extraSlideCount] as HTMLElement
               ).style.visibility = `hidden`;
             }
           }
@@ -744,7 +760,7 @@ namespace Carouzel {
     };
 
     if (core.opts.effect === _animationEffects[1] && core.trk && !core.fLoad) {
-      transformVal = newCi = newPi = null;
+      extraSlideCount = transformVal = newCi = newPi = null;
       for (let i = 0; i < core._as.length; i++) {
         (core._as[i] as HTMLElement).style.visibility = `hidden`;
         (core._as[i] as HTMLElement).style.opacity = `0`;
@@ -757,31 +773,31 @@ namespace Carouzel {
       newCi = core.ci < 0 ? core.sLen + core.ci : core.ci;
       newPi = core.pi < 0 ? core.sLen + core.pi : core.pi;
 
+      extraSlideCount = core.opts.inf ? core.bpo._2Show : 0;
       transformVal =
         newCi > newPi
-          ? Math.abs(newCi - newPi - core.bpo._2Show)
-          : Math.abs(newPi - newCi - core.bpo._2Show);
-
+          ? Math.abs(newCi - newPi - extraSlideCount)
+          : Math.abs(newPi - newCi - extraSlideCount);
       transformVal =
         newCi > newPi ? core.pts[transformVal] : -core.pts[transformVal];
 
       for (let i = 0; i < core._as.length; i++) {
         if (i >= newPi && i < newPi + core.bpo._2Show) {
-          if (core._as[i + core.bpo._2Show]) {
-            (core._as[i + core.bpo._2Show] as HTMLElement).style.transform =
+          if (core._as[i + extraSlideCount]) {
+            (core._as[i + extraSlideCount] as HTMLElement).style.transform =
               core.opts.ver
                 ? `translate3d(0, ${transformVal - core.bpo.gutr}px, 0)`
                 : `translate3d(${transformVal - core.bpo.gutr}px, 0, 0)`;
             (
-              core._as[i + core.bpo._2Show] as HTMLElement
+              core._as[i + extraSlideCount] as HTMLElement
             ).style.visibility = `visible`;
-            (core._as[i + core.bpo._2Show] as HTMLElement).style.opacity = `1`;
+            (core._as[i + extraSlideCount] as HTMLElement).style.opacity = `1`;
           }
         }
         if (i >= newCi && i < newCi + core.bpo._2Show) {
-          if (core._as[i + core.bpo._2Show]) {
+          if (core._as[i + extraSlideCount]) {
             (
-              core._as[i + core.bpo._2Show] as HTMLElement
+              core._as[i + extraSlideCount] as HTMLElement
             ).style.visibility = `visible`;
           }
         }

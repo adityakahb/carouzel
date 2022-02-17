@@ -27,6 +27,7 @@ var Carouzel;
     var windowResizeAny;
     var hashSlide;
     var transformVal;
+    var extraSlideCount;
     var newCi;
     var newPi;
     /*
@@ -491,12 +492,18 @@ var Carouzel;
             core._t.progress = _easingFunctions[core.opts.easeFn](core._t.elapsed / core._t.total);
             core._t.progress = core._t.progress > 1 ? 1 : core._t.progress;
             for (var i = 0; i < core._as.length; i++) {
-                if (newPi !== null && i >= newPi && i < newPi + core.bpo._2Show) {
-                    core._as[i + core.bpo._2Show].style.opacity =
+                if (extraSlideCount !== null &&
+                    newPi !== null &&
+                    i >= newPi &&
+                    i < newPi + core.bpo._2Show) {
+                    core._as[i + extraSlideCount].style.opacity =
                         "" + (1 - core._t.progress);
                 }
-                if (newCi !== null && i >= newCi && i < newCi + core.bpo._2Show) {
-                    core._as[i + core.bpo._2Show].style.opacity =
+                if (extraSlideCount !== null &&
+                    newCi !== null &&
+                    i >= newCi &&
+                    i < newCi + core.bpo._2Show) {
+                    core._as[i + extraSlideCount].style.opacity =
                         "" + core._t.progress;
                 }
             }
@@ -506,17 +513,20 @@ var Carouzel;
             else {
                 postAnimation();
                 for (var i = 0; i < core._as.length; i++) {
-                    if (newPi !== null && i >= newPi && i < newPi + core.bpo._2Show) {
-                        if (core._as[i + core.bpo._2Show]) {
-                            core._as[i + core.bpo._2Show].style.transform = "translate3d(0, 0, 0)";
-                            core._as[i + core.bpo._2Show].style.visibility = "hidden";
+                    if (extraSlideCount !== null &&
+                        newPi !== null &&
+                        i >= newPi &&
+                        i < newPi + core.bpo._2Show) {
+                        if (core._as[i + extraSlideCount]) {
+                            core._as[i + extraSlideCount].style.transform = "translate3d(0, 0, 0)";
+                            core._as[i + extraSlideCount].style.visibility = "hidden";
                         }
                     }
                 }
             }
         };
         if (core.opts.effect === _animationEffects[1] && core.trk && !core.fLoad) {
-            transformVal = newCi = newPi = null;
+            extraSlideCount = transformVal = newCi = newPi = null;
             for (var i = 0; i < core._as.length; i++) {
                 core._as[i].style.visibility = "hidden";
                 core._as[i].style.opacity = "0";
@@ -527,26 +537,27 @@ var Carouzel;
                 : "translate3d(".concat(-core._t.nextX, "px, 0, 0)");
             newCi = core.ci < 0 ? core.sLen + core.ci : core.ci;
             newPi = core.pi < 0 ? core.sLen + core.pi : core.pi;
+            extraSlideCount = core.opts.inf ? core.bpo._2Show : 0;
             transformVal =
                 newCi > newPi
-                    ? Math.abs(newCi - newPi - core.bpo._2Show)
-                    : Math.abs(newPi - newCi - core.bpo._2Show);
+                    ? Math.abs(newCi - newPi - extraSlideCount)
+                    : Math.abs(newPi - newCi - extraSlideCount);
             transformVal =
                 newCi > newPi ? core.pts[transformVal] : -core.pts[transformVal];
             for (var i = 0; i < core._as.length; i++) {
                 if (i >= newPi && i < newPi + core.bpo._2Show) {
-                    if (core._as[i + core.bpo._2Show]) {
-                        core._as[i + core.bpo._2Show].style.transform =
+                    if (core._as[i + extraSlideCount]) {
+                        core._as[i + extraSlideCount].style.transform =
                             core.opts.ver
                                 ? "translate3d(0, ".concat(transformVal - core.bpo.gutr, "px, 0)")
                                 : "translate3d(".concat(transformVal - core.bpo.gutr, "px, 0, 0)");
-                        core._as[i + core.bpo._2Show].style.visibility = "visible";
-                        core._as[i + core.bpo._2Show].style.opacity = "1";
+                        core._as[i + extraSlideCount].style.visibility = "visible";
+                        core._as[i + extraSlideCount].style.opacity = "1";
                     }
                 }
                 if (i >= newCi && i < newCi + core.bpo._2Show) {
-                    if (core._as[i + core.bpo._2Show]) {
-                        core._as[i + core.bpo._2Show].style.visibility = "visible";
+                    if (core._as[i + extraSlideCount]) {
+                        core._as[i + extraSlideCount].style.visibility = "visible";
                     }
                 }
             }

@@ -57,7 +57,6 @@ var loadIO = function () {
   __carouzel_instance.init('#__carouzel_4', {
     slidesToShow: 1,
     animationEffect: 'fade',
-    speed: 500,
     breakpoints: [
       {
         minWidth: 700,
