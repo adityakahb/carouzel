@@ -1201,7 +1201,6 @@ var Carouzel;
                     ratioX !== Infinity &&
                     ratioX !== ratioY) {
                     if (core.scbarB && core.scbarT) {
-                        console.log('===========-diffX', -diffX);
                         core.scbarB.style.transform = "translateX(".concat(-diffX, "px)");
                     }
                 }

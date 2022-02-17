@@ -1499,8 +1499,6 @@ namespace Carouzel {
           ratioX !== ratioY
         ) {
           if (core.scbarB && core.scbarT) {
-            console.log('===========-diffX', -diffX);
-
             core.scbarB.style.transform = `translateX(${-diffX}px)`;
           }
         }
