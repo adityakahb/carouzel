@@ -1,16 +1,16 @@
 const browserSync = require(`browser-sync`).create();
 const cleanCSS = require(`gulp-clean-css`);
+const closureCompiler = require('google-closure-compiler').gulp();
 const fileinclude = require(`gulp-file-include`);
 const gulp = require(`gulp`);
 const gulpCopy = require('gulp-copy');
 const jest = require('gulp-jest').default;
+const jestconfig = require(`./jest.config`);
 const rename = require(`gulp-rename`);
 const sass = require(`gulp-sass`)(require(`sass`));
 const sourcemaps = require(`gulp-sourcemaps`);
 const ts = require(`gulp-typescript`);
 const tsProject = ts.createProject(`tsconfig.json`);
-const uglify = require(`gulp-uglify`);
-const jestconfig = require(`./jest.config`);
 
 gulp.task(`sass-carouzel`, function () {
   return gulp
@@ -43,10 +43,23 @@ gulp.task(`minify-css`, () => {
 
 gulp.task(`uglifyjs`, function () {
   return gulp
-    .src(`./dist/scripts/carouzel.js`)
-    .pipe(uglify())
-    .pipe(rename({ suffix: `.min` }))
-    .pipe(gulp.dest(`./dist/scripts`));
+    .src('./dist/scripts/carouzel.js', { base: './' })
+    .pipe(
+      closureCompiler(
+        {
+          compilation_level: 'SIMPLE',
+          warning_level: 'VERBOSE',
+          language_in: 'ECMASCRIPT3',
+          language_out: 'ECMASCRIPT3',
+          output_wrapper: '(function(){\n%output%\n}).call(this)',
+          js_output_file: 'carouzel.min.js',
+        },
+        {
+          platform: ['native', 'java', 'javascript'],
+        }
+      )
+    )
+    .pipe(gulp.dest('./dist/scripts'));
 });
 
 gulp.task(`typescript`, function () {
