@@ -316,6 +316,24 @@ var loadIO = function () {
       },
     ],
   });
+  __carouzel_instance.init('#__carouzel_20', {
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    animationEffect: 'slide',
+    startAtIndex: 4,
+    breakpoints: [
+      {
+        minWidth: 700,
+        slidesToShow: 2,
+        slidesToScroll: 2,
+      },
+      {
+        minWidth: 1100,
+        slidesToShow: 3,
+        slidesToScroll: 3,
+      },
+    ],
+  });
   var navlinks = document.querySelectorAll('#topnav li a');
   for (var k = 0; k < navlinks.length; k++) {
     navlinks[k].addEventListener('click', function (event) {

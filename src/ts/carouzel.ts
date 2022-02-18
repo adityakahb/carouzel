@@ -197,6 +197,7 @@ namespace Carouzel {
   let hashSlide: HTMLElement | null;
   let transformVal: number | null;
   let extraSlideCount: number | null;
+  let transformBuffer: number | null;
   let newCi: number | null;
   let newPi: number | null;
 
@@ -246,7 +247,7 @@ namespace Carouzel {
   };
 
   const _animationDirections = [`previous`, `next`];
-  const _animationEffects = [`scroll`, `fade`];
+  const _animationEffects = [`scroll`, `fade`, `slide`];
   const _rootSelectorTypeError = `Element(s) with the provided query do(es) not exist`;
   const _optionsParseTypeError = `Unable to parse the options string`;
   const _duplicateBreakpointsTypeError = `Duplicate breakpoints found`;
@@ -571,6 +572,288 @@ namespace Carouzel {
     }
   };
 
+  const proceedWithAnimation = {
+    /**
+     * Local function to perform post operations after slide animation
+     *
+     */
+    _post: (core: ICore) => {
+      if (core.ci >= core.sLen) {
+        core.ci = core.sLen - core.ci;
+      }
+      if (core.ci < 0) {
+        core.ci = core.sLen + core.ci;
+      }
+      if (core.trk) {
+        core.trk.style.transform = core.opts.ver
+          ? `translate3d(0, ${-core.pts[core.ci]}px, 0)`
+          : `translate3d(${-core.pts[core.ci]}px, 0, 0)`;
+      }
+      core.ct = -core._t.nextX;
+      // updateAttributes(core);
+      manageActiveSlides(core);
+      if (core.opts._urlH && core.root) {
+        hashSlide = core.root.querySelector(`.${core.opts.activeCls}`);
+        if (hashSlide && window?.location) {
+          window.location.hash = hashSlide.getAttribute(`id`) || ``;
+        }
+        hashSlide = null;
+      }
+      if (typeof core.opts.aFn === `function`) {
+        core.opts.aFn();
+      }
+    },
+
+    /**
+     * Local function to perform scroll animation
+     *
+     */
+    scroll: (core: ICore, touchedPixel: number) => {
+      const scrollThisTrack = (now: number) => {
+        core._t.elapsed = now - core._t.start;
+        core._t.progress = _easingFunctions[core.opts.easeFn](
+          core._t.elapsed / core._t.total
+        );
+
+        if (core.ci > core.pi) {
+          core._t.position =
+            core._t.prevX +
+            (touchedPixel ? touchedPixel : 0) +
+            core._t.progress * (core._t.nextX - core._t.prevX);
+          if (core._t.position > core._t.nextX) {
+            core._t.position = core._t.nextX;
+          }
+        }
+        if (core.ci < core.pi) {
+          core._t.position =
+            core._t.prevX +
+            (touchedPixel ? touchedPixel : 0) -
+            core._t.progress * (core._t.prevX - core._t.nextX);
+          if (core._t.position < core.pts[core.ci]) {
+            core._t.position = core.pts[core.ci];
+          }
+        }
+
+        if (core._t.position && core.trk) {
+          core._t.position = Math.round(core._t.position);
+          core.trk.style.transform = core.opts.ver
+            ? `translate3d(0, ${-core._t.position}px, 0)`
+            : `translate3d(${-core._t.position}px, 0, 0)`;
+        }
+        if (core._t.progress < 1 && core._t.position !== core.pts[core.ci]) {
+          core._t.id = requestAnimationFrame(scrollThisTrack);
+        } else {
+          // postAnimation();
+          proceedWithAnimation._post(core);
+        }
+      };
+      if (core._t.start && core._t.total && core.ci !== core.pi) {
+        core._t.id = requestAnimationFrame(scrollThisTrack);
+      }
+    },
+
+    /**
+     * Local function to perform fade animation
+     *
+     */
+    fade: (core: ICore) => {
+      const fadeThisTrack = (now: number) => {
+        core._t.elapsed = now - core._t.start;
+        core._t.progress = _easingFunctions[core.opts.easeFn](
+          core._t.elapsed / core._t.total
+        );
+        core._t.progress = core._t.progress > 1 ? 1 : core._t.progress;
+        for (let i = 0; i < core._as.length; i++) {
+          if (
+            extraSlideCount !== null &&
+            newPi !== null &&
+            i >= newPi &&
+            i < newPi + core.bpo._2Show
+          ) {
+            (core._as[i + extraSlideCount] as HTMLElement).style.opacity =
+              `` + (1 - core._t.progress);
+          }
+          if (
+            extraSlideCount !== null &&
+            newCi !== null &&
+            i >= newCi &&
+            i < newCi + core.bpo._2Show
+          ) {
+            (core._as[i + extraSlideCount] as HTMLElement).style.opacity =
+              `` + core._t.progress;
+          }
+        }
+
+        if (core._t.progress < 1) {
+          core._t.id = requestAnimationFrame(fadeThisTrack);
+        } else {
+          // postAnimation();
+          proceedWithAnimation._post(core);
+          if (newPi !== null && extraSlideCount !== null) {
+            for (let i = 0; i >= newPi && i < newPi + core.bpo._2Show; i++) {
+              if (core._as[i + extraSlideCount]) {
+                (
+                  core._as[i + extraSlideCount] as HTMLElement
+                ).style.transform = `translate3d(0, 0, 0)`;
+                (
+                  core._as[i + extraSlideCount] as HTMLElement
+                ).style.visibility = `hidden`;
+              }
+            }
+          }
+        }
+      };
+
+      if (core.trk) {
+        extraSlideCount = transformVal = newCi = newPi = null;
+        for (let i = 0; i < core._as.length; i++) {
+          (core._as[i] as HTMLElement).style.visibility = `hidden`;
+          (core._as[i] as HTMLElement).style.opacity = `0`;
+          (core._as[i] as HTMLElement).style.transform = `translate3d(0, 0, 0)`;
+        }
+        core.trk.style.transform = core.opts.ver
+          ? `translate3d(0, ${-core._t.nextX}px, 0)`
+          : `translate3d(${-core._t.nextX}px, 0, 0)`;
+
+        newCi = core.ci < 0 ? core.sLen + core.ci : core.ci;
+        newPi = core.pi < 0 ? core.sLen + core.pi : core.pi;
+
+        extraSlideCount = core.opts.inf ? core.bpo._2Show : 0;
+        transformVal =
+          newCi > newPi
+            ? Math.abs(newCi - newPi - extraSlideCount)
+            : Math.abs(newPi - newCi - extraSlideCount);
+        transformVal =
+          newCi > newPi ? core.pts[transformVal] : -core.pts[transformVal];
+
+        for (let i = 0; i < core._as.length; i++) {
+          if (i >= newPi && i < newPi + core.bpo._2Show) {
+            if (core._as[i + extraSlideCount]) {
+              (core._as[i + extraSlideCount] as HTMLElement).style.transform =
+                core.opts.ver
+                  ? `translate3d(0, ${transformVal - core.bpo.gutr}px, 0)`
+                  : `translate3d(${transformVal - core.bpo.gutr}px, 0, 0)`;
+              (
+                core._as[i + extraSlideCount] as HTMLElement
+              ).style.visibility = `visible`;
+              (
+                core._as[i + extraSlideCount] as HTMLElement
+              ).style.opacity = `1`;
+            }
+          }
+          if (i >= newCi && i < newCi + core.bpo._2Show) {
+            if (core._as[i + extraSlideCount]) {
+              (
+                core._as[i + extraSlideCount] as HTMLElement
+              ).style.visibility = `visible`;
+            }
+          }
+        }
+        if (core._t.start && core._t.total && core.ci !== core.pi) {
+          core._t.id = requestAnimationFrame(fadeThisTrack);
+        }
+      }
+    },
+    /**
+     * Local function to perform slide animation
+     *
+     */
+    slide: (core: ICore, touchedPixel: number) => {
+      const slideThisTrack = (now: number) => {
+        core._t.elapsed = now - core._t.start;
+        core._t.progress = _easingFunctions[core.opts.easeFn](
+          core._t.elapsed / core._t.total
+        );
+
+        if (core.ci > core.pi) {
+          core._t.position =
+            core._t.prevX +
+            (touchedPixel ? touchedPixel : 0) +
+            core._t.progress * (core._t.nextX - core._t.prevX);
+          if (core._t.position > core._t.nextX) {
+            core._t.position = core._t.nextX;
+          }
+        }
+        if (core.ci < core.pi) {
+          core._t.position =
+            core._t.prevX +
+            (touchedPixel ? touchedPixel : 0) -
+            core._t.progress * (core._t.prevX - core._t.nextX);
+          if (core._t.position < core.pts[core.ci]) {
+            core._t.position = core.pts[core.ci];
+          }
+        }
+
+        if (
+          core._t.position &&
+          core.trk &&
+          newPi !== null &&
+          newCi !== null &&
+          extraSlideCount !== null &&
+          transformVal !== null
+        ) {
+          core._t.position = Math.round(core._t.position);
+          transformBuffer = core._t.position - core.bpo._2Show * core.sWid;
+
+          for (let i = 0; i >= newPi && i < newPi + core.bpo._2Show; i++) {
+            if (core._as[i + extraSlideCount]) {
+              (core._as[i + extraSlideCount] as HTMLElement).style.transform =
+                core.opts.ver
+                  ? `translate3d(0, ${transformBuffer}px, 3px)`
+                  : `translate3d(${transformBuffer}px, 0, 3px)`;
+            }
+          }
+          core.trk.style.transform = core.opts.ver
+            ? `translate3d(0, ${-core._t.position}px, 0)`
+            : `translate3d(${-core._t.position}px, 0, 0)`;
+        }
+        if (core._t.progress < 1 && core._t.position !== core.pts[core.ci]) {
+          core._t.id = requestAnimationFrame(slideThisTrack);
+        } else {
+          // postAnimation();
+          proceedWithAnimation._post(core);
+          for (let i = 0; i < core._as.length; i++) {
+            (
+              core._as[i] as HTMLElement
+            ).style.transform = `translate3d(0, 0, 0)`;
+          }
+        }
+      };
+      if (core.trk) {
+        extraSlideCount = transformVal = newCi = newPi = transformBuffer = null;
+        for (let i = 0; i < core._as.length; i++) {
+          (core._as[i] as HTMLElement).style.transform = core.opts.ver
+            ? `translate3d(0, 0, 5px)`
+            : `translate3d(0, 0, 5px)`;
+        }
+        newCi = core.ci < 0 ? core.sLen + core.ci : core.ci;
+        newPi = core.pi < 0 ? core.sLen + core.pi : core.pi;
+
+        extraSlideCount = core.opts.inf ? core.bpo._2Show : 0;
+        transformVal =
+          newCi > newPi
+            ? Math.abs(newCi - newPi - extraSlideCount)
+            : Math.abs(newPi - newCi - extraSlideCount);
+        transformVal =
+          newCi > newPi ? -core.pts[transformVal] : core.pts[transformVal];
+
+        for (let i = 0; i < core._as.length; i++) {
+          if (i >= newPi && i < newPi + core.bpo._2Show) {
+            if (core._as[i + extraSlideCount]) {
+              (core._as[i + extraSlideCount] as HTMLElement).style.transform =
+                core.opts.ver
+                  ? `translate3d(0, 0, 3px)`
+                  : `translate3d(0, 0, 3px)`;
+            }
+          }
+        }
+        if (core._t.start && core._t.total && core.ci !== core.pi) {
+          core._t.id = requestAnimationFrame(slideThisTrack);
+        }
+      }
+    },
+  };
+
   /**
    * Function to animate the track element based on the calculations
    *
@@ -621,190 +904,24 @@ namespace Carouzel {
     core._t.prevX = core.pts[core.pi];
     core._t.nextX = core.pts[core.ci];
 
-    if (core.opts.effect === _animationEffects[1] && core.ci < 0) {
+    if (
+      (core.opts.effect === _animationEffects[1] ||
+        core.opts.effect === _animationEffects[2]) &&
+      core.ci < 0
+    ) {
       core._t.nextX = core.pts[core.sLen + core.ci];
     }
 
-    /**
-     * Local function to perform post operations after slide animation
-     *
-     */
-    const postAnimation = () => {
-      if (core.ci >= core.sLen) {
-        core.ci = core.sLen - core.ci;
-      }
-      if (core.ci < 0) {
-        core.ci = core.sLen + core.ci;
-      }
-      if (core.trk) {
-        core.trk.style.transform = core.opts.ver
-          ? `translate3d(0, ${-core.pts[core.ci]}px, 0)`
-          : `translate3d(${-core.pts[core.ci]}px, 0, 0)`;
-      }
-      core.ct = -core._t.nextX;
-      // updateAttributes(core);
-      manageActiveSlides(core);
-      if (core.opts._urlH && core.root) {
-        hashSlide = core.root.querySelector(`.${core.opts.activeCls}`);
-        if (hashSlide && window?.location) {
-          window.location.hash = hashSlide.getAttribute(`id`) || ``;
-        }
-        hashSlide = null;
-      }
-      if (typeof core.opts.aFn === `function`) {
-        core.opts.aFn();
-      }
-    };
-
-    /**
-     * Local function to perform scroll animation
-     *
-     */
-    const scrollThisTrack = (now: number) => {
-      core._t.elapsed = now - core._t.start;
-      core._t.progress = _easingFunctions[core.opts.easeFn](
-        core._t.elapsed / core._t.total
-      );
-
-      if (core.ci > core.pi) {
-        core._t.position =
-          core._t.prevX +
-          (touchedPixel ? touchedPixel : 0) +
-          core._t.progress * (core._t.nextX - core._t.prevX);
-        if (core._t.position > core._t.nextX) {
-          core._t.position = core._t.nextX;
-        }
-      }
-      if (core.ci < core.pi) {
-        core._t.position =
-          core._t.prevX +
-          (touchedPixel ? touchedPixel : 0) -
-          core._t.progress * (core._t.prevX - core._t.nextX);
-        if (core._t.position < core.pts[core.ci]) {
-          core._t.position = core.pts[core.ci];
-        }
-      }
-
-      if (core._t.position && core.trk) {
-        core._t.position = Math.round(core._t.position);
-        core.trk.style.transform = core.opts.ver
-          ? `translate3d(0, ${-core._t.position}px, 0)`
-          : `translate3d(${-core._t.position}px, 0, 0)`;
-      }
-      if (core._t.progress < 1 && core._t.position !== core.pts[core.ci]) {
-        core._t.id = requestAnimationFrame(scrollThisTrack);
-      } else {
-        postAnimation();
-      }
-    };
-
     if (core.opts.effect === _animationEffects[0] && core.trk && !core.fLoad) {
-      if (core._t.start && core._t.total && core.ci !== core.pi) {
-        core._t.id = requestAnimationFrame(scrollThisTrack);
-      }
+      proceedWithAnimation.scroll(core, touchedPixel);
     }
 
-    /**
-     * Local function to perform fade animation
-     *
-     */
-    const fadeThisTrack = (now: number) => {
-      core._t.elapsed = now - core._t.start;
-      core._t.progress = _easingFunctions[core.opts.easeFn](
-        core._t.elapsed / core._t.total
-      );
-      core._t.progress = core._t.progress > 1 ? 1 : core._t.progress;
-      for (let i = 0; i < core._as.length; i++) {
-        if (
-          extraSlideCount !== null &&
-          newPi !== null &&
-          i >= newPi &&
-          i < newPi + core.bpo._2Show
-        ) {
-          (core._as[i + extraSlideCount] as HTMLElement).style.opacity =
-            `` + (1 - core._t.progress);
-        }
-        if (
-          extraSlideCount !== null &&
-          newCi !== null &&
-          i >= newCi &&
-          i < newCi + core.bpo._2Show
-        ) {
-          (core._as[i + extraSlideCount] as HTMLElement).style.opacity =
-            `` + core._t.progress;
-        }
-      }
-
-      if (core._t.progress < 1) {
-        core._t.id = requestAnimationFrame(fadeThisTrack);
-      } else {
-        postAnimation();
-        for (let i = 0; i < core._as.length; i++) {
-          if (
-            extraSlideCount !== null &&
-            newPi !== null &&
-            i >= newPi &&
-            i < newPi + core.bpo._2Show
-          ) {
-            if (core._as[i + extraSlideCount]) {
-              (
-                core._as[i + extraSlideCount] as HTMLElement
-              ).style.transform = `translate3d(0, 0, 0)`;
-              (
-                core._as[i + extraSlideCount] as HTMLElement
-              ).style.visibility = `hidden`;
-            }
-          }
-        }
-      }
-    };
-
     if (core.opts.effect === _animationEffects[1] && core.trk && !core.fLoad) {
-      extraSlideCount = transformVal = newCi = newPi = null;
-      for (let i = 0; i < core._as.length; i++) {
-        (core._as[i] as HTMLElement).style.visibility = `hidden`;
-        (core._as[i] as HTMLElement).style.opacity = `0`;
-        (core._as[i] as HTMLElement).style.transform = `translate3d(0, 0, 0)`;
-      }
-      core.trk.style.transform = core.opts.ver
-        ? `translate3d(0, ${-core._t.nextX}px, 0)`
-        : `translate3d(${-core._t.nextX}px, 0, 0)`;
+      proceedWithAnimation.fade(core);
+    }
 
-      newCi = core.ci < 0 ? core.sLen + core.ci : core.ci;
-      newPi = core.pi < 0 ? core.sLen + core.pi : core.pi;
-
-      extraSlideCount = core.opts.inf ? core.bpo._2Show : 0;
-      transformVal =
-        newCi > newPi
-          ? Math.abs(newCi - newPi - extraSlideCount)
-          : Math.abs(newPi - newCi - extraSlideCount);
-      transformVal =
-        newCi > newPi ? core.pts[transformVal] : -core.pts[transformVal];
-
-      for (let i = 0; i < core._as.length; i++) {
-        if (i >= newPi && i < newPi + core.bpo._2Show) {
-          if (core._as[i + extraSlideCount]) {
-            (core._as[i + extraSlideCount] as HTMLElement).style.transform =
-              core.opts.ver
-                ? `translate3d(0, ${transformVal - core.bpo.gutr}px, 0)`
-                : `translate3d(${transformVal - core.bpo.gutr}px, 0, 0)`;
-            (
-              core._as[i + extraSlideCount] as HTMLElement
-            ).style.visibility = `visible`;
-            (core._as[i + extraSlideCount] as HTMLElement).style.opacity = `1`;
-          }
-        }
-        if (i >= newCi && i < newCi + core.bpo._2Show) {
-          if (core._as[i + extraSlideCount]) {
-            (
-              core._as[i + extraSlideCount] as HTMLElement
-            ).style.visibility = `visible`;
-          }
-        }
-      }
-      if (core._t.start && core._t.total && core.ci !== core.pi) {
-        core._t.id = requestAnimationFrame(fadeThisTrack);
-      }
+    if (core.opts.effect === _animationEffects[2] && core.trk && !core.fLoad) {
+      proceedWithAnimation.slide(core, touchedPixel);
     }
   };
 
