@@ -320,7 +320,7 @@ var loadIO = function () {
     slidesToShow: 1,
     slidesToScroll: 1,
     animationEffect: 'slide',
-    startAtIndex: 4,
+    autoplay: true,
     breakpoints: [
       {
         minWidth: 700,

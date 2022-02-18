@@ -289,7 +289,7 @@ var Carouzel;
      */
     var manageActiveSlides = function (core) {
         var x = null;
-        for (var i = 0; i < core._as.length; i++) {
+        for (var i = 0; i < core.aLen; i++) {
             if (core._as[i]) {
                 removeClass(core._as[i], core.opts.activeCls);
                 core._as[i].setAttribute("aria-hidden", "true");
@@ -447,7 +447,7 @@ var Carouzel;
                 core._t.elapsed = now - core._t.start;
                 core._t.progress = _easingFunctions[core.opts.easeFn](core._t.elapsed / core._t.total);
                 core._t.progress = core._t.progress > 1 ? 1 : core._t.progress;
-                for (var i = 0; i < core._as.length; i++) {
+                for (var i = 0; i < core.aLen; i++) {
                     if (extraSlideCount !== null &&
                         newPi !== null &&
                         i >= newPi &&
@@ -470,8 +470,10 @@ var Carouzel;
                     // postAnimation();
                     proceedWithAnimation._post(core);
                     if (newPi !== null && extraSlideCount !== null) {
-                        for (var i = 0; i >= newPi && i < newPi + core.bpo._2Show; i++) {
-                            if (core._as[i + extraSlideCount]) {
+                        for (var i = 0; i < core.aLen; i++) {
+                            if (i >= newPi &&
+                                i < newPi + core.bpo._2Show &&
+                                core._as[i + extraSlideCount]) {
                                 core._as[i + extraSlideCount].style.transform = "translate3d(0, 0, 0)";
                                 core._as[i + extraSlideCount].style.visibility = "hidden";
                             }
@@ -481,7 +483,7 @@ var Carouzel;
             };
             if (core.trk) {
                 extraSlideCount = transformVal = newCi = newPi = null;
-                for (var i = 0; i < core._as.length; i++) {
+                for (var i = 0; i < core.aLen; i++) {
                     core._as[i].style.visibility = "hidden";
                     core._as[i].style.opacity = "0";
                     core._as[i].style.transform = "translate3d(0, 0, 0)";
@@ -498,21 +500,21 @@ var Carouzel;
                         : Math.abs(newPi - newCi - extraSlideCount);
                 transformVal =
                     newCi > newPi ? core.pts[transformVal] : -core.pts[transformVal];
-                for (var i = 0; i < core._as.length; i++) {
-                    if (i >= newPi && i < newPi + core.bpo._2Show) {
-                        if (core._as[i + extraSlideCount]) {
-                            core._as[i + extraSlideCount].style.transform =
-                                core.opts.ver
-                                    ? "translate3d(0, ".concat(transformVal - core.bpo.gutr, "px, 0)")
-                                    : "translate3d(".concat(transformVal - core.bpo.gutr, "px, 0, 0)");
-                            core._as[i + extraSlideCount].style.visibility = "visible";
-                            core._as[i + extraSlideCount].style.opacity = "1";
-                        }
+                for (var i = 0; i < core.aLen; i++) {
+                    if (i >= newPi &&
+                        i < newPi + core.bpo._2Show &&
+                        core._as[i + extraSlideCount]) {
+                        core._as[i + extraSlideCount].style.transform =
+                            core.opts.ver
+                                ? "translate3d(0, ".concat(transformVal - core.bpo.gutr, "px, 0)")
+                                : "translate3d(".concat(transformVal - core.bpo.gutr, "px, 0, 0)");
+                        core._as[i + extraSlideCount].style.visibility = "visible";
+                        core._as[i + extraSlideCount].style.opacity = "1";
                     }
-                    if (i >= newCi && i < newCi + core.bpo._2Show) {
-                        if (core._as[i + extraSlideCount]) {
-                            core._as[i + extraSlideCount].style.visibility = "visible";
-                        }
+                    if (i >= newCi &&
+                        i < newCi + core.bpo._2Show &&
+                        core._as[i + extraSlideCount]) {
+                        core._as[i + extraSlideCount].style.visibility = "visible";
                     }
                 }
                 if (core._t.start && core._t.total && core.ci !== core.pi) {
@@ -553,9 +555,11 @@ var Carouzel;
                     extraSlideCount !== null &&
                     transformVal !== null) {
                     core._t.position = Math.round(core._t.position);
-                    transformBuffer = core._t.position - core.bpo._2Show * core.sWid;
-                    for (var i = 0; i >= newPi && i < newPi + core.bpo._2Show; i++) {
-                        if (core._as[i + extraSlideCount]) {
+                    transformBuffer = core._t.position - core.pts[newPi];
+                    for (var i = 0; i < core.aLen; i++) {
+                        if (i >= newPi &&
+                            i < newPi + core.bpo._2Show &&
+                            core._as[i + extraSlideCount]) {
                             core._as[i + extraSlideCount].style.transform =
                                 core.opts.ver
                                     ? "translate3d(0, ".concat(transformBuffer, "px, 3px)")
@@ -572,14 +576,14 @@ var Carouzel;
                 else {
                     // postAnimation();
                     proceedWithAnimation._post(core);
-                    for (var i = 0; i < core._as.length; i++) {
+                    for (var i = 0; i < core.aLen; i++) {
                         core._as[i].style.transform = "translate3d(0, 0, 0)";
                     }
                 }
             };
             if (core.trk) {
                 extraSlideCount = transformVal = newCi = newPi = transformBuffer = null;
-                for (var i = 0; i < core._as.length; i++) {
+                for (var i = 0; i < core.aLen; i++) {
                     core._as[i].style.transform = core.opts.ver
                         ? "translate3d(0, 0, 5px)"
                         : "translate3d(0, 0, 5px)";
@@ -593,14 +597,14 @@ var Carouzel;
                         : Math.abs(newPi - newCi - extraSlideCount);
                 transformVal =
                     newCi > newPi ? -core.pts[transformVal] : core.pts[transformVal];
-                for (var i = 0; i < core._as.length; i++) {
-                    if (i >= newPi && i < newPi + core.bpo._2Show) {
-                        if (core._as[i + extraSlideCount]) {
-                            core._as[i + extraSlideCount].style.transform =
-                                core.opts.ver
-                                    ? "translate3d(0, 0, 3px)"
-                                    : "translate3d(0, 0, 3px)";
-                        }
+                for (var i = 0; i < core.aLen; i++) {
+                    if (i >= newPi &&
+                        i < newPi + core.bpo._2Show &&
+                        core._as[i + extraSlideCount]) {
+                        core._as[i + extraSlideCount].style.transform =
+                            core.opts.ver
+                                ? "translate3d(0, 0, 3px)"
+                                : "translate3d(0, 0, 3px)";
                     }
                 }
                 if (core._t.start && core._t.total && core.ci !== core.pi) {
@@ -783,6 +787,7 @@ var Carouzel;
             temp =
                 core.sLen >= bpoptions._2Show ? bpoptions.bpSLen : bpoptions._2Show;
             core._as = core.trkO.querySelectorAll(_Selectors.slide);
+            core.aLen = core._as.length;
             trkWidth = slideWidth * temp + bpoptions.gutr * (temp + 1);
             if (core.opts.ver) {
                 core.trk.style.height = toFixed4(trkWidth) + "px";
@@ -796,7 +801,7 @@ var Carouzel;
                     toFixed4(bpoptions._2Show * slideWidth +
                         bpoptions.gutr * (bpoptions._2Show - 1)) + "px";
             }
-            for (var i = 0; i < core._as.length; i++) {
+            for (var i = 0; i < core.aLen; i++) {
                 if (core.opts.ver) {
                     core._as[i].style.height =
                         toFixed4(slideWidth) + "px";
@@ -806,7 +811,7 @@ var Carouzel;
                         core._as[i].style.marginBottom =
                             toFixed4(bpoptions.gutr / 2) + "px";
                     }
-                    else if (i === core._as.length - 1) {
+                    else if (i === core.aLen - 1) {
                         core._as[i].style.marginTop =
                             toFixed4(bpoptions.gutr / 2) + "px";
                         core._as[i].style.marginBottom =
@@ -828,7 +833,7 @@ var Carouzel;
                         core._as[i].style.marginRight =
                             toFixed4(bpoptions.gutr / 2) + "px";
                     }
-                    else if (i === core._as.length - 1) {
+                    else if (i === core.aLen - 1) {
                         core._as[i].style.marginLeft =
                             toFixed4(bpoptions.gutr / 2) + "px";
                         core._as[i].style.marginRight =
@@ -1138,7 +1143,7 @@ var Carouzel;
                     }
                 }
                 if (core.trk && core.opts.effect === _animationEffects[1]) {
-                    for (var k = 0; k < core._as.length; k++) {
+                    for (var k = 0; k < core.aLen; k++) {
                         core._as[k].style.opacity = "1";
                     }
                 }
@@ -1182,7 +1187,7 @@ var Carouzel;
                         }
                         else if ((core.opts.ver ? diffY : diffX) < 0) {
                             if (Math.abs(core.ct) + core.sWid * core.bpo._2Show >=
-                                core.sWid * core._as.length) {
+                                core.sWid * core.aLen) {
                                 core.trk.style.transform = core.opts.ver
                                     ? "translate3d(0, ".concat(core.ct, "px, 0)")
                                     : "translate3d(".concat(core.ct, "px, 0, 0)");
@@ -1193,7 +1198,7 @@ var Carouzel;
                         }
                     }
                     if (core.opts.effect === _animationEffects[1]) {
-                        for (var k = 0; k < core._as.length; k++) {
+                        for (var k = 0; k < core.aLen; k++) {
                             core._as[k].style.opacity = "0";
                         }
                     }
@@ -1224,7 +1229,7 @@ var Carouzel;
                                 : "translate3d(".concat(core.ct, "px, 0, 0)");
                         }
                         if (core.opts.effect === _animationEffects[1]) {
-                            for (var k = 0; k < core._as.length; k++) {
+                            for (var k = 0; k < core.aLen; k++) {
                                 core._as[k].style.opacity = "1";
                             }
                         }

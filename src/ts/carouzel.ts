@@ -148,6 +148,7 @@ namespace Carouzel {
     _as: NodeListOf<Element>;
     _ds: NodeListOf<Element>;
     _t: ITimer;
+    aLen: number;
     arrowN: HTMLElement | null;
     arrowP: HTMLElement | null;
     autoT: any;
@@ -492,7 +493,7 @@ namespace Carouzel {
    */
   const manageActiveSlides = (core: ICore) => {
     let x: number | null = null;
-    for (let i = 0; i < core._as.length; i++) {
+    for (let i = 0; i < core.aLen; i++) {
       if (core._as[i]) {
         removeClass(core._as[i] as Element, core.opts.activeCls);
         core._as[i].setAttribute(`aria-hidden`, `true`);
@@ -663,7 +664,7 @@ namespace Carouzel {
           core._t.elapsed / core._t.total
         );
         core._t.progress = core._t.progress > 1 ? 1 : core._t.progress;
-        for (let i = 0; i < core._as.length; i++) {
+        for (let i = 0; i < core.aLen; i++) {
           if (
             extraSlideCount !== null &&
             newPi !== null &&
@@ -690,8 +691,12 @@ namespace Carouzel {
           // postAnimation();
           proceedWithAnimation._post(core);
           if (newPi !== null && extraSlideCount !== null) {
-            for (let i = 0; i >= newPi && i < newPi + core.bpo._2Show; i++) {
-              if (core._as[i + extraSlideCount]) {
+            for (let i = 0; i < core.aLen; i++) {
+              if (
+                i >= newPi &&
+                i < newPi + core.bpo._2Show &&
+                core._as[i + extraSlideCount]
+              ) {
                 (
                   core._as[i + extraSlideCount] as HTMLElement
                 ).style.transform = `translate3d(0, 0, 0)`;
@@ -706,7 +711,7 @@ namespace Carouzel {
 
       if (core.trk) {
         extraSlideCount = transformVal = newCi = newPi = null;
-        for (let i = 0; i < core._as.length; i++) {
+        for (let i = 0; i < core.aLen; i++) {
           (core._as[i] as HTMLElement).style.visibility = `hidden`;
           (core._as[i] as HTMLElement).style.opacity = `0`;
           (core._as[i] as HTMLElement).style.transform = `translate3d(0, 0, 0)`;
@@ -726,27 +731,29 @@ namespace Carouzel {
         transformVal =
           newCi > newPi ? core.pts[transformVal] : -core.pts[transformVal];
 
-        for (let i = 0; i < core._as.length; i++) {
-          if (i >= newPi && i < newPi + core.bpo._2Show) {
-            if (core._as[i + extraSlideCount]) {
-              (core._as[i + extraSlideCount] as HTMLElement).style.transform =
-                core.opts.ver
-                  ? `translate3d(0, ${transformVal - core.bpo.gutr}px, 0)`
-                  : `translate3d(${transformVal - core.bpo.gutr}px, 0, 0)`;
-              (
-                core._as[i + extraSlideCount] as HTMLElement
-              ).style.visibility = `visible`;
-              (
-                core._as[i + extraSlideCount] as HTMLElement
-              ).style.opacity = `1`;
-            }
+        for (let i = 0; i < core.aLen; i++) {
+          if (
+            i >= newPi &&
+            i < newPi + core.bpo._2Show &&
+            core._as[i + extraSlideCount]
+          ) {
+            (core._as[i + extraSlideCount] as HTMLElement).style.transform =
+              core.opts.ver
+                ? `translate3d(0, ${transformVal - core.bpo.gutr}px, 0)`
+                : `translate3d(${transformVal - core.bpo.gutr}px, 0, 0)`;
+            (
+              core._as[i + extraSlideCount] as HTMLElement
+            ).style.visibility = `visible`;
+            (core._as[i + extraSlideCount] as HTMLElement).style.opacity = `1`;
           }
-          if (i >= newCi && i < newCi + core.bpo._2Show) {
-            if (core._as[i + extraSlideCount]) {
-              (
-                core._as[i + extraSlideCount] as HTMLElement
-              ).style.visibility = `visible`;
-            }
+          if (
+            i >= newCi &&
+            i < newCi + core.bpo._2Show &&
+            core._as[i + extraSlideCount]
+          ) {
+            (
+              core._as[i + extraSlideCount] as HTMLElement
+            ).style.visibility = `visible`;
           }
         }
         if (core._t.start && core._t.total && core.ci !== core.pi) {
@@ -793,10 +800,13 @@ namespace Carouzel {
           transformVal !== null
         ) {
           core._t.position = Math.round(core._t.position);
-          transformBuffer = core._t.position - core.bpo._2Show * core.sWid;
-
-          for (let i = 0; i >= newPi && i < newPi + core.bpo._2Show; i++) {
-            if (core._as[i + extraSlideCount]) {
+          transformBuffer = core._t.position - core.pts[newPi];
+          for (let i = 0; i < core.aLen; i++) {
+            if (
+              i >= newPi &&
+              i < newPi + core.bpo._2Show &&
+              core._as[i + extraSlideCount]
+            ) {
               (core._as[i + extraSlideCount] as HTMLElement).style.transform =
                 core.opts.ver
                   ? `translate3d(0, ${transformBuffer}px, 3px)`
@@ -812,7 +822,7 @@ namespace Carouzel {
         } else {
           // postAnimation();
           proceedWithAnimation._post(core);
-          for (let i = 0; i < core._as.length; i++) {
+          for (let i = 0; i < core.aLen; i++) {
             (
               core._as[i] as HTMLElement
             ).style.transform = `translate3d(0, 0, 0)`;
@@ -821,7 +831,7 @@ namespace Carouzel {
       };
       if (core.trk) {
         extraSlideCount = transformVal = newCi = newPi = transformBuffer = null;
-        for (let i = 0; i < core._as.length; i++) {
+        for (let i = 0; i < core.aLen; i++) {
           (core._as[i] as HTMLElement).style.transform = core.opts.ver
             ? `translate3d(0, 0, 5px)`
             : `translate3d(0, 0, 5px)`;
@@ -837,14 +847,16 @@ namespace Carouzel {
         transformVal =
           newCi > newPi ? -core.pts[transformVal] : core.pts[transformVal];
 
-        for (let i = 0; i < core._as.length; i++) {
-          if (i >= newPi && i < newPi + core.bpo._2Show) {
-            if (core._as[i + extraSlideCount]) {
-              (core._as[i + extraSlideCount] as HTMLElement).style.transform =
-                core.opts.ver
-                  ? `translate3d(0, 0, 3px)`
-                  : `translate3d(0, 0, 3px)`;
-            }
+        for (let i = 0; i < core.aLen; i++) {
+          if (
+            i >= newPi &&
+            i < newPi + core.bpo._2Show &&
+            core._as[i + extraSlideCount]
+          ) {
+            (core._as[i + extraSlideCount] as HTMLElement).style.transform =
+              core.opts.ver
+                ? `translate3d(0, 0, 3px)`
+                : `translate3d(0, 0, 3px)`;
           }
         }
         if (core._t.start && core._t.total && core.ci !== core.pi) {
@@ -1050,6 +1062,7 @@ namespace Carouzel {
         core.sLen >= bpoptions._2Show ? bpoptions.bpSLen : bpoptions._2Show;
 
       core._as = core.trkO.querySelectorAll(_Selectors.slide);
+      core.aLen = core._as.length;
       trkWidth = slideWidth * temp + bpoptions.gutr * (temp + 1);
 
       if (core.opts.ver) {
@@ -1068,7 +1081,7 @@ namespace Carouzel {
           ) + `px`;
       }
 
-      for (let i = 0; i < core._as.length; i++) {
+      for (let i = 0; i < core.aLen; i++) {
         if (core.opts.ver) {
           (core._as[i] as HTMLElement).style.height =
             toFixed4(slideWidth) + `px`;
@@ -1077,7 +1090,7 @@ namespace Carouzel {
               toFixed4(bpoptions.gutr) + `px`;
             (core._as[i] as HTMLElement).style.marginBottom =
               toFixed4(bpoptions.gutr / 2) + `px`;
-          } else if (i === core._as.length - 1) {
+          } else if (i === core.aLen - 1) {
             (core._as[i] as HTMLElement).style.marginTop =
               toFixed4(bpoptions.gutr / 2) + `px`;
             (core._as[i] as HTMLElement).style.marginBottom =
@@ -1096,7 +1109,7 @@ namespace Carouzel {
               toFixed4(bpoptions.gutr) + `px`;
             (core._as[i] as HTMLElement).style.marginRight =
               toFixed4(bpoptions.gutr / 2) + `px`;
-          } else if (i === core._as.length - 1) {
+          } else if (i === core.aLen - 1) {
             (core._as[i] as HTMLElement).style.marginLeft =
               toFixed4(bpoptions.gutr / 2) + `px`;
             (core._as[i] as HTMLElement).style.marginRight =
@@ -1437,7 +1450,7 @@ namespace Carouzel {
           }
         }
         if (core.trk && core.opts.effect === _animationEffects[1]) {
-          for (let k = 0; k < core._as.length; k++) {
+          for (let k = 0; k < core.aLen; k++) {
             (core._as[k] as HTMLElement).style.opacity = `1`;
           }
         }
@@ -1483,7 +1496,7 @@ namespace Carouzel {
             } else if ((core.opts.ver ? diffY : diffX) < 0) {
               if (
                 Math.abs(core.ct) + core.sWid * core.bpo._2Show >=
-                core.sWid * core._as.length
+                core.sWid * core.aLen
               ) {
                 core.trk.style.transform = core.opts.ver
                   ? `translate3d(0, ${core.ct}px, 0)`
@@ -1495,7 +1508,7 @@ namespace Carouzel {
           }
 
           if (core.opts.effect === _animationEffects[1]) {
-            for (let k = 0; k < core._as.length; k++) {
+            for (let k = 0; k < core.aLen; k++) {
               (core._as[k] as HTMLElement).style.opacity = `0`;
             }
           }
@@ -1532,7 +1545,7 @@ namespace Carouzel {
                 : `translate3d(${core.ct}px, 0, 0)`;
             }
             if (core.opts.effect === _animationEffects[1]) {
-              for (let k = 0; k < core._as.length; k++) {
+              for (let k = 0; k < core.aLen; k++) {
                 (core._as[k] as HTMLElement).style.opacity = `1`;
               }
             }
