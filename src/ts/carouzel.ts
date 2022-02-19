@@ -721,11 +721,7 @@ namespace Carouzel {
 
       if (core.trk) {
         extraSlideCount = transformVal = newCi = newPi = null;
-        for (let i = 0; i < core.aLen; i++) {
-          (core._as[i] as HTMLElement).style.visibility = `hidden`;
-          (core._as[i] as HTMLElement).style.opacity = `0`;
-          (core._as[i] as HTMLElement).style.transform = `translate3d(0, 0, 0)`;
-        }
+
         core.trk.style.transform = core.opts.ver
           ? `translate3d(0, ${-core._t.nextX}px, 0)`
           : `translate3d(${-core._t.nextX}px, 0, 0)`;
@@ -886,11 +882,11 @@ namespace Carouzel {
   const animateTrack = (core: ICore, touchedPixel: number) => {
     if (typeof core.opts.bFn === `function` && !core.fLoad) {
       core.opts.bFn();
+      addClass(
+        core.root as HTMLElement,
+        core.ci > core.pi ? core.opts.nDirCls : core.opts.pDirCls
+      );
     }
-    addClass(
-      core.root as HTMLElement,
-      core.ci > core.pi ? core.opts.nDirCls : core.opts.pDirCls
-    );
     if (core.sync && allLocalInstances[core.sync]) {
       if (core.ci < 0) {
         go2Slide(

@@ -486,11 +486,6 @@ var Carouzel;
             };
             if (core.trk) {
                 extraSlideCount = transformVal = newCi = newPi = null;
-                for (var i = 0; i < core.aLen; i++) {
-                    core._as[i].style.visibility = "hidden";
-                    core._as[i].style.opacity = "0";
-                    core._as[i].style.transform = "translate3d(0, 0, 0)";
-                }
                 core.trk.style.transform = core.opts.ver
                     ? "translate3d(0, ".concat(-core._t.nextX, "px, 0)")
                     : "translate3d(".concat(-core._t.nextX, "px, 0, 0)");
@@ -626,8 +621,8 @@ var Carouzel;
     var animateTrack = function (core, touchedPixel) {
         if (typeof core.opts.bFn === "function" && !core.fLoad) {
             core.opts.bFn();
+            addClass(core.root, core.ci > core.pi ? core.opts.nDirCls : core.opts.pDirCls);
         }
-        addClass(core.root, core.ci > core.pi ? core.opts.nDirCls : core.opts.pDirCls);
         if (core.sync && allLocalInstances[core.sync]) {
             if (core.ci < 0) {
                 go2Slide(allLocalInstances[core.sync], core.sLen - core.bpo._2Scroll - 1);
