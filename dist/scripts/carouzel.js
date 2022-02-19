@@ -21,7 +21,6 @@ var __assign = (this && this.__assign) || function () {
  */
 var Carouzel;
 (function (Carouzel) {
-    "use strict";
     var allLocalInstances = {};
     var isWindowEventAttached = false;
     var windowResizeAny;

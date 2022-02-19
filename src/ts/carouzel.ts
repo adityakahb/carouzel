@@ -8,8 +8,6 @@
  *
  */
 namespace Carouzel {
-  `use strict`;
-
   interface IRoot {
     [key: string]: any;
   }
@@ -39,10 +37,10 @@ namespace Carouzel {
     _nav: boolean;
     _urlH: boolean;
     activeCls: string;
-    aFn?: Function;
+    aFn?: () => void;
     auto: boolean;
     autoS: number;
-    bFn?: Function;
+    bFn?: () => void;
     cntr: number;
     disableCls: string;
     dotCls: string;
@@ -86,15 +84,15 @@ namespace Carouzel {
 
   interface ISettings {
     activeClass: string;
-    afterInitFn?: Function;
-    afterScrollFn?: Function;
+    afterInitFn?: () => void;
+    afterScrollFn?: () => void;
     animationEffect: string;
     animationSpeed: number;
     appendUrlHash: boolean;
     autoplay: boolean;
     autoplaySpeed: number;
-    beforeInitFn?: Function;
-    beforeScrollFn?: Function;
+    beforeInitFn?: () => void;
+    beforeScrollFn?: () => void;
     breakpoints?: IBreakpoint[];
     centerBetween: number;
     disabledClass: string;
@@ -129,7 +127,7 @@ namespace Carouzel {
 
   interface IEventHandler {
     element: Element | Document | Window;
-    remove: Function;
+    remove: () => void;
   }
 
   interface ITimer {
@@ -191,7 +189,7 @@ namespace Carouzel {
   }
 
   interface ICarouzelEasing {
-    [key: string]: Function;
+    [key: string]: (t: number) => number;
   }
 
   let allLocalInstances: ICoreInstance = {};

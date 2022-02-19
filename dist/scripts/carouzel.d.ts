@@ -21,15 +21,15 @@ declare namespace Carouzel {
     }
     interface ISettings {
         activeClass: string;
-        afterInitFn?: Function;
-        afterScrollFn?: Function;
+        afterInitFn?: () => void;
+        afterScrollFn?: () => void;
         animationEffect: string;
         animationSpeed: number;
         appendUrlHash: boolean;
         autoplay: boolean;
         autoplaySpeed: number;
-        beforeInitFn?: Function;
-        beforeScrollFn?: Function;
+        beforeInitFn?: () => void;
+        beforeScrollFn?: () => void;
         breakpoints?: IBreakpoint[];
         centerBetween: number;
         disabledClass: string;
