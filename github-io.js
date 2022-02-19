@@ -1,5 +1,6 @@
 var loadIO = function () {
   var __carouzel_instance = Carouzel.Root.getInstance();
+  __carouzel_instance.init('#__carouzel_1');
 
   var btnbeforeinit = document.getElementById('btnbeforeinit');
   var btnafterinit = document.getElementById('btnafterinit');
@@ -33,10 +34,9 @@ var loadIO = function () {
     toastAfterScroll.show();
   });
 
-  __carouzel_instance.init('#__carouzel_1');
   __carouzel_instance.init('#__carouzel_2', {
     slidesToShow: 3,
-    slidesToScroll: 3,
+    slidesToScroll: 3
   });
   __carouzel_instance.init('#__carouzel_3', {
     slidesToShow: 1,
@@ -45,14 +45,14 @@ var loadIO = function () {
         minWidth: 700,
         slidesToScroll: 2,
         slidesToShow: 2,
-        showNavigation: true,
+        showNavigation: true
       },
       {
         minWidth: 1100,
         slidesToScroll: 4,
-        slidesToShow: 4,
-      },
-    ],
+        slidesToShow: 4
+      }
+    ]
   });
   __carouzel_instance.init('#__carouzel_4', {
     slidesToShow: 1,
@@ -61,9 +61,9 @@ var loadIO = function () {
       {
         minWidth: 700,
         slidesToScroll: 3,
-        slidesToShow: 3,
-      },
-    ],
+        slidesToShow: 3
+      }
+    ]
   });
   __carouzel_instance.init('#__carouzel_6', {
     slidesToShow: 1,
@@ -73,14 +73,14 @@ var loadIO = function () {
       {
         minWidth: 700,
         slidesToScroll: 2,
-        slidesToShow: 2,
+        slidesToShow: 2
       },
       {
         minWidth: 1100,
         slidesToScroll: 3,
-        slidesToShow: 3,
-      },
-    ],
+        slidesToShow: 3
+      }
+    ]
   });
   __carouzel_instance.init('#__carouzel_7', {
     slidesToShow: 1,
@@ -89,14 +89,14 @@ var loadIO = function () {
       {
         minWidth: 700,
         slidesToScroll: 2,
-        slidesToShow: 2,
+        slidesToShow: 2
       },
       {
         minWidth: 1100,
         slidesToScroll: 3,
-        slidesToShow: 3,
-      },
-    ],
+        slidesToShow: 3
+      }
+    ]
   });
   if (document.getElementById('__carouzel_16')) {
     __carouzel_instance.init('#__carouzel_16', {
@@ -107,21 +107,21 @@ var loadIO = function () {
         {
           minWidth: 700,
           slidesToScroll: 2,
-          slidesToShow: 2,
+          slidesToShow: 2
         },
         {
           minWidth: 1100,
           slidesToScroll: 4,
-          slidesToShow: 4,
-        },
-      ],
+          slidesToShow: 4
+        }
+      ]
     });
   }
   __carouzel_instance.init('#__carouzel_9', {
-    centerBetween: 1,
+    centerBetween: 1
   });
   __carouzel_instance.init('#__carouzel_10', {
-    useTitlesAsDots: true,
+    useTitlesAsDots: true
   });
   __carouzel_instance.init('#__carouzel_11', {
     slidesToShow: 1,
@@ -132,15 +132,15 @@ var loadIO = function () {
         slidesToScroll: 2,
         slidesToShow: 2,
         showNavigation: true,
-        slideGutter: 30,
+        slideGutter: 30
       },
       {
         minWidth: 1100,
         slidesToScroll: 4,
         slidesToShow: 4,
-        slideGutter: 40,
-      },
-    ],
+        slideGutter: 40
+      }
+    ]
   });
   __carouzel_instance.init('#__carouzel_12', {
     slidesToShow: 1,
@@ -151,14 +151,14 @@ var loadIO = function () {
         minWidth: 700,
         slidesToScroll: 2,
         slidesToShow: 2,
-        showNavigation: true,
+        showNavigation: true
       },
       {
         minWidth: 1100,
         slidesToScroll: 4,
-        slidesToShow: 4,
-      },
-    ],
+        slidesToShow: 4
+      }
+    ]
   });
   var gotoslideinput = document.getElementById('gotoslideinput');
   var gotonextbtn = document.getElementById('gotonextbtn');
@@ -178,7 +178,7 @@ var loadIO = function () {
     },
     afterScrollFn: function () {
       toastAfterScroll.show();
-    },
+    }
   };
 
   __carouzel_instance.init('#__carouzel_8', carouzel8Settings);
@@ -231,15 +231,15 @@ var loadIO = function () {
         slidesToScroll: 2,
         slidesToShow: 2,
         showNavigation: true,
-        slideGutter: 16,
+        slideGutter: 16
       },
       {
         minWidth: 1100,
         slidesToScroll: 4,
         slidesToShow: 4,
-        slideGutter: 24,
-      },
-    ],
+        slideGutter: 24
+      }
+    ]
   };
   __carouzel_instance.init('#__carouzel_13', carouzel_13settings);
   __carouzel_13form.addEventListener('submit', function (event) {
@@ -264,7 +264,7 @@ var loadIO = function () {
   });
   __carouzel_instance.init('#__carouzel_14', {
     trackUrlHash: true,
-    appendUrlHash: true,
+    appendUrlHash: true
   });
   if (document.querySelectorAll('#__carouzel_15').length > 0) {
     __carouzel_instance.init('#__carouzel_15');
@@ -284,21 +284,21 @@ var loadIO = function () {
         slidesToShow: 2,
         slidesToScroll: 2,
         verticalHeight: 400,
-        slideGutter: 40,
+        slideGutter: 40
       },
       {
         minWidth: 1100,
         slidesToShow: 3,
         slidesToScroll: 3,
         verticalHeight: 450,
-        slideGutter: 50,
-      },
-    ],
+        slideGutter: 50
+      }
+    ]
   });
   __carouzel_instance.init('#__carouzel_18', {
     animationEffect: 'fade',
     syncWith: '__carouzel_19',
-    isInfinite: false,
+    isInfinite: false
   });
   __carouzel_instance.init('#__carouzel_19', {
     slidesToShow: 1,
@@ -308,30 +308,32 @@ var loadIO = function () {
     breakpoints: [
       {
         minWidth: 700,
-        centerBetween: 3,
+        centerBetween: 3
       },
       {
         minWidth: 1100,
-        centerBetween: 5,
-      },
-    ],
+        centerBetween: 5
+      }
+    ]
   });
   __carouzel_instance.init('#__carouzel_20', {
     slidesToShow: 1,
     slidesToScroll: 1,
     animationEffect: 'slide',
+    startAtIndex: 10,
+    animationSpeed: 10000,
     breakpoints: [
       {
         minWidth: 700,
         slidesToShow: 2,
-        slidesToScroll: 2,
+        slidesToScroll: 2
       },
       {
         minWidth: 1100,
         slidesToShow: 3,
-        slidesToScroll: 3,
-      },
-    ],
+        slidesToScroll: 3
+      }
+    ]
   });
   var navlinks = document.querySelectorAll('#topnav li a');
   for (var k = 0; k < navlinks.length; k++) {

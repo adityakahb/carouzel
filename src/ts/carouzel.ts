@@ -844,7 +844,6 @@ namespace Carouzel {
             : Math.abs(core.pi - core.ci - extraSlideCount);
         transformVal =
           core.ci > core.pi ? -core.pts[transformVal] : core.pts[transformVal];
-
         for (let i = 0; i < core.aLen; i++) {
           if (
             i >= core.pi &&
