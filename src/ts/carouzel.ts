@@ -56,7 +56,9 @@ namespace Carouzel {
     idPrefix?: string;
     inf: boolean;
     kb: boolean;
+    nDirCls: string;
     pauseHov: boolean;
+    pDirCls: string;
     res: ICoreBreakpoint[];
     rtl: boolean;
     scbar: boolean;
@@ -109,7 +111,9 @@ namespace Carouzel {
     isInfinite: boolean;
     isRtl: boolean;
     isVertical: boolean;
+    nextDirectionClass: string;
     pauseOnHover: boolean;
+    previousDirectionClass: string;
     showArrows: boolean;
     showNavigation: boolean;
     slideGutter: number;
@@ -254,11 +258,11 @@ namespace Carouzel {
   const _duplicateBreakpointsTypeError = `Duplicate breakpoints found`;
   const _breakpointsParseTypeError = `Error parsing breakpoints`;
   const _noEffectFoundError = `Animation effect function not found in presets. Try using one from (${_animationEffects.join(
-    ', '
+    `, `
   )}). Setting the animation effect to ${_animationEffects[0]}.`;
   const _noEasingFoundError = `Easing function not found in presets. Try using one from [${Object.keys(
     _easingFunctions
-  ).join(', ')}]. Setting the easing function to ${
+  ).join(`, `)}]. Setting the easing function to ${
     Object.keys(_easingFunctions)[0]
   }.`;
   const _useCapture = false;
@@ -312,14 +316,16 @@ namespace Carouzel {
     isInfinite: true,
     isRtl: false,
     isVertical: false,
+    nextDirectionClass: `__carouzel-next`,
     pauseOnHover: false,
+    previousDirectionClass: `__carouzel-previous`,
     showArrows: true,
     showNavigation: true,
     slideGutter: 0,
     slidesToScroll: 1,
     slidesToShow: 1,
     startAtIndex: 1,
-    syncWith: '',
+    syncWith: ``,
     touchThreshold: 125,
     trackUrlHash: false,
     useTitlesAsDots: false,
@@ -603,6 +609,10 @@ namespace Carouzel {
       if (typeof core.opts.aFn === `function`) {
         core.opts.aFn();
       }
+      removeClass(
+        core.root as HTMLElement,
+        `${core.opts.nDirCls} ${core.opts.pDirCls}`
+      );
     },
 
     /**
@@ -877,6 +887,10 @@ namespace Carouzel {
     if (typeof core.opts.bFn === `function` && !core.fLoad) {
       core.opts.bFn();
     }
+    addClass(
+      core.root as HTMLElement,
+      core.ci > core.pi ? core.opts.nDirCls : core.opts.pDirCls
+    );
     if (core.sync && allLocalInstances[core.sync]) {
       if (core.ci < 0) {
         go2Slide(
@@ -889,7 +903,7 @@ namespace Carouzel {
         go2Slide(allLocalInstances[core.sync], core.ci);
       }
     }
-    if (typeof core.pi === 'undefined') {
+    if (typeof core.pi === `undefined`) {
       core.pi = core.opts.inf ? -core.bpo._2Show : 0;
     }
     if (!core.opts.inf) {
@@ -1637,7 +1651,7 @@ namespace Carouzel {
       }
     };
 
-    if (core.opts.swipe && !core.opts.scbar && el === 'sl') {
+    if (core.opts.swipe && !core.opts.scbar && el === `sl`) {
       core.eHandlers.push(
         eventHandler(core.trk as HTMLElement, `touchstart`, (event: Event) => {
           touchStartTrack(event);
@@ -1675,7 +1689,7 @@ namespace Carouzel {
       );
     }
 
-    if (core.opts.scbar && core.scbarB && el === 'sb') {
+    if (core.opts.scbar && core.scbarB && el === `sb`) {
       core.eHandlers.push(
         eventHandler(
           core.scbarB as HTMLElement,
@@ -1858,7 +1872,7 @@ namespace Carouzel {
       );
     }
     if (core.scbarB) {
-      toggleTouchEvents(core, 'sb');
+      toggleTouchEvents(core, `sb`);
     }
   };
 
@@ -2017,6 +2031,24 @@ namespace Carouzel {
       dotNcls: settings.dotIndexClass,
       dupCls: settings.duplicateClass,
       editCls: settings.editModeClass,
+      gutr: settings.slideGutter,
+      hidCls: settings.hiddenClass,
+      inf: settings.enableScrollbar ? false : settings.isInfinite,
+      kb: settings.enableKeyboard,
+      nDirCls: settings.nextDirectionClass,
+      pauseHov: settings.pauseOnHover,
+      pDirCls: settings.previousDirectionClass,
+      res: [],
+      rtl: settings.isRtl,
+      scbar: settings.enableScrollbar,
+      speed: settings.animationSpeed,
+      startAt: settings.animationSpeed,
+      swipe: settings.enableTouchSwipe,
+      threshold: settings.touchThreshold,
+      useTitle: settings.useTitlesAsDots,
+      ver: settings.isVertical,
+      verH: settings.verticalHeight,
+      verP: 1,
       effect: (() => {
         if (_animationEffects.indexOf(settings.animationEffect) > -1) {
           return settings.animationEffect;
@@ -2024,18 +2056,6 @@ namespace Carouzel {
         console.warn(_noEffectFoundError);
         return _animationEffects[0];
       })(),
-      gutr: settings.slideGutter,
-      hidCls: settings.hiddenClass,
-      inf: settings.enableScrollbar ? false : settings.isInfinite,
-      rtl: settings.isRtl,
-      kb: settings.enableKeyboard,
-      pauseHov: settings.pauseOnHover,
-      res: [],
-      scbar: settings.enableScrollbar,
-      speed: settings.animationSpeed,
-      startAt: settings.animationSpeed,
-      swipe: settings.enableTouchSwipe,
-      threshold: settings.touchThreshold,
       easeFn: (() => {
         if (_easingFunctions[settings.easingFunction]) {
           return settings.easingFunction;
@@ -2043,10 +2063,6 @@ namespace Carouzel {
         console.warn(_noEasingFoundError);
         return Object.keys(_easingFunctions)[0];
       })(),
-      useTitle: settings.useTitlesAsDots,
-      ver: settings.isVertical,
-      verH: settings.verticalHeight,
-      verP: 1,
     };
 
     if (settings.breakpoints && settings.breakpoints.length > 0) {
@@ -2142,7 +2158,7 @@ namespace Carouzel {
         generateElements(_core);
         generateScrollbar(_core);
         toggleControlButtons(_core);
-        toggleTouchEvents(_core, 'sl');
+        toggleTouchEvents(_core, `sl`);
         applyLayout(_core);
       }
     }

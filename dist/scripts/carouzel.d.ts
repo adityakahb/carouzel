@@ -46,7 +46,9 @@ declare namespace Carouzel {
         isInfinite: boolean;
         isRtl: boolean;
         isVertical: boolean;
+        nextDirectionClass: string;
         pauseOnHover: boolean;
+        previousDirectionClass: string;
         showArrows: boolean;
         showNavigation: boolean;
         slideGutter: number;
