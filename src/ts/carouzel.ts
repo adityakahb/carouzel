@@ -132,10 +132,6 @@ namespace Carouzel {
     remove: Function;
   }
 
-  interface IIndexHandler {
-    [key: string]: number;
-  }
-
   interface ITimer {
     id: any;
     elapsed: number;
@@ -173,7 +169,9 @@ namespace Carouzel {
     pauseClk: boolean;
     paused: boolean;
     pi: number;
-    pts: IIndexHandler;
+    pts: {
+      [key: string]: number;
+    };
     root: HTMLElement | null;
     scbarB: HTMLElement | null;
     scbarT: HTMLElement | null;
