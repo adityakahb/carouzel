@@ -239,7 +239,7 @@ namespace Carouzel {
     easeOutQuint: (t: number) => 1 + --t * t * t * t * t,
     // acceleration until halfway, then deceleration
     easeInOutQuint: (t: number) =>
-      t < 0.5 ? 16 * t * t * t * t * t : 1 + 16 * --t * t * t * t * t,
+      t < 0.5 ? 16 * t * t * t * t * t : 1 + 16 * --t * t * t * t * t
     // elastic bounce effect at the beginning
     // easeInElastic: (t: number) => (0.04 - 0.04 / t) * Math.sin(25 * t) + 1,
     // elastic bounce effect at the end
@@ -291,7 +291,7 @@ namespace Carouzel {
     trkM: `[data-carouzel-trackMask]`,
     trkO: `[data-carouzel-trackOuter]`,
     trkW: `[data-carouzel-trackWrapper]`,
-    ver: `[data-carouzel-vertical]`,
+    ver: `[data-carouzel-vertical]`
   };
   const _Defaults: ISettings = {
     activeClass: `__carouzel-active`,
@@ -329,7 +329,7 @@ namespace Carouzel {
     touchThreshold: 125,
     trackUrlHash: false,
     useTitlesAsDots: false,
-    verticalHeight: 500,
+    verticalHeight: 500
   };
 
   /**
@@ -485,7 +485,7 @@ namespace Carouzel {
       element: element,
       remove: () => {
         element.removeEventListener(type, listener, _useCapture);
-      },
+      }
     };
     element.addEventListener(type, listener, _useCapture);
     return eventHandler;
@@ -730,6 +730,7 @@ namespace Carouzel {
         newPi = core.pi < 0 ? core.sLen + core.pi : core.pi;
 
         extraSlideCount = core.opts.inf ? core.bpo._2Show : 0;
+
         transformVal =
           newCi > newPi
             ? Math.abs(newCi - newPi - extraSlideCount)
@@ -797,20 +798,13 @@ namespace Carouzel {
           }
         }
 
-        if (
-          core._t.position &&
-          core.trk &&
-          newPi !== null &&
-          newCi !== null &&
-          extraSlideCount !== null &&
-          transformVal !== null
-        ) {
+        if (core._t.position && core.trk && extraSlideCount !== null) {
           core._t.position = Math.round(core._t.position);
-          transformBuffer = core._t.position - core.pts[newPi];
+          transformBuffer = core._t.position - core.pts[core.pi];
           for (let i = 0; i < core.aLen; i++) {
             if (
-              i >= newPi &&
-              i < newPi + core.bpo._2Show &&
+              i >= core.pi &&
+              i < core.pi + core.bpo._2Show &&
               core._as[i + extraSlideCount]
             ) {
               (core._as[i + extraSlideCount] as HTMLElement).style.transform =
@@ -842,21 +836,19 @@ namespace Carouzel {
             ? `translate3d(0, 0, 5px)`
             : `translate3d(0, 0, 5px)`;
         }
-        newCi = core.ci < 0 ? core.sLen + core.ci : core.ci;
-        newPi = core.pi < 0 ? core.sLen + core.pi : core.pi;
 
         extraSlideCount = core.opts.inf ? core.bpo._2Show : 0;
         transformVal =
-          newCi > newPi
-            ? Math.abs(newCi - newPi - extraSlideCount)
-            : Math.abs(newPi - newCi - extraSlideCount);
+          core.ci > core.pi
+            ? Math.abs(core.ci - core.pi - extraSlideCount)
+            : Math.abs(core.pi - core.ci - extraSlideCount);
         transformVal =
-          newCi > newPi ? -core.pts[transformVal] : core.pts[transformVal];
+          core.ci > core.pi ? -core.pts[transformVal] : core.pts[transformVal];
 
         for (let i = 0; i < core.aLen; i++) {
           if (
-            i >= newPi &&
-            i < newPi + core.bpo._2Show &&
+            i >= core.pi &&
+            i < core.pi + core.bpo._2Show &&
             core._as[i + extraSlideCount]
           ) {
             (core._as[i + extraSlideCount] as HTMLElement).style.transform =
@@ -869,7 +861,7 @@ namespace Carouzel {
           core._t.id = requestAnimationFrame(slideThisTrack);
         }
       }
-    },
+    }
   };
 
   /**
@@ -926,11 +918,7 @@ namespace Carouzel {
     core._t.prevX = core.pts[core.pi];
     core._t.nextX = core.pts[core.ci];
 
-    if (
-      (core.opts.effect === _animationEffects[1] ||
-        core.opts.effect === _animationEffects[2]) &&
-      core.ci < 0
-    ) {
+    if (core.opts.effect === _animationEffects[1] && core.ci < 0) {
       core._t.nextX = core.pts[core.sLen + core.ci];
     }
 
@@ -1915,7 +1903,7 @@ namespace Carouzel {
           val: true,
           bp: breakpoints.sort(
             (a, b) => parseFloat(a.bp as string) - parseFloat(b.bp as string)
-          ),
+          )
         };
       } else {
         // throw new TypeError(_duplicateBreakpointsTypeError);
@@ -1951,7 +1939,7 @@ namespace Carouzel {
       pDups: [],
       swipe: settings.swipe,
       verH: settings.verH,
-      verP: 1,
+      verP: 1
     };
     let tempArr = [];
     if (settings.res && settings.res.length > 0) {
@@ -2058,7 +2046,7 @@ namespace Carouzel {
         }
         console.warn(_noEasingFoundError);
         return Object.keys(_easingFunctions)[0];
-      })(),
+      })()
     };
 
     if (settings.breakpoints && settings.breakpoints.length > 0) {
@@ -2080,7 +2068,7 @@ namespace Carouzel {
           pDups: [],
           swipe: settings.breakpoints[i].enableTouchSwipe,
           verH: settings.breakpoints[i].verticalHeight,
-          verP: 1,
+          verP: 1
         };
         if (settingsobj.res) {
           settingsobj.res.push(obj);

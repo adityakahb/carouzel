@@ -68,6 +68,15 @@ var Carouzel;
         easeInOutQuint: function (t) {
             return t < 0.5 ? 16 * t * t * t * t * t : 1 + 16 * --t * t * t * t * t;
         }
+        // elastic bounce effect at the beginning
+        // easeInElastic: (t: number) => (0.04 - 0.04 / t) * Math.sin(25 * t) + 1,
+        // elastic bounce effect at the end
+        // easeOutElastic: (t: number) => ((0.04 * t) / --t) * Math.sin(25 * t),
+        // elastic bounce effect at the beginning and end
+        // easeInOutElastic: (t: number) =>
+        //   (t -= 0.5) < 0
+        //     ? (0.02 + 0.01 / t) * Math.sin(50 * t)
+        //     : (0.02 - 0.01 / t) * Math.sin(50 * t) + 1,
     };
     var _animationDirections = ["previous", "next"];
     var _animationEffects = ["scroll", "fade", "slide"];
@@ -546,17 +555,12 @@ var Carouzel;
                         core._t.position = core.pts[core.ci];
                     }
                 }
-                if (core._t.position &&
-                    core.trk &&
-                    newPi !== null &&
-                    newCi !== null &&
-                    extraSlideCount !== null &&
-                    transformVal !== null) {
+                if (core._t.position && core.trk && extraSlideCount !== null) {
                     core._t.position = Math.round(core._t.position);
-                    transformBuffer = core._t.position - core.pts[newPi];
+                    transformBuffer = core._t.position - core.pts[core.pi];
                     for (var i = 0; i < core.aLen; i++) {
-                        if (i >= newPi &&
-                            i < newPi + core.bpo._2Show &&
+                        if (i >= core.pi &&
+                            i < core.pi + core.bpo._2Show &&
                             core._as[i + extraSlideCount]) {
                             core._as[i + extraSlideCount].style.transform =
                                 core.opts.ver
@@ -586,18 +590,16 @@ var Carouzel;
                         ? "translate3d(0, 0, 5px)"
                         : "translate3d(0, 0, 5px)";
                 }
-                newCi = core.ci < 0 ? core.sLen + core.ci : core.ci;
-                newPi = core.pi < 0 ? core.sLen + core.pi : core.pi;
                 extraSlideCount = core.opts.inf ? core.bpo._2Show : 0;
                 transformVal =
-                    newCi > newPi
-                        ? Math.abs(newCi - newPi - extraSlideCount)
-                        : Math.abs(newPi - newCi - extraSlideCount);
+                    core.ci > core.pi
+                        ? Math.abs(core.ci - core.pi - extraSlideCount)
+                        : Math.abs(core.pi - core.ci - extraSlideCount);
                 transformVal =
-                    newCi > newPi ? -core.pts[transformVal] : core.pts[transformVal];
+                    core.ci > core.pi ? -core.pts[transformVal] : core.pts[transformVal];
                 for (var i = 0; i < core.aLen; i++) {
-                    if (i >= newPi &&
-                        i < newPi + core.bpo._2Show &&
+                    if (i >= core.pi &&
+                        i < core.pi + core.bpo._2Show &&
                         core._as[i + extraSlideCount]) {
                         core._as[i + extraSlideCount].style.transform =
                             core.opts.ver
@@ -657,9 +659,7 @@ var Carouzel;
             : Date.now();
         core._t.prevX = core.pts[core.pi];
         core._t.nextX = core.pts[core.ci];
-        if ((core.opts.effect === _animationEffects[1] ||
-            core.opts.effect === _animationEffects[2]) &&
-            core.ci < 0) {
+        if (core.opts.effect === _animationEffects[1] && core.ci < 0) {
             core._t.nextX = core.pts[core.sLen + core.ci];
         }
         if (core.opts.effect === _animationEffects[0] && core.trk && !core.fLoad) {
