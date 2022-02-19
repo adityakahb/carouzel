@@ -22,11 +22,11 @@ namespace Carouzel {
     bp: number | string;
     bpSLen: number;
     cntr: number;
-    dots: Node[];
+    dots: HTMLElement[];
     nav: HTMLElement | null;
     gutr: number;
-    nDups: Node[];
-    pDups: Node[];
+    nDups: HTMLElement[];
+    pDups: HTMLElement[];
     swipe: boolean;
     verH: number;
     verP: number;
@@ -149,8 +149,8 @@ namespace Carouzel {
   }
 
   interface ICore {
-    _as: NodeListOf<Element>;
-    _ds: NodeListOf<Element>;
+    _as: HTMLElement[];
+    _ds: HTMLElement[];
     _t: ITimer;
     aLen: number;
     arrowN: HTMLElement | null;
@@ -205,6 +205,8 @@ namespace Carouzel {
   let transformBuffer: number | null;
   let newCi: number | null;
   let newPi: number | null;
+  let iloop = 0;
+  let jloop = 0;
 
   /*
    * Easing Functions - inspired from http://gizma.com/easing/
@@ -252,7 +254,7 @@ namespace Carouzel {
   };
 
   const _animationDirections = [`previous`, `next`];
-  const _animationEffects = [`scroll`, `fade`, `slide`];
+  const _animationEffects = [`scroll`, `slide`, `fade`];
   const _rootSelectorTypeError = `Element(s) with the provided query do(es) not exist`;
   const _optionsParseTypeError = `Unable to parse the options string`;
   const _duplicateBreakpointsTypeError = `Duplicate breakpoints found`;
@@ -353,7 +355,7 @@ namespace Carouzel {
    * @returns `true` if the string exists in class attribute, otherwise `false`
    *
    */
-  const hasClass = (element: Element, cls: string) => {
+  const hasClass = (element: HTMLElement, cls: string) => {
     if (typeof element?.className === `string`) {
       const clsarr = element.className.split(` `);
       return clsarr.indexOf(cls) > -1 ? true : false;
@@ -369,12 +371,12 @@ namespace Carouzel {
    * @param cls - A string
    *
    */
-  const addClass = (element: Element, cls: string) => {
+  const addClass = (element: HTMLElement, cls: string) => {
     if (typeof element?.className === `string`) {
       let clsarr = cls.split(` `);
       let clsarrLength = clsarr.length;
-      for (let i = 0; i < clsarrLength; i++) {
-        let thiscls = clsarr[i];
+      for (iloop = 0; iloop < clsarrLength; iloop++) {
+        let thiscls = clsarr[iloop];
         if (!hasClass(element, thiscls)) {
           element.className += ` ` + thiscls;
         }
@@ -390,16 +392,16 @@ namespace Carouzel {
    * @param cls - A string
    *
    */
-  const removeClass = (element: Element, cls: string) => {
+  const removeClass = (element: HTMLElement, cls: string) => {
     if (typeof element?.className === `string`) {
       let clsarr = cls.split(` `);
       let curclass = element.className.split(` `);
       let curclassLen = curclass.length;
-      for (let i = 0; i < curclassLen; i++) {
-        let thiscls = curclass[i];
+      for (iloop = 0; iloop < curclassLen; iloop++) {
+        let thiscls = curclass[iloop];
         if (clsarr.indexOf(thiscls) > -1) {
-          curclass.splice(i, 1);
-          i--;
+          curclass.splice(iloop, 1);
+          iloop--;
         }
       }
       element.className = stringTrim(curclass.join(` `));
@@ -501,7 +503,7 @@ namespace Carouzel {
     let x: number | null = null;
     for (let i = 0; i < core.aLen; i++) {
       if (core._as[i]) {
-        removeClass(core._as[i] as Element, core.opts.activeCls);
+        removeClass(core._as[i], core.opts.activeCls);
         core._as[i].setAttribute(`aria-hidden`, `true`);
       }
     }
@@ -513,14 +515,14 @@ namespace Carouzel {
       if (core.opts.rtl) {
         x = core.ci + core.bpo.pDups.length + core.bpo._2Show - i - 1;
         if (core._as[x]) {
-          addClass(core._as[x] as Element, core.opts.activeCls);
+          addClass(core._as[x], core.opts.activeCls);
           core._as[x].removeAttribute(`aria-hidden`);
         }
         x = null;
       } else {
         x = null;
         if (core._as[i]) {
-          addClass(core._as[i] as Element, core.opts.activeCls);
+          addClass(core._as[i], core.opts.activeCls);
           core._as[i].removeAttribute(`aria-hidden`);
         }
       }
@@ -537,25 +539,25 @@ namespace Carouzel {
     let x;
     if (core.arrowP) {
       if (!core.opts.inf && core.ci === 0) {
-        addClass(core.arrowP as Element, core.opts.disableCls || ``);
-        (core.arrowP as Element).setAttribute(`disabled`, `disabled`);
+        addClass(core.arrowP, core.opts.disableCls || ``);
+        core.arrowP.setAttribute(`disabled`, `disabled`);
       } else {
-        removeClass(core.arrowP as Element, core.opts.disableCls || ``);
-        (core.arrowP as Element).removeAttribute(`disabled`);
+        removeClass(core.arrowP, core.opts.disableCls || ``);
+        core.arrowP.removeAttribute(`disabled`);
       }
     }
     if (core.arrowN) {
       if (!core.opts.inf && core.ci === core.sLen - core.bpo._2Show) {
-        addClass(core.arrowN as Element, core.opts.disableCls || ``);
-        (core.arrowN as Element).setAttribute(`disabled`, `disabled`);
+        addClass(core.arrowN, core.opts.disableCls || ``);
+        core.arrowN.setAttribute(`disabled`, `disabled`);
       } else {
-        removeClass(core.arrowN as Element, core.opts.disableCls || ``);
-        (core.arrowN as Element).removeAttribute(`disabled`);
+        removeClass(core.arrowN, core.opts.disableCls || ``);
+        core.arrowN.removeAttribute(`disabled`);
       }
     }
     if (core.bpo.dots.length > 0) {
       for (let i = 0; i < core.bpo.dots.length; i++) {
-        removeClass(core.bpo.dots[i] as Element, core.opts.activeCls);
+        removeClass(core.bpo.dots[i], core.opts.activeCls);
       }
       x = Math.floor(core.ci / core.bpo._2Scroll);
       if (core.opts.rtl) {
@@ -571,10 +573,7 @@ namespace Carouzel {
         core.curp.innerHTML = `${x + 1}`;
       }
       if (core.bpo.dots[x]) {
-        addClass(
-          core.bpo.dots[x] as HTMLElement as Element,
-          core.opts.activeCls
-        );
+        addClass(core.bpo.dots[x], core.opts.activeCls);
       }
     }
   };
@@ -917,20 +916,19 @@ namespace Carouzel {
     core._t.prevX = core.pts[core.pi];
     core._t.nextX = core.pts[core.ci];
 
-    if (core.opts.effect === _animationEffects[1] && core.ci < 0) {
-      core._t.nextX = core.pts[core.sLen + core.ci];
-    }
-
     if (core.opts.effect === _animationEffects[0] && core.trk && !core.fLoad) {
       proceedWithAnimation.scroll(core, touchedPixel);
     }
 
     if (core.opts.effect === _animationEffects[1] && core.trk && !core.fLoad) {
-      proceedWithAnimation.fade(core);
+      proceedWithAnimation.slide(core, touchedPixel);
     }
 
+    if (core.opts.effect === _animationEffects[2] && core.ci < 0) {
+      core._t.nextX = core.pts[core.sLen + core.ci];
+    }
     if (core.opts.effect === _animationEffects[2] && core.trk && !core.fLoad) {
-      proceedWithAnimation.slide(core, touchedPixel);
+      proceedWithAnimation.fade(core);
     }
   };
 
@@ -997,6 +995,7 @@ namespace Carouzel {
     let slideWidth = 0;
     let trkWidth = 0;
     let temp = 0;
+    let as: any;
 
     while (len < core.bpall.length) {
       if (
@@ -1058,7 +1057,11 @@ namespace Carouzel {
       temp =
         core.sLen >= bpoptions._2Show ? bpoptions.bpSLen : bpoptions._2Show;
 
-      core._as = core.trkO.querySelectorAll(_Selectors.slide);
+      as = core.trkO.querySelectorAll(_Selectors.slide);
+      core._as = [];
+      for (let i = 0; i < as.length; i++) {
+        core._as.push(<HTMLElement>as[i]);
+      }
       core.aLen = core._as.length;
       trkWidth = slideWidth * temp + bpoptions.gutr * (temp + 1);
 
@@ -1433,19 +1436,47 @@ namespace Carouzel {
         if (!core.ct) {
           core.ct = -core.pts[core.ci];
         }
-        if (core.trk && core.opts.effect === _animationEffects[0]) {
+        if (
+          core.trk &&
+          (core.opts.effect === _animationEffects[0] ||
+            core.opts.effect === _animationEffects[1])
+        ) {
           if (ratioX > ratioY && !core.opts.ver) {
             core.trk.style.transform = `translate3d(${
               core.ct - posX2
-            }px, 0, 0)`;
+            }px, 0, 0px)`;
+            if (core.opts.effect === _animationEffects[1]) {
+              for (let k = 0; k < core.aLen; k++) {
+                core._as[k].style.transform = `translate3d(0, 0, 5px)`;
+              }
+              for (let k = core.ci; k < core.ci + core.bpo._2Show; k++) {
+                if (core._as[k + core.bpo._2Show]) {
+                  core._as[
+                    k + core.bpo._2Show
+                  ].style.transform = `translate3d(${posX2}px, 0, 3px)`;
+                }
+              }
+            }
           }
           if (ratioX < ratioY && core.opts.ver) {
             core.trk.style.transform = `translate3d(0, ${
               core.ct - posY2
             }px, 0)`;
+            if (core.opts.effect === _animationEffects[1]) {
+              for (let k = 0; k < core.aLen; k++) {
+                core._as[k].style.transform = `translate3d(0, 0, 5px)`;
+              }
+              for (let k = core.ci; k < core.ci + core.bpo._2Show; k++) {
+                if (core._as[k + core.bpo._2Show]) {
+                  core._as[
+                    k + core.bpo._2Show
+                  ].style.transform = `translate3d(0, ${posX2}px, 3px)`;
+                }
+              }
+            }
           }
         }
-        if (core.trk && core.opts.effect === _animationEffects[1]) {
+        if (core.trk && core.opts.effect === _animationEffects[2]) {
           for (let k = 0; k < core.aLen; k++) {
             (core._as[k] as HTMLElement).style.opacity = `1`;
           }
@@ -1503,44 +1534,49 @@ namespace Carouzel {
             }
           }
 
-          if (core.opts.effect === _animationEffects[1]) {
+          if (core.opts.effect === _animationEffects[2]) {
             for (let k = 0; k < core.aLen; k++) {
-              (core._as[k] as HTMLElement).style.opacity = `0`;
+              (core._as[k] as HTMLElement).style.opacity = `1`;
             }
           }
           if (posFinal < -threshold) {
             if (
-              core.opts.effect === _animationEffects[0] &&
+              (core.opts.effect === _animationEffects[0] ||
+                core.opts.effect === _animationEffects[1]) &&
               (canFiniteAnimate || core.opts.inf)
             ) {
               go2Prev(core, posFinal);
             }
             if (
-              core.opts.effect === _animationEffects[1] &&
+              core.opts.effect === _animationEffects[2] &&
               (canFiniteAnimate || core.opts.inf)
             ) {
               go2Prev(core, 1);
             }
           } else if (posFinal > threshold) {
             if (
-              core.opts.effect === _animationEffects[0] &&
+              (core.opts.effect === _animationEffects[0] ||
+                core.opts.effect === _animationEffects[1]) &&
               (canFiniteAnimate || core.opts.inf)
             ) {
               go2Next(core, posFinal);
             }
             if (
-              core.opts.effect === _animationEffects[1] &&
+              core.opts.effect === _animationEffects[2] &&
               (canFiniteAnimate || core.opts.inf)
             ) {
               go2Next(core, 1);
             }
           } else {
-            if (core.opts.effect === _animationEffects[0]) {
+            if (
+              core.opts.effect === _animationEffects[0] ||
+              core.opts.effect === _animationEffects[1]
+            ) {
               core.trk.style.transform = core.opts.ver
                 ? `translate3d(0, ${core.ct}px, 0)`
                 : `translate3d(${core.ct}px, 0, 0)`;
             }
-            if (core.opts.effect === _animationEffects[1]) {
+            if (core.opts.effect === _animationEffects[2]) {
               for (let k = 0; k < core.aLen; k++) {
                 (core._as[k] as HTMLElement).style.opacity = `1`;
               }
@@ -1750,9 +1786,9 @@ namespace Carouzel {
         ) {
           if (core._ds[j]) {
             let elem = core._ds[j].cloneNode(true);
-            addClass(elem as Element, core.opts.dupCls || ``);
+            addClass(elem as HTMLElement, core.opts.dupCls || ``);
             core.bpall[i].bpSLen++;
-            core.bpall[i].pDups.push(elem);
+            core.bpall[i].pDups.push(elem as HTMLElement);
           }
         }
         for (
@@ -1762,9 +1798,9 @@ namespace Carouzel {
         ) {
           if (core._ds[j]) {
             let elem = core._ds[j].cloneNode(true);
-            addClass(elem as Element, core.opts.dupCls || ``);
+            addClass(elem as HTMLElement, core.opts.dupCls || ``);
             core.bpall[i].bpSLen++;
-            core.bpall[i].nDups.push(elem);
+            core.bpall[i].nDups.push(elem as HTMLElement);
           }
         }
       }
@@ -1815,7 +1851,7 @@ namespace Carouzel {
             }
           )
         );
-        core.bpall[i].dots.push(navBtns[j]);
+        core.bpall[i].dots.push(navBtns[j] as HTMLElement);
       }
     }
   };
@@ -2093,7 +2129,11 @@ namespace Carouzel {
     _core.root = root;
     _core.opts = mapSettings(settings);
 
-    _core._ds = root.querySelectorAll(`${_Selectors.slide}`);
+    let ds = root.querySelectorAll(`${_Selectors.slide}`);
+    _core._ds = [];
+    for (let i = 0; i < ds.length; i++) {
+      _core._ds.push(<HTMLElement>ds[i]);
+    }
     _core.arrowN = root.querySelector(`${_Selectors.arrowN}`);
     _core.arrowP = root.querySelector(`${_Selectors.arrowP}`);
     _core.bPause = root.querySelector(`${_Selectors.pauseBtn}`);
@@ -2217,7 +2257,7 @@ namespace Carouzel {
     const allElems = (core.root as HTMLElement).querySelectorAll(`*`);
     for (let i = 0; i < allElems.length; i++) {
       removeEventListeners(core, allElems[i]);
-      if (core.trk && hasClass(allElems[i] as Element, core.opts.dupCls)) {
+      if (core.trk && hasClass(allElems[i] as HTMLElement, core.opts.dupCls)) {
         core.trk.removeChild(allElems[i]);
       }
       if (core.nav && allElems[i].hasAttribute(_Selectors.dot.slice(1, -1))) {
@@ -2318,11 +2358,11 @@ namespace Carouzel {
       const instanceLength = getCoreInstancesLength();
 
       if (elementsLength > 0) {
-        for (let i = 0; i < elementsLength; i++) {
-          const id = elements[i].getAttribute(`id`);
+        for (iloop = 0; iloop < elementsLength; iloop++) {
+          const id = elements[iloop].getAttribute(`id`);
           let isElementPresent = false;
           if (id) {
-            for (let j = 0; j < instanceLength; j++) {
+            for (jloop = 0; jloop < instanceLength; jloop++) {
               if (allLocalInstances[id]) {
                 isElementPresent = true;
                 break;
@@ -2333,7 +2373,7 @@ namespace Carouzel {
           if (!isElementPresent) {
             let newOptions;
             let autoDataAttr =
-              (elements[i] as HTMLElement).getAttribute(
+              (elements[iloop] as HTMLElement).getAttribute(
                 _Selectors.rootAuto.slice(1, -1)
               ) || ``;
             if (autoDataAttr) {
@@ -2349,7 +2389,7 @@ namespace Carouzel {
               newOptions = options;
             }
             if (id) {
-              new Core(id, elements[i] as HTMLElement, newOptions);
+              new Core(id, elements[iloop] as HTMLElement, newOptions);
             } else {
               const thisid = id
                 ? id
@@ -2357,9 +2397,9 @@ namespace Carouzel {
                   `_` +
                   new Date().getTime() +
                   `_root_` +
-                  (i + 1);
-              elements[i].setAttribute(`id`, thisid);
-              new Core(thisid, elements[i] as HTMLElement, newOptions);
+                  (iloop + 1);
+              elements[iloop].setAttribute(`id`, thisid);
+              new Core(thisid, elements[iloop] as HTMLElement, newOptions);
             }
           }
         }
@@ -2385,13 +2425,13 @@ namespace Carouzel {
     protected goToSlide = (query: string, target: string) => {
       const cores = getCores(query);
       if (cores.length > 0) {
-        for (let i = 0; i < cores.length; i++) {
+        for (iloop = 0; iloop < cores.length; iloop++) {
           if (_animationDirections.indexOf(target) !== -1) {
             target === _animationDirections[0]
-              ? go2Prev(cores[i], 0)
-              : go2Next(cores[i], 0);
+              ? go2Prev(cores[iloop], 0)
+              : go2Next(cores[iloop], 0);
           } else if (!isNaN(parseInt(target, 10))) {
-            go2Slide(cores[i], parseInt(target, 10) - 1);
+            go2Slide(cores[iloop], parseInt(target, 10) - 1);
           }
         }
       } else {
@@ -2409,8 +2449,8 @@ namespace Carouzel {
     protected destroy = (query: string) => {
       const cores = getCores(query);
       if (cores.length > 0) {
-        for (let i = 0; i < cores.length; i++) {
-          destroy(cores[i]);
+        for (iloop = 0; iloop < cores.length; iloop++) {
+          destroy(cores[iloop]);
         }
         if (window && getCoreInstancesLength() === 0) {
           window.removeEventListener(`resize`, winResizeFn, false);

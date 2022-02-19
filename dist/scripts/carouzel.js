@@ -31,6 +31,8 @@ var Carouzel;
     var transformBuffer;
     var newCi;
     var newPi;
+    var iloop = 0;
+    var jloop = 0;
     /*
      * Easing Functions - inspired from http://gizma.com/easing/
      * only considering the t value for the range [0, 1] => [0, 1]
@@ -79,7 +81,7 @@ var Carouzel;
         //     : (0.02 - 0.01 / t) * Math.sin(50 * t) + 1,
     };
     var _animationDirections = ["previous", "next"];
-    var _animationEffects = ["scroll", "fade", "slide"];
+    var _animationEffects = ["scroll", "slide", "fade"];
     var _rootSelectorTypeError = "Element(s) with the provided query do(es) not exist";
     var _optionsParseTypeError = "Unable to parse the options string";
     var _duplicateBreakpointsTypeError = "Duplicate breakpoints found";
@@ -190,8 +192,8 @@ var Carouzel;
         if (typeof (element === null || element === void 0 ? void 0 : element.className) === "string") {
             var clsarr = cls.split(" ");
             var clsarrLength = clsarr.length;
-            for (var i = 0; i < clsarrLength; i++) {
-                var thiscls = clsarr[i];
+            for (iloop = 0; iloop < clsarrLength; iloop++) {
+                var thiscls = clsarr[iloop];
                 if (!hasClass(element, thiscls)) {
                     element.className += " " + thiscls;
                 }
@@ -211,11 +213,11 @@ var Carouzel;
             var clsarr = cls.split(" ");
             var curclass = element.className.split(" ");
             var curclassLen = curclass.length;
-            for (var i = 0; i < curclassLen; i++) {
-                var thiscls = curclass[i];
+            for (iloop = 0; iloop < curclassLen; iloop++) {
+                var thiscls = curclass[iloop];
                 if (clsarr.indexOf(thiscls) > -1) {
-                    curclass.splice(i, 1);
-                    i--;
+                    curclass.splice(iloop, 1);
+                    iloop--;
                 }
             }
             element.className = stringTrim(curclass.join(" "));
@@ -659,17 +661,17 @@ var Carouzel;
             : Date.now();
         core._t.prevX = core.pts[core.pi];
         core._t.nextX = core.pts[core.ci];
-        if (core.opts.effect === _animationEffects[1] && core.ci < 0) {
-            core._t.nextX = core.pts[core.sLen + core.ci];
-        }
         if (core.opts.effect === _animationEffects[0] && core.trk && !core.fLoad) {
             proceedWithAnimation.scroll(core, touchedPixel);
         }
         if (core.opts.effect === _animationEffects[1] && core.trk && !core.fLoad) {
-            proceedWithAnimation.fade(core);
+            proceedWithAnimation.slide(core, touchedPixel);
+        }
+        if (core.opts.effect === _animationEffects[2] && core.ci < 0) {
+            core._t.nextX = core.pts[core.sLen + core.ci];
         }
         if (core.opts.effect === _animationEffects[2] && core.trk && !core.fLoad) {
-            proceedWithAnimation.slide(core, touchedPixel);
+            proceedWithAnimation.fade(core);
         }
     };
     /**
@@ -728,6 +730,7 @@ var Carouzel;
         var slideWidth = 0;
         var trkWidth = 0;
         var temp = 0;
+        var as;
         while (len < core.bpall.length) {
             if ((core.bpall[len + 1] && core.bpall[len + 1].bp > viewportWidth) ||
                 typeof core.bpall[len + 1] === "undefined") {
@@ -785,7 +788,11 @@ var Carouzel;
             core.sWid = slideWidth;
             temp =
                 core.sLen >= bpoptions._2Show ? bpoptions.bpSLen : bpoptions._2Show;
-            core._as = core.trkO.querySelectorAll(_Selectors.slide);
+            as = core.trkO.querySelectorAll(_Selectors.slide);
+            core._as = [];
+            for (var i = 0; i < as.length; i++) {
+                core._as.push(as[i]);
+            }
             core.aLen = core._as.length;
             trkWidth = slideWidth * temp + bpoptions.gutr * (temp + 1);
             if (core.opts.ver) {
@@ -1133,15 +1140,37 @@ var Carouzel;
                 if (!core.ct) {
                     core.ct = -core.pts[core.ci];
                 }
-                if (core.trk && core.opts.effect === _animationEffects[0]) {
+                if (core.trk &&
+                    (core.opts.effect === _animationEffects[0] ||
+                        core.opts.effect === _animationEffects[1])) {
                     if (ratioX > ratioY && !core.opts.ver) {
-                        core.trk.style.transform = "translate3d(".concat(core.ct - posX2, "px, 0, 0)");
+                        core.trk.style.transform = "translate3d(".concat(core.ct - posX2, "px, 0, 0px)");
+                        if (core.opts.effect === _animationEffects[1]) {
+                            for (var k = 0; k < core.aLen; k++) {
+                                core._as[k].style.transform = "translate3d(0, 0, 5px)";
+                            }
+                            for (var k = core.ci; k < core.ci + core.bpo._2Show; k++) {
+                                if (core._as[k + core.bpo._2Show]) {
+                                    core._as[k + core.bpo._2Show].style.transform = "translate3d(".concat(posX2, "px, 0, 3px)");
+                                }
+                            }
+                        }
                     }
                     if (ratioX < ratioY && core.opts.ver) {
                         core.trk.style.transform = "translate3d(0, ".concat(core.ct - posY2, "px, 0)");
+                        if (core.opts.effect === _animationEffects[1]) {
+                            for (var k = 0; k < core.aLen; k++) {
+                                core._as[k].style.transform = "translate3d(0, 0, 5px)";
+                            }
+                            for (var k = core.ci; k < core.ci + core.bpo._2Show; k++) {
+                                if (core._as[k + core.bpo._2Show]) {
+                                    core._as[k + core.bpo._2Show].style.transform = "translate3d(0, ".concat(posX2, "px, 3px)");
+                                }
+                            }
+                        }
                     }
                 }
-                if (core.trk && core.opts.effect === _animationEffects[1]) {
+                if (core.trk && core.opts.effect === _animationEffects[2]) {
                     for (var k = 0; k < core.aLen; k++) {
                         core._as[k].style.opacity = "1";
                     }
@@ -1196,38 +1225,41 @@ var Carouzel;
                             }
                         }
                     }
-                    if (core.opts.effect === _animationEffects[1]) {
+                    if (core.opts.effect === _animationEffects[2]) {
                         for (var k = 0; k < core.aLen; k++) {
-                            core._as[k].style.opacity = "0";
+                            core._as[k].style.opacity = "1";
                         }
                     }
                     if (posFinal < -threshold) {
-                        if (core.opts.effect === _animationEffects[0] &&
+                        if ((core.opts.effect === _animationEffects[0] ||
+                            core.opts.effect === _animationEffects[1]) &&
                             (canFiniteAnimate || core.opts.inf)) {
                             go2Prev(core, posFinal);
                         }
-                        if (core.opts.effect === _animationEffects[1] &&
+                        if (core.opts.effect === _animationEffects[2] &&
                             (canFiniteAnimate || core.opts.inf)) {
                             go2Prev(core, 1);
                         }
                     }
                     else if (posFinal > threshold) {
-                        if (core.opts.effect === _animationEffects[0] &&
+                        if ((core.opts.effect === _animationEffects[0] ||
+                            core.opts.effect === _animationEffects[1]) &&
                             (canFiniteAnimate || core.opts.inf)) {
                             go2Next(core, posFinal);
                         }
-                        if (core.opts.effect === _animationEffects[1] &&
+                        if (core.opts.effect === _animationEffects[2] &&
                             (canFiniteAnimate || core.opts.inf)) {
                             go2Next(core, 1);
                         }
                     }
                     else {
-                        if (core.opts.effect === _animationEffects[0]) {
+                        if (core.opts.effect === _animationEffects[0] ||
+                            core.opts.effect === _animationEffects[1]) {
                             core.trk.style.transform = core.opts.ver
                                 ? "translate3d(0, ".concat(core.ct, "px, 0)")
                                 : "translate3d(".concat(core.ct, "px, 0, 0)");
                         }
-                        if (core.opts.effect === _animationEffects[1]) {
+                        if (core.opts.effect === _animationEffects[2]) {
                             for (var k = 0; k < core.aLen; k++) {
                                 core._as[k].style.opacity = "1";
                             }
@@ -1693,7 +1725,11 @@ var Carouzel;
         var _core = {};
         _core.root = root;
         _core.opts = mapSettings(settings);
-        _core._ds = root.querySelectorAll("".concat(_Selectors.slide));
+        var ds = root.querySelectorAll("".concat(_Selectors.slide));
+        _core._ds = [];
+        for (var i = 0; i < ds.length; i++) {
+            _core._ds.push(ds[i]);
+        }
         _core.arrowN = root.querySelector("".concat(_Selectors.arrowN));
         _core.arrowP = root.querySelector("".concat(_Selectors.arrowP));
         _core.bPause = root.querySelector("".concat(_Selectors.pauseBtn));
@@ -1880,11 +1916,11 @@ var Carouzel;
                 var elementsLength = elements.length;
                 var instanceLength = getCoreInstancesLength();
                 if (elementsLength > 0) {
-                    for (var i = 0; i < elementsLength; i++) {
-                        var id = elements[i].getAttribute("id");
+                    for (iloop = 0; iloop < elementsLength; iloop++) {
+                        var id = elements[iloop].getAttribute("id");
                         var isElementPresent = false;
                         if (id) {
-                            for (var j = 0; j < instanceLength; j++) {
+                            for (jloop = 0; jloop < instanceLength; jloop++) {
                                 if (allLocalInstances[id]) {
                                     isElementPresent = true;
                                     break;
@@ -1893,7 +1929,7 @@ var Carouzel;
                         }
                         if (!isElementPresent) {
                             var newOptions = void 0;
-                            var autoDataAttr = elements[i].getAttribute(_Selectors.rootAuto.slice(1, -1)) || "";
+                            var autoDataAttr = elements[iloop].getAttribute(_Selectors.rootAuto.slice(1, -1)) || "";
                             if (autoDataAttr) {
                                 try {
                                     newOptions = JSON.parse(stringTrim(autoDataAttr).replace(/'/g, "\""));
@@ -1907,7 +1943,7 @@ var Carouzel;
                                 newOptions = options;
                             }
                             if (id) {
-                                new Core(id, elements[i], newOptions);
+                                new Core(id, elements[iloop], newOptions);
                             }
                             else {
                                 var thisid = id
@@ -1916,9 +1952,9 @@ var Carouzel;
                                         "_" +
                                         new Date().getTime() +
                                         "_root_" +
-                                        (i + 1);
-                                elements[i].setAttribute("id", thisid);
-                                new Core(thisid, elements[i], newOptions);
+                                        (iloop + 1);
+                                elements[iloop].setAttribute("id", thisid);
+                                new Core(thisid, elements[iloop], newOptions);
                             }
                         }
                     }
@@ -1944,14 +1980,14 @@ var Carouzel;
             this.goToSlide = function (query, target) {
                 var cores = getCores(query);
                 if (cores.length > 0) {
-                    for (var i = 0; i < cores.length; i++) {
+                    for (iloop = 0; iloop < cores.length; iloop++) {
                         if (_animationDirections.indexOf(target) !== -1) {
                             target === _animationDirections[0]
-                                ? go2Prev(cores[i], 0)
-                                : go2Next(cores[i], 0);
+                                ? go2Prev(cores[iloop], 0)
+                                : go2Next(cores[iloop], 0);
                         }
                         else if (!isNaN(parseInt(target, 10))) {
-                            go2Slide(cores[i], parseInt(target, 10) - 1);
+                            go2Slide(cores[iloop], parseInt(target, 10) - 1);
                         }
                     }
                 }
@@ -1969,8 +2005,8 @@ var Carouzel;
             this.destroy = function (query) {
                 var cores = getCores(query);
                 if (cores.length > 0) {
-                    for (var i = 0; i < cores.length; i++) {
-                        destroy(cores[i]);
+                    for (iloop = 0; iloop < cores.length; iloop++) {
+                        destroy(cores[iloop]);
                     }
                     if (window && getCoreInstancesLength() === 0) {
                         window.removeEventListener("resize", winResizeFn, false);
