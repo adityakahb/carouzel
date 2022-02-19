@@ -558,7 +558,7 @@ var Carouzel;
                 if (core._t.position && core.trk && extraSlideCount !== null) {
                     core._t.position = Math.round(core._t.position);
                     transformBuffer = core._t.position - core.pts[core.pi];
-                    for (var i = 0; i < core.aLen; i++) {
+                    for (var i = -core.bpo.pDups.length; i < core.aLen; i++) {
                         if (i >= core.pi &&
                             i < core.pi + core.bpo._2Show &&
                             core._as[i + extraSlideCount]) {
@@ -1703,7 +1703,7 @@ var Carouzel;
         _core.eHandlers = [];
         _core.nav = root.querySelector("".concat(_Selectors.nav));
         _core.navW = root.querySelector("".concat(_Selectors.navW));
-        _core.pts = [];
+        _core.pts = {};
         _core.sLen = _core._ds.length;
         _core.trk = root.querySelector("".concat(_Selectors.trk));
         _core.trkM = root.querySelector("".concat(_Selectors.trkM));

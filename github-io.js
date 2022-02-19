@@ -1,6 +1,5 @@
 var loadIO = function () {
   var __carouzel_instance = Carouzel.Root.getInstance();
-  __carouzel_instance.init('#__carouzel_1');
 
   var btnbeforeinit = document.getElementById('btnbeforeinit');
   var btnafterinit = document.getElementById('btnafterinit');
@@ -34,6 +33,7 @@ var loadIO = function () {
     toastAfterScroll.show();
   });
 
+  __carouzel_instance.init('#__carouzel_1');
   __carouzel_instance.init('#__carouzel_2', {
     slidesToShow: 3,
     slidesToScroll: 3
@@ -321,7 +321,7 @@ var loadIO = function () {
     slidesToScroll: 1,
     animationEffect: 'slide',
     startAtIndex: 10,
-    animationSpeed: 10000,
+    animationSpeed: 500,
     breakpoints: [
       {
         minWidth: 700,

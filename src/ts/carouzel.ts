@@ -133,7 +133,7 @@ namespace Carouzel {
   }
 
   interface IIndexHandler {
-    [key: number]: number;
+    [key: string]: number;
   }
 
   interface ITimer {
@@ -801,7 +801,7 @@ namespace Carouzel {
         if (core._t.position && core.trk && extraSlideCount !== null) {
           core._t.position = Math.round(core._t.position);
           transformBuffer = core._t.position - core.pts[core.pi];
-          for (let i = 0; i < core.aLen; i++) {
+          for (let i = -core.bpo.pDups.length; i < core.aLen; i++) {
             if (
               i >= core.pi &&
               i < core.pi + core.bpo._2Show &&
@@ -1138,7 +1138,6 @@ namespace Carouzel {
             bpoptions.gutr
         );
       }
-
       if (core.totp) {
         core.totp.innerHTML = `${bpoptions.dots.length}`;
       }
@@ -2104,7 +2103,7 @@ namespace Carouzel {
     _core.eHandlers = [];
     _core.nav = root.querySelector(`${_Selectors.nav}`);
     _core.navW = root.querySelector(`${_Selectors.navW}`);
-    _core.pts = [];
+    _core.pts = {};
     _core.sLen = _core._ds.length;
     _core.trk = root.querySelector(`${_Selectors.trk}`);
     _core.trkM = root.querySelector(`${_Selectors.trkM}`);
