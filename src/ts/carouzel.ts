@@ -2404,7 +2404,9 @@ namespace Carouzel {
     /**
      * Function to auto-initialize the Carouzel plugin for specific carouzels
      */
-    public initGlobal = () => this.init(cSelectors.rootAuto, {} as ISettings);
+    public initGlobal = () => {
+      this.init(cSelectors.rootAuto, {} as ISettings);
+    };
 
     /**
      * Function to animate to a certain slide based on a provided direction or number

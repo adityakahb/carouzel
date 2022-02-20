@@ -2007,7 +2007,9 @@ var Carouzel;
             /**
              * Function to auto-initialize the Carouzel plugin for specific carouzels
              */
-            this.initGlobal = function () { return _this.init(cSelectors.rootAuto, {}); };
+            this.initGlobal = function () {
+                _this.init(cSelectors.rootAuto, {});
+            };
             /**
              * Function to animate to a certain slide based on a provided direction or number
              *
