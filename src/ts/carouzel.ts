@@ -865,11 +865,11 @@ namespace Carouzel {
   const animateTrack = (core: ICore, touchedPixel: number) => {
     if (typeof core.o.bFn === `function` && !core.fLoad) {
       core.o.bFn();
-      addClass(
-        core.root as HTMLElement,
-        core.ci > core.pi ? core.o.nDirCls : core.o.pDirCls
-      );
     }
+    addClass(
+      core.root as HTMLElement,
+      core.ci > core.pi ? core.o.nDirCls : core.o.pDirCls
+    );
     if (core.sync && allLocalInstances[core.sync]) {
       if (core.ci < 0) {
         go2Slide(
