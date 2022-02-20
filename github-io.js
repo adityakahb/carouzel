@@ -327,6 +327,22 @@ var loadIO = function () {
     __carouzel_instance.init('#__carouzel_19');
   }
 
+  var navlinks = document.querySelectorAll('#topnav li a');
+  for (var k = 0; k < navlinks.length; k++) {
+    navlinks[k].addEventListener('click', function (event) {
+      event.preventDefault();
+      setTimeout(function () {
+        window.location.hash = event.target.getAttribute('href');
+      }, 500);
+    });
+  }
+  var clipcopied = new bootstrap.Toast(document.getElementById('clipcopied'));
+  var clipbrd_click = document.getElementById('clipbrd_click');
+  clipbrd_click.addEventListener('click', function (event) {
+    navigator.clipboard.writeText(event.target.getAttribute('data-clipboard'));
+    clipcopied.show();
+  });
+
   // if (document.getElementById('__carouzel_16')) {
   //   __carouzel_instance.init('#__carouzel_16', {
   //     slidesToShow: 1,
@@ -346,22 +362,6 @@ var loadIO = function () {
   //     ]
   //   });
   // }
-
-  var navlinks = document.querySelectorAll('#topnav li a');
-  for (var k = 0; k < navlinks.length; k++) {
-    navlinks[k].addEventListener('click', function (event) {
-      event.preventDefault();
-      setTimeout(function () {
-        window.location.hash = event.target.getAttribute('href');
-      }, 500);
-    });
-  }
-  var clipcopied = new bootstrap.Toast(document.getElementById('clipcopied'));
-  var clipbrd_click = document.getElementById('clipbrd_click');
-  clipbrd_click.addEventListener('click', function (event) {
-    navigator.clipboard.writeText(event.target.getAttribute('data-clipboard'));
-    clipcopied.show();
-  });
 };
 document.addEventListener('DOMContentLoaded', function () {
   loadIO();

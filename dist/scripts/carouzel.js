@@ -1929,11 +1929,8 @@ var Carouzel;
      *
      */
     var Root = /** @class */ (function () {
-        /**
-         * Constructor
-         * @constructor
-         */
         function Root() {
+            var _this = this;
             /**
              * Function to return count of all available carouzel objects
              *
@@ -2008,6 +2005,10 @@ var Carouzel;
                 }
             };
             /**
+             * Function to auto-initialize the Carouzel plugin for specific carouzels
+             */
+            this.initGlobal = function () { return _this.init(cSelectors.rootAuto, {}); };
+            /**
              * Function to animate to a certain slide based on a provided direction or number
              *
              * @param query - The CSS selector for which the Carouzels need to be animated
@@ -2054,7 +2055,17 @@ var Carouzel;
                     console.error("destroy() \"".concat(query, "\": ").concat(cRootSelectorTypeError));
                 }
             };
-            this.init(cSelectors.rootAuto, {});
+            // TODO: FUTURE APPEND AND PREPEND SLIDE IMPLEMENTATION
+            // protected prependSlide = (slideElem: Node) => {
+            //   if (_core.trk) {
+            //     doInsertBefore(_core.trk, slideElem);
+            //   }
+            // };
+            // protected appendSlide = (slideElem: Node) => {
+            //   if (_core.trk) {
+            //     doInsertAfter(_core.trk, slideElem);
+            //   }
+            // };
         }
         /**
          * Function to return single instance
@@ -2073,6 +2084,7 @@ var Carouzel;
     }());
     Carouzel.Root = Root;
 })(Carouzel || (Carouzel = {}));
+Carouzel.Root.getInstance().initGlobal();
 if (typeof exports === "object" && typeof module !== "undefined") {
     module.exports = Carouzel;
 }

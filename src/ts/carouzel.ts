@@ -2311,13 +2311,6 @@ namespace Carouzel {
     protected static instance: Root | null = null;
 
     /**
-     * Constructor
-     * @constructor
-     */
-    constructor() {
-      this.init(cSelectors.rootAuto, {} as ISettings);
-    }
-    /**
      * Function to return single instance
      *
      * @returns Single Carouzel Instance
@@ -2409,6 +2402,11 @@ namespace Carouzel {
     };
 
     /**
+     * Function to auto-initialize the Carouzel plugin for specific carouzels
+     */
+    public initGlobal = () => this.init(cSelectors.rootAuto, {} as ISettings);
+
+    /**
      * Function to animate to a certain slide based on a provided direction or number
      *
      * @param query - The CSS selector for which the Carouzels need to be animated
@@ -2467,6 +2465,7 @@ namespace Carouzel {
     // };
   }
 }
+Carouzel.Root.getInstance().initGlobal();
 if (typeof exports === `object` && typeof module !== `undefined`) {
   module.exports = Carouzel;
 }

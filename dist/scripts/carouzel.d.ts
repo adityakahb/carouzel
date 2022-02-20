@@ -73,11 +73,6 @@ declare namespace Carouzel {
     export class Root {
         protected static instance: Root | null;
         /**
-         * Constructor
-         * @constructor
-         */
-        constructor();
-        /**
          * Function to return single instance
          *
          * @returns Single Carouzel Instance
@@ -99,6 +94,10 @@ declare namespace Carouzel {
          *
          */
         init: (query: string, options?: ISettings | undefined) => void;
+        /**
+         * Function to auto-initialize the Carouzel plugin for specific carouzels
+         */
+        initGlobal: () => void;
         /**
          * Function to animate to a certain slide based on a provided direction or number
          *
