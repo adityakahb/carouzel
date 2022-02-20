@@ -367,13 +367,13 @@ __carouzel_instance.init('#__carouzel_id', __carouzel_options);</code>
           <table class="table table-striped table-hover">
             <tbody>
               <tr>
-                <th><kbd>data-carouzel</kbd></th>
+                <th><kbd>carouzel</kbd></th>
                 <td class="bg-warning bg-opacity-10">
                   Main attribute to be added to the root element
                 </td>
               </tr>
               <tr>
-                <th><kbd>data-carouzel-auto</kbd></th>
+                <th><kbd>carouzel-auto</kbd></th>
                 <td class="bg-warning bg-opacity-10">
                   Attached to the root element along with `data-carouzel`. Takes
                   the settings object as value and initializes the carouzel on
@@ -381,14 +381,14 @@ __carouzel_instance.init('#__carouzel_id', __carouzel_options);</code>
                 </td>
               </tr>
               <tr>
-                <th><kbd>data-carouzel-rtl</kbd></th>
+                <th><kbd>carouzel-rtl</kbd></th>
                 <td class="bg-warning bg-opacity-10">
                   Attached programmatically to the root element along with
                   `data-carouzel`, when `isRtl` is true.
                 </td>
               </tr>
               <tr>
-                <th><kbd>data-carouzel-centered</kbd></th>
+                <th><kbd>carouzel-centered</kbd></th>
                 <td class="bg-warning bg-opacity-10">
                   Attached programmatically to the root element along with
                   `data-carouzel`, when `centerBetween` is found to be greater
@@ -396,21 +396,21 @@ __carouzel_instance.init('#__carouzel_id', __carouzel_options);</code>
                 </td>
               </tr>
               <tr>
-                <th><kbd>data-carouzel-trackwrapper</kbd></th>
+                <th><kbd>carouzel-trackwrapper</kbd></th>
                 <td class="bg-warning bg-opacity-10">
                   Immediate child of `data-carouzel` root element. Contains the
                   main track, and left/right arrows elements.
                 </td>
               </tr>
               <tr>
-                <th><kbd>data-carouzel-trackmask</kbd></th>
+                <th><kbd>carouzel-trackmask</kbd></th>
                 <td class="bg-warning bg-opacity-10">
                   Immediate child of `data-carouzel-trackwrapper` element. This
                   acts as mask to hide the inactive/hidden slides on the track.
                 </td>
               </tr>
               <tr>
-                <th><kbd>data-carouzel-trackouter</kbd></th>
+                <th><kbd>carouzel-trackouter</kbd></th>
                 <td class="bg-warning bg-opacity-10">
                   Immediate child of `data-carouzel-trackmask` element. This
                   gets the calculated width based on the number of active slides
@@ -418,7 +418,7 @@ __carouzel_instance.init('#__carouzel_id', __carouzel_options);</code>
                 </td>
               </tr>
               <tr>
-                <th><kbd>data-carouzel-track</kbd></th>
+                <th><kbd>carouzel-track</kbd></th>
                 <td class="bg-warning bg-opacity-10">
                   Immediate child of `data-carouzel-trackouter` element. This is
                   the container which contains all slides as immediate children.
@@ -427,14 +427,14 @@ __carouzel_instance.init('#__carouzel_id', __carouzel_options);</code>
                 </td>
               </tr>
               <tr>
-                <th><kbd>data-carouzel-slide</kbd></th>
+                <th><kbd>carouzel-slide</kbd></th>
                 <td class="bg-warning bg-opacity-10">
                   Immediate child of `data-carouzel-track` element. This is the
                   slide element.
                 </td>
               </tr>
               <tr>
-                <th><kbd>data-carouzel-title</kbd></th>
+                <th><kbd>carouzel-title</kbd></th>
                 <td class="bg-warning bg-opacity-10">
                   Attaches along with `data-carouzel-slide`. Contains encoded
                   HTML markup as value. This can be used to show on respective
@@ -443,63 +443,83 @@ __carouzel_instance.init('#__carouzel_id', __carouzel_options);</code>
                 </td>
               </tr>
               <tr>
-                <th><kbd>data-carouzel-controlswrapper</kbd></th>
+                <th><kbd>carouzel-controlswrapper</kbd></th>
                 <td class="bg-warning bg-opacity-10">
                   Immediate child of `data-carouzel-trackwrapper`. Contains
                   arrows for left/right navigation.
                 </td>
               </tr>
               <tr>
-                <th><kbd>data-carouzel-previousarrow</kbd></th>
+                <th><kbd>carouzel-previousarrow</kbd></th>
                 <td class="bg-warning bg-opacity-10">
                   Immediate child of `data-carouzel-controlswrapper`. Left arrow
                   button.
                 </td>
               </tr>
               <tr>
-                <th><kbd>data-carouzel-nextarrow</kbd></th>
+                <th><kbd>carouzel-nextarrow</kbd></th>
                 <td class="bg-warning bg-opacity-10">
                   Immediate child of `data-carouzel-controlswrapper`. Right
                   arrow button.
                 </td>
               </tr>
               <tr>
-                <th><kbd>data-carouzel-play</kbd></th>
+                <th><kbd>carouzel-play</kbd></th>
                 <td class="bg-warning bg-opacity-10">
                   Immediate child of `data-carouzel-controlswrapper`. Play
                   button to control carouzel if `autoplay` is true.
                 </td>
               </tr>
               <tr>
-                <th><kbd>data-carouzel-pause</kbd></th>
+                <th><kbd>carouzel-pause</kbd></th>
                 <td class="bg-warning bg-opacity-10">
                   Immediate child of `data-carouzel-controlswrapper`. Pause
                   button to control carouzel if `autoplay` is true.
                 </td>
               </tr>
               <tr>
-                <th><kbd>data-carouzel-navigationwrapper</kbd></th>
+                <th><kbd>carouzel-pageinfo</kbd></th>
+                <td class="bg-warning bg-opacity-10">
+                  Wrapper elemment for current page count and total page count
+                </td>
+              </tr>
+              <tr>
+                <th><kbd>carouzel-currentpage</kbd></th>
+                <td class="bg-warning bg-opacity-10">
+                  Immediate child of `data-carouzel-pageinfo`. Elemment for
+                  current page count
+                </td>
+              </tr>
+              <tr>
+                <th><kbd>carouzel-totalpages</kbd></th>
+                <td class="bg-warning bg-opacity-10">
+                  Immediate child of `data-carouzel-pageinfo`. Elemment for
+                  total page count
+                </td>
+              </tr>
+              <tr>
+                <th><kbd>carouzel-navigationwrapper</kbd></th>
                 <td class="bg-warning bg-opacity-10">
                   Immediate child of `data-carouzel-carouzel`. Contains list of
                   navigation dots.
                 </td>
               </tr>
               <tr>
-                <th><kbd>data-carouzel-navigation</kbd></th>
+                <th><kbd>carouzel-navigation</kbd></th>
                 <td class="bg-warning bg-opacity-10">
                   Immediate child of `data-carouzel-navigationwrapper`. Contains
                   navigation dots list items.
                 </td>
               </tr>
               <tr>
-                <th><kbd>data-carouzel-dot</kbd></th>
+                <th><kbd>carouzel-dot</kbd></th>
                 <td class="bg-warning bg-opacity-10">
                   Immediate child of `data-carouzel-navigation`. This element,
                   and the child button element is generated programmatically.
                 </td>
               </tr>
               <tr>
-                <th><kbd>data-carouzel-video</kbd></th>
+                <th><kbd>carouzel-video</kbd></th>
                 <td class="bg-warning bg-opacity-10">
                   Immediate child of `data-carouzel-slide`. Helps in styling
                   video elements/iframes/embeds.

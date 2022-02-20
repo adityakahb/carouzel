@@ -65,7 +65,7 @@ npm install carouzel
   data-carouzel
   id="__carouzel_id"
   aria-roledescription="carousel"
-  aria-label="Carouzel Implementation"
+  aria-label="Simple implementation of Carouzel"
 >
   <div data-carouzel-trackwrapper>
     <div data-carouzel-trackmask>
@@ -148,6 +148,10 @@ npm install carouzel
         </svg>
       </button>
     </div>
+  </div>
+  <div data-carouzel-pageinfo>
+    <em data-carouzel-currentpage></em> /
+    <em data-carouzel-totalpages></em>
   </div>
   <div data-carouzel-navigationwrapper>
     <ul data-carouzel-navigation></ul>
