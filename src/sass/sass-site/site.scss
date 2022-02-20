@@ -35,19 +35,19 @@
     }
   }
 }
-[data-carouzel]#__carouzel_4 {
+[data-carouzel]#__carouzel_11 {
   [data-carouzel-slide] {
     border: 0;
   }
 }
-[data-carouzel]#__carouzel_18 {
+[data-carouzel]#__carouzel_13 {
   [data-carouzel-slide] {
     > div {
       min-height: 400px;
     }
   }
 }
-#__carouzel_10[data-carouzel] {
+#__carouzel_6[data-carouzel] {
   [data-carouzel-navigation] {
     flex-direction: column;
     flex-wrap: nowrap;
@@ -56,7 +56,7 @@
     }
   }
 }
-#__carouzel_15[data-carouzel] {
+#__carouzel_19[data-carouzel] {
   [data-carouzel-slide] {
     display: block;
     font-size: unset;
