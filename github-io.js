@@ -24,7 +24,17 @@ var loadIO = function () {
   });
 
   __carouzel_instance.init('#__carouzel_4', {
-    centerBetween: 1
+    centerBetween: 1,
+    breakpoints: [
+      {
+        minWidth: 700,
+        centerBetween: 3
+      },
+      {
+        minWidth: 1100,
+        centerBetween: 5
+      }
+    ]
   });
 
   __carouzel_instance.init('#__carouzel_5', {
@@ -133,7 +143,6 @@ var loadIO = function () {
   });
 
   __carouzel_instance.init('#__carouzel_11', {
-    slidesToShow: 1,
     animationEffect: 'fade',
     breakpoints: [
       {
@@ -145,8 +154,6 @@ var loadIO = function () {
   });
 
   __carouzel_instance.init('#__carouzel_12', {
-    slidesToShow: 1,
-    slidesToScroll: 1,
     animationEffect: 'slide',
     breakpoints: [
       {
