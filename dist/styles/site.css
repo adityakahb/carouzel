@@ -12137,6 +12137,14 @@ h4, .h4 {
   justify-content: center;
   min-height: 200px;
   width: 100%;
+  -webkit-user-select: none;
+  /* Safari */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* IE10+/Edge */
+  user-select: none;
+  /* Standard */
 }
 [data-carouzel] [data-carouzel-slide] > div {
   min-height: 200px;
