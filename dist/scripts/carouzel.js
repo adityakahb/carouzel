@@ -131,7 +131,7 @@ var Carouzel;
         easingFunction: "linear",
         editModeClass: "__carouzel-editmode",
         enableKeyboard: true,
-        enableScrollbar: false,
+        // enableScrollbar: false,
         enableTouchSwipe: true,
         hiddenClass: "__carouzel-hidden",
         idPrefix: "__carouzel",
@@ -151,7 +151,7 @@ var Carouzel;
         touchThreshold: 125,
         trackUrlHash: false,
         useTitlesAsDots: false,
-        verticalHeight: 500
+        verticalHeight: 480
     };
     /**
      * Function to trim whitespaces from a string
@@ -1248,6 +1248,9 @@ var Carouzel;
                     else {
                         if (core.o.effect === cAnimationEffects[0] ||
                             core.o.effect === cAnimationEffects[1]) {
+                            for (var k = 0; k < core.aLen; k++) {
+                                core._as[k].style.transform = "translate3d(0, 0, 0)";
+                            }
                             core.trk.style.transform = core.o.ver
                                 ? "translate3d(0, ".concat(core.ct, "px, 0)")
                                 : "translate3d(".concat(core.ct, "px, 0, 0)");
@@ -1664,7 +1667,8 @@ var Carouzel;
      */
     var mapSettings = function (settings) {
         var settingsobj = {
-            _2Scroll: settings.enableScrollbar ? 1 : settings.slidesToScroll,
+            // _2Scroll: settings.enableScrollbar ? 1 : settings.slidesToScroll,
+            _2Scroll: settings.slidesToScroll,
             _2Show: settings.slidesToShow,
             _arrows: settings.showArrows,
             _nav: settings.showNavigation,
@@ -1682,7 +1686,8 @@ var Carouzel;
             editCls: settings.editModeClass,
             gutr: settings.slideGutter,
             hidCls: settings.hiddenClass,
-            inf: settings.enableScrollbar ? false : settings.isInfinite,
+            // inf: settings.enableScrollbar ? false : settings.isInfinite,
+            inf: settings.isInfinite,
             kb: settings.enableKeyboard,
             nDirCls: settings.nextDirectionClass,
             pauseHov: settings.pauseOnHover,
@@ -1716,9 +1721,10 @@ var Carouzel;
         if (settings.breakpoints && settings.breakpoints.length > 0) {
             for (var i = 0; i < settings.breakpoints.length; i++) {
                 var obj = {
-                    _2Scroll: settings.enableScrollbar
-                        ? 1
-                        : settings.breakpoints[i].slidesToScroll,
+                    // _2Scroll: settings.enableScrollbar
+                    //   ? 1
+                    //   : settings.breakpoints[i].slidesToScroll,
+                    _2Scroll: settings.breakpoints[i].slidesToScroll,
                     _2Show: settings.breakpoints[i].slidesToShow,
                     _arrows: settings.breakpoints[i].showArrows,
                     _nav: settings.breakpoints[i].showNavigation,

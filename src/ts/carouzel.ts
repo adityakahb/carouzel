@@ -102,7 +102,7 @@ namespace Carouzel {
     easingFunction: string;
     editModeClass: string;
     enableKeyboard: boolean;
-    enableScrollbar: boolean;
+    // enableScrollbar: boolean;
     enableTouchSwipe: boolean;
     hiddenClass: string;
     idPrefix: string;
@@ -306,7 +306,7 @@ namespace Carouzel {
     easingFunction: `linear`,
     editModeClass: `__carouzel-editmode`,
     enableKeyboard: true,
-    enableScrollbar: false,
+    // enableScrollbar: false,
     enableTouchSwipe: true,
     hiddenClass: `__carouzel-hidden`,
     idPrefix: `__carouzel`,
@@ -326,7 +326,7 @@ namespace Carouzel {
     touchThreshold: 125,
     trackUrlHash: false,
     useTitlesAsDots: false,
-    verticalHeight: 500
+    verticalHeight: 480
   };
 
   /**
@@ -1560,6 +1560,9 @@ namespace Carouzel {
               core.o.effect === cAnimationEffects[0] ||
               core.o.effect === cAnimationEffects[1]
             ) {
+              for (let k = 0; k < core.aLen; k++) {
+                core._as[k].style.transform = `translate3d(0, 0, 0)`;
+              }
               core.trk.style.transform = core.o.ver
                 ? `translate3d(0, ${core.ct}px, 0)`
                 : `translate3d(${core.ct}px, 0, 0)`;
@@ -2019,7 +2022,8 @@ namespace Carouzel {
    */
   const mapSettings = (settings: ISettings) => {
     const settingsobj: ICoreSettings = {
-      _2Scroll: settings.enableScrollbar ? 1 : settings.slidesToScroll,
+      // _2Scroll: settings.enableScrollbar ? 1 : settings.slidesToScroll,
+      _2Scroll: settings.slidesToScroll,
       _2Show: settings.slidesToShow,
       _arrows: settings.showArrows,
       _nav: settings.showNavigation,
@@ -2037,7 +2041,8 @@ namespace Carouzel {
       editCls: settings.editModeClass,
       gutr: settings.slideGutter,
       hidCls: settings.hiddenClass,
-      inf: settings.enableScrollbar ? false : settings.isInfinite,
+      // inf: settings.enableScrollbar ? false : settings.isInfinite,
+      inf: settings.isInfinite,
       kb: settings.enableKeyboard,
       nDirCls: settings.nextDirectionClass,
       pauseHov: settings.pauseOnHover,
@@ -2072,9 +2077,10 @@ namespace Carouzel {
     if (settings.breakpoints && settings.breakpoints.length > 0) {
       for (let i = 0; i < settings.breakpoints.length; i++) {
         const obj: ICoreBreakpoint = {
-          _2Scroll: settings.enableScrollbar
-            ? 1
-            : settings.breakpoints[i].slidesToScroll,
+          // _2Scroll: settings.enableScrollbar
+          //   ? 1
+          //   : settings.breakpoints[i].slidesToScroll,
+          _2Scroll: settings.breakpoints[i].slidesToScroll,
           _2Show: settings.breakpoints[i].slidesToShow,
           _arrows: settings.breakpoints[i].showArrows,
           _nav: settings.breakpoints[i].showNavigation,

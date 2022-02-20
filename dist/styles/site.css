@@ -12153,7 +12153,8 @@ h4, .h4 {
   transform: translate(-50%, -50%);
 }
 
-[data-carouzel]#__carouzel_11 [data-carouzel-slide] {
+[data-carouzel]#__carouzel_11 [data-carouzel-slide],
+[data-carouzel]#__carouzel_12 [data-carouzel-slide] {
   border: 0;
 }
 

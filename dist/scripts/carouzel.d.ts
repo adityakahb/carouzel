@@ -39,7 +39,6 @@ declare namespace Carouzel {
         easingFunction: string;
         editModeClass: string;
         enableKeyboard: boolean;
-        enableScrollbar: boolean;
         enableTouchSwipe: boolean;
         hiddenClass: string;
         idPrefix: string;
