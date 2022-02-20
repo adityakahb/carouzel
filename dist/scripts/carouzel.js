@@ -1879,7 +1879,7 @@ var Carouzel;
         var _a;
         var id = (_a = core.root) === null || _a === void 0 ? void 0 : _a.getAttribute("id");
         var allElems = core.root.querySelectorAll("*");
-        for (var i = allElems.length - 1; i >= 0; i++) {
+        for (var i = allElems.length - 1; i >= 0; i--) {
             removeEventListeners(core, allElems[i]);
             if (core.trk && hasClass(allElems[i], core.o.dupCls)) {
                 core.trk.removeChild(allElems[i]);

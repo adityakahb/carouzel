@@ -2247,11 +2247,12 @@ namespace Carouzel {
   const destroy = (core: ICore) => {
     const id = core.root?.getAttribute(`id`);
     const allElems = (core.root as HTMLElement).querySelectorAll(`*`);
-    for (let i = allElems.length - 1; i >= 0; i++) {
+    for (let i = allElems.length - 1; i >= 0; i--) {
       removeEventListeners(core, allElems[i]);
       if (core.trk && hasClass(allElems[i] as HTMLElement, core.o.dupCls)) {
         core.trk.removeChild(allElems[i]);
       }
+
       if (core.nav && allElems[i].hasAttribute(cSelectors.dot.slice(1, -1))) {
         core.nav.removeChild(allElems[i]);
       }
