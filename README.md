@@ -34,7 +34,7 @@ Carouzel is a framework free light-weight carousel plugin, which is responsive, 
 - Compiled through Typescript.
 - Can have multiple instances with multiple configurations.
 - Styled through SASS - Source included for customization.
-- Has 16 easing options to go with scroll and fade effects.
+- Has 13 easing options to go with scroll, slide and fade effects.
 - Can be navigated through keyboard arrows.
 - Can be initiated manually or via `data-attribute`.
 - Uses [requestAnimationFrame](https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame) for animation.
