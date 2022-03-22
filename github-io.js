@@ -144,13 +144,7 @@ var loadIO = function () {
 
   __carouzel_instance.init('#__carouzel_11', {
     animationEffect: 'fade',
-    breakpoints: [
-      {
-        minWidth: 700,
-        slidesToScroll: 3,
-        slidesToShow: 3
-      }
-    ]
+    autoplay: 'true'
   });
 
   __carouzel_instance.init('#__carouzel_12', {

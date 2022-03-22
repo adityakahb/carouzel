@@ -648,7 +648,6 @@ namespace Carouzel {
         if (core._t.progress < 1 && core._t.position !== core.pts[core.ci]) {
           core._t.id = requestAnimationFrame(scrollThisTrack);
         } else {
-          // postAnimation();
           proceedWithAnimation._post(core);
         }
       };
@@ -656,7 +655,96 @@ namespace Carouzel {
         core._t.id = requestAnimationFrame(scrollThisTrack);
       }
     },
+    /**
+     * Local function to perform slide animation
+     *
+     */
+    slide: (core: ICore, touchedPixel: number) => {
+      const slideThisTrack = (now: number) => {
+        core._t.elapsed = now - core._t.start;
+        core._t.progress = cEasingFunctions[core.o.easeFn](
+          core._t.elapsed / core._t.total
+        );
 
+        if (core.ci > core.pi) {
+          core._t.position =
+            core._t.pX +
+            (touchedPixel ? touchedPixel : 0) +
+            core._t.progress * (core._t.nX - core._t.pX);
+          if (core._t.position > core._t.nX) {
+            core._t.position = core._t.nX;
+          }
+        }
+        if (core.ci < core.pi) {
+          core._t.position =
+            core._t.pX +
+            (touchedPixel ? touchedPixel : 0) -
+            core._t.progress * (core._t.pX - core._t.nX);
+          if (core._t.position < core.pts[core.ci]) {
+            core._t.position = core.pts[core.ci];
+          }
+        }
+
+        if (core._t.position && core.trk && extraSlideCount !== null) {
+          core._t.position = Math.round(core._t.position);
+          transformBuffer = core._t.position - core.pts[core.pi];
+          for (let i = -core.bpo.pDups.length; i < core.aLen; i++) {
+            if (
+              i >= core.pi &&
+              i < core.pi + core.bpo._2Show &&
+              core._as[i + extraSlideCount]
+            ) {
+              (core._as[i + extraSlideCount] as HTMLElement).style.transform =
+                core.o.ver
+                  ? `translate3d(0, ${transformBuffer}px, 3px)`
+                  : `translate3d(${transformBuffer}px, 0, 3px)`;
+            }
+          }
+          core.trk.style.transform = core.o.ver
+            ? `translate3d(0, ${-core._t.position}px, 0)`
+            : `translate3d(${-core._t.position}px, 0, 0)`;
+        }
+        if (core._t.progress < 1 && core._t.position !== core.pts[core.ci]) {
+          core._t.id = requestAnimationFrame(slideThisTrack);
+        } else {
+          proceedWithAnimation._post(core);
+          for (let i = 0; i < core.aLen; i++) {
+            (
+              core._as[i] as HTMLElement
+            ).style.transform = `translate3d(0, 0, 0)`;
+          }
+        }
+      };
+      if (core.trk) {
+        extraSlideCount = transformVal = newCi = newPi = transformBuffer = null;
+        for (let i = 0; i < core.aLen; i++) {
+          (core._as[i] as HTMLElement).style.transform = core.o.ver
+            ? `translate3d(0, 0, 5px)`
+            : `translate3d(0, 0, 5px)`;
+        }
+
+        extraSlideCount = core.o.inf ? core.bpo._2Show : 0;
+        transformVal =
+          core.ci > core.pi
+            ? Math.abs(core.ci - core.pi - extraSlideCount)
+            : Math.abs(core.pi - core.ci - extraSlideCount);
+        transformVal =
+          core.ci > core.pi ? -core.pts[transformVal] : core.pts[transformVal];
+        for (let i = 0; i < core.aLen; i++) {
+          if (
+            i >= core.pi &&
+            i < core.pi + core.bpo._2Show &&
+            core._as[i + extraSlideCount]
+          ) {
+            (core._as[i + extraSlideCount] as HTMLElement).style.transform =
+              core.o.ver ? `translate3d(0, 0, 3px)` : `translate3d(0, 0, 3px)`;
+          }
+        }
+        if (core._t.start && core._t.total && core.ci !== core.pi) {
+          core._t.id = requestAnimationFrame(slideThisTrack);
+        }
+      }
+    },
     /**
      * Local function to perform fade animation
      *
@@ -692,7 +780,6 @@ namespace Carouzel {
         if (core._t.progress < 1) {
           core._t.id = requestAnimationFrame(fadeThisTrack);
         } else {
-          // postAnimation();
           proceedWithAnimation._post(core);
           if (newPi !== null && extraSlideCount !== null) {
             for (let i = 0; i < core.aLen; i++) {
@@ -759,97 +846,6 @@ namespace Carouzel {
         }
         if (core._t.start && core._t.total && core.ci !== core.pi) {
           core._t.id = requestAnimationFrame(fadeThisTrack);
-        }
-      }
-    },
-    /**
-     * Local function to perform slide animation
-     *
-     */
-    slide: (core: ICore, touchedPixel: number) => {
-      const slideThisTrack = (now: number) => {
-        core._t.elapsed = now - core._t.start;
-        core._t.progress = cEasingFunctions[core.o.easeFn](
-          core._t.elapsed / core._t.total
-        );
-
-        if (core.ci > core.pi) {
-          core._t.position =
-            core._t.pX +
-            (touchedPixel ? touchedPixel : 0) +
-            core._t.progress * (core._t.nX - core._t.pX);
-          if (core._t.position > core._t.nX) {
-            core._t.position = core._t.nX;
-          }
-        }
-        if (core.ci < core.pi) {
-          core._t.position =
-            core._t.pX +
-            (touchedPixel ? touchedPixel : 0) -
-            core._t.progress * (core._t.pX - core._t.nX);
-          if (core._t.position < core.pts[core.ci]) {
-            core._t.position = core.pts[core.ci];
-          }
-        }
-
-        if (core._t.position && core.trk && extraSlideCount !== null) {
-          core._t.position = Math.round(core._t.position);
-          transformBuffer = core._t.position - core.pts[core.pi];
-          for (let i = -core.bpo.pDups.length; i < core.aLen; i++) {
-            if (
-              i >= core.pi &&
-              i < core.pi + core.bpo._2Show &&
-              core._as[i + extraSlideCount]
-            ) {
-              (core._as[i + extraSlideCount] as HTMLElement).style.transform =
-                core.o.ver
-                  ? `translate3d(0, ${transformBuffer}px, 3px)`
-                  : `translate3d(${transformBuffer}px, 0, 3px)`;
-            }
-          }
-          core.trk.style.transform = core.o.ver
-            ? `translate3d(0, ${-core._t.position}px, 0)`
-            : `translate3d(${-core._t.position}px, 0, 0)`;
-        }
-        if (core._t.progress < 1 && core._t.position !== core.pts[core.ci]) {
-          core._t.id = requestAnimationFrame(slideThisTrack);
-        } else {
-          // postAnimation();
-          proceedWithAnimation._post(core);
-          for (let i = 0; i < core.aLen; i++) {
-            (
-              core._as[i] as HTMLElement
-            ).style.transform = `translate3d(0, 0, 0)`;
-          }
-        }
-      };
-      if (core.trk) {
-        extraSlideCount = transformVal = newCi = newPi = transformBuffer = null;
-        for (let i = 0; i < core.aLen; i++) {
-          (core._as[i] as HTMLElement).style.transform = core.o.ver
-            ? `translate3d(0, 0, 5px)`
-            : `translate3d(0, 0, 5px)`;
-        }
-
-        extraSlideCount = core.o.inf ? core.bpo._2Show : 0;
-        transformVal =
-          core.ci > core.pi
-            ? Math.abs(core.ci - core.pi - extraSlideCount)
-            : Math.abs(core.pi - core.ci - extraSlideCount);
-        transformVal =
-          core.ci > core.pi ? -core.pts[transformVal] : core.pts[transformVal];
-        for (let i = 0; i < core.aLen; i++) {
-          if (
-            i >= core.pi &&
-            i < core.pi + core.bpo._2Show &&
-            core._as[i + extraSlideCount]
-          ) {
-            (core._as[i + extraSlideCount] as HTMLElement).style.transform =
-              core.o.ver ? `translate3d(0, 0, 3px)` : `translate3d(0, 0, 3px)`;
-          }
-        }
-        if (core._t.start && core._t.total && core.ci !== core.pi) {
-          core._t.id = requestAnimationFrame(slideThisTrack);
         }
       }
     }
@@ -1305,11 +1301,11 @@ namespace Carouzel {
     if (!core.o.pauseHov) {
       core.paused = false;
     }
-    core.autoT = setInterval(() => {
-      if (!core.paused && !core.pauseClk) {
-        go2Next(core, 0);
-      }
-    }, core.o.autoS);
+    // core.autoT = setInterval(() => {
+    //   if (!core.paused && !core.pauseClk) {
+    //     go2Next(core, 0);
+    //   }
+    // }, core.o.autoS);
   };
 
   /**

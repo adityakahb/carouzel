@@ -443,91 +443,11 @@ var Carouzel;
                     core._t.id = requestAnimationFrame(scrollThisTrack);
                 }
                 else {
-                    // postAnimation();
                     proceedWithAnimation._post(core);
                 }
             };
             if (core._t.start && core._t.total && core.ci !== core.pi) {
                 core._t.id = requestAnimationFrame(scrollThisTrack);
-            }
-        },
-        /**
-         * Local function to perform fade animation
-         *
-         */
-        fade: function (core) {
-            var fadeThisTrack = function (now) {
-                core._t.elapsed = now - core._t.start;
-                core._t.progress = cEasingFunctions[core.o.easeFn](core._t.elapsed / core._t.total);
-                core._t.progress = core._t.progress > 1 ? 1 : core._t.progress;
-                for (var i = 0; i < core.aLen; i++) {
-                    if (extraSlideCount !== null &&
-                        newPi !== null &&
-                        i >= newPi &&
-                        i < newPi + core.bpo._2Show) {
-                        core._as[i + extraSlideCount].style.opacity =
-                            "" + (1 - core._t.progress);
-                    }
-                    if (extraSlideCount !== null &&
-                        newCi !== null &&
-                        i >= newCi &&
-                        i < newCi + core.bpo._2Show) {
-                        core._as[i + extraSlideCount].style.opacity =
-                            "" + core._t.progress;
-                    }
-                }
-                if (core._t.progress < 1) {
-                    core._t.id = requestAnimationFrame(fadeThisTrack);
-                }
-                else {
-                    // postAnimation();
-                    proceedWithAnimation._post(core);
-                    if (newPi !== null && extraSlideCount !== null) {
-                        for (var i = 0; i < core.aLen; i++) {
-                            if (i >= newPi &&
-                                i < newPi + core.bpo._2Show &&
-                                core._as[i + extraSlideCount]) {
-                                core._as[i + extraSlideCount].style.transform = "translate3d(0, 0, 0)";
-                                core._as[i + extraSlideCount].style.visibility = "hidden";
-                            }
-                        }
-                    }
-                }
-            };
-            if (core.trk) {
-                extraSlideCount = transformVal = newCi = newPi = null;
-                core.trk.style.transform = core.o.ver
-                    ? "translate3d(0, ".concat(-core._t.nX, "px, 0)")
-                    : "translate3d(".concat(-core._t.nX, "px, 0, 0)");
-                newCi = core.ci < 0 ? core.sLen + core.ci : core.ci;
-                newPi = core.pi < 0 ? core.sLen + core.pi : core.pi;
-                extraSlideCount = core.o.inf ? core.bpo._2Show : 0;
-                transformVal =
-                    newCi > newPi
-                        ? Math.abs(newCi - newPi - extraSlideCount)
-                        : Math.abs(newPi - newCi - extraSlideCount);
-                transformVal =
-                    newCi > newPi ? core.pts[transformVal] : -core.pts[transformVal];
-                for (var i = 0; i < core.aLen; i++) {
-                    if (i >= newPi &&
-                        i < newPi + core.bpo._2Show &&
-                        core._as[i + extraSlideCount]) {
-                        core._as[i + extraSlideCount].style.transform =
-                            core.o.ver
-                                ? "translate3d(0, ".concat(transformVal - core.bpo.gutr, "px, 0)")
-                                : "translate3d(".concat(transformVal - core.bpo.gutr, "px, 0, 0)");
-                        core._as[i + extraSlideCount].style.visibility = "visible";
-                        core._as[i + extraSlideCount].style.opacity = "1";
-                    }
-                    if (i >= newCi &&
-                        i < newCi + core.bpo._2Show &&
-                        core._as[i + extraSlideCount]) {
-                        core._as[i + extraSlideCount].style.visibility = "visible";
-                    }
-                }
-                if (core._t.start && core._t.total && core.ci !== core.pi) {
-                    core._t.id = requestAnimationFrame(fadeThisTrack);
-                }
             }
         },
         /**
@@ -577,7 +497,6 @@ var Carouzel;
                     core._t.id = requestAnimationFrame(slideThisTrack);
                 }
                 else {
-                    // postAnimation();
                     proceedWithAnimation._post(core);
                     for (var i = 0; i < core.aLen; i++) {
                         core._as[i].style.transform = "translate3d(0, 0, 0)";
@@ -608,6 +527,84 @@ var Carouzel;
                 }
                 if (core._t.start && core._t.total && core.ci !== core.pi) {
                     core._t.id = requestAnimationFrame(slideThisTrack);
+                }
+            }
+        },
+        /**
+         * Local function to perform fade animation
+         *
+         */
+        fade: function (core) {
+            var fadeThisTrack = function (now) {
+                core._t.elapsed = now - core._t.start;
+                core._t.progress = cEasingFunctions[core.o.easeFn](core._t.elapsed / core._t.total);
+                core._t.progress = core._t.progress > 1 ? 1 : core._t.progress;
+                for (var i = 0; i < core.aLen; i++) {
+                    if (extraSlideCount !== null &&
+                        newPi !== null &&
+                        i >= newPi &&
+                        i < newPi + core.bpo._2Show) {
+                        core._as[i + extraSlideCount].style.opacity =
+                            "" + (1 - core._t.progress);
+                    }
+                    if (extraSlideCount !== null &&
+                        newCi !== null &&
+                        i >= newCi &&
+                        i < newCi + core.bpo._2Show) {
+                        core._as[i + extraSlideCount].style.opacity =
+                            "" + core._t.progress;
+                    }
+                }
+                if (core._t.progress < 1) {
+                    core._t.id = requestAnimationFrame(fadeThisTrack);
+                }
+                else {
+                    proceedWithAnimation._post(core);
+                    if (newPi !== null && extraSlideCount !== null) {
+                        for (var i = 0; i < core.aLen; i++) {
+                            if (i >= newPi &&
+                                i < newPi + core.bpo._2Show &&
+                                core._as[i + extraSlideCount]) {
+                                core._as[i + extraSlideCount].style.transform = "translate3d(0, 0, 0)";
+                                core._as[i + extraSlideCount].style.visibility = "hidden";
+                            }
+                        }
+                    }
+                }
+            };
+            if (core.trk) {
+                extraSlideCount = transformVal = newCi = newPi = null;
+                core.trk.style.transform = core.o.ver
+                    ? "translate3d(0, ".concat(-core._t.nX, "px, 0)")
+                    : "translate3d(".concat(-core._t.nX, "px, 0, 0)");
+                newCi = core.ci < 0 ? core.sLen + core.ci : core.ci;
+                newPi = core.pi < 0 ? core.sLen + core.pi : core.pi;
+                extraSlideCount = core.o.inf ? core.bpo._2Show : 0;
+                transformVal =
+                    newCi > newPi
+                        ? Math.abs(newCi - newPi - extraSlideCount)
+                        : Math.abs(newPi - newCi - extraSlideCount);
+                transformVal =
+                    newCi > newPi ? core.pts[transformVal] : -core.pts[transformVal];
+                for (var i = 0; i < core.aLen; i++) {
+                    if (i >= newPi &&
+                        i < newPi + core.bpo._2Show &&
+                        core._as[i + extraSlideCount]) {
+                        core._as[i + extraSlideCount].style.transform =
+                            core.o.ver
+                                ? "translate3d(0, ".concat(transformVal - core.bpo.gutr, "px, 0)")
+                                : "translate3d(".concat(transformVal - core.bpo.gutr, "px, 0, 0)");
+                        core._as[i + extraSlideCount].style.visibility = "visible";
+                        core._as[i + extraSlideCount].style.opacity = "1";
+                    }
+                    if (i >= newCi &&
+                        i < newCi + core.bpo._2Show &&
+                        core._as[i + extraSlideCount]) {
+                        core._as[i + extraSlideCount].style.visibility = "visible";
+                    }
+                }
+                if (core._t.start && core._t.total && core.ci !== core.pi) {
+                    core._t.id = requestAnimationFrame(fadeThisTrack);
                 }
             }
         }
@@ -1025,11 +1022,11 @@ var Carouzel;
         if (!core.o.pauseHov) {
             core.paused = false;
         }
-        core.autoT = setInterval(function () {
-            if (!core.paused && !core.pauseClk) {
-                go2Next(core, 0);
-            }
-        }, core.o.autoS);
+        // core.autoT = setInterval(() => {
+        //   if (!core.paused && !core.pauseClk) {
+        //     go2Next(core, 0);
+        //   }
+        // }, core.o.autoS);
     };
     /**
      * Function to add click events to the arrows
