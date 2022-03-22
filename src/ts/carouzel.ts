@@ -131,12 +131,17 @@ namespace Carouzel {
   }
 
   interface ITimer {
-    id: any;
+    aElapsed: number;
+    aId: any;
+    aProgress: number;
+    aStart: number;
+    aTotal: number;
     elapsed: number;
+    id: any;
     nX: number; // nextX
     position: number;
-    pX: number; // prevX
     progress: number;
+    pX: number; // prevX
     start: number;
     total: number;
   }
@@ -328,6 +333,15 @@ namespace Carouzel {
     useTitlesAsDots: false,
     verticalHeight: 480
   };
+
+  /**
+   * Function to return the now() value based on the available global `performance` object
+   *
+   * @returns The now() value.
+   *
+   */
+  const getNow = () =>
+    (performance as Performance) ? performance.now() : Date.now();
 
   /**
    * Function to trim whitespaces from a string
@@ -776,7 +790,6 @@ namespace Carouzel {
               `` + core._t.progress;
           }
         }
-
         if (core._t.progress < 1) {
           core._t.id = requestAnimationFrame(fadeThisTrack);
         } else {
@@ -899,9 +912,7 @@ namespace Carouzel {
     manageActiveSlides(core);
     updateAttributes(core);
 
-    core._t.start = (performance as Performance)
-      ? performance.now()
-      : Date.now();
+    core._t.start = getNow();
     core._t.pX = core.pts[core.pi];
     core._t.nX = core.pts[core.ci];
 
@@ -1265,7 +1276,7 @@ namespace Carouzel {
    * @param shouldPlay - A boolean value determining if the carouzel is being played or is paused
    *
    */
-  const togglePlayPause = (core: ICore, shouldPlay: boolean) => {
+  const togglePlayPauseButtons = (core: ICore, shouldPlay: boolean) => {
     if (core && core.bPause && core.bPlay) {
       if (shouldPlay) {
         addClass(core.bPlay, core.o.hidCls);
@@ -1278,34 +1289,60 @@ namespace Carouzel {
   };
 
   /**
-   * Function to toggle Autoplay and pause on hover functionalities for the carouzel
+   * Function to enable pause on hover when autoplay is enabled
    *
    * @param core - Carouzel instance core object
    *
    */
-  const toggleAutoplay = (core: ICore) => {
+  const togglePauseOnHover = (core: ICore) => {
     if (core.root && core.o.pauseHov) {
       core.eH.push(
         eventHandler(core.root, `mouseenter`, () => {
           core.paused = true;
-          togglePlayPause(core, false);
+          togglePlayPauseButtons(core, false);
         })
       );
       core.eH.push(
         eventHandler(core.root, `mouseleave`, () => {
           core.paused = false;
-          togglePlayPause(core, true);
+          togglePlayPauseButtons(core, true);
         })
       );
     }
     if (!core.o.pauseHov) {
       core.paused = false;
     }
+    core._t.aTotal = core.o.autoS;
     // core.autoT = setInterval(() => {
     //   if (!core.paused && !core.pauseClk) {
-    //     go2Next(core, 0);
+    //
     //   }
     // }, core.o.autoS);
+  };
+
+  /**
+   * Function to toggle Autoplay and pause on hover functionalities for the carouzel
+   *
+   * @param core - Carouzel instance core object
+   *
+   */
+  const toggleAutoplay = (core: ICore) => {
+    const animateAutoplay = (now: number) => {
+      core._t.aElapsed = now - core._t.aStart;
+      core._t.aProgress = core._t.aElapsed / core._t.aTotal;
+      console.log('=======core._t.aProgress', core._t.aProgress);
+      core._t.aProgress = core._t.aProgress > 1 ? 1 : core._t.aProgress;
+      if (core._t.progress < 1) {
+        core._t.aId = requestAnimationFrame(animateAutoplay);
+      } else {
+        go2Next(core, 0);
+        core._t.aStart = getNow();
+        // core._t.aId = requestAnimationFrame(animateAutoplay);
+      }
+    };
+    // core._t.aTotal += core.o.speed;
+    core._t.aStart = getNow();
+    core._t.aId = requestAnimationFrame(animateAutoplay);
   };
 
   /**
@@ -1336,7 +1373,7 @@ namespace Carouzel {
         eventHandler(core.bPause, `click`, (event: Event) => {
           event.preventDefault();
           core.pauseClk = true;
-          togglePlayPause(core, false);
+          togglePlayPauseButtons(core, false);
         })
       );
     }
@@ -1345,7 +1382,7 @@ namespace Carouzel {
         eventHandler(core.bPlay, `click`, (event: Event) => {
           event.preventDefault();
           core.pauseClk = false;
-          togglePlayPause(core, true);
+          togglePlayPauseButtons(core, true);
         })
       );
     }
@@ -2159,7 +2196,7 @@ namespace Carouzel {
     if (cCore.trk && cCore.sLen > 0) {
       if (cCore.o.auto) {
         cCore.o.inf = true;
-        toggleAutoplay(cCore);
+        togglePauseOnHover(cCore);
       }
       cCore.bpall = updateBreakpoints(cCore.o);
       if (cCore.bpall.length > 0) {
@@ -2187,6 +2224,12 @@ namespace Carouzel {
       }
     }
 
+    if (cCore.o.auto) {
+      // setTimeout(() => {
+      //   toggleAutoplay(cCore);
+      // }, cCore.o.autoS);
+      toggleAutoplay(cCore);
+    }
     if (typeof settings.afterInitFn === `function`) {
       settings.afterInitFn();
     }

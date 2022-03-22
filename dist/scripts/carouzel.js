@@ -154,6 +154,15 @@ var Carouzel;
         verticalHeight: 480
     };
     /**
+     * Function to return the now() value based on the available global `performance` object
+     *
+     * @returns The now() value.
+     *
+     */
+    var getNow = function () {
+        return performance ? performance.now() : Date.now();
+    };
+    /**
      * Function to trim whitespaces from a string
      *
      * @param str - The string which needs to be trimmed
@@ -650,9 +659,7 @@ var Carouzel;
         }
         manageActiveSlides(core);
         updateAttributes(core);
-        core._t.start = performance
-            ? performance.now()
-            : Date.now();
+        core._t.start = getNow();
         core._t.pX = core.pts[core.pi];
         core._t.nX = core.pts[core.ci];
         if (core.o.effect === cAnimationEffects[0] && core.trk && !core.fLoad) {
@@ -990,7 +997,7 @@ var Carouzel;
      * @param shouldPlay - A boolean value determining if the carouzel is being played or is paused
      *
      */
-    var togglePlayPause = function (core, shouldPlay) {
+    var togglePlayPauseButtons = function (core, shouldPlay) {
         if (core && core.bPause && core.bPlay) {
             if (shouldPlay) {
                 addClass(core.bPlay, core.o.hidCls);
@@ -1003,30 +1010,56 @@ var Carouzel;
         }
     };
     /**
+     * Function to enable pause on hover when autoplay is enabled
+     *
+     * @param core - Carouzel instance core object
+     *
+     */
+    var togglePauseOnHover = function (core) {
+        if (core.root && core.o.pauseHov) {
+            core.eH.push(eventHandler(core.root, "mouseenter", function () {
+                core.paused = true;
+                togglePlayPauseButtons(core, false);
+            }));
+            core.eH.push(eventHandler(core.root, "mouseleave", function () {
+                core.paused = false;
+                togglePlayPauseButtons(core, true);
+            }));
+        }
+        if (!core.o.pauseHov) {
+            core.paused = false;
+        }
+        core._t.aTotal = core.o.autoS;
+        // core.autoT = setInterval(() => {
+        //   if (!core.paused && !core.pauseClk) {
+        //
+        //   }
+        // }, core.o.autoS);
+    };
+    /**
      * Function to toggle Autoplay and pause on hover functionalities for the carouzel
      *
      * @param core - Carouzel instance core object
      *
      */
     var toggleAutoplay = function (core) {
-        if (core.root && core.o.pauseHov) {
-            core.eH.push(eventHandler(core.root, "mouseenter", function () {
-                core.paused = true;
-                togglePlayPause(core, false);
-            }));
-            core.eH.push(eventHandler(core.root, "mouseleave", function () {
-                core.paused = false;
-                togglePlayPause(core, true);
-            }));
-        }
-        if (!core.o.pauseHov) {
-            core.paused = false;
-        }
-        // core.autoT = setInterval(() => {
-        //   if (!core.paused && !core.pauseClk) {
-        //     go2Next(core, 0);
-        //   }
-        // }, core.o.autoS);
+        var animateAutoplay = function (now) {
+            core._t.aElapsed = now - core._t.aStart;
+            core._t.aProgress = core._t.aElapsed / core._t.aTotal;
+            console.log('=======core._t.aProgress', core._t.aProgress);
+            core._t.aProgress = core._t.aProgress > 1 ? 1 : core._t.aProgress;
+            if (core._t.progress < 1) {
+                core._t.aId = requestAnimationFrame(animateAutoplay);
+            }
+            else {
+                go2Next(core, 0);
+                core._t.aStart = getNow();
+                // core._t.aId = requestAnimationFrame(animateAutoplay);
+            }
+        };
+        // core._t.aTotal += core.o.speed;
+        core._t.aStart = getNow();
+        core._t.aId = requestAnimationFrame(animateAutoplay);
     };
     /**
      * Function to add click events to the arrows
@@ -1051,14 +1084,14 @@ var Carouzel;
             core.eH.push(eventHandler(core.bPause, "click", function (event) {
                 event.preventDefault();
                 core.pauseClk = true;
-                togglePlayPause(core, false);
+                togglePlayPauseButtons(core, false);
             }));
         }
         if (core.o.inf && core.bPlay) {
             core.eH.push(eventHandler(core.bPlay, "click", function (event) {
                 event.preventDefault();
                 core.pauseClk = false;
-                togglePlayPause(core, true);
+                togglePlayPauseButtons(core, true);
             }));
         }
     };
@@ -1796,7 +1829,7 @@ var Carouzel;
         if (cCore.trk && cCore.sLen > 0) {
             if (cCore.o.auto) {
                 cCore.o.inf = true;
-                toggleAutoplay(cCore);
+                togglePauseOnHover(cCore);
             }
             cCore.bpall = updateBreakpoints(cCore.o);
             if (cCore.bpall.length > 0) {
@@ -1820,6 +1853,12 @@ var Carouzel;
             if (!isNaN(cCore.o.res[r].cntr) && cCore.o.res[r].cntr > 0) {
                 cCore.root.setAttribute(cSelectors.cntr.slice(1, -1), "true");
             }
+        }
+        if (cCore.o.auto) {
+            // setTimeout(() => {
+            //   toggleAutoplay(cCore);
+            // }, cCore.o.autoS);
+            toggleAutoplay(cCore);
         }
         if (typeof settings.afterInitFn === "function") {
             settings.afterInitFn();
