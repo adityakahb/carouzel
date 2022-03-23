@@ -3350,7 +3350,426 @@
   </div>
 </div>
 
-      
+      <div class="row my-5">
+  <div class="col text-center">
+    <hr />
+  </div>
+</div>
+
+<div class="row">
+  <div class="col text-center">
+    <h3 id="example_video">Video Carouzel</h3>
+    <a
+      href="https://codesandbox.io/s/carouzel-video-z6j56?file=/index.html"
+      target="_blank"
+      class="btn btn-sm btn-outline-info"
+      ><span class="material-icons">code</span> View on Codesandbox</a
+    >
+    <br /><br />
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <section
+      data-carouzel
+      id="__carouzel_19"
+      aria-roledescription="carousel"
+      aria-label="Carouzel showing video embeds"
+    >
+      <div data-carouzel-trackwrapper>
+        <div data-carouzel-trackmask>
+          <div data-carouzel-trackouter>
+            <div data-carouzel-track aria-live="polite">
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="1 of 6"
+              >
+                <div data-carouzel-video>
+                  <iframe
+                    width="560"
+                    height="315"
+                    src="https://www.youtube.com/embed/rzfmZC3kg3M"
+                    title="YouTube video player"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen
+                  ></iframe>
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="2 of 6"
+              >
+                <div data-carouzel-video>
+                  <iframe
+                    src="https://player.vimeo.com/video/63655754?h=10a7533127"
+                    width="640"
+                    height="360"
+                    frameborder="0"
+                    allow="autoplay; fullscreen; picture-in-picture"
+                    allowfullscreen
+                  ></iframe>
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="3 of 6"
+              >
+                <div data-carouzel-video>
+                  <iframe
+                    frameborder="0"
+                    type="text/html"
+                    src="https://www.dailymotion.com/embed/video/x36zno3"
+                    width="100%"
+                    height="100%"
+                    allowfullscreen
+                  >
+                  </iframe>
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="4 of 6"
+              >
+                <div data-carouzel-video>
+                  <video
+                    class="video-js"
+                    controls
+                    preload="auto"
+                    width="640"
+                    height="264"
+                    poster="assets/video-js-poster.jpg"
+                    data-setup="{}"
+                  >
+                    <source
+                      src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+                      type="video/mp4"
+                    />
+                    <p class="vjs-no-js">
+                      To view this video please enable JavaScript, and consider
+                      upgrading to a web browser that
+                      <a
+                        href="https://videojs.com/html5-video-support/"
+                        target="_blank"
+                        >supports HTML5 video</a
+                      >
+                    </p>
+                  </video>
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="5 of 6"
+              >
+                <div data-carouzel-video>
+                  <video width="320" height="240" controls>
+                    <source
+                      src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4"
+                      type="video/mp4"
+                    />
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="6 of 6"
+              >
+                <div data-carouzel-video>
+                  <video width="320" height="240" loop autoplay muted>
+                    <source
+                      src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
+                      type="video/mp4"
+                    />
+                    Your browser does not support the video tag.
+                  </video>
+                  <div data-carouzel-video-content>
+                    <h3>Lorem ipsum dolor sit amet</h3>
+                    <p>
+                      Donec metus velit, pellentesque at sollicitudin at,
+                      pulvinar ac nunc. Ut feugiat dui nulla, eget sollicitudin
+                      nunc sodales vitae.
+                    </p>
+                    <p>
+                      Pellentesque habitant morbi tristique senectus et netus et
+                      malesuada fames ac turpis egestas. Integer id lorem ac
+                      tortor malesuada semper. Donec convallis odio faucibus,
+                      faucibus justo ac, suscipit dui.
+                    </p>
+                    <button type="button" class="btn btn-primary">
+                      This does nothing<span class="material-icons">
+                        chevron_right
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div data-carouzel-controlswrapper>
+          <button
+            type="button"
+            data-carouzel-previousarrow
+            aria-label="Previous"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#000000"
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path
+                d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z"
+              />
+            </svg>
+          </button>
+          <button type="button" data-carouzel-nextarrow aria-label="Next">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#000000"
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div data-carouzel-pageinfo>
+        <em data-carouzel-currentpage></em> /
+        <em data-carouzel-totalpages></em>
+      </div>
+      <div data-carouzel-navigationwrapper>
+        <ul data-carouzel-navigation></ul>
+      </div>
+    </section>
+  </div>
+</div>
+ <!-- <div class="row my-5">
+  <div class="col text-center">
+    <hr />
+  </div>
+</div>
+
+<div class="row">
+  <div class="col text-center">
+    <h3 id="example_scrollbar">Scrollbar</h3>
+    <a href="#" target="_blank" class="btn btn-sm btn-outline-info"
+      ><span class="material-icons">code</span> View on Codesandbox</a
+    >
+    <br /><br />
+  </div>
+</div>
+<div class="row">
+  <div class="col" style="max-width: 1017.4px">
+    <section
+      data-carouzel
+      id="__carouzel_16"
+      aria-roledescription="carousel"
+      aria-label="Carouzel with finite scroll"
+    >
+      <div data-carouzel-trackwrapper>
+        <div data-carouzel-trackmask>
+          <div data-carouzel-trackouter>
+            <div data-carouzel-track aria-live="polite">
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="1 of 16"
+              >
+                01
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="2 of 16"
+              >
+                02
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="3 of 16"
+              >
+                03
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="4 of 16"
+              >
+                04
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="5 of 16"
+              >
+                05
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="6 of 16"
+              >
+                06
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="7 of 16"
+              >
+                07
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="8 of 16"
+              >
+                08
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="9 of 16"
+              >
+                09
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="10 of 16"
+              >
+                10
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="11 of 16"
+              >
+                11
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="12 of 16"
+              >
+                12
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="13 of 16"
+              >
+                13
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="14 of 16"
+              >
+                14
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="15 of 16"
+              >
+                15
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="16 of 16"
+              >
+                16
+              </div>
+            </div>
+          </div>
+        </div>
+        <div data-carouzel-controlswrapper>
+          <button
+            type="button"
+            data-carouzel-previousarrow
+            aria-label="Previous"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#000000"
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path
+                d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z"
+              />
+            </svg>
+          </button>
+          <button type="button" data-carouzel-nextarrow aria-label="Next">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#000000"
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div data-carouzel-scrollbarwrapper>
+        <div data-carouzel-scrollbartrack>
+          <button type="button" data-carouzel-scrollbarthumb>Drag</button>
+        </div>
+      </div>
+      <div data-carouzel-pageinfo>
+        <em data-carouzel-currentpage></em> /
+        <em data-carouzel-totalpages></em>
+      </div>
+      <div data-carouzel-navigationwrapper>
+        <ul data-carouzel-navigation></ul>
+      </div>
+    </section>
+  </div>
+</div> -->
+
       <div class="row my-5">
         <div class="col text-center">
           <hr />

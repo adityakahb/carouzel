@@ -73,6 +73,11 @@ declare namespace Carouzel {
     export class Root {
         protected static instance: Root | null;
         /**
+         * Constructor
+         * @constructor
+         */
+        constructor();
+        /**
          * Function to return single instance
          *
          * @returns Single Carouzel Instance

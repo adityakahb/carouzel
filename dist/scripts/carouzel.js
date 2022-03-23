@@ -22,16 +22,18 @@ var __assign = (this && this.__assign) || function () {
 var Carouzel;
 (function (Carouzel) {
     var allLocalInstances = {};
-    var isWindowEventAttached = false;
-    var windowResizeAny;
-    var hashSlide;
-    var transformVal;
+    var documentHiddenTime = 0;
     var extraSlideCount;
-    var transformBuffer;
+    var hashSlide;
+    var iloop = 0;
+    var isDocumentHidden = false;
+    var isWindowEventAttached = false;
+    var jloop = 0;
     var newCi;
     var newPi;
-    var iloop = 0;
-    var jloop = 0;
+    var transformBuffer;
+    var transformVal;
+    var windowResizeAny;
     /*
      * Easing Functions - inspired from http://gizma.com/easing/
      * only considering the t value for the range [0, 1] => [0, 1]
@@ -118,10 +120,10 @@ var Carouzel;
     var cDefaults = {
         activeClass: "__carouzel-active",
         animationEffect: cAnimationEffects[0],
-        animationSpeed: 500,
+        animationSpeed: 1000,
         appendUrlHash: false,
         autoplay: false,
-        autoplaySpeed: 5000,
+        autoplaySpeed: 2000,
         breakpoints: [],
         centerBetween: 0,
         disabledClass: "__carouzel-disabled",
@@ -241,6 +243,20 @@ var Carouzel;
      */
     var toFixed4 = function (num) {
         return parseFloat(num.toFixed(4));
+    };
+    /**
+     * Function to track the document visibility
+     *
+     */
+    var documentVisibilityFn = function () {
+        if (document === null || document === void 0 ? void 0 : document.hidden) {
+            isDocumentHidden = true;
+            documentHiddenTime = getNow();
+        }
+        else {
+            isDocumentHidden = false;
+            documentHiddenTime = (getNow() - documentHiddenTime) / 1000;
+        }
     };
     /**
      * Function to apply the settings to all the instances w.r.t. applicable breakpoint
@@ -571,6 +587,9 @@ var Carouzel;
                     proceedWithAnimation._post(core);
                     if (newPi !== null && extraSlideCount !== null) {
                         for (var i = 0; i < core.aLen; i++) {
+                            core._as[i].style.opacity = "1";
+                        }
+                        for (var i = 0; i < core.aLen; i++) {
                             if (i >= newPi &&
                                 i < newPi + core.bpo._2Show &&
                                 core._as[i + extraSlideCount]) {
@@ -595,6 +614,10 @@ var Carouzel;
                         : Math.abs(newPi - newCi - extraSlideCount);
                 transformVal =
                     newCi > newPi ? core.pts[transformVal] : -core.pts[transformVal];
+                for (var i = 0; i < core.aLen; i++) {
+                    core._as[i].style.opacity = "0";
+                    core._as[i].style.transform = "translate3d(0, 0, 0)";
+                }
                 for (var i = 0; i < core.aLen; i++) {
                     if (i >= newPi &&
                         i < newPi + core.bpo._2Show &&
@@ -1020,21 +1043,20 @@ var Carouzel;
             core.eH.push(eventHandler(core.root, "mouseenter", function () {
                 core.paused = true;
                 togglePlayPauseButtons(core, false);
+                if (core._t.aId) {
+                    cancelAnimationFrame(core._t.aId);
+                }
             }));
             core.eH.push(eventHandler(core.root, "mouseleave", function () {
                 core.paused = false;
                 togglePlayPauseButtons(core, true);
+                toggleAutoplay(core);
             }));
         }
         if (!core.o.pauseHov) {
             core.paused = false;
         }
         core._t.aTotal = core.o.autoS;
-        // core.autoT = setInterval(() => {
-        //   if (!core.paused && !core.pauseClk) {
-        //
-        //   }
-        // }, core.o.autoS);
     };
     /**
      * Function to toggle Autoplay and pause on hover functionalities for the carouzel
@@ -1046,20 +1068,20 @@ var Carouzel;
         var animateAutoplay = function (now) {
             core._t.aElapsed = now - core._t.aStart;
             core._t.aProgress = core._t.aElapsed / core._t.aTotal;
-            console.log('=======core._t.aProgress', core._t.aProgress);
             core._t.aProgress = core._t.aProgress > 1 ? 1 : core._t.aProgress;
-            if (core._t.progress < 1) {
+            if (!core.paused) {
+                if (core._t.aProgress >= 1 && !isDocumentHidden) {
+                    core._t.aStart = getNow();
+                    go2Next(core, 0);
+                }
                 core._t.aId = requestAnimationFrame(animateAutoplay);
             }
-            else {
-                go2Next(core, 0);
-                core._t.aStart = getNow();
-                // core._t.aId = requestAnimationFrame(animateAutoplay);
-            }
         };
-        // core._t.aTotal += core.o.speed;
-        core._t.aStart = getNow();
-        core._t.aId = requestAnimationFrame(animateAutoplay);
+        core._t.aTotal += core.o.speed;
+        if (!core.paused) {
+            core._t.aStart = getNow();
+            core._t.aId = requestAnimationFrame(animateAutoplay);
+        }
     };
     /**
      * Function to add click events to the arrows
@@ -1855,9 +1877,6 @@ var Carouzel;
             }
         }
         if (cCore.o.auto) {
-            // setTimeout(() => {
-            //   toggleAutoplay(cCore);
-            // }, cCore.o.autoS);
             toggleAutoplay(cCore);
         }
         if (typeof settings.afterInitFn === "function") {
@@ -1965,6 +1984,10 @@ var Carouzel;
      *
      */
     var Root = /** @class */ (function () {
+        /**
+         * Constructor
+         * @constructor
+         */
         function Root() {
             var _this = this;
             /**
@@ -2093,17 +2116,9 @@ var Carouzel;
                     console.error("destroy() \"".concat(query, "\": ").concat(cRootSelectorTypeError));
                 }
             };
-            // TODO: FUTURE APPEND AND PREPEND SLIDE IMPLEMENTATION
-            // protected prependSlide = (slideElem: Node) => {
-            //   if (_core.trk) {
-            //     doInsertBefore(_core.trk, slideElem);
-            //   }
-            // };
-            // protected appendSlide = (slideElem: Node) => {
-            //   if (_core.trk) {
-            //     doInsertAfter(_core.trk, slideElem);
-            //   }
-            // };
+            if (document) {
+                document.addEventListener("visibilitychange", documentVisibilityFn, false);
+            }
         }
         /**
          * Function to return single instance

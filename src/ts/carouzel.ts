@@ -197,16 +197,18 @@ namespace Carouzel {
   }
 
   const allLocalInstances: ICoreInstance = {};
-  let isWindowEventAttached = false;
-  let windowResizeAny: any;
-  let hashSlide: HTMLElement | null;
-  let transformVal: number | null;
+  let documentHiddenTime = 0;
   let extraSlideCount: number | null;
-  let transformBuffer: number | null;
+  let hashSlide: HTMLElement | null;
+  let iloop = 0;
+  let isDocumentHidden = false;
+  let isWindowEventAttached = false;
+  let jloop = 0;
   let newCi: number | null;
   let newPi: number | null;
-  let iloop = 0;
-  let jloop = 0;
+  let transformBuffer: number | null;
+  let transformVal: number | null;
+  let windowResizeAny: any;
 
   /*
    * Easing Functions - inspired from http://gizma.com/easing/
@@ -298,10 +300,10 @@ namespace Carouzel {
   const cDefaults: ISettings = {
     activeClass: `__carouzel-active`,
     animationEffect: cAnimationEffects[0],
-    animationSpeed: 500,
+    animationSpeed: 1000,
     appendUrlHash: false,
     autoplay: false,
-    autoplaySpeed: 5000,
+    autoplaySpeed: 2000,
     breakpoints: [],
     centerBetween: 0,
     disabledClass: `__carouzel-disabled`,
@@ -427,6 +429,20 @@ namespace Carouzel {
    */
   const toFixed4 = (num: number) => {
     return parseFloat(num.toFixed(4));
+  };
+
+  /**
+   * Function to track the document visibility
+   *
+   */
+  const documentVisibilityFn = () => {
+    if (document?.hidden) {
+      isDocumentHidden = true;
+      documentHiddenTime = getNow();
+    } else {
+      isDocumentHidden = false;
+      documentHiddenTime = (getNow() - documentHiddenTime) / 1000;
+    }
   };
 
   /**
@@ -796,6 +812,9 @@ namespace Carouzel {
           proceedWithAnimation._post(core);
           if (newPi !== null && extraSlideCount !== null) {
             for (let i = 0; i < core.aLen; i++) {
+              (core._as[i] as HTMLElement).style.opacity = `1`;
+            }
+            for (let i = 0; i < core.aLen; i++) {
               if (
                 i >= newPi &&
                 i < newPi + core.bpo._2Show &&
@@ -815,7 +834,6 @@ namespace Carouzel {
 
       if (core.trk) {
         extraSlideCount = transformVal = newCi = newPi = null;
-
         core.trk.style.transform = core.o.ver
           ? `translate3d(0, ${-core._t.nX}px, 0)`
           : `translate3d(${-core._t.nX}px, 0, 0)`;
@@ -832,6 +850,10 @@ namespace Carouzel {
         transformVal =
           newCi > newPi ? core.pts[transformVal] : -core.pts[transformVal];
 
+        for (let i = 0; i < core.aLen; i++) {
+          (core._as[i] as HTMLElement).style.opacity = `0`;
+          (core._as[i] as HTMLElement).style.transform = `translate3d(0, 0, 0)`;
+        }
         for (let i = 0; i < core.aLen; i++) {
           if (
             i >= newPi &&
@@ -1300,12 +1322,16 @@ namespace Carouzel {
         eventHandler(core.root, `mouseenter`, () => {
           core.paused = true;
           togglePlayPauseButtons(core, false);
+          if (core._t.aId) {
+            cancelAnimationFrame(core._t.aId);
+          }
         })
       );
       core.eH.push(
         eventHandler(core.root, `mouseleave`, () => {
           core.paused = false;
           togglePlayPauseButtons(core, true);
+          toggleAutoplay(core);
         })
       );
     }
@@ -1313,11 +1339,6 @@ namespace Carouzel {
       core.paused = false;
     }
     core._t.aTotal = core.o.autoS;
-    // core.autoT = setInterval(() => {
-    //   if (!core.paused && !core.pauseClk) {
-    //
-    //   }
-    // }, core.o.autoS);
   };
 
   /**
@@ -1330,19 +1351,20 @@ namespace Carouzel {
     const animateAutoplay = (now: number) => {
       core._t.aElapsed = now - core._t.aStart;
       core._t.aProgress = core._t.aElapsed / core._t.aTotal;
-      console.log('=======core._t.aProgress', core._t.aProgress);
       core._t.aProgress = core._t.aProgress > 1 ? 1 : core._t.aProgress;
-      if (core._t.progress < 1) {
+      if (!core.paused) {
+        if (core._t.aProgress >= 1 && !isDocumentHidden) {
+          core._t.aStart = getNow();
+          go2Next(core, 0);
+        }
         core._t.aId = requestAnimationFrame(animateAutoplay);
-      } else {
-        go2Next(core, 0);
-        core._t.aStart = getNow();
-        // core._t.aId = requestAnimationFrame(animateAutoplay);
       }
     };
-    // core._t.aTotal += core.o.speed;
-    core._t.aStart = getNow();
-    core._t.aId = requestAnimationFrame(animateAutoplay);
+    core._t.aTotal += core.o.speed;
+    if (!core.paused) {
+      core._t.aStart = getNow();
+      core._t.aId = requestAnimationFrame(animateAutoplay);
+    }
   };
 
   /**
@@ -2225,9 +2247,6 @@ namespace Carouzel {
     }
 
     if (cCore.o.auto) {
-      // setTimeout(() => {
-      //   toggleAutoplay(cCore);
-      // }, cCore.o.autoS);
       toggleAutoplay(cCore);
     }
     if (typeof settings.afterInitFn === `function`) {
@@ -2348,6 +2367,20 @@ namespace Carouzel {
 
   export class Root {
     protected static instance: Root | null = null;
+
+    /**
+     * Constructor
+     * @constructor
+     */
+    constructor() {
+      if (document as Document) {
+        document.addEventListener(
+          `visibilitychange`,
+          documentVisibilityFn,
+          false
+        );
+      }
+    }
 
     /**
      * Function to return single instance

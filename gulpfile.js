@@ -20,7 +20,7 @@ gulp.task(`sass-carouzel`, function () {
     .pipe(
       sourcemaps.write(`.`, {
         includeContent: false,
-        sourceRoot: `./dist/styles`,
+        sourceRoot: `./dist/styles`
       })
     )
     .pipe(gulp.dest(`./dist/styles`));
@@ -51,10 +51,10 @@ gulp.task(`uglifyjs`, function () {
           warning_level: 'VERBOSE',
           language_in: 'ECMASCRIPT3',
           language_out: 'ECMASCRIPT3',
-          js_output_file: 'carouzel.min.js',
+          js_output_file: 'carouzel.min.js'
         },
         {
-          platform: ['native', 'java', 'javascript'],
+          platform: ['native', 'java', 'javascript']
         }
       )
     )
@@ -69,7 +69,7 @@ gulp.task(`typescript`, function () {
     .pipe(
       sourcemaps.write(`.`, {
         includeContent: false,
-        sourceRoot: `./dist/scripts`,
+        sourceRoot: `./dist/scripts`
       })
     )
     .pipe(gulp.dest(`dist/scripts`));
@@ -79,6 +79,7 @@ gulp.task(`browserSync`, function (done) {
   browserSync.init({
     files: `./index.html`,
     server: `./`,
+    port: 3001
   });
   done();
 });
@@ -89,7 +90,7 @@ gulp.task(`fileinclude`, function () {
     .pipe(
       fileinclude({
         prefix: `@@`,
-        basepath: `@file`,
+        basepath: `@file`
       })
     )
     .pipe(gulp.dest(`./`));
@@ -127,7 +128,7 @@ gulp.task(`default`, gulp.series([`fileinclude`]));
 gulp.task(`browserSync-for-test`, function (done) {
   browserSync.init({
     server: './tests',
-    port: 3001,
+    port: 3002
   });
   done();
 });
@@ -137,7 +138,7 @@ gulp.task(`copy-for-test`, function () {
     .src([
       './dist/scripts/carouzel.js',
       './dist/styles/carouzel.min.css',
-      './dist/styles/site.min.css',
+      './dist/styles/site.min.css'
     ])
     .pipe(gulp.dest('./tests/resources'));
 });
