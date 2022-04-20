@@ -1050,7 +1050,7 @@ var Carouzel;
             core.eH.push(eventHandler(core.root, "mouseleave", function () {
                 core.paused = false;
                 togglePlayPauseButtons(core, true);
-                toggleAutoplay(core);
+                initializeAutoplay(core);
             }));
         }
         if (!core.o.pauseHov) {
@@ -1059,12 +1059,12 @@ var Carouzel;
         core._t.aTotal = core.o.autoS;
     };
     /**
-     * Function to toggle Autoplay and pause on hover functionalities for the carouzel
+     * Function to initialize Autoplay
      *
      * @param core - Carouzel instance core object
      *
      */
-    var toggleAutoplay = function (core) {
+    var initializeAutoplay = function (core) {
         var animateAutoplay = function (now) {
             core._t.aElapsed = now - core._t.aStart;
             core._t.aProgress = core._t.aElapsed / core._t.aTotal;
@@ -1877,7 +1877,7 @@ var Carouzel;
             }
         }
         if (cCore.o.auto) {
-            toggleAutoplay(cCore);
+            initializeAutoplay(cCore);
         }
         if (typeof settings.afterInitFn === "function") {
             settings.afterInitFn();

@@ -1331,7 +1331,7 @@ namespace Carouzel {
         eventHandler(core.root, `mouseleave`, () => {
           core.paused = false;
           togglePlayPauseButtons(core, true);
-          toggleAutoplay(core);
+          initializeAutoplay(core);
         })
       );
     }
@@ -1342,12 +1342,12 @@ namespace Carouzel {
   };
 
   /**
-   * Function to toggle Autoplay and pause on hover functionalities for the carouzel
+   * Function to initialize Autoplay
    *
    * @param core - Carouzel instance core object
    *
    */
-  const toggleAutoplay = (core: ICore) => {
+  const initializeAutoplay = (core: ICore) => {
     const animateAutoplay = (now: number) => {
       core._t.aElapsed = now - core._t.aStart;
       core._t.aProgress = core._t.aElapsed / core._t.aTotal;
@@ -2247,7 +2247,7 @@ namespace Carouzel {
     }
 
     if (cCore.o.auto) {
-      toggleAutoplay(cCore);
+      initializeAutoplay(cCore);
     }
     if (typeof settings.afterInitFn === `function`) {
       settings.afterInitFn();
