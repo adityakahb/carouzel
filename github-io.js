@@ -6,18 +6,33 @@ var loadIO = function () {
     slidesToShow: 3,
     slidesToScroll: 3
   });
+  // __carouzel_instance.init('#__carouzel_3', {
+  //   slidesToShow: 1,
+  //   breakpoints: [
+  //     {
+  //       minWidth: 700,
+  //       slidesToScroll: 2,
+  //       slidesToShow: 2,
+  //       showNavigation: true
+  //     },
+  //     {
+  //       minWidth: 1100,
+  //       slidesToScroll: 4,
+  //       slidesToShow: 4
+  //     }
+  //   ]
+  // });
   __carouzel_instance.init('#__carouzel_3', {
     slidesToShow: 1,
+    isInfinite: false,
     breakpoints: [
       {
         minWidth: 700,
-        slidesToScroll: 2,
         slidesToShow: 2,
         showNavigation: true
       },
       {
         minWidth: 1100,
-        slidesToScroll: 4,
         slidesToShow: 4
       }
     ]

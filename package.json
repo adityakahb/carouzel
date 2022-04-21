@@ -1,6 +1,6 @@
 {
   "name": "carouzel",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "Carouzel is a framework free, light-weight carousel plugin, which is responsive and handles multiple configurations. It uses DOM hardware acceleration for animation effects.",
   "private": false,
   "scripts": {},
