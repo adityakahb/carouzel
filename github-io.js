@@ -24,7 +24,7 @@ var loadIO = function () {
   // });
   __carouzel_instance.init('#__carouzel_3', {
     slidesToShow: 1,
-    isInfinite: false,
+    // isInfinite: false,
     breakpoints: [
       {
         minWidth: 700,

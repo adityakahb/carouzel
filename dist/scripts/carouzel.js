@@ -1487,7 +1487,7 @@ var Carouzel;
     var generateElements = function (core) {
         for (var i = 0; i < core.bpall.length; i++) {
             core.bpall[i].bpSLen = core.sLen;
-            if (core.o.inf) {
+            if (core.o.inf && core.sLen >= core.bpall[i]._2Show) {
                 for (var j = core.sLen -
                     core.bpall[i]._2Show -
                     Math.ceil(core.bpall[i].cntr / 2); j < core.sLen; j++) {
@@ -1510,18 +1510,18 @@ var Carouzel;
         }
         var _loop_1 = function (i) {
             var pageLength = Math.floor(core.sLen / core.bpall[i]._2Scroll);
-            console.log('===core.sLen', core.sLen);
-            console.log('===core.bpall[i]', core.bpall[i]);
-            if (core.sLen > core.bpall[i]._2Show) {
+            var var1 = core.sLen % core.bpall[i]._2Scroll;
+            var var2 = core.bpall[i]._2Show - core.bpall[i]._2Scroll;
+            if (var2 > var1) {
+                pageLength--;
+            }
+            if (var2 < var1) {
+                pageLength++;
+            }
+            console.log('===core.bpall[i]', core.bpall[i].nDups.length + core.bpall[i].pDups.length + core.sLen);
+            console.log('==========pageLength', pageLength);
+            if (!core.o.inf && core.sLen > core.bpall[i]._2Show) {
                 var navBtns = [];
-                var var1 = core.sLen % core.bpall[i]._2Scroll;
-                var var2 = core.bpall[i]._2Show - core.bpall[i]._2Scroll;
-                if (var2 > var1) {
-                    pageLength--;
-                }
-                if (var2 < var1) {
-                    pageLength++;
-                }
                 core.bpall[i].dots = [];
                 var btnStr = "";
                 var _loop_2 = function (j) {
