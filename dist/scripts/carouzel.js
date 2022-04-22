@@ -971,12 +971,17 @@ var Carouzel;
      *
      */
     var go2Next = function (core, touchedPixel) {
+        console.log('==============before core.ci', core.ci);
+        console.log('==============before core.pi', core.pi);
         core.pi = core.ci;
         core.ci += core.bpo._2Scroll;
+        console.log('==============then core.ci', core.ci);
+        console.log('==============then core.pi', core.pi);
         if (core._t.id) {
             cancelAnimationFrame(core._t.id);
         }
         if (core.o.inf) {
+            console.log('---------core.ci + core.bpo._2Show', core.ci + core.bpo._2Show > core.sLen);
             if (typeof core.pts[core.ci + core.bpo._2Show] === "undefined") {
                 core.pi = core.pi - core.sLen;
                 core.ci = 0;
@@ -1487,7 +1492,7 @@ var Carouzel;
     var generateElements = function (core) {
         for (var i = 0; i < core.bpall.length; i++) {
             core.bpall[i].bpSLen = core.sLen;
-            if (core.o.inf && core.sLen >= core.bpall[i]._2Show) {
+            if (core.o.inf && core.sLen > core.bpall[i]._2Show) {
                 for (var j = core.sLen -
                     core.bpall[i]._2Show -
                     Math.ceil(core.bpall[i].cntr / 2); j < core.sLen; j++) {
@@ -1509,50 +1514,43 @@ var Carouzel;
             }
         }
         var _loop_1 = function (i) {
-            var pageLength = Math.floor(core.sLen / core.bpall[i]._2Scroll);
-            var var1 = core.sLen % core.bpall[i]._2Scroll;
-            var var2 = core.bpall[i]._2Show - core.bpall[i]._2Scroll;
-            if (var2 > var1) {
-                pageLength--;
-            }
-            if (var2 < var1) {
+            var pageLength = 1;
+            var totalpages = core.sLen - core.bpall[i]._2Show;
+            while (totalpages > 0) {
+                totalpages -= core.bpall[i]._2Scroll;
                 pageLength++;
             }
-            console.log('===core.bpall[i]', core.bpall[i].nDups.length + core.bpall[i].pDups.length + core.sLen);
-            console.log('==========pageLength', pageLength);
-            if (!core.o.inf && core.sLen > core.bpall[i]._2Show) {
-                var navBtns = [];
-                core.bpall[i].dots = [];
-                var btnStr = "";
-                var _loop_2 = function (j) {
-                    var liElem = document === null || document === void 0 ? void 0 : document.createElement("li");
-                    var btnElem = document === null || document === void 0 ? void 0 : document.createElement("button");
-                    liElem.setAttribute(cSelectors.dot.slice(1, -1), "");
-                    btnElem.setAttribute("type", "button");
-                    btnStr = "<div class=\"".concat(core.o.dotNcls, "\">").concat(j + 1, "</div>");
-                    if (core.o.useTitle &&
-                        core.bpall[i]._2Show === 1 &&
-                        core._ds[j].getAttribute(cSelectors.stitle.slice(1, -1))) {
-                        btnStr += core._ds[j].getAttribute(cSelectors.stitle.slice(1, -1));
-                        addClass(liElem, core.o.dotCls);
-                    }
-                    btnElem.innerHTML = btnStr;
-                    liElem.appendChild(btnElem);
-                    navBtns.push(liElem);
-                    core.eH.push(eventHandler(btnElem, "click", function (event) {
-                        event.preventDefault();
-                        if (core.o.rtl) {
-                            go2Slide(core, pageLength - j - 1);
-                        }
-                        else {
-                            go2Slide(core, j);
-                        }
-                    }));
-                    core.bpall[i].dots.push(navBtns[j]);
-                };
-                for (var j = 0; j < pageLength; j++) {
-                    _loop_2(j);
+            var navBtns = [];
+            core.bpall[i].dots = [];
+            var btnStr = "";
+            var _loop_2 = function (j) {
+                var liElem = document === null || document === void 0 ? void 0 : document.createElement("li");
+                var btnElem = document === null || document === void 0 ? void 0 : document.createElement("button");
+                liElem.setAttribute(cSelectors.dot.slice(1, -1), "");
+                btnElem.setAttribute("type", "button");
+                btnStr = "<div class=\"".concat(core.o.dotNcls, "\">").concat(j + 1, "</div>");
+                if (core.o.useTitle &&
+                    core.bpall[i]._2Show === 1 &&
+                    core._ds[j].getAttribute(cSelectors.stitle.slice(1, -1))) {
+                    btnStr += core._ds[j].getAttribute(cSelectors.stitle.slice(1, -1));
+                    addClass(liElem, core.o.dotCls);
                 }
+                btnElem.innerHTML = btnStr;
+                liElem.appendChild(btnElem);
+                navBtns.push(liElem);
+                core.eH.push(eventHandler(btnElem, "click", function (event) {
+                    event.preventDefault();
+                    if (core.o.rtl) {
+                        go2Slide(core, pageLength - j - 1);
+                    }
+                    else {
+                        go2Slide(core, j);
+                    }
+                }));
+                core.bpall[i].dots.push(navBtns[j]);
+            };
+            for (var j = 0; j < pageLength; j++) {
+                _loop_2(j);
             }
         };
         for (var i = 0; i < core.bpall.length; i++) {

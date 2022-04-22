@@ -1246,12 +1246,20 @@ namespace Carouzel {
    *
    */
   const go2Next = (core: ICore, touchedPixel: number) => {
+    console.log('==============before core.ci', core.ci);
+    console.log('==============before core.pi', core.pi);
     core.pi = core.ci;
     core.ci += core.bpo._2Scroll;
+    console.log('==============then core.ci', core.ci);
+    console.log('==============then core.pi', core.pi);
     if (core._t.id) {
       cancelAnimationFrame(core._t.id);
     }
     if (core.o.inf) {
+      console.log(
+        '---------core.ci + core.bpo._2Show',
+        core.ci + core.bpo._2Show > core.sLen
+      );
       if (typeof core.pts[core.ci + core.bpo._2Show] === `undefined`) {
         core.pi = core.pi - core.sLen;
         core.ci = 0;
@@ -1822,7 +1830,7 @@ namespace Carouzel {
   const generateElements = (core: ICore) => {
     for (let i = 0; i < core.bpall.length; i++) {
       core.bpall[i].bpSLen = core.sLen;
-      if (core.o.inf && core.sLen >= core.bpall[i]._2Show) {
+      if (core.o.inf && core.sLen > core.bpall[i]._2Show) {
         for (
           let j =
             core.sLen -
@@ -1853,55 +1861,45 @@ namespace Carouzel {
       }
     }
     for (let i = 0; i < core.bpall.length; i++) {
-      let pageLength = Math.floor(core.sLen / core.bpall[i]._2Scroll);
-      const var1 = core.sLen % core.bpall[i]._2Scroll;
-      const var2 = core.bpall[i]._2Show - core.bpall[i]._2Scroll;
-      if (var2 > var1) {
-        pageLength--;
-      }
-      if (var2 < var1) {
+      let pageLength = 1;
+      let totalpages = core.sLen - core.bpall[i]._2Show;
+      while (totalpages > 0) {
+        totalpages -= core.bpall[i]._2Scroll;
         pageLength++;
       }
-      console.log(
-        '===core.bpall[i]',
-        core.bpall[i].nDups.length + core.bpall[i].pDups.length + core.sLen
-      );
-      console.log('==========pageLength', pageLength);
-      if (!core.o.inf && core.sLen > core.bpall[i]._2Show) {
-        const navBtns: HTMLElement[] = [];
-        core.bpall[i].dots = [];
-        let btnStr = ``;
+      const navBtns: HTMLElement[] = [];
+      core.bpall[i].dots = [];
+      let btnStr = ``;
 
-        for (let j = 0; j < pageLength; j++) {
-          const liElem = document?.createElement(`li`);
-          const btnElem = document?.createElement(`button`);
-          liElem.setAttribute(cSelectors.dot.slice(1, -1), ``);
-          btnElem.setAttribute(`type`, `button`);
-          btnStr = `<div class="${core.o.dotNcls}">${j + 1}</div>`;
-          if (
-            core.o.useTitle &&
-            core.bpall[i]._2Show === 1 &&
-            core._ds[j].getAttribute(cSelectors.stitle.slice(1, -1))
-          ) {
-            btnStr += core._ds[j].getAttribute(cSelectors.stitle.slice(1, -1));
-            addClass(liElem as HTMLElement, core.o.dotCls);
-          }
-          btnElem.innerHTML = btnStr;
-          liElem.appendChild(btnElem);
-          navBtns.push(liElem);
-
-          core.eH.push(
-            eventHandler(btnElem as HTMLElement, `click`, (event: Event) => {
-              event.preventDefault();
-              if (core.o.rtl) {
-                go2Slide(core, pageLength - j - 1);
-              } else {
-                go2Slide(core, j);
-              }
-            })
-          );
-          core.bpall[i].dots.push(navBtns[j] as HTMLElement);
+      for (let j = 0; j < pageLength; j++) {
+        const liElem = document?.createElement(`li`);
+        const btnElem = document?.createElement(`button`);
+        liElem.setAttribute(cSelectors.dot.slice(1, -1), ``);
+        btnElem.setAttribute(`type`, `button`);
+        btnStr = `<div class="${core.o.dotNcls}">${j + 1}</div>`;
+        if (
+          core.o.useTitle &&
+          core.bpall[i]._2Show === 1 &&
+          core._ds[j].getAttribute(cSelectors.stitle.slice(1, -1))
+        ) {
+          btnStr += core._ds[j].getAttribute(cSelectors.stitle.slice(1, -1));
+          addClass(liElem as HTMLElement, core.o.dotCls);
         }
+        btnElem.innerHTML = btnStr;
+        liElem.appendChild(btnElem);
+        navBtns.push(liElem);
+
+        core.eH.push(
+          eventHandler(btnElem as HTMLElement, `click`, (event: Event) => {
+            event.preventDefault();
+            if (core.o.rtl) {
+              go2Slide(core, pageLength - j - 1);
+            } else {
+              go2Slide(core, j);
+            }
+          })
+        );
+        core.bpall[i].dots.push(navBtns[j] as HTMLElement);
       }
     }
   };
