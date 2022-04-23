@@ -9,22 +9,29 @@ var loadIO = function () {
       slidesToShow: 3,
       slidesToScroll: 3
     });
+
+  // {
+  //   slidesToShow: 1,
+  //   slidesToScroll: 1,
+  //   breakpoints: [
+  //     {
+  //       minWidth: 700,
+  //       slidesToScroll: 2,
+  //       slidesToShow: 2
+  //     },
+  //     {
+  //       minWidth: 1100,
+  //       slidesToScroll: 4,
+  //       slidesToShow: 4
+  //     }
+  //   ]
+  // }
+
   document.getElementById('__carouzel_3') &&
     __carouzel_instance.init('#__carouzel_3', {
-      slidesToShow: 1,
-      slidesToScroll: 1,
-      breakpoints: [
-        {
-          minWidth: 700,
-          slidesToScroll: 2,
-          slidesToShow: 2
-        },
-        {
-          minWidth: 1100,
-          slidesToScroll: 4,
-          slidesToShow: 4
-        }
-      ]
+      animationSpeed: 100,
+      slidesToShow: 3,
+      slidesToScroll: 2
     });
 
   document.getElementById('__carouzel_4') &&

@@ -149,6 +149,8 @@ namespace Carouzel {
   interface ICore {
     _as: HTMLElement[];
     _ds: HTMLElement[];
+    _f: number;
+    _l: number;
     _t: ITimer;
     aLen: number;
     arrowN: HTMLElement | null;
@@ -157,11 +159,11 @@ namespace Carouzel {
     bpall: ICoreBreakpoint[];
     bPause: HTMLElement | null;
     bPlay: HTMLElement | null;
-    bpoOld: ICoreBreakpoint;
     bpo: ICoreBreakpoint;
+    bpoOld: ICoreBreakpoint;
     ci: number;
-    ctrlW: HTMLElement | null;
     ct: number;
+    ctrlW: HTMLElement | null;
     curp: HTMLElement | null;
     eH: any[];
     fLoad: boolean;
@@ -1134,6 +1136,10 @@ namespace Carouzel {
         }
       }
 
+      core._f = core.o.inf ? -bpoptions.pDups.length : 0;
+      core._l = core.o.inf
+        ? core.sLen + bpoptions.nDups.length - 1
+        : core.sLen - 1;
       for (let i = bpoptions.pDups.length; i > 0; i--) {
         core.pts[-i] = toFixed4(
           (-i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr) +
@@ -1179,9 +1185,6 @@ namespace Carouzel {
     if (!touchedPixel) {
       touchedPixel = 0;
     }
-    // if (typeof core.pi === `undefined`) {
-    //   core.pi = core.o.inf ? -core.bpo._2Show : 0;
-    // }
 
     core.pi = core.ci;
 
@@ -1195,26 +1198,23 @@ namespace Carouzel {
     } else if (dir === `next`) {
       core.ci += core.bpo._2Scroll;
 
-      console.log(
-        '=========core.ci + core.bpo._2Show',
-        core.ci + core.bpo._2Show
-      );
-
-      if (core.ci + core.bpo._2Show === core.sLen) {
-        console.log('====== eq');
-
+      if (core.ci === core.sLen && core.o.inf) {
         core.ci = 0;
-        core.pi = 0 - core.bpo._2Show;
+        core.pi = core._f;
       }
-      if (core.ci + core.bpo._2Show > core.sLen) {
-        console.log('====== more');
 
+      if (core.ci + core.bpo._2Show > core.sLen) {
         core.ci = core.sLen - core.bpo._2Show;
       }
     } else if (dir === `prev`) {
       core.ci -= core.bpo._2Scroll;
 
-      if (core.ci - core.bpo._2Show < 0) {
+      if (core.ci === core._f && core.o.inf) {
+        core.pi = core._l + 1 - core.bpo._2Show;
+        core.ci = core.pi - core.bpo._2Show;
+      }
+
+      if (core.ci < 0) {
         core.ci = 0;
       }
     }
@@ -1223,14 +1223,15 @@ namespace Carouzel {
       core.fLoad = false;
     }
 
-    console.log('=============new core.pi', core.pi);
-    console.log('=============new core.ci', core.ci);
+    // console.log('==========core.pts', core.pts);
+    // console.log('==========core.ci', core.ci);
+    // console.log('==========core.pi', core.pi);
 
     if (core._t.id) {
       cancelAnimationFrame(core._t.id);
     }
 
-    animateTrack(core, touchedPixel);
+    // animateTrack(core, touchedPixel);
   };
 
   /**
@@ -2080,7 +2081,10 @@ namespace Carouzel {
   const mapSettings = (settings: ISettings) => {
     const settingsobj: ICoreSettings = {
       // _2Scroll: settings.enableScrollbar ? 1 : settings.slidesToScroll,
-      _2Scroll: settings.slidesToScroll,
+      _2Scroll:
+        settings.slidesToScroll > settings.slidesToShow
+          ? settings.slidesToShow
+          : settings.slidesToScroll,
       _2Show: settings.slidesToShow,
       _arrows: settings.showArrows,
       _nav: settings.showNavigation,

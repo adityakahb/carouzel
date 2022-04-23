@@ -866,6 +866,10 @@ var Carouzel;
                     }
                 }
             }
+            core._f = core.o.inf ? -bpoptions.pDups.length : 0;
+            core._l = core.o.inf
+                ? core.sLen + bpoptions.nDups.length - 1
+                : core.sLen - 1;
             for (var i = bpoptions.pDups.length; i > 0; i--) {
                 core.pts[-i] = toFixed4((-i + bpoptions.pDups.length) * (slideWidth + bpoptions.gutr) +
                     bpoptions.gutr);
@@ -899,9 +903,6 @@ var Carouzel;
         if (!touchedPixel) {
             touchedPixel = 0;
         }
-        // if (typeof core.pi === `undefined`) {
-        //   core.pi = core.o.inf ? -core.bpo._2Show : 0;
-        // }
         core.pi = core.ci;
         if (dir === "goto" && slidenumber) {
             if (slidenumber >= core.sLen) {
@@ -914,32 +915,34 @@ var Carouzel;
         }
         else if (dir === "next") {
             core.ci += core.bpo._2Scroll;
-            console.log('=========core.ci + core.bpo._2Show', core.ci + core.bpo._2Show);
-            if (core.ci + core.bpo._2Show === core.sLen) {
-                console.log('====== eq');
+            if (core.ci === core.sLen && core.o.inf) {
                 core.ci = 0;
-                core.pi = 0 - core.bpo._2Show;
+                core.pi = core._f;
             }
             if (core.ci + core.bpo._2Show > core.sLen) {
-                console.log('====== more');
                 core.ci = core.sLen - core.bpo._2Show;
             }
         }
         else if (dir === "prev") {
             core.ci -= core.bpo._2Scroll;
-            if (core.ci - core.bpo._2Show < 0) {
+            if (core.ci === core._f && core.o.inf) {
+                core.pi = core._l + 1 - core.bpo._2Show;
+                core.ci = core.pi - core.bpo._2Show;
+            }
+            if (core.ci < 0) {
                 core.ci = 0;
             }
         }
         if (core.fLoad) {
             core.fLoad = false;
         }
-        console.log('=============new core.pi', core.pi);
-        console.log('=============new core.ci', core.ci);
+        // console.log('==========core.pts', core.pts);
+        // console.log('==========core.ci', core.ci);
+        // console.log('==========core.pi', core.pi);
         if (core._t.id) {
             cancelAnimationFrame(core._t.id);
         }
-        animateTrack(core, touchedPixel);
+        // animateTrack(core, touchedPixel);
     };
     /**
      * Function to go to the specific slide number
@@ -1703,7 +1706,9 @@ var Carouzel;
     var mapSettings = function (settings) {
         var settingsobj = {
             // _2Scroll: settings.enableScrollbar ? 1 : settings.slidesToScroll,
-            _2Scroll: settings.slidesToScroll,
+            _2Scroll: settings.slidesToScroll > settings.slidesToShow
+                ? settings.slidesToShow
+                : settings.slidesToScroll,
             _2Show: settings.slidesToShow,
             _arrows: settings.showArrows,
             _nav: settings.showNavigation,
