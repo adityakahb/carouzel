@@ -664,17 +664,6 @@ var Carouzel;
                 go2Slide(allLocalInstances[core.sync], core.ci);
             }
         }
-        if (typeof core.pi === "undefined") {
-            core.pi = core.o.inf ? -core.bpo._2Show : 0;
-        }
-        if (!core.o.inf) {
-            if (core.ci < 0) {
-                core.ci = 0;
-            }
-            if (core.ci + core.bpo._2Show >= core.sLen) {
-                core.ci = core.sLen - core.bpo._2Show;
-            }
-        }
         if (core.trk && core.fLoad) {
             core.trk.style.transform = core.o.ver
                 ? "translate3d(0, ".concat(-core.pts[core.ci], "px, 0)")
@@ -906,6 +895,48 @@ var Carouzel;
         //   animateTrack(core, 0);
         // }
     };
+    var updateIndicesAndAnimate = function (core, touchedPixel, slidenumber, dir) {
+        if (!touchedPixel) {
+            touchedPixel = 0;
+        }
+        // if (typeof core.pi === `undefined`) {
+        //   core.pi = core.o.inf ? -core.bpo._2Show : 0;
+        // }
+        core.pi = core.ci;
+        if (dir === "goto" && slidenumber) {
+            if (slidenumber >= core.sLen) {
+                slidenumber = core.sLen - 1;
+            }
+            else if (slidenumber <= -1) {
+                slidenumber = 0;
+            }
+            core.ci = slidenumber * core.bpo._2Scroll;
+        }
+        if (core.fLoad) {
+            core.fLoad = false;
+        }
+        if (dir === "next") {
+            core.ci += core.bpo._2Scroll;
+        }
+        if (dir === "prev") {
+            core.ci -= core.bpo._2Scroll;
+        }
+        console.log('=============core.pts', core.pts);
+        console.log('=============core.pi', core.pi);
+        console.log('=============core.ci', core.ci);
+        console.log('=============core.ci > core.sLen', core.ci > core.sLen);
+        console.log('=============core.ci < 0', core.ci < 0);
+        if (core.ci + core.bpo._2Show > core.sLen) {
+            core.ci = core.sLen - core.bpo._2Show;
+        }
+        if (core.ci - core.bpo._2Show < 0) {
+            core.ci = 0;
+        }
+        if (core._t.id) {
+            cancelAnimationFrame(core._t.id);
+        }
+        animateTrack(core, touchedPixel);
+    };
     /**
      * Function to go to the specific slide number
      *
@@ -915,21 +946,8 @@ var Carouzel;
      */
     var go2Slide = function (core, slidenumber) {
         if (core.ci !== slidenumber * core.bpo._2Scroll) {
-            if (slidenumber >= core.sLen) {
-                slidenumber = core.sLen - 1;
-            }
-            else if (slidenumber <= -1) {
-                slidenumber = 0;
-            }
-            core.pi = core.ci;
-            core.ci = slidenumber * core.bpo._2Scroll;
-            if (core._t.id) {
-                cancelAnimationFrame(core._t.id);
-            }
-            if (core.fLoad) {
-                core.fLoad = false;
-            }
-            animateTrack(core, 0);
+            updateIndicesAndAnimate(core, null, slidenumber, "goto");
+            // animateTrack(core, 0);
         }
     };
     /**
@@ -940,28 +958,8 @@ var Carouzel;
      *
      */
     var go2Prev = function (core, touchedPixel) {
-        core.pi = core.ci;
-        core.ci -= core.bpo._2Scroll;
-        if (core._t.id) {
-            cancelAnimationFrame(core._t.id);
-        }
-        if (core.o.inf) {
-            if (typeof core.pts[core.ci] === "undefined") {
-                core.pi =
-                    core.sLen -
-                        (core.sLen % core.bpo._2Scroll > 0
-                            ? core.sLen % core.bpo._2Scroll
-                            : core.bpo._2Scroll);
-                core.ci = core.pi - core.bpo._2Scroll;
-            }
-            else {
-                core.pi = core.ci + core.bpo._2Scroll;
-            }
-        }
-        if (core.fLoad) {
-            core.fLoad = false;
-        }
-        animateTrack(core, touchedPixel);
+        updateIndicesAndAnimate(core, touchedPixel, null, "prev");
+        // animateTrack(core, touchedPixel);
     };
     /**
      * Function to go to the next set of slides
@@ -971,29 +969,8 @@ var Carouzel;
      *
      */
     var go2Next = function (core, touchedPixel) {
-        console.log('==============before core.ci', core.ci);
-        console.log('==============before core.pi', core.pi);
-        core.pi = core.ci;
-        core.ci += core.bpo._2Scroll;
-        console.log('==============then core.ci', core.ci);
-        console.log('==============then core.pi', core.pi);
-        if (core._t.id) {
-            cancelAnimationFrame(core._t.id);
-        }
-        if (core.o.inf) {
-            console.log('---------core.ci + core.bpo._2Show', core.ci + core.bpo._2Show > core.sLen);
-            if (typeof core.pts[core.ci + core.bpo._2Show] === "undefined") {
-                core.pi = core.pi - core.sLen;
-                core.ci = 0;
-            }
-            else {
-                core.pi = core.ci - core.bpo._2Scroll;
-            }
-        }
-        if (core.fLoad) {
-            core.fLoad = false;
-        }
-        animateTrack(core, touchedPixel);
+        updateIndicesAndAnimate(core, touchedPixel, null, "next");
+        // animateTrack(core, touchedPixel);
     };
     /**
      * Function to toggle keyboard navigation with left and right arrows
