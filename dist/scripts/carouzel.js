@@ -912,26 +912,30 @@ var Carouzel;
             }
             core.ci = slidenumber * core.bpo._2Scroll;
         }
+        else if (dir === "next") {
+            core.ci += core.bpo._2Scroll;
+            console.log('=========core.ci + core.bpo._2Show', core.ci + core.bpo._2Show);
+            if (core.ci + core.bpo._2Show === core.sLen) {
+                console.log('====== eq');
+                core.ci = 0;
+                core.pi = 0 - core.bpo._2Show;
+            }
+            if (core.ci + core.bpo._2Show > core.sLen) {
+                console.log('====== more');
+                core.ci = core.sLen - core.bpo._2Show;
+            }
+        }
+        else if (dir === "prev") {
+            core.ci -= core.bpo._2Scroll;
+            if (core.ci - core.bpo._2Show < 0) {
+                core.ci = 0;
+            }
+        }
         if (core.fLoad) {
             core.fLoad = false;
         }
-        if (dir === "next") {
-            core.ci += core.bpo._2Scroll;
-        }
-        if (dir === "prev") {
-            core.ci -= core.bpo._2Scroll;
-        }
-        console.log('=============core.pts', core.pts);
-        console.log('=============core.pi', core.pi);
-        console.log('=============core.ci', core.ci);
-        console.log('=============core.ci > core.sLen', core.ci > core.sLen);
-        console.log('=============core.ci < 0', core.ci < 0);
-        if (core.ci + core.bpo._2Show > core.sLen) {
-            core.ci = core.sLen - core.bpo._2Show;
-        }
-        if (core.ci - core.bpo._2Show < 0) {
-            core.ci = 0;
-        }
+        console.log('=============new core.pi', core.pi);
+        console.log('=============new core.ci', core.ci);
         if (core._t.id) {
             cancelAnimationFrame(core._t.id);
         }
