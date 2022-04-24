@@ -38,7 +38,7 @@ var loadIO = function () {
     __carouzel_instance.init('#__carouzel_3', {
       animationSpeed: 300,
       slidesToShow: 3,
-      slidesToScroll: 1
+      slidesToScroll: 2
     });
 
   document.getElementById('__carouzel_4') &&

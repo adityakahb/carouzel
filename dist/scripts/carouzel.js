@@ -382,21 +382,13 @@ var Carouzel;
             for (var i = 0; i < core.bpo.dots.length; i++) {
                 removeClass(core.bpo.dots[i], core.o.activeCls);
             }
-            x = Math.floor(core.ci / core.bpo._2Scroll);
-            if (core.o.rtl) {
-                x = core.bpo.dots.length - x - 1;
-            }
-            if (x < 0) {
-                x = core.bpo.dots.length - 1;
-            }
-            if (x >= core.bpo.dots.length) {
-                x = 0;
-            }
-            if (core.curp) {
-                core.curp.innerHTML = "".concat(x + 1);
-            }
+            x = Math.floor(core.ci % core.bpo._2Scroll);
+            console.log('==========x', x);
+            // if (core.curp) {
+            //   core.curp.innerHTML = `${x + 1}`;
+            // }
             if (core.bpo.dots[x]) {
-                addClass(core.bpo.dots[x], core.o.activeCls);
+                // addClass(core.bpo.dots[x], core.o.activeCls);
             }
         }
     };
@@ -905,14 +897,13 @@ var Carouzel;
         }
         core.pi = core.ci;
         var someci = null;
-        if (dir === "goto" && slidenumber) {
-            if (slidenumber >= core.sLen) {
-                slidenumber = core.sLen - 1;
+        if (dir === "goto" &&
+            slidenumber !== null &&
+            slidenumber * core.bpo._2Scroll !== core.ci) {
+            someci = slidenumber === 0 ? 0 : slidenumber * core.bpo._2Scroll;
+            if (someci + core.bpo._2Show > core.sLen) {
+                someci = core.sLen - core.bpo._2Show;
             }
-            else if (slidenumber <= -1) {
-                slidenumber = 0;
-            }
-            someci = slidenumber * core.bpo._2Scroll;
             core.ci = someci;
         }
         else if (dir === "next") {
@@ -965,13 +956,7 @@ var Carouzel;
      *
      */
     var go2Slide = function (core, slidenumber) {
-        console.log('=========core.ci', core.ci);
-        console.log('=========slidenumber', slidenumber);
-        console.log('=========core.bpo._2Scroll', core.bpo._2Scroll);
-        if (core.ci !== slidenumber) {
-            updateIndicesAndAnimate(core, null, slidenumber, "goto");
-            // animateTrack(core, 0);
-        }
+        updateIndicesAndAnimate(core, null, slidenumber, "goto");
     };
     /**
      * Function to go to the previous set of slides
@@ -982,7 +967,6 @@ var Carouzel;
      */
     var go2Prev = function (core, touchedPixel) {
         updateIndicesAndAnimate(core, touchedPixel, null, "prev");
-        // animateTrack(core, touchedPixel);
     };
     /**
      * Function to go to the next set of slides
@@ -993,7 +977,6 @@ var Carouzel;
      */
     var go2Next = function (core, touchedPixel) {
         updateIndicesAndAnimate(core, touchedPixel, null, "next");
-        // animateTrack(core, touchedPixel);
     };
     /**
      * Function to toggle keyboard navigation with left and right arrows
@@ -1538,10 +1521,12 @@ var Carouzel;
                 btnElem.innerHTML = btnStr;
                 liElem.appendChild(btnElem);
                 navBtns.push(liElem);
-                core.eH.push(eventHandler(btnElem, "click", function (event) {
-                    event.preventDefault();
-                    go2Slide(core, j);
-                }));
+                if (pageLength > 1) {
+                    core.eH.push(eventHandler(btnElem, "click", function (event) {
+                        event.preventDefault();
+                        go2Slide(core, j);
+                    }));
+                }
                 core.bpall[i].dots.push(navBtns[j]);
             };
             for (var j = 0; j < pageLength; j++) {
