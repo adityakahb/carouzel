@@ -11,6 +11,7 @@ var loadIO = function () {
     });
 
   // {
+  // animationSpeed: 300,
   //   slidesToShow: 1,
   //   slidesToScroll: 1,
   //   breakpoints: [
@@ -27,11 +28,17 @@ var loadIO = function () {
   //   ]
   // }
 
+  // {
+  //   animationSpeed: 300,
+  //   slidesToShow: 3,
+  //   slidesToScroll: 2
+  // }
+
   document.getElementById('__carouzel_3') &&
     __carouzel_instance.init('#__carouzel_3', {
-      animationSpeed: 100,
+      animationSpeed: 300,
       slidesToShow: 3,
-      slidesToScroll: 2
+      slidesToScroll: 1
     });
 
   document.getElementById('__carouzel_4') &&

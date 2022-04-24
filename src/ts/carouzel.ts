@@ -1187,6 +1187,7 @@ namespace Carouzel {
     }
 
     core.pi = core.ci;
+    let someci: number | null = null;
 
     if (dir === `goto` && slidenumber) {
       if (slidenumber >= core.sLen) {
@@ -1194,28 +1195,43 @@ namespace Carouzel {
       } else if (slidenumber <= -1) {
         slidenumber = 0;
       }
-      core.ci = slidenumber * core.bpo._2Scroll;
+      someci = slidenumber * core.bpo._2Scroll;
+      core.ci = someci;
     } else if (dir === `next`) {
-      core.ci += core.bpo._2Scroll;
+      someci = core.ci + core.bpo._2Scroll;
 
-      if (core.ci === core.sLen && core.o.inf) {
-        core.ci = 0;
+      if (someci === core.sLen && core.o.inf) {
+        someci = 0;
         core.pi = core._f;
       }
 
-      if (core.ci + core.bpo._2Show > core.sLen) {
-        core.ci = core.sLen - core.bpo._2Show;
+      if (someci + core.bpo._2Show > core.sLen) {
+        someci = core.sLen - core.bpo._2Show;
+      }
+
+      if (someci === core.ci) {
+        core.ci = 0;
+        core.pi = core._f;
+      } else {
+        core.ci = someci;
       }
     } else if (dir === `prev`) {
-      core.ci -= core.bpo._2Scroll;
+      someci = core.ci - core.bpo._2Scroll;
 
-      if (core.ci === core._f && core.o.inf) {
+      if (someci === core._f && core.o.inf) {
         core.pi = core._l + 1 - core.bpo._2Show;
-        core.ci = core.pi - core.bpo._2Show;
+        someci = core.pi - core.bpo._2Show;
       }
 
-      if (core.ci < 0) {
-        core.ci = 0;
+      if (someci < 0) {
+        someci = 0;
+      }
+
+      if (someci === core.ci) {
+        core.pi = core._l - core.bpo._2Show;
+        core.ci = core.sLen - core.bpo._2Show;
+      } else {
+        core.ci = someci;
       }
     }
 
@@ -1223,15 +1239,11 @@ namespace Carouzel {
       core.fLoad = false;
     }
 
-    // console.log('==========core.pts', core.pts);
-    // console.log('==========core.ci', core.ci);
-    // console.log('==========core.pi', core.pi);
-
     if (core._t.id) {
       cancelAnimationFrame(core._t.id);
     }
 
-    // animateTrack(core, touchedPixel);
+    animateTrack(core, touchedPixel);
   };
 
   /**
@@ -1242,7 +1254,10 @@ namespace Carouzel {
    *
    */
   const go2Slide = (core: ICore, slidenumber: number) => {
-    if (core.ci !== slidenumber * core.bpo._2Scroll) {
+    console.log('=========core.ci', core.ci);
+    console.log('=========slidenumber', slidenumber);
+    console.log('=========core.bpo._2Scroll', core.bpo._2Scroll);
+    if (core.ci !== slidenumber) {
       updateIndicesAndAnimate(core, null, slidenumber, `goto`);
       // animateTrack(core, 0);
     }
@@ -1891,11 +1906,7 @@ namespace Carouzel {
         core.eH.push(
           eventHandler(btnElem as HTMLElement, `click`, (event: Event) => {
             event.preventDefault();
-            if (core.o.rtl) {
-              go2Slide(core, pageLength - j - 1);
-            } else {
-              go2Slide(core, j);
-            }
+            go2Slide(core, j);
           })
         );
         core.bpall[i].dots.push(navBtns[j] as HTMLElement);

@@ -904,6 +904,7 @@ var Carouzel;
             touchedPixel = 0;
         }
         core.pi = core.ci;
+        var someci = null;
         if (dir === "goto" && slidenumber) {
             if (slidenumber >= core.sLen) {
                 slidenumber = core.sLen - 1;
@@ -911,38 +912,50 @@ var Carouzel;
             else if (slidenumber <= -1) {
                 slidenumber = 0;
             }
-            core.ci = slidenumber * core.bpo._2Scroll;
+            someci = slidenumber * core.bpo._2Scroll;
+            core.ci = someci;
         }
         else if (dir === "next") {
-            core.ci += core.bpo._2Scroll;
-            if (core.ci === core.sLen && core.o.inf) {
+            someci = core.ci + core.bpo._2Scroll;
+            if (someci === core.sLen && core.o.inf) {
+                someci = 0;
+                core.pi = core._f;
+            }
+            if (someci + core.bpo._2Show > core.sLen) {
+                someci = core.sLen - core.bpo._2Show;
+            }
+            if (someci === core.ci) {
                 core.ci = 0;
                 core.pi = core._f;
             }
-            if (core.ci + core.bpo._2Show > core.sLen) {
-                core.ci = core.sLen - core.bpo._2Show;
+            else {
+                core.ci = someci;
             }
         }
         else if (dir === "prev") {
-            core.ci -= core.bpo._2Scroll;
-            if (core.ci === core._f && core.o.inf) {
+            someci = core.ci - core.bpo._2Scroll;
+            if (someci === core._f && core.o.inf) {
                 core.pi = core._l + 1 - core.bpo._2Show;
-                core.ci = core.pi - core.bpo._2Show;
+                someci = core.pi - core.bpo._2Show;
             }
-            if (core.ci < 0) {
-                core.ci = 0;
+            if (someci < 0) {
+                someci = 0;
+            }
+            if (someci === core.ci) {
+                core.pi = core._l - core.bpo._2Show;
+                core.ci = core.sLen - core.bpo._2Show;
+            }
+            else {
+                core.ci = someci;
             }
         }
         if (core.fLoad) {
             core.fLoad = false;
         }
-        // console.log('==========core.pts', core.pts);
-        // console.log('==========core.ci', core.ci);
-        // console.log('==========core.pi', core.pi);
         if (core._t.id) {
             cancelAnimationFrame(core._t.id);
         }
-        // animateTrack(core, touchedPixel);
+        animateTrack(core, touchedPixel);
     };
     /**
      * Function to go to the specific slide number
@@ -952,7 +965,10 @@ var Carouzel;
      *
      */
     var go2Slide = function (core, slidenumber) {
-        if (core.ci !== slidenumber * core.bpo._2Scroll) {
+        console.log('=========core.ci', core.ci);
+        console.log('=========slidenumber', slidenumber);
+        console.log('=========core.bpo._2Scroll', core.bpo._2Scroll);
+        if (core.ci !== slidenumber) {
             updateIndicesAndAnimate(core, null, slidenumber, "goto");
             // animateTrack(core, 0);
         }
@@ -1497,7 +1513,7 @@ var Carouzel;
                 }
             }
         }
-        var _loop_1 = function (i) {
+        for (var i = 0; i < core.bpall.length; i++) {
             var pageLength = 1;
             var totalpages = core.sLen - core.bpall[i]._2Show;
             while (totalpages > 0) {
@@ -1507,7 +1523,7 @@ var Carouzel;
             var navBtns = [];
             core.bpall[i].dots = [];
             var btnStr = "";
-            var _loop_2 = function (j) {
+            var _loop_1 = function (j) {
                 var liElem = document === null || document === void 0 ? void 0 : document.createElement("li");
                 var btnElem = document === null || document === void 0 ? void 0 : document.createElement("button");
                 liElem.setAttribute(cSelectors.dot.slice(1, -1), "");
@@ -1524,21 +1540,13 @@ var Carouzel;
                 navBtns.push(liElem);
                 core.eH.push(eventHandler(btnElem, "click", function (event) {
                     event.preventDefault();
-                    if (core.o.rtl) {
-                        go2Slide(core, pageLength - j - 1);
-                    }
-                    else {
-                        go2Slide(core, j);
-                    }
+                    go2Slide(core, j);
                 }));
                 core.bpall[i].dots.push(navBtns[j]);
             };
             for (var j = 0; j < pageLength; j++) {
-                _loop_2(j);
+                _loop_1(j);
             }
-        };
-        for (var i = 0; i < core.bpall.length; i++) {
-            _loop_1(i);
         }
     };
     /**
