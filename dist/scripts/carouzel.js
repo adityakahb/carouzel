@@ -351,6 +351,24 @@ var Carouzel;
         }
     };
     /**
+     * Function to enable or disable the arrow element
+     *
+     * @param element - Arrow element
+     * @param cls - `disabled` class
+     * @param shouldDisable - To determine whether it should disable or enable
+     *
+     */
+    var toggleArrows = function (element, cls, shouldDisable) {
+        if (shouldDisable && element) {
+            addClass(element, cls);
+            element.setAttribute("disabled", "disabled");
+        }
+        else if (!shouldDisable && element) {
+            removeClass(element, cls);
+            element.removeAttribute("disabled");
+        }
+    };
+    /**
      * Function to update CSS classes on all respective elements
      *
      * @param core - Carouzel instance core object
@@ -360,35 +378,30 @@ var Carouzel;
         var x;
         if (core.arrowP) {
             if (!core.o.inf && core.ci === 0) {
-                addClass(core.arrowP, core.o.disableCls || "");
-                core.arrowP.setAttribute("disabled", "disabled");
+                toggleArrows(core.arrowP, core.o.disableCls, true);
             }
-            else {
-                removeClass(core.arrowP, core.o.disableCls || "");
-                core.arrowP.removeAttribute("disabled");
+            else if (!core.o.inf && core.ci !== 0) {
+                toggleArrows(core.arrowP, core.o.disableCls, false);
             }
         }
         if (core.arrowN) {
             if (!core.o.inf && core.ci === core.sLen - core.bpo._2Show) {
-                addClass(core.arrowN, core.o.disableCls || "");
-                core.arrowN.setAttribute("disabled", "disabled");
+                toggleArrows(core.arrowN, core.o.disableCls, true);
             }
-            else {
-                removeClass(core.arrowN, core.o.disableCls || "");
-                core.arrowN.removeAttribute("disabled");
+            else if (!core.o.inf && core.ci !== core.sLen - core.bpo._2Show) {
+                toggleArrows(core.arrowN, core.o.disableCls, false);
             }
         }
         if (core.bpo.dots.length > 0) {
             for (var i = 0; i < core.bpo.dots.length; i++) {
                 removeClass(core.bpo.dots[i], core.o.activeCls);
             }
-            x = Math.floor(core.ci % core.bpo._2Scroll);
-            console.log('==========x', x);
-            // if (core.curp) {
-            //   core.curp.innerHTML = `${x + 1}`;
-            // }
+            x = Math.ceil(core.ci / core.bpo._2Scroll);
+            if (core.curp) {
+                core.curp.innerHTML = "".concat(x + 1);
+            }
             if (core.bpo.dots[x]) {
-                // addClass(core.bpo.dots[x], core.o.activeCls);
+                addClass(core.bpo.dots[x], core.o.activeCls);
             }
         }
     };
@@ -877,6 +890,16 @@ var Carouzel;
             if (core.totp) {
                 core.totp.innerHTML = "".concat(bpoptions.dots.length);
             }
+            if (core.o.inf && core.arrowN && core.arrowP) {
+                if (core.aLen <= core.bpo._2Show) {
+                    toggleArrows(core.arrowP, core.o.disableCls, true);
+                    toggleArrows(core.arrowN, core.o.disableCls, true);
+                }
+                else {
+                    toggleArrows(core.arrowP, core.o.disableCls, false);
+                    toggleArrows(core.arrowN, core.o.disableCls, false);
+                }
+            }
         }
         animateTrack(core, 0);
         // TODO: Scrollbar implementation
@@ -891,12 +914,27 @@ var Carouzel;
         //   animateTrack(core, 0);
         // }
     };
+    /**
+     * Function to update the indices and animate to the mentioned direction
+     *
+     * @param core - Carouzel instance core object
+     * @param touchedPixel - The amount of pixels moved using touch/cursor drag
+     * @param slidenumber - Slide index to which the carouzel should be scrolled to
+     * @param dir - The provided direction
+     *
+     */
     var updateIndicesAndAnimate = function (core, touchedPixel, slidenumber, dir) {
         if (!touchedPixel) {
             touchedPixel = 0;
         }
         core.pi = core.ci;
         var someci = null;
+        if (core.fLoad) {
+            core.fLoad = false;
+        }
+        if (core._t.id) {
+            cancelAnimationFrame(core._t.id);
+        }
         if (dir === "goto" &&
             slidenumber !== null &&
             slidenumber * core.bpo._2Scroll !== core.ci) {
@@ -905,6 +943,7 @@ var Carouzel;
                 someci = core.sLen - core.bpo._2Show;
             }
             core.ci = someci;
+            animateTrack(core, touchedPixel);
         }
         else if (dir === "next") {
             someci = core.ci + core.bpo._2Scroll;
@@ -921,6 +960,15 @@ var Carouzel;
             }
             else {
                 core.ci = someci;
+            }
+            if (!core.o.inf) {
+                console.log('=======core.ci', core.ci);
+                console.log('=======core._l', core._l);
+                console.log('=======core.bpo._2Show', core.bpo._2Show);
+                console.log('=======(!core.o.inf && core.ci + core.bpo._2Show <= core._l)', !core.o.inf && core.ci + core.bpo._2Show <= core._l);
+            }
+            if ((!core.o.inf && core.ci + core.bpo._2Show <= core._l) || core.o.inf) {
+                animateTrack(core, touchedPixel);
             }
         }
         else if (dir === "prev") {
@@ -939,14 +987,10 @@ var Carouzel;
             else {
                 core.ci = someci;
             }
+            if ((!core.o.inf && core.ci !== 0) || core.o.inf) {
+                animateTrack(core, touchedPixel);
+            }
         }
-        if (core.fLoad) {
-            core.fLoad = false;
-        }
-        if (core._t.id) {
-            cancelAnimationFrame(core._t.id);
-        }
-        animateTrack(core, touchedPixel);
     };
     /**
      * Function to go to the specific slide number
