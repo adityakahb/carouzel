@@ -1238,57 +1238,63 @@ namespace Carouzel {
 
       animateTrack(core, touchedPixel);
     } else if (dir === `next`) {
-      someci = core.ci + core.bpo._2Scroll;
+      let shouldScroll = false;
 
-      if (someci === core.sLen && core.o.inf) {
-        someci = 0;
-        core.pi = core._f;
-      }
-
-      if (someci + core.bpo._2Show > core.sLen) {
-        someci = core.sLen - core.bpo._2Show;
-      }
-
-      if (someci === core.ci) {
-        core.ci = 0;
-        core.pi = core._f;
+      if (core.o.inf) {
+        shouldScroll = true;
       } else {
-        core.ci = someci;
+        console.log('==========core.ci', core.ci);
+        console.log('==========core._l', core._l);
+        console.log('==========core.bpo._2Show', core.bpo._2Show);
       }
 
-      if (!core.o.inf) {
-        console.log('=======core.ci', core.ci);
-        console.log('=======core._l', core._l);
-        console.log('=======core.bpo._2Show', core.bpo._2Show);
-        console.log(
-          '=======(!core.o.inf && core.ci + core.bpo._2Show <= core._l)',
-          !core.o.inf && core.ci + core.bpo._2Show <= core._l
-        );
-      }
+      if (shouldScroll) {
+        someci = core.ci + core.bpo._2Scroll;
 
-      if ((!core.o.inf && core.ci + core.bpo._2Show <= core._l) || core.o.inf) {
+        if (someci === core.sLen && core.o.inf) {
+          someci = 0;
+          core.pi = core._f;
+        }
+
+        if (someci + core.bpo._2Show > core.sLen) {
+          someci = core.sLen - core.bpo._2Show;
+        }
+
+        if (someci === core.ci) {
+          core.ci = 0;
+          core.pi = core._f;
+        } else {
+          core.ci = someci;
+        }
         animateTrack(core, touchedPixel);
       }
     } else if (dir === `prev`) {
-      someci = core.ci - core.bpo._2Scroll;
+      let shouldScroll = false;
 
-      if (someci === core._f && core.o.inf) {
-        core.pi = core._l + 1 - core.bpo._2Show;
-        someci = core.pi - core.bpo._2Show;
-      }
-
-      if (someci < 0) {
-        someci = 0;
-      }
-
-      if (someci === core.ci) {
-        core.pi = core._l - core.bpo._2Show;
-        core.ci = core.sLen - core.bpo._2Show;
+      if (core.o.inf) {
+        shouldScroll = true;
       } else {
-        core.ci = someci;
+        console.log('==========core.ci', core.ci);
       }
 
-      if ((!core.o.inf && core.ci !== 0) || core.o.inf) {
+      if (shouldScroll) {
+        someci = core.ci - core.bpo._2Scroll;
+
+        if (someci === core._f && core.o.inf) {
+          core.pi = core._l + 1 - core.bpo._2Show;
+          someci = core.pi - core.bpo._2Show;
+        }
+
+        if (someci < 0) {
+          someci = 0;
+        }
+
+        if (someci === core.ci) {
+          core.pi = core._l - core.bpo._2Show;
+          core.ci = core.sLen - core.bpo._2Show;
+        } else {
+          core.ci = someci;
+        }
         animateTrack(core, touchedPixel);
       }
     }
