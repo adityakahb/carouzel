@@ -1243,9 +1243,7 @@ namespace Carouzel {
       if (core.o.inf) {
         shouldScroll = true;
       } else {
-        console.log('==========core.ci', core.ci);
-        console.log('==========core._l', core._l);
-        console.log('==========core.bpo._2Show', core.bpo._2Show);
+        shouldScroll = core.ci + core.bpo._2Show < core._l ? true : false;
       }
 
       if (shouldScroll) {
@@ -1274,7 +1272,7 @@ namespace Carouzel {
       if (core.o.inf) {
         shouldScroll = true;
       } else {
-        console.log('==========core.ci', core.ci);
+        shouldScroll = core.ci === 0 ? false : true;
       }
 
       if (shouldScroll) {

@@ -305,7 +305,250 @@
     <div class="container-fluid">
       <div class="row my-4"></div>
 
-      
+      <div class="row">
+  <div class="col text-center">
+    <h3 id="example_simple">Simple</h3>
+    <a
+      href="https://codesandbox.io/s/carouzel-simple-jt6g6?file=/index.html"
+      target="_blank"
+      class="btn btn-sm btn-outline-info"
+      ><span class="material-icons">code</span> View on Codesandbox</a
+    >
+    <br /><br />
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <section
+      data-carouzel
+      id="__carouzel_1"
+      aria-roledescription="carousel"
+      aria-label="Simple implementation of Carouzel"
+    >
+      <div data-carouzel-trackwrapper>
+        <div data-carouzel-trackmask>
+          <div data-carouzel-trackouter>
+            <div data-carouzel-track aria-live="polite">
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="1 of 6"
+              >
+                01
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="2 of 6"
+              >
+                02
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="3 of 6"
+              >
+                03
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="4 of 6"
+              >
+                04
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="5 of 6"
+              >
+                05
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="6 of 6"
+              >
+                06
+              </div>
+            </div>
+          </div>
+        </div>
+        <div data-carouzel-controlswrapper>
+          <button
+            type="button"
+            data-carouzel-previousarrow
+            aria-label="Previous"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#000000"
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path
+                d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z"
+              />
+            </svg>
+          </button>
+          <button type="button" data-carouzel-nextarrow aria-label="Next">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#000000"
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div data-carouzel-pageinfo>
+        <em data-carouzel-currentpage></em> /
+        <em data-carouzel-totalpages></em>
+      </div>
+      <div data-carouzel-navigationwrapper>
+        <ul data-carouzel-navigation></ul>
+      </div>
+    </section>
+  </div>
+</div>
+
+      <div class="row my-5">
+  <div class="col text-center">
+    <hr />
+  </div>
+</div>
+
+<div class="row">
+  <div class="col text-center">
+    <h3 id="example_multiple">Multiple slides</h3>
+    <a
+      href="https://codesandbox.io/s/carouzel-multiple-rm53q?file=/index.html"
+      target="_blank"
+      class="btn btn-sm btn-outline-info"
+      ><span class="material-icons">code</span> View on Codesandbox</a
+    >
+    <br /><br />
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <section
+      data-carouzel
+      id="__carouzel_2"
+      aria-roledescription="carousel"
+      aria-label="Carouzel showing multiple slides at once"
+    >
+      <div data-carouzel-trackwrapper>
+        <div data-carouzel-trackmask>
+          <div data-carouzel-trackouter>
+            <div data-carouzel-track aria-live="polite">
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="1 of 6"
+              >
+                01
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="2 of 6"
+              >
+                02
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="3 of 6"
+              >
+                03
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="4 of 6"
+              >
+                04
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="5 of 6"
+              >
+                05
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="6 of 6"
+              >
+                06
+              </div>
+            </div>
+          </div>
+        </div>
+        <div data-carouzel-controlswrapper>
+          <button
+            type="button"
+            data-carouzel-previousarrow
+            aria-label="Previous"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#000000"
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path
+                d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z"
+              />
+            </svg>
+          </button>
+          <button type="button" data-carouzel-nextarrow aria-label="Next">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#000000"
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div data-carouzel-pageinfo>
+        <em data-carouzel-currentpage></em> /
+        <em data-carouzel-totalpages></em>
+      </div>
+      <div data-carouzel-navigationwrapper>
+        <ul data-carouzel-navigation></ul>
+      </div>
+    </section>
+  </div>
+</div>
+
       <div class="row my-5">
   <div class="col text-center">
     <hr />
@@ -377,7 +620,2640 @@
     </section>
   </div>
 </div>
-      
+      <div class="row my-5">
+  <div class="col text-center">
+    <hr />
+  </div>
+</div>
+
+<div class="row">
+  <div class="col text-center">
+    <h3 id="example_centered">Centered</h3>
+    <a
+      href="https://codesandbox.io/s/carouzel-centered-jmbr4?file=/index.html"
+      target="_blank"
+      class="btn btn-sm btn-outline-info"
+      ><span class="material-icons">code</span> View on Codesandbox</a
+    >
+    <br /><br />
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <section
+      data-carouzel
+      id="__carouzel_4"
+      aria-roledescription="carousel"
+      aria-label="Carouzel showing centered slides"
+    >
+      <div data-carouzel-trackwrapper>
+        <div data-carouzel-trackmask>
+          <div data-carouzel-trackouter>
+            <div data-carouzel-track aria-live="polite">
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="1 of 6"
+              >
+                01
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="1 of 6"
+              >
+                02
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="3 of 6"
+              >
+                03
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="4 of 6"
+              >
+                04
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="5 of 6"
+              >
+                05
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="6 of 6"
+              >
+                06
+              </div>
+            </div>
+          </div>
+        </div>
+        <div data-carouzel-controlswrapper>
+          <button
+            type="button"
+            data-carouzel-previousarrow
+            aria-label="Previous"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#000000"
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path
+                d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z"
+              />
+            </svg>
+          </button>
+          <button type="button" data-carouzel-nextarrow aria-label="Next">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#000000"
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div data-carouzel-pageinfo>
+        <em data-carouzel-currentpage></em> /
+        <em data-carouzel-totalpages></em>
+      </div>
+      <div data-carouzel-navigationwrapper>
+        <ul data-carouzel-navigation></ul>
+      </div>
+    </section>
+  </div>
+</div>
+ <div class="row my-5">
+  <div class="col text-center">
+    <hr />
+  </div>
+</div>
+
+<div class="row">
+  <div class="col text-center">
+    <h3 id="example_gutter_space">Gutter Space</h3>
+    <a
+      href="https://codesandbox.io/s/carouzel-gutter-space-cltvd?file=/index.html"
+      target="_blank"
+      class="btn btn-sm btn-outline-info"
+      ><span class="material-icons">code</span> View on Codesandbox</a
+    >
+    <br /><br />
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <section
+      data-carouzel
+      id="__carouzel_5"
+      aria-roledescription="carousel"
+      aria-label="Carouzel showing gutter space between slides"
+    >
+      <div data-carouzel-trackwrapper>
+        <div data-carouzel-trackmask>
+          <div data-carouzel-trackouter>
+            <div data-carouzel-track aria-live="polite">
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="1 of 12"
+              >
+                01
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="2 of 12"
+              >
+                02
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="3 of 12"
+              >
+                03
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="4 of 12"
+              >
+                04
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="5 of 12"
+              >
+                05
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="6 of 12"
+              >
+                06
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="7 of 12"
+              >
+                07
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="8 of 12"
+              >
+                08
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="9 of 12"
+              >
+                09
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="10 of 12"
+              >
+                10
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="11 of 12"
+              >
+                11
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="12 of 12"
+              >
+                12
+              </div>
+            </div>
+          </div>
+        </div>
+        <div data-carouzel-controlswrapper>
+          <button
+            type="button"
+            data-carouzel-previousarrow
+            aria-label="Previous"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#000000"
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path
+                d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z"
+              />
+            </svg>
+          </button>
+          <button type="button" data-carouzel-nextarrow aria-label="Next">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#000000"
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div data-carouzel-pageinfo>
+        <em data-carouzel-currentpage></em> /
+        <em data-carouzel-totalpages></em>
+      </div>
+      <div data-carouzel-navigationwrapper>
+        <ul data-carouzel-navigation></ul>
+      </div>
+    </section>
+  </div>
+</div>
+
+      <div class="row my-5">
+  <div class="col text-center">
+    <hr />
+  </div>
+</div>
+
+<div class="row">
+  <div class="col text-center">
+    <h3 id="example_titles_as_nav">Slide titles as navigation</h3>
+    <a
+      href="https://codesandbox.io/s/carouzel-slide-titles-as-dots-tykcs?file=/index.html"
+      target="_blank"
+      class="btn btn-sm btn-outline-info"
+      ><span class="material-icons">code</span> View on Codesandbox</a
+    >
+    <br /><br />
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <section
+      data-carouzel
+      id="__carouzel_6"
+      aria-roledescription="carousel"
+      aria-label="Carouzel showing slides' titles as custom dots"
+    >
+      <div data-carouzel-trackwrapper>
+        <div data-carouzel-trackmask>
+          <div data-carouzel-trackouter>
+            <div data-carouzel-track aria-live="polite">
+              <div
+                data-carouzel-slide
+                data-carouzel-title="&lt;h6&gt;Slide 1&lt;/h6&gt;&lt;p&gt;Description for Slide 1&lt;/p&gt;"
+                role="group"
+                aria-roledescription="slide"
+                aria-label="1 of 6"
+              >
+                01
+              </div>
+              <div
+                data-carouzel-slide
+                data-carouzel-title="&lt;h6&gt;Slide 2&lt;/h6&gt;&lt;p&gt;Description for Slide 2&lt;/p&gt;"
+                role="group"
+                aria-roledescription="slide"
+                aria-label="1 of 6"
+              >
+                02
+              </div>
+              <div
+                data-carouzel-slide
+                data-carouzel-title="&lt;h6&gt;Slide 3&lt;/h6&gt;&lt;p&gt;Description for Slide 3&lt;/p&gt;"
+                role="group"
+                aria-roledescription="slide"
+                aria-label="3 of 6"
+              >
+                03
+              </div>
+              <div
+                data-carouzel-slide
+                data-carouzel-title="&lt;h6&gt;Slide 4&lt;/h6&gt;&lt;p&gt;Description for Slide 4&lt;/p&gt;"
+                role="group"
+                aria-roledescription="slide"
+                aria-label="4 of 6"
+              >
+                04
+              </div>
+              <div
+                data-carouzel-slide
+                data-carouzel-title="&lt;h6&gt;Slide 5&lt;/h6&gt;&lt;p&gt;Description for Slide 5&lt;/p&gt;"
+                role="group"
+                aria-roledescription="slide"
+                aria-label="5 of 6"
+              >
+                05
+              </div>
+              <div
+                data-carouzel-slide
+                data-carouzel-title="&lt;h6&gt;Slide 6&lt;/h6&gt;&lt;p&gt;Description for Slide 6&lt;/p&gt;"
+                role="group"
+                aria-roledescription="slide"
+                aria-label="6 of 6"
+              >
+                06
+              </div>
+            </div>
+          </div>
+        </div>
+        <div data-carouzel-controlswrapper>
+          <button
+            type="button"
+            data-carouzel-previousarrow
+            aria-label="Previous"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#000000"
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path
+                d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z"
+              />
+            </svg>
+          </button>
+          <button type="button" data-carouzel-nextarrow aria-label="Next">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#000000"
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div data-carouzel-pageinfo>
+        <em data-carouzel-currentpage></em> /
+        <em data-carouzel-totalpages></em>
+      </div>
+      <div data-carouzel-navigationwrapper>
+        <ul data-carouzel-navigation></ul>
+      </div>
+    </section>
+  </div>
+</div>
+
+      <div class="row my-5">
+  <div class="col text-center">
+    <hr />
+  </div>
+</div>
+
+<div class="row">
+  <div class="col text-center">
+    <h3 id="example_autoplay">Autoplay</h3>
+    <a
+      href="https://codesandbox.io/s/carouzel-autoplay-k4tk4?file=/index.html"
+      target="_blank"
+      class="btn btn-sm btn-outline-info"
+      ><span class="material-icons">code</span> View on Codesandbox</a
+    >
+    <br /><br />
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <section
+      data-carouzel
+      id="__carouzel_7"
+      aria-roledescription="carousel"
+      aria-label="Carouzel showing Autoplay functionality"
+    >
+      <div data-carouzel-trackwrapper>
+        <div data-carouzel-trackmask>
+          <div data-carouzel-trackouter>
+            <div data-carouzel-track aria-live="polite">
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="1 of 12"
+              >
+                01
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="2 of 12"
+              >
+                02
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="3 of 12"
+              >
+                03
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="4 of 12"
+              >
+                04
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="5 of 12"
+              >
+                05
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="6 of 12"
+              >
+                06
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="7 of 12"
+              >
+                07
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="8 of 12"
+              >
+                08
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="9 of 12"
+              >
+                09
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="10 of 12"
+              >
+                10
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="11 of 12"
+              >
+                11
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="12 of 12"
+              >
+                12
+              </div>
+            </div>
+          </div>
+        </div>
+        <div data-carouzel-controlswrapper>
+          <button
+            type="button"
+            data-carouzel-pause
+            aria-label="Pause the autoplay carousel"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#000000"
+            >
+              <path d="M0 0h24v24H0z" fill="none" />
+              <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            data-carouzel-play
+            class="__carouzel-hidden"
+            aria-label="Start the autoplay carousel"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#000000"
+            >
+              <path d="M0 0h24v24H0z" fill="none" />
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            data-carouzel-previousarrow
+            aria-label="Previous"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#000000"
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path
+                d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z"
+              />
+            </svg>
+          </button>
+          <button type="button" data-carouzel-nextarrow aria-label="Next">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#000000"
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div data-carouzel-pageinfo>
+        <em data-carouzel-currentpage></em> /
+        <em data-carouzel-totalpages></em>
+      </div>
+      <div data-carouzel-navigationwrapper>
+        <ul data-carouzel-navigation></ul>
+      </div>
+    </section>
+  </div>
+</div>
+ <div class="row my-5">
+  <div class="col text-center">
+    <hr />
+  </div>
+</div>
+
+<div class="row">
+  <div class="col text-center">
+    <h3 id="example_finite">Finite</h3>
+    <a href="https://codesandbox.io/s/carouzel-finite-3sy8r?file=/index.html" target="_blank"
+      class="btn btn-sm btn-outline-info"><span class="material-icons">code</span> View on Codesandbox</a>
+    <br /><br />
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <section data-carouzel id="__carouzel_8" aria-roledescription="carousel" aria-label="Carouzel with finite scroll">
+      <div data-carouzel-trackwrapper>
+        <div data-carouzel-trackmask>
+          <div data-carouzel-trackouter>
+            <div data-carouzel-track aria-live="polite">
+              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="1 of 6">
+                01
+              </div>
+              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="2 of 6">
+                02
+              </div>
+              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="3 of 6">
+                03
+              </div>
+              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="4 of 6">
+                04
+              </div>
+              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="5 of 6">
+                05
+              </div>
+              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="6 of 6">
+                06
+              </div>
+              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="1 of 6">
+                07
+              </div>
+              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="2 of 6">
+                08
+              </div>
+              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="3 of 6">
+                09
+              </div>
+              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="4 of 6">
+                10
+              </div>
+              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="5 of 6">
+                11
+              </div>
+              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="6 of 6">
+                12
+              </div>
+            </div>
+          </div>
+        </div>
+        <div data-carouzel-controlswrapper>
+          <button type="button" data-carouzel-previousarrow aria-label="Previous">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000">
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z" />
+            </svg>
+          </button>
+          <button type="button" data-carouzel-nextarrow aria-label="Next">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000">
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div data-carouzel-pageinfo>
+        <em data-carouzel-currentpage></em> /
+        <em data-carouzel-totalpages></em>
+      </div>
+      <div data-carouzel-navigationwrapper>
+        <ul data-carouzel-navigation></ul>
+      </div>
+    </section>
+  </div>
+</div>
+      <div class="row my-5">
+  <div class="col text-center">
+    <hr />
+  </div>
+</div>
+
+<div class="row">
+  <div class="col text-center">
+    <h3 id="example_vertical">Vertical Carouzel</h3>
+    <a
+      href="https://codesandbox.io/s/carouzel-vertical-layout-djyg6d?file=/index.html"
+      target="_blank"
+      class="btn btn-sm btn-outline-info"
+      ><span class="material-icons">code</span> View on Codesandbox</a
+    >
+    <br /><br />
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <section
+      data-carouzel
+      id="__carouzel_9"
+      aria-roledescription="carousel"
+      aria-label="Vertical Carouzel"
+    >
+      <div data-carouzel-trackwrapper>
+        <div data-carouzel-trackmask>
+          <div data-carouzel-trackouter>
+            <div data-carouzel-track aria-live="polite">
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="1 of 12"
+              >
+                01
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="2 of 12"
+              >
+                02
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="3 of 12"
+              >
+                03
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="4 of 12"
+              >
+                04
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="5 of 12"
+              >
+                05
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="6 of 12"
+              >
+                06
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="7 of 12"
+              >
+                07
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="8 of 12"
+              >
+                08
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="9 of 12"
+              >
+                09
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="10 of 12"
+              >
+                10
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="11 of 12"
+              >
+                11
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="12 of 12"
+              >
+                12
+              </div>
+            </div>
+          </div>
+        </div>
+        <div data-carouzel-controlswrapper>
+          <button
+            type="button"
+            data-carouzel-previousarrow
+            aria-label="Previous"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#000000"
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14l-6-6z" />
+            </svg>
+          </button>
+          <button type="button" data-carouzel-nextarrow aria-label="Next">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#000000"
+            >
+              <path d="M24 24H0V0h24v24z" fill="none" opacity=".87" />
+              <path
+                d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6-1.41-1.41z"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div data-carouzel-pageinfo>
+        <em data-carouzel-currentpage></em> /
+        <em data-carouzel-totalpages></em>
+      </div>
+      <div data-carouzel-navigationwrapper>
+        <ul data-carouzel-navigation></ul>
+      </div>
+    </section>
+  </div>
+</div>
+ <div class="row my-5">
+  <div class="col text-center">
+    <hr />
+  </div>
+</div>
+
+<div class="row">
+  <div class="col text-center">
+    <h3 id="example_right_to_left">Right To Left</h3>
+    <a
+      href="https://codesandbox.io/s/carouzel-right-to-left-pop1y?file=/index.html"
+      target="_blank"
+      class="btn btn-sm btn-outline-info"
+      ><span class="material-icons">code</span> View on Codesandbox</a
+    >
+    <br /><br />
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <section
+      data-carouzel
+      id="__carouzel_10"
+      aria-roledescription="carousel"
+      aria-label="Carouzel showing Right-to-Left implementation"
+    >
+      <div data-carouzel-trackwrapper>
+        <div data-carouzel-trackmask>
+          <div data-carouzel-trackouter>
+            <div data-carouzel-track aria-live="polite">
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="1 of 16"
+              >
+                01
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="2 of 16"
+              >
+                02
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="3 of 16"
+              >
+                03
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="4 of 16"
+              >
+                04
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="5 of 16"
+              >
+                05
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="6 of 16"
+              >
+                06
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="7 of 16"
+              >
+                07
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="8 of 16"
+              >
+                08
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="9 of 16"
+              >
+                09
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="10 of 16"
+              >
+                10
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="11 of 16"
+              >
+                11
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="12 of 16"
+              >
+                12
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="13 of 16"
+              >
+                13
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="14 of 16"
+              >
+                14
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="15 of 16"
+              >
+                15
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="16 of 16"
+              >
+                16
+              </div>
+            </div>
+          </div>
+        </div>
+        <div data-carouzel-controlswrapper>
+          <button
+            type="button"
+            data-carouzel-previousarrow
+            aria-label="Previous"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#000000"
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path
+                d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z"
+              />
+            </svg>
+          </button>
+          <button type="button" data-carouzel-nextarrow aria-label="Next">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#000000"
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div data-carouzel-pageinfo>
+        <em data-carouzel-currentpage></em> /
+        <em data-carouzel-totalpages></em>
+      </div>
+      <div data-carouzel-navigationwrapper>
+        <ul data-carouzel-navigation></ul>
+      </div>
+    </section>
+  </div>
+</div>
+
+      <div class="row my-5">
+  <div class="col text-center">
+    <hr />
+  </div>
+</div>
+
+<div class="row">
+  <div class="col text-center">
+    <h3 id="example_fade">Fading animation</h3>
+    <a href="https://codesandbox.io/s/carouzel-fading-animaton-9p9jh?file=/index.html" target="_blank"
+      class="btn btn-sm btn-outline-info"><span class="material-icons">code</span> View on Codesandbox</a>
+    <br /><br />
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <section data-carouzel id="__carouzel_11" aria-roledescription="carousel"
+      aria-label="Carouzel having fading animation">
+      <div data-carouzel-trackwrapper>
+        <div data-carouzel-trackmask>
+          <div data-carouzel-trackouter>
+            <div data-carouzel-track aria-live="polite">
+              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="1 of 12">
+                <div>
+                  <img src="https://picsum.photos/800/600?random=654321" alt="img 1" />
+                </div>
+              </div>
+              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="2 of 12">
+                <div>
+                  <img src="https://picsum.photos/800/600?random=65432" alt="img 2" />
+                </div>
+              </div>
+              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="3 of 12">
+                <div>
+                  <img src="https://picsum.photos/800/600?random=6543" alt="img 3" />
+                </div>
+              </div>
+              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="4 of 12">
+                <div>
+                  <img src="https://picsum.photos/800/600?random=654" alt="img 4" />
+                </div>
+              </div>
+              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="5 of 12">
+                <div>
+                  <img src="https://picsum.photos/800/600?random=65" alt="img 5" />
+                </div>
+              </div>
+              <!-- <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="6 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/800/600?random=6"
+                    alt="img 6"
+                  />
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="7 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/800/600?random=987654"
+                    alt="img 7"
+                  />
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="8 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/800/600?random=98765"
+                    alt="img 8"
+                  />
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="9 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/800/600?random=9876"
+                    alt="img 9"
+                  />
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="10 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/800/600?random=987"
+                    alt="img 10"
+                  />
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="11 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/800/600?random=98"
+                    alt="img 11"
+                  />
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="12 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/800/600?random=9"
+                    alt="img 12"
+                  />
+                </div>
+              </div> -->
+            </div>
+          </div>
+        </div>
+        <div data-carouzel-controlswrapper>
+          <button type="button" data-carouzel-previousarrow aria-label="Previous">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000">
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z" />
+            </svg>
+          </button>
+          <button type="button" data-carouzel-nextarrow aria-label="Next">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000">
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div data-carouzel-pageinfo>
+        <em data-carouzel-currentpage></em> /
+        <em data-carouzel-totalpages></em>
+      </div>
+      <div data-carouzel-navigationwrapper>
+        <ul data-carouzel-navigation></ul>
+      </div>
+    </section>
+  </div>
+</div>
+      <div class="row my-5">
+  <div class="col text-center">
+    <hr />
+  </div>
+</div>
+
+<div class="row">
+  <div class="col text-center">
+    <h3 id="example_slide">Slide-deck animation</h3>
+    <a
+      href="https://codesandbox.io/s/carouzel-slide-deck-animation-swz8nh?file=/index.html"
+      target="_blank"
+      class="btn btn-sm btn-outline-info"
+      ><span class="material-icons">code</span> View on Codesandbox</a
+    >
+    <br /><br />
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <section
+      data-carouzel
+      id="__carouzel_12"
+      aria-roledescription="carousel"
+      aria-label="Carouzel with sliding animation"
+    >
+      <div data-carouzel-trackwrapper>
+        <div data-carouzel-trackmask>
+          <div data-carouzel-trackouter>
+            <div data-carouzel-track aria-live="polite">
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="1 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/800/600?random=654321"
+                    alt="img 1"
+                  />
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="2 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/800/600?random=65432"
+                    alt="img 2"
+                  />
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="3 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/800/600?random=6543"
+                    alt="img 3"
+                  />
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="4 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/800/600?random=654"
+                    alt="img 4"
+                  />
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="5 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/800/600?random=65"
+                    alt="img 5"
+                  />
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="6 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/800/600?random=6"
+                    alt="img 6"
+                  />
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="7 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/800/600?random=987654"
+                    alt="img 7"
+                  />
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="8 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/800/600?random=98765"
+                    alt="img 8"
+                  />
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="9 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/800/600?random=9876"
+                    alt="img 9"
+                  />
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="10 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/800/600?random=987"
+                    alt="img 10"
+                  />
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="11 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/800/600?random=98"
+                    alt="img 11"
+                  />
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="12 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/800/600?random=9"
+                    alt="img 12"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div data-carouzel-controlswrapper>
+          <button
+            type="button"
+            data-carouzel-previousarrow
+            aria-label="Previous"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#000000"
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path
+                d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z"
+              />
+            </svg>
+          </button>
+          <button type="button" data-carouzel-nextarrow aria-label="Next">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#000000"
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div data-carouzel-pageinfo>
+        <em data-carouzel-currentpage></em> /
+        <em data-carouzel-totalpages></em>
+      </div>
+      <div data-carouzel-navigationwrapper>
+        <ul data-carouzel-navigation></ul>
+      </div>
+    </section>
+  </div>
+</div>
+
+      <div class="row my-5">
+  <div class="col text-center">
+    <hr />
+  </div>
+</div>
+
+<div class="row">
+  <div class="col text-center">
+    <h3 id="example_sync">Synced carouzels</h3>
+    <a
+      href="https://codesandbox.io/s/carouzel-synced-bp7ocj?file=/index.html"
+      target="_blank"
+      class="btn btn-sm btn-outline-info"
+      ><span class="material-icons">code</span> View on Codesandbox</a
+    >
+    <br /><br />
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <section
+      data-carouzel
+      id="__carouzel_13"
+      aria-roledescription="carousel"
+      aria-label="Synced Carouzels"
+    >
+      <div data-carouzel-trackwrapper>
+        <div data-carouzel-trackmask>
+          <div data-carouzel-trackouter>
+            <div data-carouzel-track aria-live="polite">
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="1 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/1280/400?random=654321"
+                    alt="img 1"
+                  />
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="2 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/1280/400?random=65432"
+                    alt="img 2"
+                  />
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="3 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/1280/400?random=6543"
+                    alt="img 3"
+                  />
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="4 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/1280/400?random=654"
+                    alt="img 4"
+                  />
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="5 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/1280/400?random=65"
+                    alt="img 5"
+                  />
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="6 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/1280/400?random=6"
+                    alt="img 6"
+                  />
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="7 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/1280/400?random=987654"
+                    alt="img 7"
+                  />
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="8 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/1280/400?random=98765"
+                    alt="img 8"
+                  />
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="9 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/1280/400?random=9876"
+                    alt="img 9"
+                  />
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="10 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/1280/400?random=987"
+                    alt="img 10"
+                  />
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="11 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/1280/400?random=98"
+                    alt="img 11"
+                  />
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="12 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/1280/400?random=9"
+                    alt="img 12"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div data-carouzel-controlswrapper>
+          <button
+            type="button"
+            data-carouzel-previousarrow
+            aria-label="Previous"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#000000"
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path
+                d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z"
+              />
+            </svg>
+          </button>
+          <button type="button" data-carouzel-nextarrow aria-label="Next">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#000000"
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <section
+      data-carouzel
+      id="__carouzel_14"
+      aria-roledescription="carousel"
+      aria-label="Synced Carouzels"
+    >
+      <div data-carouzel-trackwrapper>
+        <div data-carouzel-trackmask>
+          <div data-carouzel-trackouter>
+            <div data-carouzel-track aria-live="polite">
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="1 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/1280/400?random=654321"
+                    alt="img 1"
+                  />
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="2 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/1280/400?random=65432"
+                    alt="img 2"
+                  />
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="3 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/1280/400?random=6543"
+                    alt="img 3"
+                  />
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="4 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/1280/400?random=654"
+                    alt="img 4"
+                  />
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="5 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/1280/400?random=65"
+                    alt="img 5"
+                  />
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="6 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/1280/400?random=6"
+                    alt="img 6"
+                  />
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="7 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/1280/400?random=987654"
+                    alt="img 7"
+                  />
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="8 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/1280/400?random=98765"
+                    alt="img 8"
+                  />
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="9 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/1280/400?random=9876"
+                    alt="img 9"
+                  />
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="10 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/1280/400?random=987"
+                    alt="img 10"
+                  />
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="11 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/1280/400?random=98"
+                    alt="img 11"
+                  />
+                </div>
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="12 of 12"
+              >
+                <div>
+                  <img
+                    src="https://picsum.photos/1280/400?random=9"
+                    alt="img 12"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div data-carouzel-controlswrapper>
+          <button
+            type="button"
+            data-carouzel-previousarrow
+            aria-label="Previous"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#000000"
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path
+                d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z"
+              />
+            </svg>
+          </button>
+          <button type="button" data-carouzel-nextarrow aria-label="Next">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#000000"
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div data-carouzel-pageinfo>
+        <em data-carouzel-currentpage></em> /
+        <em data-carouzel-totalpages></em>
+      </div>
+      <div data-carouzel-navigationwrapper>
+        <ul data-carouzel-navigation></ul>
+      </div>
+    </section>
+  </div>
+</div>
+ <div class="row my-5">
+  <div class="col text-center">
+    <hr />
+  </div>
+</div>
+
+<div class="row">
+  <div class="col text-center">
+    <h3 id="example_easing">Easing</h3>
+    <a
+      href="https://codesandbox.io/s/carouzel-easing-vkuxo?file=/index.html"
+      target="_blank"
+      class="btn btn-sm btn-outline-info"
+      ><span class="material-icons">code</span> View on Codesandbox</a
+    >
+    <br /><br />
+  </div>
+</div>
+<div class="row pb-5">
+  <form
+    id="__carouzel_15form"
+    class="m-0 row row-cols-lg-auto g-3 justify-content-center align-items-end"
+  >
+    <div class="col-12 text-start">
+      <label for="easingfnselect">Easing function</label>
+      <select class="form-select" id="easingfnselect">
+        <option value="linear" selected>Linear</option>
+        <option value="easeInQuad">EaseInQuad</option>
+        <option value="easeOutQuad">EaseOutQuad</option>
+        <option value="easeInOutQuad">EaseInOutQuad</option>
+        <option value="easeInCubic">EaseInCubic</option>
+        <option value="easeOutCubic">EaseOutCubic</option>
+        <option value="easeInOutCubic">EaseInOutCubic</option>
+        <option value="easeInQuart">EaseInQuart</option>
+        <option value="easeOutQuart">EaseOutQuart</option>
+        <option value="easeInOutQuart">EaseInOutQuart</option>
+        <option value="easeInQuint">EaseInQuint</option>
+        <option value="easeOutQuint">EaseOutQuint</option>
+        <option value="easeInOutQuint">EaseInOutQuint</option>
+      </select>
+    </div>
+
+    <div class="col-12 text-start">
+      <label for="effectfnselect">Effect</label>
+      <select class="form-select" id="effectfnselect">
+        <option value="scroll" selected>Scroll</option>
+        <option value="slide">Slide</option>
+        <option value="fade">Fade</option>
+      </select>
+    </div>
+
+    <div class="col-12 text-start">
+      <label for="easingNumText">Time in miliseconds</label>
+      <input
+        class="form-control"
+        id="easingNumText"
+        type="number"
+        min="0"
+        value="500"
+      />
+    </div>
+
+    <div class="col-12">
+      <button type="submit" class="btn btn-primary">Apply</button>
+    </div>
+  </form>
+</div>
+<div class="row">
+  <div class="col">
+    <section
+      data-carouzel
+      id="__carouzel_15"
+      aria-roledescription="carousel"
+      aria-label="Carouzel showing easing presets"
+    >
+      <div data-carouzel-trackwrapper>
+        <div data-carouzel-trackmask>
+          <div data-carouzel-trackouter>
+            <div data-carouzel-track aria-live="polite">
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="1 of 8"
+              >
+                01
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="2 of 8"
+              >
+                02
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="3 of 8"
+              >
+                03
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="4 of 8"
+              >
+                04
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="5 of 8"
+              >
+                05
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="6 of 8"
+              >
+                06
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="7 of 8"
+              >
+                07
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="8 of 8"
+              >
+                08
+              </div>
+            </div>
+          </div>
+        </div>
+        <div data-carouzel-controlswrapper>
+          <button
+            type="button"
+            data-carouzel-previousarrow
+            aria-label="Previous"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#000000"
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path
+                d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z"
+              />
+            </svg>
+          </button>
+          <button type="button" data-carouzel-nextarrow aria-label="Next">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#000000"
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div data-carouzel-pageinfo>
+        <em data-carouzel-currentpage></em> /
+        <em data-carouzel-totalpages></em>
+      </div>
+      <div data-carouzel-navigationwrapper>
+        <ul data-carouzel-navigation></ul>
+      </div>
+    </section>
+  </div>
+</div>
+
+      <div class="row my-5">
+  <div class="col text-center">
+    <hr />
+  </div>
+</div>
+
+<div class="row">
+  <div class="col text-center">
+    <h3 id="example_events_methods">Events &amp; Methods</h3>
+    <a
+      href="https://codesandbox.io/s/carouzel-events-and-methods-0s52x?file=/index.html"
+      target="_blank"
+      class="btn btn-sm btn-outline-info"
+      ><span class="material-icons">code</span> View on Codesandbox</a
+    >
+    <br /><br />
+  </div>
+</div>
+<div class="row pb-5">
+  <div class="col-12 col-xl-6 text-center text-xl-end mb-3 mb-xl-0">
+    <div class="d-grid d-md-inline-block gap-2 mb-3 mb-md-0">
+      <button
+        type="button"
+        id="destroybtn"
+        class="btn btn-block btn-danger mx-1"
+      >
+        Destroy
+      </button>
+      <button type="button" id="initbtn" class="btn btn-success mx-1" hidden>
+        initialize
+      </button>
+    </div>
+    <button type="button" id="gotoprevbtn" class="btn btn-primary mx-1">
+      Go to Previous
+    </button>
+    <button type="button" id="gotonextbtn" class="btn btn-primary mx-1">
+      Go to Next
+    </button>
+  </div>
+  <div class="col-12 col-xl-6 text-center text-xl-start">
+    <div class="input-group my-3 my-md-0 w-75 w-md-50 d-inline-flex">
+      <span class="input-group-text" id="basic-addon1">Go to Slide</span>
+      <input
+        type="number"
+        value="1"
+        id="gotoslideinput"
+        class="form-control"
+        min="1"
+        max="8"
+      />
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <section
+      data-carouzel
+      id="__carouzel_16"
+      aria-roledescription="carousel"
+      aria-label="Carouzel showing events and methods"
+    >
+      <div data-carouzel-trackwrapper>
+        <div data-carouzel-trackmask>
+          <div data-carouzel-trackouter>
+            <div data-carouzel-track aria-live="polite">
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="1 of 8"
+              >
+                01
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="2 of 8"
+              >
+                02
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="3 of 8"
+              >
+                03
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="4 of 8"
+              >
+                04
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="5 of 8"
+              >
+                05
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="6 of 8"
+              >
+                06
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="7 of 8"
+              >
+                07
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="8 of 8"
+              >
+                08
+              </div>
+            </div>
+          </div>
+        </div>
+        <div data-carouzel-controlswrapper>
+          <button
+            type="button"
+            data-carouzel-previousarrow
+            aria-label="Previous"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#000000"
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path
+                d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z"
+              />
+            </svg>
+          </button>
+          <button type="button" data-carouzel-nextarrow aria-label="Next">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#000000"
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div data-carouzel-pageinfo>
+        <em data-carouzel-currentpage></em> /
+        <em data-carouzel-totalpages></em>
+      </div>
+      <div data-carouzel-navigationwrapper>
+        <ul data-carouzel-navigation></ul>
+      </div>
+    </section>
+  </div>
+</div>
+<div class="row pt-3 pb-5">
+  <div class="col text-center">
+    <button type="button" id="btnbeforeinit" class="btn btn-warning btn-sm m-1">
+      Event Before Init
+    </button>
+    <button type="button" id="btnafterinit" class="btn btn-dark btn-sm m-1">
+      Event After Init
+    </button>
+    <button
+      type="button"
+      id="btnbeforescroll"
+      class="btn btn-secondary btn-sm m-1"
+    >
+      Event Before Scroll
+    </button>
+    <button
+      type="button"
+      id="btnafterscroll"
+      class="btn btn-success btn-sm m-1"
+    >
+      Event After Scroll
+    </button>
+  </div>
+</div>
+ <div class="row my-5">
+  <div class="col text-center">
+    <hr />
+  </div>
+</div>
+
+<div class="row">
+  <div class="col text-center">
+    <h3 id="example_hash_nav">Hash Navigation</h3>
+    <a
+      href="https://codesandbox.io/s/carouzel-hash-navigation-wppyo?file=/index.html"
+      target="_blank"
+      class="btn btn-sm btn-outline-info"
+      ><span class="material-icons">code</span> View on Codesandbox</a
+    >
+    <br /><br />
+  </div>
+</div>
+<div class="row pb-5">
+  <form
+    class="m-0 row row-cols-lg-auto g-3 justify-content-center align-items-center"
+  >
+    <div class="col-12 text-center">
+      <button
+        type="button"
+        id="__carouzel_17_btn"
+        class="btn btn-primary btn-sm mx-1 mb-2"
+      >
+        Add hash and refresh
+      </button>
+      <button
+        type="button"
+        id="__carouzel_17_btnrem"
+        class="btn btn-dark btn-sm mx-1 mb-2"
+      >
+        Remove hash and refresh
+      </button>
+    </div>
+  </form>
+</div>
+
+<div class="row">
+  <div class="col">
+    <section
+      data-carouzel
+      id="__carouzel_17"
+      aria-roledescription="carousel"
+      aria-label="Carouzel scrolling based on the hash in url"
+    >
+      <div data-carouzel-trackwrapper>
+        <div data-carouzel-trackmask>
+          <div data-carouzel-trackouter>
+            <div data-carouzel-track aria-live="polite">
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="1 of 6"
+                id="__carouzel_17_id_1"
+              >
+                01
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="2 of 6"
+                id="__carouzel_17_id_2"
+              >
+                02
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="3 of 6"
+                id="__carouzel_17_id_3"
+              >
+                03
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="4 of 6"
+                id="__carouzel_17_id_4"
+              >
+                04
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="5 of 6"
+                id="__carouzel_17_id_5"
+              >
+                05
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="6 of 6"
+                id="__carouzel_17_id_6"
+              >
+                06
+              </div>
+            </div>
+          </div>
+        </div>
+        <div data-carouzel-controlswrapper>
+          <button
+            type="button"
+            data-carouzel-previousarrow
+            aria-label="Previous"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#000000"
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path
+                d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z"
+              />
+            </svg>
+          </button>
+          <button type="button" data-carouzel-nextarrow aria-label="Next">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#000000"
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div data-carouzel-pageinfo>
+        <em data-carouzel-currentpage></em> /
+        <em data-carouzel-totalpages></em>
+      </div>
+      <div data-carouzel-navigationwrapper>
+        <ul data-carouzel-navigation></ul>
+      </div>
+    </section>
+  </div>
+</div>
+
+      <div class="row my-5">
+  <div class="col text-center">
+    <hr />
+  </div>
+</div>
+
+<div class="row">
+  <div class="col text-center">
+    <h3 id="example_data_attribute">Through data-attribute</h3>
+    <a
+      href="https://codesandbox.io/s/carouzel-using-data-attribute-wqked?file=/index.html"
+      target="_blank"
+      class="btn btn-sm btn-outline-info"
+      ><span class="material-icons">code</span> View on Codesandbox</a
+    >
+    <br /><br />
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <section
+      data-carouzel
+      data-carouzel-auto="{
+            'animationSpeed': 1000,
+            'slidesToScroll': 1,
+            'slidesToShow': 1,
+            'breakpoints': [
+                {
+                  'minWidth': 768,
+                  'slidesToScroll': 2,
+                  'slidesToShow': 2,
+                  'centerBetween': 1
+                },
+                {
+                  'minWidth': 1024,
+                  'slidesToScroll': 3,
+                  'slidesToShow': 3
+                }
+            ]
+          }"
+      aria-roledescription="carousel"
+      aria-label="Implementation of Carouzel through `data-attribute`"
+    >
+      <div data-carouzel-trackwrapper>
+        <div data-carouzel-trackmask>
+          <div data-carouzel-trackouter>
+            <div data-carouzel-track aria-live="polite">
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="1 of 8"
+              >
+                01
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="2 of 8"
+              >
+                02
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="3 of 8"
+              >
+                03
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="4 of 8"
+              >
+                04
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="5 of 8"
+              >
+                05
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="6 of 8"
+              >
+                06
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="7 of 8"
+              >
+                07
+              </div>
+              <div
+                data-carouzel-slide
+                role="group"
+                aria-roledescription="slide"
+                aria-label="8 of 8"
+              >
+                08
+              </div>
+            </div>
+          </div>
+        </div>
+        <div data-carouzel-controlswrapper>
+          <button
+            type="button"
+            data-carouzel-previousarrow
+            aria-label="Previous"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#000000"
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path
+                d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z"
+              />
+            </svg>
+          </button>
+          <button type="button" data-carouzel-nextarrow aria-label="Next">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 0 24 24"
+              width="24px"
+              fill="#000000"
+            >
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div data-carouzel-pageinfo>
+        <em data-carouzel-currentpage></em> /
+        <em data-carouzel-totalpages></em>
+      </div>
+      <div data-carouzel-navigationwrapper>
+        <ul data-carouzel-navigation></ul>
+      </div>
+    </section>
+  </div>
+</div>
+
       
       <div class="row my-5">
         <div class="col text-center">
