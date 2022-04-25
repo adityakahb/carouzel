@@ -376,21 +376,21 @@ var Carouzel;
      */
     var updateAttributes = function (core) {
         var x;
-        if (core.arrowP) {
-            if (!core.o.inf && core.ci === 0) {
-                toggleArrows(core.arrowP, core.o.disableCls, true);
-            }
-            else if (!core.o.inf && core.ci !== 0) {
-                toggleArrows(core.arrowP, core.o.disableCls, false);
-            }
+        if (!core.o.inf && core.ci === 0) {
+            toggleArrows(core.arrowP, core.o.disableCls, true);
         }
-        if (core.arrowN) {
-            if (!core.o.inf && core.ci === core.sLen - core.bpo._2Show) {
-                toggleArrows(core.arrowN, core.o.disableCls, true);
-            }
-            else if (!core.o.inf && core.ci !== core.sLen - core.bpo._2Show) {
-                toggleArrows(core.arrowN, core.o.disableCls, false);
-            }
+        else if (!core.o.inf && core.ci !== 0) {
+            toggleArrows(core.arrowP, core.o.disableCls, false);
+        }
+        if (!core.o.inf && core.ci === core.sLen - core.bpo._2Show) {
+            toggleArrows(core.arrowN, core.o.disableCls, true);
+        }
+        else if (!core.o.inf && core.ci !== core.sLen - core.bpo._2Show) {
+            toggleArrows(core.arrowN, core.o.disableCls, false);
+        }
+        if (!core.o.inf && core.aLen <= core.bpo._2Show) {
+            toggleArrows(core.arrowP, core.o.disableCls, true);
+            toggleArrows(core.arrowN, core.o.disableCls, true);
         }
         if (core.bpo.dots.length > 0) {
             for (var i = 0; i < core.bpo.dots.length; i++) {
@@ -890,15 +890,13 @@ var Carouzel;
             if (core.totp) {
                 core.totp.innerHTML = "".concat(bpoptions.dots.length);
             }
-            if (core.o.inf && core.arrowN && core.arrowP) {
-                if (core.aLen <= core.bpo._2Show) {
-                    toggleArrows(core.arrowP, core.o.disableCls, true);
-                    toggleArrows(core.arrowN, core.o.disableCls, true);
-                }
-                else {
-                    toggleArrows(core.arrowP, core.o.disableCls, false);
-                    toggleArrows(core.arrowN, core.o.disableCls, false);
-                }
+            if (core.aLen <= core.bpo._2Show) {
+                toggleArrows(core.arrowP, core.o.disableCls, true);
+                toggleArrows(core.arrowN, core.o.disableCls, true);
+            }
+            else {
+                toggleArrows(core.arrowP, core.o.disableCls, false);
+                toggleArrows(core.arrowN, core.o.disableCls, false);
             }
         }
         animateTrack(core, 0);
@@ -951,7 +949,7 @@ var Carouzel;
                 shouldScroll = true;
             }
             else {
-                shouldScroll = core.ci + core.bpo._2Show < core._l ? true : false;
+                shouldScroll = core.ci + core.bpo._2Show <= core._l ? true : false;
             }
             if (shouldScroll) {
                 someci = core.ci + core.bpo._2Scroll;
