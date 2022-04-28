@@ -1503,6 +1503,32 @@ namespace Carouzel {
     const threshold = core.o.threshold || 125;
 
     /**
+     * Function to take the carouzel back to the default position if it is not dragged to next or previous set
+     *
+     */
+    const goBackToLastPos = () => {
+      if (core.trk) {
+        core.trk.style.transition = `transform 50ms linear`;
+        if (
+          core.o.effect === cAnimationEffects[0] ||
+          core.o.effect === cAnimationEffects[1]
+        ) {
+          for (let k = 0; k < core.aLen; k++) {
+            core._as[k].style.transform = `translate3d(0, 0, 0)`;
+          }
+          core.trk.style.transform = core.o.ver
+            ? `translate3d(0, ${core.ct}px, 0)`
+            : `translate3d(${core.ct}px, 0, 0)`;
+        }
+        if (core.o.effect === cAnimationEffects[2]) {
+          for (let k = 0; k < core.aLen; k++) {
+            (core._as[k] as HTMLElement).style.opacity = `1`;
+          }
+        }
+      }
+    };
+
+    /**
      * Function to be triggered when the carouzel is touched the cursor is down on it
      *
      */
@@ -1612,7 +1638,6 @@ namespace Carouzel {
         diffY = endY - startY;
         ratioX = Math.abs(diffX / diffY);
         ratioY = Math.abs(diffY / diffX);
-
         if (
           !isNaN(ratioX) &&
           !isNaN(ratioY) &&
@@ -1649,6 +1674,7 @@ namespace Carouzel {
               (core._as[k] as HTMLElement).style.opacity = `1`;
             }
           }
+
           if (posFinal < -threshold) {
             if (
               (core.o.effect === cAnimationEffects[0] ||
@@ -1656,12 +1682,16 @@ namespace Carouzel {
               (canFiniteAnimate || core.o.inf)
             ) {
               go2Prev(core, posFinal);
+            } else {
+              goBackToLastPos();
             }
             if (
               core.o.effect === cAnimationEffects[2] &&
               (canFiniteAnimate || core.o.inf)
             ) {
-              go2Prev(core, 1);
+              go2Prev(core, 0);
+            } else {
+              goBackToLastPos();
             }
           } else if (posFinal > threshold) {
             if (
@@ -1670,31 +1700,22 @@ namespace Carouzel {
               (canFiniteAnimate || core.o.inf)
             ) {
               go2Next(core, posFinal);
+            } else {
+              goBackToLastPos();
             }
             if (
               core.o.effect === cAnimationEffects[2] &&
               (canFiniteAnimate || core.o.inf)
             ) {
-              go2Next(core, 1);
+              go2Next(core, 0);
+            } else {
+              goBackToLastPos();
             }
           } else {
-            if (
-              core.o.effect === cAnimationEffects[0] ||
-              core.o.effect === cAnimationEffects[1]
-            ) {
-              for (let k = 0; k < core.aLen; k++) {
-                core._as[k].style.transform = `translate3d(0, 0, 0)`;
-              }
-              core.trk.style.transform = core.o.ver
-                ? `translate3d(0, ${core.ct}px, 0)`
-                : `translate3d(${core.ct}px, 0, 0)`;
-            }
-            if (core.o.effect === cAnimationEffects[2]) {
-              for (let k = 0; k < core.aLen; k++) {
-                (core._as[k] as HTMLElement).style.opacity = `1`;
-              }
-            }
+            goBackToLastPos();
           }
+        } else {
+          goBackToLastPos();
         }
         posX1 = posX2 = posY1 = posY2 = posFinal = 0;
         dragging = false;
