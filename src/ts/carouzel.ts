@@ -152,6 +152,7 @@ namespace Carouzel {
     _f: number;
     _l: number;
     _t: ITimer;
+    _a: boolean; // isAnimating
     aLen: number;
     arrowN: HTMLElement | null;
     arrowP: HTMLElement | null;
@@ -199,6 +200,7 @@ namespace Carouzel {
   }
 
   const allLocalInstances: ICoreInstance = {};
+  let debugMode = false;
   let documentHiddenTime = 0;
   let extraSlideCount: number | null;
   let hashSlide: HTMLElement | null;
@@ -302,7 +304,7 @@ namespace Carouzel {
   const cDefaults: ISettings = {
     activeClass: `__carouzel-active`,
     animationEffect: cAnimationEffects[0],
-    animationSpeed: 1000,
+    animationSpeed: 500,
     appendUrlHash: false,
     autoplay: false,
     autoplaySpeed: 2000,
@@ -332,7 +334,7 @@ namespace Carouzel {
     slidesToShow: 1,
     startAtIndex: 1,
     syncWith: ``,
-    touchThreshold: 125,
+    touchThreshold: 50,
     trackUrlHash: false,
     useTitlesAsDots: false,
     verticalHeight: 480
@@ -565,6 +567,7 @@ namespace Carouzel {
    *
    */
   const toggleArrows = (
+    root: HTMLElement | null,
     element: HTMLElement | null,
     cls: string,
     shouldDisable: boolean
@@ -572,6 +575,7 @@ namespace Carouzel {
     if (shouldDisable && element) {
       addClass(element, cls);
       element.setAttribute(`disabled`, `disabled`);
+      root?.focus();
     } else if (!shouldDisable && element) {
       removeClass(element, cls);
       element.removeAttribute(`disabled`);
@@ -588,19 +592,19 @@ namespace Carouzel {
     let x;
 
     if (!core.o.inf && core.ci === 0) {
-      toggleArrows(core.arrowP, core.o.disableCls, true);
+      toggleArrows(core.root, core.arrowP, core.o.disableCls, true);
     } else if (!core.o.inf && core.ci !== 0) {
-      toggleArrows(core.arrowP, core.o.disableCls, false);
+      toggleArrows(core.root, core.arrowP, core.o.disableCls, false);
     }
     if (!core.o.inf && core.ci === core.sLen - core.bpo._2Show) {
-      toggleArrows(core.arrowN, core.o.disableCls, true);
+      toggleArrows(core.root, core.arrowN, core.o.disableCls, true);
     } else if (!core.o.inf && core.ci !== core.sLen - core.bpo._2Show) {
-      toggleArrows(core.arrowN, core.o.disableCls, false);
+      toggleArrows(core.root, core.arrowN, core.o.disableCls, false);
     }
 
     if (!core.o.inf && core.aLen <= core.bpo._2Show) {
-      toggleArrows(core.arrowP, core.o.disableCls, true);
-      toggleArrows(core.arrowN, core.o.disableCls, true);
+      toggleArrows(core.root, core.arrowP, core.o.disableCls, true);
+      toggleArrows(core.root, core.arrowN, core.o.disableCls, true);
     }
 
     if (core.bpo.dots.length > 0) {
@@ -623,6 +627,10 @@ namespace Carouzel {
      *
      */
     _post: (core: ICore) => {
+      core._a = false;
+      if (core._t.id) {
+        cancelAnimationFrame(core._t.id);
+      }
       if (core.ci >= core.sLen) {
         core.ci = core.sLen - core.ci;
       }
@@ -663,7 +671,6 @@ namespace Carouzel {
         core._t.progress = cEasingFunctions[core.o.easeFn](
           core._t.elapsed / core._t.total
         );
-
         if (core.ci > core.pi) {
           core._t.position =
             core._t.pX +
@@ -942,10 +949,12 @@ namespace Carouzel {
     core._t.nX = core.pts[core.ci];
 
     if (core.o.effect === cAnimationEffects[0] && core.trk && !core.fLoad) {
+      core._a = true;
       proceedWithAnimation.scroll(core, touchedPixel);
     }
 
     if (core.o.effect === cAnimationEffects[1] && core.trk && !core.fLoad) {
+      core._a = true;
       proceedWithAnimation.slide(core, touchedPixel);
     }
 
@@ -953,6 +962,7 @@ namespace Carouzel {
       core._t.nX = core.pts[core.sLen + core.ci];
     }
     if (core.o.effect === cAnimationEffects[2] && core.trk && !core.fLoad) {
+      core._a = true;
       proceedWithAnimation.fade(core);
     }
   };
@@ -1175,11 +1185,11 @@ namespace Carouzel {
       }
 
       if (core.aLen <= core.bpo._2Show) {
-        toggleArrows(core.arrowP, core.o.disableCls, true);
-        toggleArrows(core.arrowN, core.o.disableCls, true);
+        toggleArrows(core.root, core.arrowP, core.o.disableCls, true);
+        toggleArrows(core.root, core.arrowN, core.o.disableCls, true);
       } else {
-        toggleArrows(core.arrowP, core.o.disableCls, false);
-        toggleArrows(core.arrowN, core.o.disableCls, false);
+        toggleArrows(core.root, core.arrowP, core.o.disableCls, false);
+        toggleArrows(core.root, core.arrowN, core.o.disableCls, false);
       }
     }
     animateTrack(core, 0);
@@ -1220,10 +1230,6 @@ namespace Carouzel {
 
     if (core.fLoad) {
       core.fLoad = false;
-    }
-
-    if (core._t.id) {
-      cancelAnimationFrame(core._t.id);
     }
 
     if (
@@ -1341,10 +1347,9 @@ namespace Carouzel {
   const toggleKeyboard = (core: ICore) => {
     if (core.root && core.o.kb) {
       core.root.setAttribute(`tabindex`, `-1`);
-      let keyCode = ``;
       core.eH.push(
         eventHandler(core.root, `keydown`, (event: Event) => {
-          keyCode = (event as KeyboardEvent).key.toLowerCase();
+          const keyCode = (event as KeyboardEvent).key.toLowerCase();
           switch (keyCode) {
             case `arrowleft`:
               go2Prev(core, 0);
@@ -1500,7 +1505,7 @@ namespace Carouzel {
     let startX = 0;
     let startY = 0;
     let canFiniteAnimate = false;
-    const threshold = core.o.threshold || 125;
+    const threshold = core.o.threshold;
 
     /**
      * Function to take the carouzel back to the default position if it is not dragged to next or previous set
@@ -1533,17 +1538,19 @@ namespace Carouzel {
      *
      */
     const touchStartTrack = (e: Event) => {
-      dragging = true;
-      if (e.type === `touchstart`) {
-        startX = (e as TouchEvent).changedTouches[0].screenX;
-        startY = (e as TouchEvent).changedTouches[0].screenY;
-        posX1 = (e as TouchEvent).changedTouches[0].screenX;
-        posY1 = (e as TouchEvent).changedTouches[0].screenY;
-      } else {
-        startX = (e as MouseEvent).clientX;
-        startY = (e as MouseEvent).clientY;
-        posX1 = (e as MouseEvent).clientX;
-        posY1 = (e as MouseEvent).clientY;
+      if (!dragging) {
+        dragging = true;
+        if (e.type === `touchstart`) {
+          startX = (e as TouchEvent).changedTouches[0].screenX;
+          startY = (e as TouchEvent).changedTouches[0].screenY;
+          posX1 = (e as TouchEvent).changedTouches[0].screenX;
+          posY1 = (e as TouchEvent).changedTouches[0].screenY;
+        } else {
+          startX = (e as MouseEvent).clientX;
+          startY = (e as MouseEvent).clientY;
+          posX1 = (e as MouseEvent).clientX;
+          posY1 = (e as MouseEvent).clientY;
+        }
       }
     };
 
@@ -2065,13 +2072,17 @@ namespace Carouzel {
           )
         };
       } else {
-        // throw new TypeError(cDuplicateBreakpointsTypeError);
-        console.error(cDuplicateBreakpointsTypeError);
+        if (debugMode) {
+          // throw new TypeError(cDuplicateBreakpointsTypeError);
+          console.error(cDuplicateBreakpointsTypeError);
+        }
         return {};
       }
     } catch (e) {
-      // throw new TypeError(cBreakpointsParseTypeError);
-      console.error(cBreakpointsParseTypeError);
+      if (debugMode) {
+        // throw new TypeError(cBreakpointsParseTypeError);
+        console.error(cBreakpointsParseTypeError);
+      }
       return {};
     }
   };
@@ -2201,14 +2212,18 @@ namespace Carouzel {
         if (cAnimationEffects.indexOf(settings.animationEffect) > -1) {
           return settings.animationEffect;
         }
-        console.warn(cNoEffectFoundError);
+        if (debugMode) {
+          console.warn(cNoEffectFoundError);
+        }
         return cAnimationEffects[0];
       })(),
       easeFn: (() => {
         if (cEasingFunctions[settings.easingFunction]) {
           return settings.easingFunction;
         }
-        console.warn(cNoEasingFoundError);
+        if (debugMode) {
+          console.warn(cNoEasingFoundError);
+        }
         return Object.keys(cEasingFunctions)[0];
       })()
     };
@@ -2283,6 +2298,7 @@ namespace Carouzel {
     cCore.curp = root.querySelector(`${cSelectors.curp}`);
     cCore.totp = root.querySelector(`${cSelectors.totp}`);
     cCore.fLoad = true;
+    cCore._a = false;
 
     if ((settings.syncWith || ``).length > 0) {
       cCore.sync = settings.syncWith;
@@ -2472,7 +2488,10 @@ namespace Carouzel {
      * @returns Single Carouzel Instance
      *
      */
-    public static getInstance(): Root {
+    public static getInstance(debugM?: boolean): Root {
+      if (debugM) {
+        debugMode = true;
+      }
       if (!Root.instance) {
         Root.instance = new Root();
       }
@@ -2524,8 +2543,10 @@ namespace Carouzel {
                   stringTrim(autoDataAttr).replace(/'/g, `"`)
                 );
               } catch (e) {
-                // throw new TypeError(cOptionsParseTypeError);
-                console.error(cOptionsParseTypeError);
+                if (debugMode) {
+                  // throw new TypeError(cOptionsParseTypeError);
+                  console.error(cOptionsParseTypeError);
+                }
               }
             } else {
               newOptions = options;
@@ -2551,8 +2572,10 @@ namespace Carouzel {
         }
       } else {
         if (query !== cSelectors.rootAuto) {
-          // throw new TypeError(cRootSelectorTypeError);
-          console.error(`init() "${query}": ${cRootSelectorTypeError}`);
+          if (debugMode) {
+            // throw new TypeError(cRootSelectorTypeError);
+            console.error(`init() "${query}": ${cRootSelectorTypeError}`);
+          }
         }
       }
     };
@@ -2584,8 +2607,10 @@ namespace Carouzel {
           }
         }
       } else {
-        // throw new TypeError(cRootSelectorTypeError);
-        console.error(`goToSlide() "${query}": ${cRootSelectorTypeError}`);
+        if (debugMode) {
+          // throw new TypeError(cRootSelectorTypeError);
+          console.error(`goToSlide() "${query}": ${cRootSelectorTypeError}`);
+        }
       }
     };
 
@@ -2605,8 +2630,10 @@ namespace Carouzel {
           window.removeEventListener(`resize`, winResizeFn, false);
         }
       } else {
-        // throw new TypeError(cRootSelectorTypeError);
-        console.error(`destroy() "${query}": ${cRootSelectorTypeError}`);
+        if (debugMode) {
+          // throw new TypeError(cRootSelectorTypeError);
+          console.error(`destroy() "${query}": ${cRootSelectorTypeError}`);
+        }
       }
     };
 

@@ -83,7 +83,7 @@ declare namespace Carouzel {
          * @returns Single Carouzel Instance
          *
          */
-        static getInstance(): Root;
+        static getInstance(debugM?: boolean): Root;
         /**
          * Function to return count of all available carouzel objects
          *
