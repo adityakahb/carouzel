@@ -561,6 +561,7 @@ namespace Carouzel {
   /**
    * Function to enable or disable the arrow element
    *
+   * @param root = Carouzel root element
    * @param element - Arrow element
    * @param cls - `disabled` class
    * @param shouldDisable - To determine whether it should disable or enable
@@ -628,9 +629,9 @@ namespace Carouzel {
      */
     _post: (core: ICore) => {
       core._a = false;
-      if (core._t.id) {
-        cancelAnimationFrame(core._t.id);
-      }
+      // if (core._t.id) {
+      //   cancelAnimationFrame(core._t.id);
+      // }
       if (core.ci >= core.sLen) {
         core.ci = core.sLen - core.ci;
       }
