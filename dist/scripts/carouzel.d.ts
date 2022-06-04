@@ -98,7 +98,7 @@ declare namespace Carouzel {
          * @param options - The optional object to customize every Carouzel instance.
          *
          */
-        init: (query: string, options?: ISettings | undefined) => void;
+        init: (query: string, options?: ISettings) => void;
         /**
          * Function to auto-initialize the Carouzel plugin for specific carouzels
          */

@@ -16,7 +16,12 @@ var loadIO = function () {
         {
           minWidth: 700,
           slidesToShow: 3,
-          slideGutter: 28
+          slideGutter: 2
+        },
+        {
+          minWidth: 1100,
+          slidesToShow: 4,
+          slideGutter: 4
         }
       ]
     });

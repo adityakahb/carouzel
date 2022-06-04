@@ -568,18 +568,14 @@ namespace Carouzel {
    *
    */
   const toggleArrows = (
-    root: HTMLElement | null,
     element: HTMLElement | null,
     cls: string,
     shouldDisable: boolean
   ) => {
     if (shouldDisable && element) {
       addClass(element, cls);
-      element.setAttribute(`disabled`, `disabled`);
-      root?.focus();
     } else if (!shouldDisable && element) {
       removeClass(element, cls);
-      element.removeAttribute(`disabled`);
     }
   };
 
@@ -593,19 +589,19 @@ namespace Carouzel {
     let x;
 
     if (!core.o.inf && core.ci === 0) {
-      toggleArrows(core.root, core.arrowP, core.o.disableCls, true);
+      toggleArrows(core.arrowP, core.o.disableCls, true);
     } else if (!core.o.inf && core.ci !== 0) {
-      toggleArrows(core.root, core.arrowP, core.o.disableCls, false);
+      toggleArrows(core.arrowP, core.o.disableCls, false);
     }
     if (!core.o.inf && core.ci === core.sLen - core.bpo._2Show) {
-      toggleArrows(core.root, core.arrowN, core.o.disableCls, true);
+      toggleArrows(core.arrowN, core.o.disableCls, true);
     } else if (!core.o.inf && core.ci !== core.sLen - core.bpo._2Show) {
-      toggleArrows(core.root, core.arrowN, core.o.disableCls, false);
+      toggleArrows(core.arrowN, core.o.disableCls, false);
     }
 
     if (!core.o.inf && core.aLen <= core.bpo._2Show) {
-      toggleArrows(core.root, core.arrowP, core.o.disableCls, true);
-      toggleArrows(core.root, core.arrowN, core.o.disableCls, true);
+      toggleArrows(core.arrowP, core.o.disableCls, true);
+      toggleArrows(core.arrowN, core.o.disableCls, true);
     }
 
     if (core.bpo.dots.length > 0) {
@@ -629,9 +625,9 @@ namespace Carouzel {
      */
     _post: (core: ICore) => {
       core._a = false;
-      // if (core._t.id) {
-      //   cancelAnimationFrame(core._t.id);
-      // }
+      if (core._t.id) {
+        cancelAnimationFrame(core._t.id);
+      }
       if (core.ci >= core.sLen) {
         core.ci = core.sLen - core.ci;
       }
@@ -1186,11 +1182,11 @@ namespace Carouzel {
       }
 
       if (core.aLen <= core.bpo._2Show) {
-        toggleArrows(core.root, core.arrowP, core.o.disableCls, true);
-        toggleArrows(core.root, core.arrowN, core.o.disableCls, true);
+        toggleArrows(core.arrowP, core.o.disableCls, true);
+        toggleArrows(core.arrowN, core.o.disableCls, true);
       } else {
-        toggleArrows(core.root, core.arrowP, core.o.disableCls, false);
-        toggleArrows(core.root, core.arrowN, core.o.disableCls, false);
+        toggleArrows(core.arrowP, core.o.disableCls, false);
+        toggleArrows(core.arrowN, core.o.disableCls, false);
       }
     }
     animateTrack(core, 0);
@@ -1296,7 +1292,7 @@ namespace Carouzel {
         }
 
         if (someci === core.ci) {
-          core.pi = core._l - core.bpo._2Show;
+          core.pi = core._l - core.bpo._2Show + 1;
           core.ci = core.sLen - core.bpo._2Show;
         } else {
           core.ci = someci;
@@ -1514,7 +1510,7 @@ namespace Carouzel {
      */
     const goBackToLastPos = () => {
       if (core.trk) {
-        core.trk.style.transition = `transform 50ms linear`;
+        // core.trk.style.transition = `transform 50ms linear`;
         if (
           core.o.effect === cAnimationEffects[0] ||
           core.o.effect === cAnimationEffects[1]
@@ -2420,9 +2416,6 @@ namespace Carouzel {
         allElems[i] as HTMLElement,
         `${core.o.activeCls} ${core.o.editCls} ${core.o.disableCls} ${core.o.dupCls}`
       );
-      if ((allElems[i] as HTMLElement).hasAttribute(`disabled`)) {
-        (allElems[i] as HTMLElement).removeAttribute(`disabled`);
-      }
     }
 
     removeClass(

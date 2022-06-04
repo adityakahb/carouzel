@@ -35,7 +35,7 @@ $rem-px-only: false !default;
     }
 
     @else if type-of($value)=="number"and unit($value)=="px"and $to=="rem" {
-      $result: append($result, $value / $rem-baseline * 1rem, $separator);
+      $result: append($result, calc($value / $rem-baseline * 1rem), $separator);
     }
 
     @else if type-of($value)=="list" {

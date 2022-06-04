@@ -360,15 +360,12 @@ var Carouzel;
      * @param shouldDisable - To determine whether it should disable or enable
      *
      */
-    var toggleArrows = function (root, element, cls, shouldDisable) {
+    var toggleArrows = function (element, cls, shouldDisable) {
         if (shouldDisable && element) {
             addClass(element, cls);
-            element.setAttribute("disabled", "disabled");
-            root === null || root === void 0 ? void 0 : root.focus();
         }
         else if (!shouldDisable && element) {
             removeClass(element, cls);
-            element.removeAttribute("disabled");
         }
     };
     /**
@@ -380,20 +377,20 @@ var Carouzel;
     var updateAttributes = function (core) {
         var x;
         if (!core.o.inf && core.ci === 0) {
-            toggleArrows(core.root, core.arrowP, core.o.disableCls, true);
+            toggleArrows(core.arrowP, core.o.disableCls, true);
         }
         else if (!core.o.inf && core.ci !== 0) {
-            toggleArrows(core.root, core.arrowP, core.o.disableCls, false);
+            toggleArrows(core.arrowP, core.o.disableCls, false);
         }
         if (!core.o.inf && core.ci === core.sLen - core.bpo._2Show) {
-            toggleArrows(core.root, core.arrowN, core.o.disableCls, true);
+            toggleArrows(core.arrowN, core.o.disableCls, true);
         }
         else if (!core.o.inf && core.ci !== core.sLen - core.bpo._2Show) {
-            toggleArrows(core.root, core.arrowN, core.o.disableCls, false);
+            toggleArrows(core.arrowN, core.o.disableCls, false);
         }
         if (!core.o.inf && core.aLen <= core.bpo._2Show) {
-            toggleArrows(core.root, core.arrowP, core.o.disableCls, true);
-            toggleArrows(core.root, core.arrowN, core.o.disableCls, true);
+            toggleArrows(core.arrowP, core.o.disableCls, true);
+            toggleArrows(core.arrowN, core.o.disableCls, true);
         }
         if (core.bpo.dots.length > 0) {
             for (var i = 0; i < core.bpo.dots.length; i++) {
@@ -415,9 +412,9 @@ var Carouzel;
          */
         _post: function (core) {
             core._a = false;
-            // if (core._t.id) {
-            //   cancelAnimationFrame(core._t.id);
-            // }
+            if (core._t.id) {
+                cancelAnimationFrame(core._t.id);
+            }
             if (core.ci >= core.sLen) {
                 core.ci = core.sLen - core.ci;
             }
@@ -901,12 +898,12 @@ var Carouzel;
                 core.totp.innerHTML = "".concat(bpoptions.dots.length);
             }
             if (core.aLen <= core.bpo._2Show) {
-                toggleArrows(core.root, core.arrowP, core.o.disableCls, true);
-                toggleArrows(core.root, core.arrowN, core.o.disableCls, true);
+                toggleArrows(core.arrowP, core.o.disableCls, true);
+                toggleArrows(core.arrowN, core.o.disableCls, true);
             }
             else {
-                toggleArrows(core.root, core.arrowP, core.o.disableCls, false);
-                toggleArrows(core.root, core.arrowN, core.o.disableCls, false);
+                toggleArrows(core.arrowP, core.o.disableCls, false);
+                toggleArrows(core.arrowN, core.o.disableCls, false);
             }
         }
         animateTrack(core, 0);
@@ -995,7 +992,7 @@ var Carouzel;
                     someci = 0;
                 }
                 if (someci === core.ci) {
-                    core.pi = core._l - core.bpo._2Show;
+                    core.pi = core._l - core.bpo._2Show + 1;
                     core.ci = core.sLen - core.bpo._2Show;
                 }
                 else {
@@ -1191,7 +1188,7 @@ var Carouzel;
          */
         var goBackToLastPos = function () {
             if (core.trk) {
-                core.trk.style.transition = "transform 50ms linear";
+                // core.trk.style.transition = `transform 50ms linear`;
                 if (core.o.effect === cAnimationEffects[0] ||
                     core.o.effect === cAnimationEffects[1]) {
                     for (var k = 0; k < core.aLen; k++) {
@@ -2017,9 +2014,6 @@ var Carouzel;
             }
             allElems[i].removeAttribute("style");
             removeClass(allElems[i], "".concat(core.o.activeCls, " ").concat(core.o.editCls, " ").concat(core.o.disableCls, " ").concat(core.o.dupCls));
-            if (allElems[i].hasAttribute("disabled")) {
-                allElems[i].removeAttribute("disabled");
-            }
         }
         removeClass(core.root, "".concat(core.o.activeCls, " ").concat(core.o.editCls, " ").concat(core.o.disableCls, " ").concat(core.o.dupCls));
         if (id) {
