@@ -270,7 +270,7 @@ var Carouzel;
         windowResizeAny = setTimeout(function () {
             for (var e in allLocalInstances) {
                 if (allLocalInstances.hasOwnProperty(e)) {
-                    applyLayout(allLocalInstances[e]);
+                    applyLayout(allLocalInstances[e], true);
                 }
             }
         }, 0);
@@ -746,9 +746,10 @@ var Carouzel;
      * Function to find and apply the appropriate breakpoint settings based on the viewport
      *
      * @param core - Carouzel instance core object
+     * @param isFromResize - Update indices if there is a window resize event
      *
      */
-    var applyLayout = function (core) {
+    var applyLayout = function (core, isFromResize) {
         var viewportWidth = window === null || window === void 0 ? void 0 : window.innerWidth;
         var bpoptions = core.bpall[0];
         var len = 0;
@@ -905,6 +906,10 @@ var Carouzel;
                 toggleArrows(core.arrowP, core.o.disableCls, false);
                 toggleArrows(core.arrowN, core.o.disableCls, false);
             }
+        }
+        if (isFromResize && core.ci + core.bpo._2Show >= core.sLen) {
+            core.ci = core.sLen - core.bpo._2Show;
+            core.pi = core.sLen - 1;
         }
         animateTrack(core, 0);
         // TODO: Scrollbar implementation
@@ -1931,7 +1936,7 @@ var Carouzel;
                 // generateScrollbar(cCore);
                 toggleControlButtons(cCore);
                 toggleTouchEvents(cCore, "sl");
-                applyLayout(cCore);
+                applyLayout(cCore, false);
             }
         }
         addClass(cCore.root, cCore.o.activeCls);

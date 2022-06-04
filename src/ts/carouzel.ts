@@ -460,7 +460,7 @@ namespace Carouzel {
     windowResizeAny = setTimeout(() => {
       for (const e in allLocalInstances) {
         if (allLocalInstances.hasOwnProperty(e)) {
-          applyLayout(allLocalInstances[e]);
+          applyLayout(allLocalInstances[e], true);
         }
       }
     }, 0);
@@ -1018,9 +1018,10 @@ namespace Carouzel {
    * Function to find and apply the appropriate breakpoint settings based on the viewport
    *
    * @param core - Carouzel instance core object
+   * @param isFromResize - Update indices if there is a window resize event
    *
    */
-  const applyLayout = (core: ICore) => {
+  const applyLayout = (core: ICore, isFromResize: boolean) => {
     const viewportWidth = window?.innerWidth;
     let bpoptions = core.bpall[0];
     let len = 0;
@@ -1188,6 +1189,10 @@ namespace Carouzel {
         toggleArrows(core.arrowP, core.o.disableCls, false);
         toggleArrows(core.arrowN, core.o.disableCls, false);
       }
+    }
+    if (isFromResize && core.ci + core.bpo._2Show >= core.sLen) {
+      core.ci = core.sLen - core.bpo._2Show;
+      core.pi = core.sLen - 1;
     }
     animateTrack(core, 0);
     // TODO: Scrollbar implementation
@@ -2325,7 +2330,7 @@ namespace Carouzel {
         // generateScrollbar(cCore);
         toggleControlButtons(cCore);
         toggleTouchEvents(cCore, `sl`);
-        applyLayout(cCore);
+        applyLayout(cCore, false);
       }
     }
 
