@@ -168,7 +168,6 @@ namespace Carouzel {
     curp: HTMLElement | null;
     eH: any[];
     fLoad: boolean;
-    focusableAll: Element[];
     nav: HTMLElement | null;
     navW: HTMLElement | null;
     o: ICoreSettings; // Options
@@ -341,17 +340,6 @@ namespace Carouzel {
     verticalHeight: 480
   };
 
-  const focusablesStr = [
-    `a:not([tabindex^="-"])`,
-    `button:not([tabindex^="-"])`,
-    `input:not([tabindex^="-"])`,
-    `textarea:not([tabindex^="-"])`,
-    `select:not([tabindex^="-"])`,
-    `details:not([tabindex^="-"])`,
-    `[tabindex]:not([tabindex^="-"])`,
-    `[contenteditable="true"]:not([tabindex^="-"])`
-  ];
-
   /**
    * Function to return the now() value based on the available global `performance` object
    *
@@ -433,51 +421,6 @@ namespace Carouzel {
       }
       element.className = stringTrim(curclass.join(` `));
     }
-  };
-
-  const isElementDisabled = (element: Element) => {
-    if (
-      !element ||
-      element.nodeType !== Node.ELEMENT_NODE ||
-      hasClass(element as HTMLElement, `disabled`)
-    ) {
-      return true;
-    }
-
-    if (typeof (element as any).disabled !== `undefined`) {
-      return (element as any).disabled;
-    }
-
-    return (
-      element.hasAttribute(`disabled`) &&
-      element.getAttribute(`disabled`) !== `false`
-    );
-  };
-
-  const isElementVisible = (element: HTMLElement) => {
-    if (element.getClientRects().length === 0) {
-      return false;
-    }
-    return (
-      getComputedStyle(element).getPropertyValue(`visibility`) === `visible`
-    );
-  };
-
-  const getAllFocusableChildren = (parent: Element) => {
-    const str = focusablesStr.join(',');
-    const selected = Array.prototype.slice.call(
-      parent.querySelectorAll(str) || []
-    );
-    const newArr = [] as Element[];
-    for (let n = 0; n < selected.length; n++) {
-      if (
-        !isElementDisabled(selected[n]) &&
-        isElementVisible(selected[n] as HTMLElement)
-      ) {
-        newArr.push(selected[n] as Element);
-      }
-    }
-    return newArr;
   };
 
   /**
@@ -1567,15 +1510,6 @@ namespace Carouzel {
     const threshold = core.o.threshold;
 
     /**
-     * Function to disable mouse click when the Carouzel is being dragged
-     *
-     */
-    const preventClick = (e: Event) => {
-      e.preventDefault();
-      e.stopImmediatePropagation();
-    };
-
-    /**
      * Function to take the carouzel back to the default position if it is not dragged to next or previous set
      *
      */
@@ -1696,36 +1630,8 @@ namespace Carouzel {
       }
     };
 
-    /**
-     * Function to be triggered when the touch is ended or cursor is released
-     *
-     */
-    const toggleClickEvents = (shouldAttach: boolean) => {
-      if (shouldAttach && core.focusableAll.length > 0) {
-        for (let r = 0; r < core.focusableAll.length; r++) {
-          core.focusableAll[r].addEventListener('click', preventClick, false);
-        }
-      } else if (!shouldAttach && core.focusableAll.length > 0) {
-        for (let r = 0; r < core.focusableAll.length; r++) {
-          core.focusableAll[r].removeEventListener(
-            'click',
-            preventClick,
-            false
-          );
-        }
-      }
-    };
-
-    const touchEndTrack = (e: Event) => {
-      toggleClickEvents(dragging);
+    const touchEndTrack = () => {
       if (dragging && core.trk) {
-        if (e.type === `touchend`) {
-          endX = (e as TouchEvent).changedTouches[0].screenX;
-          endY = (e as TouchEvent).changedTouches[0].screenY;
-        } else {
-          endX = (e as MouseEvent).clientX;
-          endY = (e as MouseEvent).clientY;
-        }
         diffX = endX - startX;
         diffY = endY - startY;
         ratioX = Math.abs(diffX / diffY);
@@ -1908,8 +1814,8 @@ namespace Carouzel {
         })
       );
       core.eH.push(
-        eventHandler(core.trk as HTMLElement, `touchend`, (event: Event) => {
-          touchEndTrack(event);
+        eventHandler(core.trk as HTMLElement, `touchend`, () => {
+          touchEndTrack();
         })
       );
       core.eH.push(
@@ -1918,15 +1824,15 @@ namespace Carouzel {
         })
       );
       core.eH.push(
-        eventHandler(core.trk as HTMLElement, `mouseup`, (event: Event) => {
-          touchEndTrack(event);
+        eventHandler(core.trk as HTMLElement, `mouseup`, () => {
+          touchEndTrack();
         })
       );
-      core.eH.push(
-        eventHandler(core.trk as HTMLElement, `mouseleave`, (event: Event) => {
-          touchEndTrack(event);
-        })
-      );
+      // core.eH.push(
+      //   eventHandler(core.trk as HTMLElement, `mouseleave`, () => {
+      //     touchEndTrack();
+      //   })
+      // );
       core.eH.push(
         eventHandler(core.trk as HTMLElement, `mousemove`, (event: Event) => {
           touchMoveTrack(event);
@@ -2000,9 +1906,6 @@ namespace Carouzel {
    *
    */
   const generateElements = (core: ICore) => {
-    if (core.trk && core.root) {
-      core.focusableAll = getAllFocusableChildren(core.root);
-    }
     for (let i = 0; i < core.bpall.length; i++) {
       core.bpall[i].bpSLen = core.sLen;
       if (core.o.inf && core.sLen > core.bpall[i]._2Show) {

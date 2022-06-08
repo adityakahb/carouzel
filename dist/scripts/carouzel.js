@@ -156,16 +156,6 @@ var Carouzel;
         useTitlesAsDots: false,
         verticalHeight: 480
     };
-    var focusablesStr = [
-        "a:not([tabindex^=\"-\"])",
-        "button:not([tabindex^=\"-\"])",
-        "input:not([tabindex^=\"-\"])",
-        "textarea:not([tabindex^=\"-\"])",
-        "select:not([tabindex^=\"-\"])",
-        "details:not([tabindex^=\"-\"])",
-        "[tabindex]:not([tabindex^=\"-\"])",
-        "[contenteditable=\"true\"]:not([tabindex^=\"-\"])"
-    ];
     /**
      * Function to return the now() value based on the available global `performance` object
      *
@@ -243,36 +233,6 @@ var Carouzel;
             }
             element.className = stringTrim(curclass.join(" "));
         }
-    };
-    var isElementDisabled = function (element) {
-        if (!element ||
-            element.nodeType !== Node.ELEMENT_NODE ||
-            hasClass(element, "disabled")) {
-            return true;
-        }
-        if (typeof element.disabled !== "undefined") {
-            return element.disabled;
-        }
-        return (element.hasAttribute("disabled") &&
-            element.getAttribute("disabled") !== "false");
-    };
-    var isElementVisible = function (element) {
-        if (element.getClientRects().length === 0) {
-            return false;
-        }
-        return (getComputedStyle(element).getPropertyValue("visibility") === "visible");
-    };
-    var getAllFocusableChildren = function (parent) {
-        var str = focusablesStr.join(',');
-        var selected = Array.prototype.slice.call(parent.querySelectorAll(str) || []);
-        var newArr = [];
-        for (var n = 0; n < selected.length; n++) {
-            if (!isElementDisabled(selected[n]) &&
-                isElementVisible(selected[n])) {
-                newArr.push(selected[n]);
-            }
-        }
-        return newArr;
     };
     /**
      * Function to fix the decimal places to 4
@@ -1228,14 +1188,6 @@ var Carouzel;
         var canFiniteAnimate = false;
         var threshold = core.o.threshold;
         /**
-         * Function to disable mouse click when the Carouzel is being dragged
-         *
-         */
-        var preventClick = function (e) {
-            e.preventDefault();
-            e.stopImmediatePropagation();
-        };
-        /**
          * Function to take the carouzel back to the default position if it is not dragged to next or previous set
          *
          */
@@ -1342,33 +1294,8 @@ var Carouzel;
                 posFinal = core.o.ver ? posY2 : posX2;
             }
         };
-        /**
-         * Function to be triggered when the touch is ended or cursor is released
-         *
-         */
-        var toggleClickEvents = function (shouldAttach) {
-            if (shouldAttach && core.focusableAll.length > 0) {
-                for (var r = 0; r < core.focusableAll.length; r++) {
-                    core.focusableAll[r].addEventListener('click', preventClick, false);
-                }
-            }
-            else if (!shouldAttach && core.focusableAll.length > 0) {
-                for (var r = 0; r < core.focusableAll.length; r++) {
-                    core.focusableAll[r].removeEventListener('click', preventClick, false);
-                }
-            }
-        };
-        var touchEndTrack = function (e) {
-            toggleClickEvents(dragging);
+        var touchEndTrack = function () {
             if (dragging && core.trk) {
-                if (e.type === "touchend") {
-                    endX = e.changedTouches[0].screenX;
-                    endY = e.changedTouches[0].screenY;
-                }
-                else {
-                    endX = e.clientX;
-                    endY = e.clientY;
-                }
                 diffX = endX - startX;
                 diffY = endY - startY;
                 ratioX = Math.abs(diffX / diffY);
@@ -1537,18 +1464,20 @@ var Carouzel;
             core.eH.push(eventHandler(core.trk, "touchmove", function (event) {
                 touchMoveTrack(event);
             }));
-            core.eH.push(eventHandler(core.trk, "touchend", function (event) {
-                touchEndTrack(event);
+            core.eH.push(eventHandler(core.trk, "touchend", function () {
+                touchEndTrack();
             }));
             core.eH.push(eventHandler(core.trk, "mousedown", function (event) {
                 touchStartTrack(event);
             }));
-            core.eH.push(eventHandler(core.trk, "mouseup", function (event) {
-                touchEndTrack(event);
+            core.eH.push(eventHandler(core.trk, "mouseup", function () {
+                touchEndTrack();
             }));
-            core.eH.push(eventHandler(core.trk, "mouseleave", function (event) {
-                touchEndTrack(event);
-            }));
+            // core.eH.push(
+            //   eventHandler(core.trk as HTMLElement, `mouseleave`, () => {
+            //     touchEndTrack();
+            //   })
+            // );
             core.eH.push(eventHandler(core.trk, "mousemove", function (event) {
                 touchMoveTrack(event);
             }));
@@ -1619,9 +1548,6 @@ var Carouzel;
      *
      */
     var generateElements = function (core) {
-        if (core.trk && core.root) {
-            core.focusableAll = getAllFocusableChildren(core.root);
-        }
         for (var i = 0; i < core.bpall.length; i++) {
             core.bpall[i].bpSLen = core.sLen;
             if (core.o.inf && core.sLen > core.bpall[i]._2Show) {
