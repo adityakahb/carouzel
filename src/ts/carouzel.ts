@@ -1510,6 +1510,15 @@ namespace Carouzel {
     const threshold = core.o.threshold;
 
     /**
+     * Function to disable mouse click when the Carouzel is being dragged
+     *
+     */
+    const preventClick = (e: MouseEvent) => {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+    };
+
+    /**
      * Function to take the carouzel back to the default position if it is not dragged to next or previous set
      *
      */
@@ -1635,6 +1644,11 @@ namespace Carouzel {
      *
      */
     const touchEndTrack = (e: Event) => {
+      if (dragging && core.trk) {
+        core.trk.addEventListener('click', preventClick);
+      } else if (!dragging && core.trk) {
+        core.trk.removeEventListener('click', preventClick);
+      }
       if (dragging && core.trk) {
         if (e.type === `touchend`) {
           endX = (e as TouchEvent).changedTouches[0].screenX;
