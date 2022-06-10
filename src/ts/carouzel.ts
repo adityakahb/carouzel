@@ -1630,8 +1630,20 @@ namespace Carouzel {
       }
     };
 
-    const touchEndTrack = () => {
+    const touchEndTrack = (e: Event) => {
       if (dragging && core.trk) {
+        if (e.type === `touchmove`) {
+          endX = (e as TouchEvent).changedTouches[0].screenX;
+          endY = (e as TouchEvent).changedTouches[0].screenY;
+          posX2 = posX1 - (e as TouchEvent).changedTouches[0].screenX;
+          posY2 = posY1 - (e as TouchEvent).changedTouches[0].screenY;
+        } else {
+          endX = (e as MouseEvent).clientX;
+          endY = (e as MouseEvent).clientY;
+          posX2 = posX1 - (e as MouseEvent).clientX;
+          posY2 = posY1 - (e as MouseEvent).clientY;
+        }
+
         diffX = endX - startX;
         diffY = endY - startY;
         ratioX = Math.abs(diffX / diffY);
@@ -1814,8 +1826,8 @@ namespace Carouzel {
         })
       );
       core.eH.push(
-        eventHandler(core.trk as HTMLElement, `touchend`, () => {
-          touchEndTrack();
+        eventHandler(core.trk as HTMLElement, `touchend`, (event: Event) => {
+          touchEndTrack(event);
         })
       );
       core.eH.push(
@@ -1824,15 +1836,15 @@ namespace Carouzel {
         })
       );
       core.eH.push(
-        eventHandler(core.trk as HTMLElement, `mouseup`, () => {
-          touchEndTrack();
+        eventHandler(core.trk as HTMLElement, `mouseup`, (event: Event) => {
+          touchEndTrack(event);
         })
       );
-      // core.eH.push(
-      //   eventHandler(core.trk as HTMLElement, `mouseleave`, () => {
-      //     touchEndTrack();
-      //   })
-      // );
+      core.eH.push(
+        eventHandler(core.trk as HTMLElement, `mouseleave`, (event: Event) => {
+          touchEndTrack(event);
+        })
+      );
       core.eH.push(
         eventHandler(core.trk as HTMLElement, `mousemove`, (event: Event) => {
           touchMoveTrack(event);
