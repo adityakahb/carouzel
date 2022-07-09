@@ -534,6 +534,7 @@ namespace Carouzel {
       if (core._as[i]) {
         removeClass(core._as[i], core.o.activeCls);
         core._as[i].setAttribute(`aria-hidden`, `true`);
+        core._as[i].setAttribute(`tabindex`, `-1`);
       }
     }
     for (
@@ -553,6 +554,7 @@ namespace Carouzel {
         if (core._as[i]) {
           addClass(core._as[i], core.o.activeCls);
           core._as[i].removeAttribute(`aria-hidden`);
+          core._as[i].removeAttribute(`tabindex`);
         }
       }
     }
@@ -1942,6 +1944,9 @@ namespace Carouzel {
         ) {
           if (core._ds[j]) {
             const elem = core._ds[j].cloneNode(true);
+            if ((elem as HTMLElement).getAttribute(`id`)) {
+              (elem as HTMLElement).removeAttribute(`id`);
+            }
             addClass(elem as HTMLElement, core.o.dupCls || ``);
             core.bpall[i].bpSLen++;
             core.bpall[i].pDups.push(elem as HTMLElement);
@@ -1954,6 +1959,9 @@ namespace Carouzel {
         ) {
           if (core._ds[j]) {
             const elem = core._ds[j].cloneNode(true);
+            if ((elem as HTMLElement).getAttribute(`id`)) {
+              (elem as HTMLElement).removeAttribute(`id`);
+            }
             addClass(elem as HTMLElement, core.o.dupCls || ``);
             core.bpall[i].bpSLen++;
             core.bpall[i].nDups.push(elem as HTMLElement);

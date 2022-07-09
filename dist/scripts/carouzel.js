@@ -331,6 +331,7 @@ var Carouzel;
             if (core._as[i]) {
                 removeClass(core._as[i], core.o.activeCls);
                 core._as[i].setAttribute("aria-hidden", "true");
+                core._as[i].setAttribute("tabindex", "-1");
             }
         }
         for (var i = core.ci + core.bpo.pDups.length; i < core.ci + core.bpo.pDups.length + core.bpo._2Show; i++) {
@@ -347,6 +348,7 @@ var Carouzel;
                 if (core._as[i]) {
                     addClass(core._as[i], core.o.activeCls);
                     core._as[i].removeAttribute("aria-hidden");
+                    core._as[i].removeAttribute("tabindex");
                 }
             }
         }
@@ -1578,6 +1580,9 @@ var Carouzel;
                     Math.ceil(core.bpall[i].cntr / 2); j < core.sLen; j++) {
                     if (core._ds[j]) {
                         var elem = core._ds[j].cloneNode(true);
+                        if (elem.getAttribute("id")) {
+                            elem.removeAttribute("id");
+                        }
                         addClass(elem, core.o.dupCls || "");
                         core.bpall[i].bpSLen++;
                         core.bpall[i].pDups.push(elem);
@@ -1586,6 +1591,9 @@ var Carouzel;
                 for (var j = 0; j < core.bpall[i]._2Show + Math.ceil(core.bpall[i].cntr / 2); j++) {
                     if (core._ds[j]) {
                         var elem = core._ds[j].cloneNode(true);
+                        if (elem.getAttribute("id")) {
+                            elem.removeAttribute("id");
+                        }
                         addClass(elem, core.o.dupCls || "");
                         core.bpall[i].bpSLen++;
                         core.bpall[i].nDups.push(elem);
