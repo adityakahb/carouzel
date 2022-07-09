@@ -1645,7 +1645,7 @@ namespace Carouzel {
 
     const touchEndTrack = (e: Event) => {
       if (dragging && core.trk) {
-        if (e.type === `touchmove`) {
+        if (e.type === `touchend`) {
           endX = (e as TouchEvent).changedTouches[0].screenX;
           endY = (e as TouchEvent).changedTouches[0].screenY;
           posX2 = posX1 - (e as TouchEvent).changedTouches[0].screenX;

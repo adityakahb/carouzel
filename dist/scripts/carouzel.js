@@ -1310,7 +1310,7 @@ var Carouzel;
         };
         var touchEndTrack = function (e) {
             if (dragging && core.trk) {
-                if (e.type === "touchmove") {
+                if (e.type === "touchend") {
                     endX = e.changedTouches[0].screenX;
                     endY = e.changedTouches[0].screenY;
                     posX2 = posX1 - e.changedTouches[0].screenX;
