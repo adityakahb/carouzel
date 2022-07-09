@@ -157,6 +157,18 @@ var Carouzel;
         verticalHeight: 480
     };
     /**
+     * Function to log the messages on browser console
+     *
+     * @param type - The string which determines whether it is warn or log or error
+     * @param message - The string which needs to be displayed
+     *
+     */
+    var debugOnConsole = function (type, message) {
+        if (debugMode && (console || {})[type]) {
+            console[type](message);
+        }
+    };
+    /**
      * Function to return the now() value based on the available global `performance` object
      *
      * @returns The now() value.
@@ -1712,18 +1724,12 @@ var Carouzel;
                 };
             }
             else {
-                if (debugMode) {
-                    // throw new TypeError(cDuplicateBreakpointsTypeError);
-                    console.error(cDuplicateBreakpointsTypeError);
-                }
+                debugOnConsole("error", cDuplicateBreakpointsTypeError);
                 return {};
             }
         }
         catch (e) {
-            if (debugMode) {
-                // throw new TypeError(cBreakpointsParseTypeError);
-                console.error(cBreakpointsParseTypeError);
-            }
+            debugOnConsole("error", cBreakpointsParseTypeError);
             return {};
         }
     };
@@ -1849,18 +1855,14 @@ var Carouzel;
                 if (cAnimationEffects.indexOf(settings.animationEffect) > -1) {
                     return settings.animationEffect;
                 }
-                if (debugMode) {
-                    console.warn(cNoEffectFoundError);
-                }
+                debugOnConsole("warn", cNoEffectFoundError);
                 return cAnimationEffects[0];
             })(),
             easeFn: (function () {
                 if (cEasingFunctions[settings.easingFunction]) {
                     return settings.easingFunction;
                 }
-                if (debugMode) {
-                    console.warn(cNoEasingFoundError);
-                }
+                debugOnConsole("warn", cNoEasingFoundError);
                 return Object.keys(cEasingFunctions)[0];
             })()
         };
@@ -2120,10 +2122,7 @@ var Carouzel;
                                     newOptions = JSON.parse(stringTrim(autoDataAttr).replace(/'/g, "\""));
                                 }
                                 catch (e) {
-                                    if (debugMode) {
-                                        // throw new TypeError(cOptionsParseTypeError);
-                                        console.error(cOptionsParseTypeError);
-                                    }
+                                    debugOnConsole("error", cOptionsParseTypeError);
                                 }
                             }
                             else {
@@ -2152,10 +2151,7 @@ var Carouzel;
                 }
                 else {
                     if (query !== cSelectors.rootAuto) {
-                        if (debugMode) {
-                            // throw new TypeError(cRootSelectorTypeError);
-                            console.error("init() \"".concat(query, "\": ").concat(cRootSelectorTypeError));
-                        }
+                        debugOnConsole("error", "init() \"".concat(query, "\": ").concat(cRootSelectorTypeError));
                     }
                 }
             };
@@ -2187,10 +2183,7 @@ var Carouzel;
                     }
                 }
                 else {
-                    if (debugMode) {
-                        // throw new TypeError(cRootSelectorTypeError);
-                        console.error("goToSlide() \"".concat(query, "\": ").concat(cRootSelectorTypeError));
-                    }
+                    debugOnConsole("error", "goToSlide() \"".concat(query, "\": ").concat(cRootSelectorTypeError));
                 }
             };
             /**
@@ -2210,10 +2203,7 @@ var Carouzel;
                     }
                 }
                 else {
-                    if (debugMode) {
-                        // throw new TypeError(cRootSelectorTypeError);
-                        console.error("destroy() \"".concat(query, "\": ").concat(cRootSelectorTypeError));
-                    }
+                    debugOnConsole("error", "destroy() \"".concat(query, "\": ").concat(cRootSelectorTypeError));
                 }
             };
             if (document) {

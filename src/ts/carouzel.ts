@@ -341,6 +341,19 @@ namespace Carouzel {
   };
 
   /**
+   * Function to log the messages on browser console
+   *
+   * @param type - The string which determines whether it is warn or log or error
+   * @param message - The string which needs to be displayed
+   *
+   */
+  const debugOnConsole = (type: string, message: string) => {
+    if (debugMode && ((console as any) || {})[type]) {
+      (console as any)[type](message);
+    }
+  };
+
+  /**
    * Function to return the now() value based on the available global `performance` object
    *
    * @returns The now() value.
@@ -2094,17 +2107,11 @@ namespace Carouzel {
           )
         };
       } else {
-        if (debugMode) {
-          // throw new TypeError(cDuplicateBreakpointsTypeError);
-          console.error(cDuplicateBreakpointsTypeError);
-        }
+        debugOnConsole(`error`, cDuplicateBreakpointsTypeError);
         return {};
       }
     } catch (e) {
-      if (debugMode) {
-        // throw new TypeError(cBreakpointsParseTypeError);
-        console.error(cBreakpointsParseTypeError);
-      }
+      debugOnConsole(`error`, cBreakpointsParseTypeError);
       return {};
     }
   };
@@ -2234,18 +2241,14 @@ namespace Carouzel {
         if (cAnimationEffects.indexOf(settings.animationEffect) > -1) {
           return settings.animationEffect;
         }
-        if (debugMode) {
-          console.warn(cNoEffectFoundError);
-        }
+        debugOnConsole(`warn`, cNoEffectFoundError);
         return cAnimationEffects[0];
       })(),
       easeFn: (() => {
         if (cEasingFunctions[settings.easingFunction]) {
           return settings.easingFunction;
         }
-        if (debugMode) {
-          console.warn(cNoEasingFoundError);
-        }
+        debugOnConsole(`warn`, cNoEasingFoundError);
         return Object.keys(cEasingFunctions)[0];
       })()
     };
@@ -2562,10 +2565,7 @@ namespace Carouzel {
                   stringTrim(autoDataAttr).replace(/'/g, `"`)
                 );
               } catch (e) {
-                if (debugMode) {
-                  // throw new TypeError(cOptionsParseTypeError);
-                  console.error(cOptionsParseTypeError);
-                }
+                debugOnConsole(`error`, cOptionsParseTypeError);
               }
             } else {
               newOptions = options;
@@ -2591,10 +2591,10 @@ namespace Carouzel {
         }
       } else {
         if (query !== cSelectors.rootAuto) {
-          if (debugMode) {
-            // throw new TypeError(cRootSelectorTypeError);
-            console.error(`init() "${query}": ${cRootSelectorTypeError}`);
-          }
+          debugOnConsole(
+            `error`,
+            `init() "${query}": ${cRootSelectorTypeError}`
+          );
         }
       }
     };
@@ -2626,10 +2626,10 @@ namespace Carouzel {
           }
         }
       } else {
-        if (debugMode) {
-          // throw new TypeError(cRootSelectorTypeError);
-          console.error(`goToSlide() "${query}": ${cRootSelectorTypeError}`);
-        }
+        debugOnConsole(
+          `error`,
+          `goToSlide() "${query}": ${cRootSelectorTypeError}`
+        );
       }
     };
 
@@ -2649,10 +2649,10 @@ namespace Carouzel {
           window.removeEventListener(`resize`, winResizeFn, false);
         }
       } else {
-        if (debugMode) {
-          // throw new TypeError(cRootSelectorTypeError);
-          console.error(`destroy() "${query}": ${cRootSelectorTypeError}`);
-        }
+        debugOnConsole(
+          `error`,
+          `destroy() "${query}": ${cRootSelectorTypeError}`
+        );
       }
     };
 
