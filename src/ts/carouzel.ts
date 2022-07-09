@@ -678,7 +678,7 @@ namespace Carouzel {
           if (core._t.position > core._t.nX) {
             core._t.position = core._t.nX;
           }
-          if (core._t.position < core._t.pX) {
+          if (core._t.position < core._t.pX && touchedPixel === 0) {
             core._t.position = core._t.pX;
           }
         }
@@ -690,7 +690,7 @@ namespace Carouzel {
           if (core._t.position < core.pts[core.ci]) {
             core._t.position = core.pts[core.ci];
           }
-          if (core._t.position > core._t.pX) {
+          if (core._t.position > core._t.pX && touchedPixel === 0) {
             core._t.position = core._t.pX;
           }
         }
@@ -729,7 +729,7 @@ namespace Carouzel {
           if (core._t.position > core._t.nX) {
             core._t.position = core._t.nX;
           }
-          if (core._t.position < core._t.pX) {
+          if (core._t.position < core._t.pX && touchedPixel === 0) {
             core._t.position = core._t.pX;
           }
         }
@@ -741,7 +741,7 @@ namespace Carouzel {
           if (core._t.position < core.pts[core.ci]) {
             core._t.position = core.pts[core.ci];
           }
-          if (core._t.position > core._t.pX) {
+          if (core._t.position > core._t.pX && touchedPixel === 0) {
             core._t.position = core._t.pX;
           }
         }
