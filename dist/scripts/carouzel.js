@@ -457,6 +457,9 @@ var Carouzel;
                     if (core._t.position > core._t.nX) {
                         core._t.position = core._t.nX;
                     }
+                    if (core._t.position < core._t.pX) {
+                        core._t.position = core._t.pX;
+                    }
                 }
                 if (core.ci < core.pi) {
                     core._t.position =
@@ -465,6 +468,9 @@ var Carouzel;
                             core._t.progress * (core._t.pX - core._t.nX);
                     if (core._t.position < core.pts[core.ci]) {
                         core._t.position = core.pts[core.ci];
+                    }
+                    if (core._t.position > core._t.pX) {
+                        core._t.position = core._t.pX;
                     }
                 }
                 if (core._t.position && core.trk) {
@@ -500,6 +506,9 @@ var Carouzel;
                     if (core._t.position > core._t.nX) {
                         core._t.position = core._t.nX;
                     }
+                    if (core._t.position < core._t.pX) {
+                        core._t.position = core._t.pX;
+                    }
                 }
                 if (core.ci < core.pi) {
                     core._t.position =
@@ -508,6 +517,9 @@ var Carouzel;
                             core._t.progress * (core._t.pX - core._t.nX);
                     if (core._t.position < core.pts[core.ci]) {
                         core._t.position = core.pts[core.ci];
+                    }
+                    if (core._t.position > core._t.pX) {
+                        core._t.position = core._t.pX;
                     }
                 }
                 if (core._t.position && core.trk && extraSlideCount !== null) {
@@ -1294,8 +1306,20 @@ var Carouzel;
                 posFinal = core.o.ver ? posY2 : posX2;
             }
         };
-        var touchEndTrack = function () {
+        var touchEndTrack = function (e) {
             if (dragging && core.trk) {
+                if (e.type === "touchmove") {
+                    endX = e.changedTouches[0].screenX;
+                    endY = e.changedTouches[0].screenY;
+                    posX2 = posX1 - e.changedTouches[0].screenX;
+                    posY2 = posY1 - e.changedTouches[0].screenY;
+                }
+                else {
+                    endX = e.clientX;
+                    endY = e.clientY;
+                    posX2 = posX1 - e.clientX;
+                    posY2 = posY1 - e.clientY;
+                }
                 diffX = endX - startX;
                 diffY = endY - startY;
                 ratioX = Math.abs(diffX / diffY);
@@ -1464,20 +1488,18 @@ var Carouzel;
             core.eH.push(eventHandler(core.trk, "touchmove", function (event) {
                 touchMoveTrack(event);
             }));
-            core.eH.push(eventHandler(core.trk, "touchend", function () {
-                touchEndTrack();
+            core.eH.push(eventHandler(core.trk, "touchend", function (event) {
+                touchEndTrack(event);
             }));
             core.eH.push(eventHandler(core.trk, "mousedown", function (event) {
                 touchStartTrack(event);
             }));
-            core.eH.push(eventHandler(core.trk, "mouseup", function () {
-                touchEndTrack();
+            core.eH.push(eventHandler(core.trk, "mouseup", function (event) {
+                touchEndTrack(event);
             }));
-            // core.eH.push(
-            //   eventHandler(core.trk as HTMLElement, `mouseleave`, () => {
-            //     touchEndTrack();
-            //   })
-            // );
+            core.eH.push(eventHandler(core.trk, "mouseleave", function (event) {
+                touchEndTrack(event);
+            }));
             core.eH.push(eventHandler(core.trk, "mousemove", function (event) {
                 touchMoveTrack(event);
             }));
