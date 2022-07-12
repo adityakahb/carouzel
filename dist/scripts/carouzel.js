@@ -599,6 +599,67 @@ var Carouzel;
                 core._t.elapsed = now - core._t.start;
                 core._t.progress = cEasingFunctions[core.o.easeFn](core._t.elapsed / core._t.total);
                 core._t.progress = core._t.progress > 1 ? 1 : core._t.progress;
+                for (var i = 0; i < core.aLen && newPi && transformVal; i++) {
+                    if (i >= newPi && i < newPi + core.bpo._2Show && core._as[i]) {
+                        core._as[i].style.visibility = "visible";
+                        core._as[i].style.opacity = "1";
+                        core._as[i].style.transform = "translate3d(".concat(transformVal, "px, 0, 3px)");
+                    }
+                    else {
+                        core._as[i].style.visibility = "visible";
+                        core._as[i].style.opacity = "".concat(core._t.progress);
+                        core._as[i].style.transform = "translate3d(0, 0, 5px)";
+                    }
+                }
+                if (core._t.progress < 1) {
+                    core._t.id = requestAnimationFrame(fadeThisTrack);
+                }
+                else {
+                    proceedWithAnimation._post(core);
+                    for (var i = 0; i < core.aLen; i++) {
+                        core._as[i].style.visibility = "visible";
+                        core._as[i].style.opacity = "1";
+                        core._as[i].style.transform = "translate3d(0, 0, 0)";
+                    }
+                }
+            };
+            if (core.trk) {
+                extraSlideCount = transformVal = newCi = newPi = null;
+                transformVal = core.sWid * core.bpo._2Show;
+                if (core.ci > core.pi) {
+                    newCi = core.o.inf ? core.ci + core.bpo._2Show : core.ci;
+                    newPi = core.ci;
+                }
+                else {
+                    newPi = core.o.inf ? core.pi + core.bpo._2Show : core.pi;
+                    newCi = core.pi;
+                    transformVal = -transformVal;
+                }
+                for (var i = 0; i < core.aLen; i++) {
+                    if (i >= newPi && i < newPi + core.bpo._2Show && core._as[i]) {
+                        core._as[i].style.visibility = "visible";
+                        core._as[i].style.opacity = "1";
+                        core._as[i].style.transform = "translate3d(".concat(transformVal, "px, 0, 3px)");
+                    }
+                    else {
+                        core._as[i].style.visibility = "hidden";
+                        core._as[i].style.opacity = "0";
+                        core._as[i].style.transform = "translate3d(0, 0, 0)";
+                    }
+                }
+                core.trk.style.transform = core.o.ver
+                    ? "translate3d(0, ".concat(-core._t.nX, "px, 0)")
+                    : "translate3d(".concat(-core._t.nX, "px, 0, 0)");
+                if (core._t.start && core._t.total && core.ci !== core.pi) {
+                    core._t.id = requestAnimationFrame(fadeThisTrack);
+                }
+            }
+        },
+        __fade: function (core) {
+            var fadeThisTrack = function (now) {
+                core._t.elapsed = now - core._t.start;
+                core._t.progress = cEasingFunctions[core.o.easeFn](core._t.elapsed / core._t.total);
+                core._t.progress = core._t.progress > 1 ? 1 : core._t.progress;
                 for (var i = 0; i < core.aLen; i++) {
                     if (extraSlideCount !== null &&
                         newPi !== null &&

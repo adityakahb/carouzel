@@ -830,6 +830,81 @@ namespace Carouzel {
           core._t.elapsed / core._t.total
         );
         core._t.progress = core._t.progress > 1 ? 1 : core._t.progress;
+
+        for (let i = 0; i < core.aLen && newPi && transformVal; i++) {
+          if (i >= newPi && i < newPi + core.bpo._2Show && core._as[i]) {
+            (core._as[i] as HTMLElement).style.visibility = `visible`;
+            (core._as[i] as HTMLElement).style.opacity = `1`;
+            (
+              core._as[i] as HTMLElement
+            ).style.transform = `translate3d(${transformVal}px, 0, 3px)`;
+          } else {
+            (core._as[i] as HTMLElement).style.visibility = `visible`;
+            (core._as[i] as HTMLElement).style.opacity = `${core._t.progress}`;
+            (
+              core._as[i] as HTMLElement
+            ).style.transform = `translate3d(0, 0, 5px)`;
+          }
+        }
+
+        if (core._t.progress < 1) {
+          core._t.id = requestAnimationFrame(fadeThisTrack);
+        } else {
+          proceedWithAnimation._post(core);
+          for (let i = 0; i < core.aLen; i++) {
+            (core._as[i] as HTMLElement).style.visibility = `visible`;
+            (core._as[i] as HTMLElement).style.opacity = `1`;
+            (
+              core._as[i] as HTMLElement
+            ).style.transform = `translate3d(0, 0, 0)`;
+          }
+        }
+      };
+      if (core.trk) {
+        extraSlideCount = transformVal = newCi = newPi = null;
+
+        transformVal = core.sWid * core.bpo._2Show;
+
+        if (core.ci > core.pi) {
+          newCi = core.o.inf ? core.ci + core.bpo._2Show : core.ci;
+          newPi = core.ci;
+        } else {
+          newPi = core.o.inf ? core.pi + core.bpo._2Show : core.pi;
+          newCi = core.pi;
+          transformVal = -transformVal;
+        }
+
+        for (let i = 0; i < core.aLen; i++) {
+          if (i >= newPi && i < newPi + core.bpo._2Show && core._as[i]) {
+            (core._as[i] as HTMLElement).style.visibility = `visible`;
+            (core._as[i] as HTMLElement).style.opacity = `1`;
+            (
+              core._as[i] as HTMLElement
+            ).style.transform = `translate3d(${transformVal}px, 0, 3px)`;
+          } else {
+            (core._as[i] as HTMLElement).style.visibility = `hidden`;
+            (core._as[i] as HTMLElement).style.opacity = `0`;
+            (
+              core._as[i] as HTMLElement
+            ).style.transform = `translate3d(0, 0, 0)`;
+          }
+        }
+
+        core.trk.style.transform = core.o.ver
+          ? `translate3d(0, ${-core._t.nX}px, 0)`
+          : `translate3d(${-core._t.nX}px, 0, 0)`;
+        if (core._t.start && core._t.total && core.ci !== core.pi) {
+          core._t.id = requestAnimationFrame(fadeThisTrack);
+        }
+      }
+    },
+    __fade: (core: ICore) => {
+      const fadeThisTrack = (now: number) => {
+        core._t.elapsed = now - core._t.start;
+        core._t.progress = cEasingFunctions[core.o.easeFn](
+          core._t.elapsed / core._t.total
+        );
+        core._t.progress = core._t.progress > 1 ? 1 : core._t.progress;
         for (let i = 0; i < core.aLen; i++) {
           if (
             extraSlideCount !== null &&
