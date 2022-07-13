@@ -306,6 +306,7 @@
       <div class="row my-4"></div>
 
       
+      
       <div class="row my-5">
   <div class="col text-center">
     <hr />
@@ -314,80 +315,60 @@
 
 <div class="row">
   <div class="col text-center">
-    <h3 id="example_fade">Fading animation</h3>
-    <a href="https://codesandbox.io/s/carouzel-fading-animaton-9p9jh?file=/index.html" target="_blank"
+    <h3 id="example_data_attribute">Through data-attribute</h3>
+    <a href="https://codesandbox.io/s/carouzel-using-data-attribute-wqked?file=/index.html" target="_blank"
       class="btn btn-sm btn-outline-info"><span class="material-icons">code</span> View on Codesandbox</a>
     <br /><br />
   </div>
 </div>
 <div class="row">
   <div class="col">
-    <section data-carouzel id="__carouzel_11" aria-roledescription="carousel"
-      aria-label="Carouzel having fading animation">
+    <section id="carouzel-1" data-carouzel data-carouzel-auto="{
+            'animationSpeed': 1000,
+            'slidesToScroll': 1,
+            'slidesToShow': 1,
+            'breakpoints': [
+                {
+                  'minWidth': 768,
+                  'slidesToScroll': 2,
+                  'slidesToShow': 2,
+                  'centerBetween': 1
+                },
+                {
+                  'minWidth': 1024,
+                  'slidesToScroll': 3,
+                  'slidesToShow': 3
+                }
+            ]
+          }" aria-roledescription="carousel" aria-label="Implementation of Carouzel through `data-attribute`">
       <div data-carouzel-trackwrapper>
         <div data-carouzel-trackmask>
           <div data-carouzel-trackouter>
             <div data-carouzel-track aria-live="polite">
-              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="1 of 12">
-                <div>
-                  <img src="https://picsum.photos/800/600?random=654321" alt="img 1" />
-                </div>
+              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="1 of 8">
+                01
               </div>
-              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="2 of 12">
-                <div>
-                  <img src="https://picsum.photos/800/600?random=65432" alt="img 2" />
-                </div>
+              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="2 of 8">
+                02
               </div>
-              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="3 of 12">
-                <div>
-                  <img src="https://picsum.photos/800/600?random=6543" alt="img 3" />
-                </div>
+              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="3 of 8">
+                03
               </div>
-              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="4 of 12">
-                <div>
-                  <img src="https://picsum.photos/800/600?random=654" alt="img 4" />
-                </div>
+              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="4 of 8">
+                04
               </div>
-              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="5 of 12">
-                <div>
-                  <img src="https://picsum.photos/800/600?random=65" alt="img 5" />
-                </div>
+              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="5 of 8">
+                05
               </div>
-              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="6 of 12">
-                <div>
-                  <img src="https://picsum.photos/800/600?random=6" alt="img 6" />
-                </div>
+              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="6 of 8">
+                06
               </div>
-              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="7 of 12">
-                <div>
-                  <img src="https://picsum.photos/800/600?random=987654" alt="img 7" />
-                </div>
+              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="7 of 8">
+                07
               </div>
-              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="8 of 12">
-                <div>
-                  <img src="https://picsum.photos/800/600?random=98765" alt="img 8" />
-                </div>
+              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="8 of 8">
+                08
               </div>
-              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="9 of 12">
-                <div>
-                  <img src="https://picsum.photos/800/600?random=9876" alt="img 9" />
-                </div>
-              </div>
-              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="10 of 12">
-                <div>
-                  <img src="https://picsum.photos/800/600?random=987" alt="img 10" />
-                </div>
-              </div>
-              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="11 of 12">
-                <div>
-                  <img src="https://picsum.photos/800/600?random=98" alt="img 11" />
-                </div>
-              </div>
-              <!-- <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="12 of 12">
-                <div>
-                  <img src="https://picsum.photos/800/600?random=9" alt="img 12" />
-                </div>
-              </div> -->
             </div>
           </div>
         </div>
@@ -416,7 +397,96 @@
     </section>
   </div>
 </div>
-      
+      <div class="row my-5">
+  <div class="col text-center">
+    <hr />
+  </div>
+</div>
+
+<div class="row">
+  <div class="col text-center">
+    <h3 id="example_data_attribute">Through data-attribute</h3>
+    <a href="https://codesandbox.io/s/carouzel-using-data-attribute-wqked?file=/index.html" target="_blank"
+      class="btn btn-sm btn-outline-info"><span class="material-icons">code</span> View on Codesandbox</a>
+    <br /><br />
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <section id="carouzel-2" data-carouzel data-carouzel-auto="{
+            'animationSpeed': 1000,
+            'slidesToScroll': 1,
+            'slidesToShow': 1,
+            'breakpoints': [
+                {
+                  'minWidth': 768,
+                  'slidesToScroll': 2,
+                  'slidesToShow': 2,
+                  'centerBetween': 1
+                },
+                {
+                  'minWidth': 1024,
+                  'slidesToScroll': 3,
+                  'slidesToShow': 3
+                }
+            ]
+          }" aria-roledescription="carousel" aria-label="Implementation of Carouzel through `data-attribute`">
+      <div data-carouzel-trackwrapper>
+        <div data-carouzel-trackmask>
+          <div data-carouzel-trackouter>
+            <div data-carouzel-track aria-live="polite">
+              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="1 of 8">
+                01
+              </div>
+              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="2 of 8">
+                02
+              </div>
+              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="3 of 8">
+                03
+              </div>
+              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="4 of 8">
+                04
+              </div>
+              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="5 of 8">
+                05
+              </div>
+              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="6 of 8">
+                06
+              </div>
+              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="7 of 8">
+                07
+              </div>
+              <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="8 of 8">
+                08
+              </div>
+            </div>
+          </div>
+        </div>
+        <div data-carouzel-controlswrapper>
+          <button type="button" data-carouzel-previousarrow aria-label="Previous">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000">
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z" />
+            </svg>
+          </button>
+          <button type="button" data-carouzel-nextarrow aria-label="Next">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000">
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div data-carouzel-pageinfo>
+        <em data-carouzel-currentpage></em> /
+        <em data-carouzel-totalpages></em>
+      </div>
+      <div data-carouzel-navigationwrapper>
+        <ul data-carouzel-navigation></ul>
+      </div>
+    </section>
+  </div>
+</div>
       
       <div class="row my-5">
         <div class="col text-center">

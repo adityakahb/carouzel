@@ -233,16 +233,16 @@ var loadIO = function () {
   };
   document.getElementById('__carouzel_15') &&
     __carouzel_instance.init('#__carouzel_15', carouzel_15settings);
-  __carouzel_15form.addEventListener('submit', function (event) {
-    event.preventDefault();
-    carouzel_15settings.easingFunction = easingfnselect.value;
-    carouzel_15settings.animationEffect = effectfnselect.value;
-    carouzel_15settings.animationSpeed = easingNumText.value;
-    document.getElementById('__carouzel_15') &&
-      __carouzel_instance.destroy('#__carouzel_15');
-    document.getElementById('__carouzel_15') &&
-      __carouzel_instance.init('#__carouzel_15', carouzel_15settings);
-  });
+  // __carouzel_15form.addEventListener('submit', function (event) {
+  //   event.preventDefault();
+  //   carouzel_15settings.easingFunction = easingfnselect.value;
+  //   carouzel_15settings.animationEffect = effectfnselect.value;
+  //   carouzel_15settings.animationSpeed = easingNumText.value;
+  //   document.getElementById('__carouzel_15') &&
+  //     __carouzel_instance.destroy('#__carouzel_15');
+  //   document.getElementById('__carouzel_15') &&
+  //     __carouzel_instance.init('#__carouzel_15', carouzel_15settings);
+  // });
 
   var btnbeforeinit = document.getElementById('btnbeforeinit');
   var btnafterinit = document.getElementById('btnafterinit');
@@ -259,22 +259,22 @@ var loadIO = function () {
   var toastBeforeScroll = new bootstrap.Toast(beforeScrollElem);
   var toastAfterScroll = new bootstrap.Toast(afterScrollElem);
 
-  btnbeforeinit.addEventListener('click', function (event) {
-    event.preventDefault();
-    toastBeforeInit.show();
-  });
-  btnafterinit.addEventListener('click', function (event) {
-    event.preventDefault();
-    toastAfterInit.show();
-  });
-  btnbeforescroll.addEventListener('click', function (event) {
-    event.preventDefault();
-    toastBeforeScroll.show();
-  });
-  btnafterscroll.addEventListener('click', function (event) {
-    event.preventDefault();
-    toastAfterScroll.show();
-  });
+  // btnbeforeinit.addEventListener('click', function (event) {
+  //   event.preventDefault();
+  //   toastBeforeInit.show();
+  // });
+  // btnafterinit.addEventListener('click', function (event) {
+  //   event.preventDefault();
+  //   toastAfterInit.show();
+  // });
+  // btnbeforescroll.addEventListener('click', function (event) {
+  //   event.preventDefault();
+  //   toastBeforeScroll.show();
+  // });
+  // btnafterscroll.addEventListener('click', function (event) {
+  //   event.preventDefault();
+  //   toastAfterScroll.show();
+  // });
   var gotoslideinput = document.getElementById('gotoslideinput');
   var gotonextbtn = document.getElementById('gotonextbtn');
   var gotoprevbtn = document.getElementById('gotoprevbtn');
@@ -298,52 +298,52 @@ var loadIO = function () {
 
   document.getElementById('__carouzel_16') &&
     __carouzel_instance.init('#__carouzel_16', carouzel8Settings);
-  destroybtn.addEventListener('click', function () {
-    destroybtn.setAttribute('hidden', 'true');
-    initbtn.removeAttribute('hidden');
-    gotoslideinput.setAttribute('disabled', true);
-    gotonextbtn.setAttribute('disabled', true);
-    gotoprevbtn.setAttribute('disabled', true);
-    btnbeforeinit.setAttribute('disabled', true);
-    btnafterinit.setAttribute('disabled', true);
-    btnbeforescroll.setAttribute('disabled', true);
-    btnafterscroll.setAttribute('disabled', true);
-    __carouzel_instance.destroy('#__carouzel_16');
-  });
-  initbtn.addEventListener('click', function () {
-    destroybtn.removeAttribute('hidden');
-    initbtn.setAttribute('hidden', 'true');
-    gotoslideinput.removeAttribute('disabled');
-    gotonextbtn.removeAttribute('disabled');
-    gotoprevbtn.removeAttribute('disabled');
-    btnbeforeinit.removeAttribute('disabled');
-    btnafterinit.removeAttribute('disabled');
-    btnbeforescroll.removeAttribute('disabled');
-    btnafterscroll.removeAttribute('disabled');
-    __carouzel_instance.init('#__carouzel_16', carouzel8Settings);
-  });
-  gotonextbtn.addEventListener('click', function () {
-    __carouzel_instance.goToSlide('#__carouzel_16', 'next');
-  });
-  gotoprevbtn.addEventListener('click', function () {
-    __carouzel_instance.goToSlide('#__carouzel_16', 'previous');
-  });
-  gotoslideinput.addEventListener('change', function () {
-    __carouzel_instance.goToSlide('#__carouzel_16', gotoslideinput.value);
-  });
+  // destroybtn.addEventListener('click', function () {
+  //   destroybtn.setAttribute('hidden', 'true');
+  //   initbtn.removeAttribute('hidden');
+  //   gotoslideinput.setAttribute('disabled', true);
+  //   gotonextbtn.setAttribute('disabled', true);
+  //   gotoprevbtn.setAttribute('disabled', true);
+  //   btnbeforeinit.setAttribute('disabled', true);
+  //   btnafterinit.setAttribute('disabled', true);
+  //   btnbeforescroll.setAttribute('disabled', true);
+  //   btnafterscroll.setAttribute('disabled', true);
+  //   __carouzel_instance.destroy('#__carouzel_16');
+  // });
+  // initbtn.addEventListener('click', function () {
+  //   destroybtn.removeAttribute('hidden');
+  //   initbtn.setAttribute('hidden', 'true');
+  //   gotoslideinput.removeAttribute('disabled');
+  //   gotonextbtn.removeAttribute('disabled');
+  //   gotoprevbtn.removeAttribute('disabled');
+  //   btnbeforeinit.removeAttribute('disabled');
+  //   btnafterinit.removeAttribute('disabled');
+  //   btnbeforescroll.removeAttribute('disabled');
+  //   btnafterscroll.removeAttribute('disabled');
+  //   __carouzel_instance.init('#__carouzel_16', carouzel8Settings);
+  // });
+  // gotonextbtn.addEventListener('click', function () {
+  //   __carouzel_instance.goToSlide('#__carouzel_16', 'next');
+  // });
+  // gotoprevbtn.addEventListener('click', function () {
+  //   __carouzel_instance.goToSlide('#__carouzel_16', 'previous');
+  // });
+  // gotoslideinput.addEventListener('change', function () {
+  //   __carouzel_instance.goToSlide('#__carouzel_16', gotoslideinput.value);
+  // });
 
   var __carouzel_17_btn = document.getElementById('__carouzel_17_btn');
   var __carouzel_17_btnrem = document.getElementById('__carouzel_17_btnrem');
-  __carouzel_17_btn.addEventListener('click', function (e) {
-    e.preventDefault();
-    window.location.hash = '__carouzel_17_id_4';
-    window.location.reload();
-  });
-  __carouzel_17_btnrem.addEventListener('click', function (e) {
-    e.preventDefault();
-    history.replaceState(null, null, ' ');
-    window.location.reload();
-  });
+  // __carouzel_17_btn.addEventListener('click', function (e) {
+  //   e.preventDefault();
+  //   window.location.hash = '__carouzel_17_id_4';
+  //   window.location.reload();
+  // });
+  // __carouzel_17_btnrem.addEventListener('click', function (e) {
+  //   e.preventDefault();
+  //   history.replaceState(null, null, ' ');
+  //   window.location.reload();
+  // });
   document.getElementById('__carouzel_17') &&
     __carouzel_instance.init('#__carouzel_17', {
       trackUrlHash: true,
@@ -363,10 +363,10 @@ var loadIO = function () {
   }
   var clipcopied = new bootstrap.Toast(document.getElementById('clipcopied'));
   var clipbrd_click = document.getElementById('clipbrd_click');
-  clipbrd_click.addEventListener('click', function (event) {
-    navigator.clipboard.writeText(event.target.getAttribute('data-clipboard'));
-    clipcopied.show();
-  });
+  // clipbrd_click.addEventListener('click', function (event) {
+  //   navigator.clipboard.writeText(event.target.getAttribute('data-clipboard'));
+  //   clipcopied.show();
+  // });
 
   // if (document.getElementById('__carouzel_16')) {
   //   __carouzel_instance.init('#__carouzel_16', {

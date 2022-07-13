@@ -26,10 +26,8 @@ var Carouzel;
     var documentHiddenTime = 0;
     var extraSlideCount;
     var hashSlide;
-    var iloop = 0;
     var isDocumentHidden = false;
     var isWindowEventAttached = false;
-    var jloop = 0;
     // let newCi: number | null;
     var newPi;
     var transformBuffer;
@@ -215,8 +213,8 @@ var Carouzel;
         if (typeof (element === null || element === void 0 ? void 0 : element.className) === "string") {
             var clsarr = cls.split(" ");
             var clsarrLength = clsarr.length;
-            for (iloop = 0; iloop < clsarrLength; iloop++) {
-                var thiscls = clsarr[iloop];
+            for (var i = 0; i < clsarrLength; i++) {
+                var thiscls = clsarr[i];
                 if (!hasClass(element, thiscls)) {
                     element.className += " " + thiscls;
                 }
@@ -236,11 +234,11 @@ var Carouzel;
             var clsarr = cls.split(" ");
             var curclass = element.className.split(" ");
             var curclassLen = curclass.length;
-            for (iloop = 0; iloop < curclassLen; iloop++) {
-                var thiscls = curclass[iloop];
+            for (var i = 0; i < curclassLen; i++) {
+                var thiscls = curclass[i];
                 if (clsarr.indexOf(thiscls) > -1) {
-                    curclass.splice(iloop, 1);
-                    iloop--;
+                    curclass.splice(i, 1);
+                    i--;
                 }
             }
             element.className = stringTrim(curclass.join(" "));
@@ -2091,11 +2089,11 @@ var Carouzel;
                 var elementsLength = elements.length;
                 var instanceLength = getCoreInstancesLength();
                 if (elementsLength > 0) {
-                    for (iloop = 0; iloop < elementsLength; iloop++) {
-                        var id = elements[iloop].getAttribute("id");
+                    for (var i = 0; i < elementsLength; i++) {
+                        var id = elements[i].getAttribute("id");
                         var isElementPresent = false;
                         if (id) {
-                            for (jloop = 0; jloop < instanceLength; jloop++) {
+                            for (var j = 0; j < instanceLength; j++) {
                                 if (allLocalInstances[id]) {
                                     isElementPresent = true;
                                     break;
@@ -2104,7 +2102,7 @@ var Carouzel;
                         }
                         if (!isElementPresent) {
                             var newOptions = void 0;
-                            var autoDataAttr = elements[iloop].getAttribute(cSelectors.rootAuto.slice(1, -1)) || "";
+                            var autoDataAttr = elements[i].getAttribute(cSelectors.rootAuto.slice(1, -1)) || "";
                             if (autoDataAttr) {
                                 try {
                                     newOptions = JSON.parse(stringTrim(autoDataAttr).replace(/'/g, "\""));
@@ -2117,7 +2115,7 @@ var Carouzel;
                                 newOptions = options;
                             }
                             if (id) {
-                                new Core(id, elements[iloop], newOptions);
+                                new Core(id, elements[i], newOptions);
                             }
                             else {
                                 var thisid = id
@@ -2126,9 +2124,9 @@ var Carouzel;
                                         "_" +
                                         new Date().getTime() +
                                         "_root_" +
-                                        (iloop + 1);
-                                elements[iloop].setAttribute("id", thisid);
-                                new Core(thisid, elements[iloop], newOptions);
+                                        (i + 1);
+                                elements[i].setAttribute("id", thisid);
+                                new Core(thisid, elements[i], newOptions);
                             }
                         }
                     }
@@ -2159,14 +2157,14 @@ var Carouzel;
             this.goToSlide = function (query, target) {
                 var cores = getCores(query);
                 if (cores.length > 0) {
-                    for (iloop = 0; iloop < cores.length; iloop++) {
+                    for (var i = 0; i < cores.length; i++) {
                         if (cAnimationDirections.indexOf(target) !== -1) {
                             target === cAnimationDirections[0]
-                                ? go2Prev(cores[iloop], 0)
-                                : go2Next(cores[iloop], 0);
+                                ? go2Prev(cores[i], 0)
+                                : go2Next(cores[i], 0);
                         }
                         else if (!isNaN(parseInt(target, 10))) {
-                            go2Slide(cores[iloop], parseInt(target, 10) - 1);
+                            go2Slide(cores[i], parseInt(target, 10) - 1);
                         }
                     }
                 }
@@ -2183,8 +2181,8 @@ var Carouzel;
             this.destroy = function (query) {
                 var cores = getCores(query);
                 if (cores.length > 0) {
-                    for (iloop = 0; iloop < cores.length; iloop++) {
-                        destroy(cores[iloop]);
+                    for (var i = 0; i < cores.length; i++) {
+                        destroy(cores[i]);
                     }
                     if (window && getCoreInstancesLength() === 0) {
                         window.removeEventListener("resize", winResizeFn, false);

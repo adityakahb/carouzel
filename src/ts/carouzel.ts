@@ -204,10 +204,8 @@ namespace Carouzel {
   let documentHiddenTime = 0;
   let extraSlideCount: number | null;
   let hashSlide: HTMLElement | null;
-  let iloop = 0;
   let isDocumentHidden = false;
   let isWindowEventAttached = false;
-  let jloop = 0;
   // let newCi: number | null;
   let newPi: number | null;
   let transformBuffer: number | null;
@@ -403,8 +401,8 @@ namespace Carouzel {
     if (typeof element?.className === `string`) {
       const clsarr = cls.split(` `);
       const clsarrLength = clsarr.length;
-      for (iloop = 0; iloop < clsarrLength; iloop++) {
-        const thiscls = clsarr[iloop];
+      for (let i = 0; i < clsarrLength; i++) {
+        const thiscls = clsarr[i];
         if (!hasClass(element, thiscls)) {
           element.className += ` ` + thiscls;
         }
@@ -425,11 +423,11 @@ namespace Carouzel {
       const clsarr = cls.split(` `);
       const curclass = element.className.split(` `);
       const curclassLen = curclass.length;
-      for (iloop = 0; iloop < curclassLen; iloop++) {
-        const thiscls = curclass[iloop];
+      for (let i = 0; i < curclassLen; i++) {
+        const thiscls = curclass[i];
         if (clsarr.indexOf(thiscls) > -1) {
-          curclass.splice(iloop, 1);
-          iloop--;
+          curclass.splice(i, 1);
+          i--;
         }
       }
       element.className = stringTrim(curclass.join(` `));
@@ -2515,11 +2513,11 @@ namespace Carouzel {
       const instanceLength = getCoreInstancesLength();
 
       if (elementsLength > 0) {
-        for (iloop = 0; iloop < elementsLength; iloop++) {
-          const id = elements[iloop].getAttribute(`id`);
+        for (let i = 0; i < elementsLength; i++) {
+          const id = elements[i].getAttribute(`id`);
           let isElementPresent = false;
           if (id) {
-            for (jloop = 0; jloop < instanceLength; jloop++) {
+            for (let j = 0; j < instanceLength; j++) {
               if (allLocalInstances[id]) {
                 isElementPresent = true;
                 break;
@@ -2530,7 +2528,7 @@ namespace Carouzel {
           if (!isElementPresent) {
             let newOptions;
             const autoDataAttr =
-              (elements[iloop] as HTMLElement).getAttribute(
+              (elements[i] as HTMLElement).getAttribute(
                 cSelectors.rootAuto.slice(1, -1)
               ) || ``;
             if (autoDataAttr) {
@@ -2545,7 +2543,7 @@ namespace Carouzel {
               newOptions = options;
             }
             if (id) {
-              new Core(id, elements[iloop] as HTMLElement, newOptions);
+              new Core(id, elements[i] as HTMLElement, newOptions);
             } else {
               const thisid = id
                 ? id
@@ -2553,9 +2551,9 @@ namespace Carouzel {
                   `_` +
                   new Date().getTime() +
                   `_root_` +
-                  (iloop + 1);
-              elements[iloop].setAttribute(`id`, thisid);
-              new Core(thisid, elements[iloop] as HTMLElement, newOptions);
+                  (i + 1);
+              elements[i].setAttribute(`id`, thisid);
+              new Core(thisid, elements[i] as HTMLElement, newOptions);
             }
           }
         }
@@ -2590,13 +2588,13 @@ namespace Carouzel {
     protected goToSlide = (query: string, target: string) => {
       const cores = getCores(query);
       if (cores.length > 0) {
-        for (iloop = 0; iloop < cores.length; iloop++) {
+        for (let i = 0; i < cores.length; i++) {
           if (cAnimationDirections.indexOf(target) !== -1) {
             target === cAnimationDirections[0]
-              ? go2Prev(cores[iloop], 0)
-              : go2Next(cores[iloop], 0);
+              ? go2Prev(cores[i], 0)
+              : go2Next(cores[i], 0);
           } else if (!isNaN(parseInt(target, 10))) {
-            go2Slide(cores[iloop], parseInt(target, 10) - 1);
+            go2Slide(cores[i], parseInt(target, 10) - 1);
           }
         }
       } else {
@@ -2616,8 +2614,8 @@ namespace Carouzel {
     protected destroy = (query: string) => {
       const cores = getCores(query);
       if (cores.length > 0) {
-        for (iloop = 0; iloop < cores.length; iloop++) {
-          destroy(cores[iloop]);
+        for (let i = 0; i < cores.length; i++) {
+          destroy(cores[i]);
         }
         if (window && getCoreInstancesLength() === 0) {
           window.removeEventListener(`resize`, winResizeFn, false);
