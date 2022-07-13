@@ -30,7 +30,7 @@ var Carouzel;
     var isDocumentHidden = false;
     var isWindowEventAttached = false;
     var jloop = 0;
-    var newCi;
+    // let newCi: number | null;
     var newPi;
     var transformBuffer;
     var transformVal;
@@ -564,7 +564,8 @@ var Carouzel;
                 }
             };
             if (core.trk) {
-                extraSlideCount = transformVal = newCi = newPi = transformBuffer = null;
+                // extraSlideCount = transformVal = newCi = newPi = transformBuffer = null;
+                extraSlideCount = transformVal = newPi = transformBuffer = null;
                 for (var i = 0; i < core.aLen; i++) {
                     core._as[i].style.transform = core.o.ver
                         ? "translate3d(0, 0, 5px)"
@@ -628,15 +629,16 @@ var Carouzel;
                 thisSlideElem = null;
             };
             if (core.trk) {
-                extraSlideCount = transformVal = newCi = newPi = null;
+                // extraSlideCount = transformVal = newCi = newPi = null;
+                extraSlideCount = transformVal = newPi = null;
                 transformVal = core.sWid * core.bpo._2Show;
                 if (core.ci > core.pi) {
-                    newCi = core.o.inf ? core.ci + core.bpo._2Show : core.ci;
+                    // newCi = core.o.inf ? core.ci + core.bpo._2Show : core.ci;
                     newPi = core.ci;
                 }
                 else {
                     newPi = core.o.inf ? core.pi + core.bpo._2Show : core.pi;
-                    newCi = core.pi;
+                    // newCi = core.pi;
                     transformVal = -transformVal;
                 }
                 for (var i = 0; i < core.aLen; i++) {

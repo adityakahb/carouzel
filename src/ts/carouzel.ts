@@ -208,7 +208,7 @@ namespace Carouzel {
   let isDocumentHidden = false;
   let isWindowEventAttached = false;
   let jloop = 0;
-  let newCi: number | null;
+  // let newCi: number | null;
   let newPi: number | null;
   let transformBuffer: number | null;
   let transformVal: number | null;
@@ -790,7 +790,8 @@ namespace Carouzel {
         }
       };
       if (core.trk) {
-        extraSlideCount = transformVal = newCi = newPi = transformBuffer = null;
+        // extraSlideCount = transformVal = newCi = newPi = transformBuffer = null;
+        extraSlideCount = transformVal = newPi = transformBuffer = null;
         for (let i = 0; i < core.aLen; i++) {
           (core._as[i] as HTMLElement).style.transform = core.o.ver
             ? `translate3d(0, 0, 5px)`
@@ -864,16 +865,17 @@ namespace Carouzel {
         thisSlideElem = null;
       };
       if (core.trk) {
-        extraSlideCount = transformVal = newCi = newPi = null;
+        // extraSlideCount = transformVal = newCi = newPi = null;
+        extraSlideCount = transformVal = newPi = null;
 
         transformVal = core.sWid * core.bpo._2Show;
 
         if (core.ci > core.pi) {
-          newCi = core.o.inf ? core.ci + core.bpo._2Show : core.ci;
+          // newCi = core.o.inf ? core.ci + core.bpo._2Show : core.ci;
           newPi = core.ci;
         } else {
           newPi = core.o.inf ? core.pi + core.bpo._2Show : core.pi;
-          newCi = core.pi;
+          // newCi = core.pi;
           transformVal = -transformVal;
         }
 
