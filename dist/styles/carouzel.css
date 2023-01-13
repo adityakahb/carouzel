@@ -1,7 +1,5 @@
-[data-carouzel], [data-carouzel]:after, [data-carouzel]:before,
-[data-carouzel] *,
-[data-carouzel] *:after,
-[data-carouzel] *:before {
+[data-carouzel] ::after,
+[data-carouzel] ::before {
   box-sizing: border-box;
 }
 [data-carouzel] button:not(:disabled),

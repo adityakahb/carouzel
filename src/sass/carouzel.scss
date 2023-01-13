@@ -1,12 +1,9 @@
 $timeInMilliseconds: 250ms;
 [data-carouzel] {
-  &,
-  * {
-    &,
-    &:after,
-    &:before {
-      box-sizing: border-box;
-    }
+  &
+  ::after,
+  ::before {
+    box-sizing: border-box;
   }
   button:not(:disabled),
   [type='button']:not(:disabled),
