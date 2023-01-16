@@ -1,1 +1,1 @@
-{"version":3,"sources":["carouzel.ts"],"names":[],"mappings":"AAmBA,qBAAa,QAAQ;IACnB,IAAI;IAGJ,UAAU;CAGX","file":"carouzel.d.ts","sourceRoot":"dist/scripts"}
+{"version":3,"sources":["carouzel.ts"],"names":[],"mappings":"AAmBA,qBAAa,QAAQ;IACnB,IAAI;IAGJ,WAAW;IAGX,UAAU;CAGX","file":"carouzel.d.ts","sourceRoot":"dist/scripts"}

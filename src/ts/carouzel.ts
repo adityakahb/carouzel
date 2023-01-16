@@ -14,12 +14,15 @@ namespace CarouzelHelper {
   const __version = `2.0.0`;
 
   export const getV = () => {
-    return `Carouzel Version ${__version}`;
+    return __version;
   };
 }
-export class Carouzel {
+export default class Carouzel {
   init() {
-    console.log('=========here');
+    console.log(document.querySelectorAll('[data-carouzel]'));
+  }
+  getInstance() {
+    console.log('========');
   }
   getVersion() {
     return CarouzelHelper.getV();
