@@ -16,27 +16,35 @@
     <div data-carouzel-trackwrapper>
       <div data-carouzel-trackmask>
         <div data-carouzel-trackouter>
-          <div data-carouzel-track aria-live="polite">
-            <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="1 of 6">
+          <ul data-carouzel-track>
+            <li data-carouzel-slide role="group" aria-roledescription="slide" aria-label="1 of 6">
               01
-            </div>
-            <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="2 of 6">
+            </li>
+            <li data-carouzel-slide role="group" aria-roledescription="slide" aria-label="2 of 6">
               02
-            </div>
-            <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="3 of 6">
+            </li>
+            <li data-carouzel-slide role="group" aria-roledescription="slide" aria-label="3 of 6">
               03
-            </div>
-            <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="4 of 6">
+            </li>
+            <li data-carouzel-slide role="group" aria-roledescription="slide" aria-label="4 of 6">
               04
-            </div>
-            <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="5 of 6">
+            </li>
+            <li data-carouzel-slide role="group" aria-roledescription="slide" aria-label="5 of 6">
               05
-            </div>
-            <div data-carouzel-slide role="group" aria-roledescription="slide" aria-label="6 of 6">
+            </li>
+            <li data-carouzel-slide role="group" aria-roledescription="slide" aria-label="6 of 6">
               06
-            </div>
-          </div>
+            </li>
+          </ul>
         </div>
+      </div>
+      <div data-carouzel-playpausewrapper>
+        <button type="button" data-carouzel-pause aria-label="Pause the autoplay carousel">
+          ￭
+        </button>
+        <button type="button" data-carouzel-play aria-label="Start the autoplay carousel">
+          ▶
+        </button>
       </div>
       <div data-carouzel-controlswrapper>
         <button type="button" data-carouzel-previousarrow aria-label="Previous">
@@ -47,7 +55,7 @@
         </button>
       </div>
     </div>
-    <div data-carouzel-pageinfo>
+    <div data-carouzel-pageinfo aria-live="polite" aria-atomic="true">
       <em data-carouzel-currentpage></em> /
       <em data-carouzel-totalpages></em>
     </div>
