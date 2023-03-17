@@ -68,15 +68,6 @@ var Carouzel;
         easeInOutQuint: function (t) {
             return t < 0.5 ? 16 * t * t * t * t * t : 1 + 16 * --t * t * t * t * t;
         }
-        // elastic bounce effect at the beginning
-        // easeInElastic: (t: number) => (0.04 - 0.04 / t) * Math.sin(25 * t) + 1,
-        // elastic bounce effect at the end
-        // easeOutElastic: (t: number) => ((0.04 * t) / --t) * Math.sin(25 * t),
-        // elastic bounce effect at the beginning and end
-        // easeInOutElastic: (t: number) =>
-        //   (t -= 0.5) < 0
-        //     ? (0.02 + 0.01 / t) * Math.sin(50 * t)
-        //     : (0.02 - 0.01 / t) * Math.sin(50 * t) + 1,
     };
     var cAnimationDirections = ["previous", "next"];
     var cAnimationEffects = ["scroll", "slide", "fade"];
@@ -90,6 +81,7 @@ var Carouzel;
     var cSelectors = {
         arrowN: "[data-carouzel-nextarrow]",
         arrowP: "[data-carouzel-previousarrow]",
+        auto: "[data-carouzel-auto]",
         cntr: "[data-carouzel-centered]",
         ctrlW: "[data-carouzel-ctrlWrapper]",
         curp: "[data-carouzel-currentpage]",
@@ -152,32 +144,39 @@ var Carouzel;
         useTitlesAsDots: false,
         verticalHeight: 480
     };
-    var allInstances = {};
+    var allGlobalInstances = {};
+    var allLocalInstances = {};
     var instanceIndex = 0;
-    var Root = /** @class */ (function () {
-        function Root(el, settings) {
+    var start = function (el, settings) {
+        if (typeof settings.beforeInit === "function") {
+            settings.beforeInit();
         }
-        Root.prototype.getInstance = function () { };
-        Root.prototype.goToNext = function () { };
-        Root.prototype.goToPrevious = function () { };
-        Root.prototype.goToSlide = function () { };
-        Root.prototype.destroy = function () { };
-        return Root;
+    };
+    var __slider = /** @class */ (function () {
+        function __slider(el, settings) {
+            start(el, settings);
+        }
+        __slider.prototype.getInstance = function () { };
+        __slider.prototype.goToNext = function () { };
+        __slider.prototype.goToPrevious = function () { };
+        __slider.prototype.goToSlide = function () { };
+        __slider.prototype.destroy = function () { };
+        return __slider;
     }());
-    var generate = function (el, options) {
+    var instantiate = function (el, options) {
         var element = el;
         var elementId = element.getAttribute("id");
         if (!elementId) {
             elementId = "".concat(__assign(__assign({}, cDefaults), options).idPrefix, "_").concat(new Date().getTime(), "_root_").concat(instanceIndex++);
             element.setAttribute("id", elementId);
         }
-        if (!allInstances[elementId]) {
-            allInstances[elementId] = new Root(el);
+        if (!allGlobalInstances[elementId]) {
+            allGlobalInstances[elementId] = new __slider(element, options);
         }
-        return allInstances[elementId];
+        return allGlobalInstances[elementId];
     };
     var initGlobal = function () {
-        $$(cSelectors.root).forEach(function (el) {
+        $$(cSelectors.auto).forEach(function (el) {
             var element = el;
             var newOptions;
             var optionsDataAttr = element.getAttribute(cSelectors.opts.slice(1, -1)) || "";
@@ -186,18 +185,22 @@ var Carouzel;
                     newOptions = JSON.parse(optionsDataAttr.trim().replace(/'/g, "\""));
                 }
                 catch (e) {
-                    // throw new TypeError(cOptionsParseTypeError);
                     console.error(cOptionsParseTypeError);
                 }
             }
             else {
                 newOptions = {};
             }
-            generate(el, newOptions);
+            instantiate(el, newOptions);
         });
     };
-    Carouzel.init = function (el, settings) {
-        return generate(el, settings || {});
+    Carouzel.init = function (selector, settings) {
+        var instanceArr = [];
+        $$(selector).forEach(function (el) {
+            var element = el;
+            instanceArr.push(instantiate(element, settings || {}));
+        });
+        return instanceArr;
     };
     Carouzel.getVersion = function () {
         return __version;

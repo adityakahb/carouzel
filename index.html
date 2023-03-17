@@ -12,7 +12,59 @@
 </head>
 
 <body>
-  <section data-carouzel aria-roledescription="carousel" aria-label="">
+  <section data-carouzel data-carouzel-auto aria-roledescription="carousel" aria-label="">
+    <div data-carouzel-trackwrapper>
+      <div data-carouzel-trackmask>
+        <div data-carouzel-trackouter>
+          <ul data-carouzel-track>
+            <li data-carouzel-slide role="group" aria-roledescription="slide" aria-label="1 of 6">
+              01
+            </li>
+            <li data-carouzel-slide role="group" aria-roledescription="slide" aria-label="2 of 6">
+              02
+            </li>
+            <li data-carouzel-slide role="group" aria-roledescription="slide" aria-label="3 of 6">
+              03
+            </li>
+            <li data-carouzel-slide role="group" aria-roledescription="slide" aria-label="4 of 6">
+              04
+            </li>
+            <li data-carouzel-slide role="group" aria-roledescription="slide" aria-label="5 of 6">
+              05
+            </li>
+            <li data-carouzel-slide role="group" aria-roledescription="slide" aria-label="6 of 6">
+              06
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div data-carouzel-playpausewrapper>
+        <button type="button" data-carouzel-pause aria-label="Pause the autoplay carousel">
+          ￭
+        </button>
+        <button type="button" data-carouzel-play aria-label="Start the autoplay carousel">
+          ▶
+        </button>
+      </div>
+      <div data-carouzel-controlswrapper>
+        <button type="button" data-carouzel-previousarrow aria-label="Previous">
+          &lt;
+        </button>
+        <button type="button" data-carouzel-nextarrow aria-label="Next">
+          &gt;
+        </button>
+      </div>
+    </div>
+    <div data-carouzel-pageinfo aria-live="polite" aria-atomic="true">
+      <em data-carouzel-currentpage></em> /
+      <em data-carouzel-totalpages></em>
+    </div>
+    <div data-carouzel-navigationwrapper>
+      <ul data-carouzel-navigation></ul>
+    </div>
+  </section>
+  <hr />
+  <section data-carouzel class="carouzel1" aria-roledescription="carousel" aria-label="">
     <div data-carouzel-trackwrapper>
       <div data-carouzel-trackmask>
         <div data-carouzel-trackouter>
@@ -64,6 +116,10 @@
     </div>
   </section>
 </body>
-<script src="./dist/scripts/carouzel.es3.js"></script>
+<script src="./dist/scripts/carouzel.min.es3.js"></script>
+<script>
+  var temp = Carouzel.init(".carouzel1");
+  console.log("========temp", temp[0].goToNext);
+</script>
 
 </html>

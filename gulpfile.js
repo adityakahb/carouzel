@@ -42,7 +42,7 @@ gulp.task(`uglifyjs`, function () {
 
 gulp.task(`es3js`, function () {
   return gulp
-    .src('./dist/scripts/carouzel.js', { base: './' })
+    .src('./dist/scripts/carouzel.min.js', { base: './' })
     .pipe(
       replace('"use strict";', '"use strict";\nvar exports = exports || {};')
     )

@@ -118,15 +118,6 @@ export namespace Carouzel {
     // acceleration until halfway, then deceleration
     easeInOutQuint: (t: number) =>
       t < 0.5 ? 16 * t * t * t * t * t : 1 + 16 * --t * t * t * t * t
-    // elastic bounce effect at the beginning
-    // easeInElastic: (t: number) => (0.04 - 0.04 / t) * Math.sin(25 * t) + 1,
-    // elastic bounce effect at the end
-    // easeOutElastic: (t: number) => ((0.04 * t) / --t) * Math.sin(25 * t),
-    // elastic bounce effect at the beginning and end
-    // easeInOutElastic: (t: number) =>
-    //   (t -= 0.5) < 0
-    //     ? (0.02 + 0.01 / t) * Math.sin(50 * t)
-    //     : (0.02 - 0.01 / t) * Math.sin(50 * t) + 1,
   };
 
   const cAnimationDirections = [`previous`, `next`];
@@ -147,6 +138,7 @@ export namespace Carouzel {
   const cSelectors = {
     arrowN: `[data-carouzel-nextarrow]`,
     arrowP: `[data-carouzel-previousarrow]`,
+    auto: `[data-carouzel-auto]`,
     cntr: `[data-carouzel-centered]`,
     ctrlW: `[data-carouzel-ctrlWrapper]`,
     curp: `[data-carouzel-currentpage]`,
@@ -210,11 +202,22 @@ export namespace Carouzel {
     verticalHeight: 480
   };
 
-  const allInstances: IInstances = {};
+  const allGlobalInstances: IInstances = {};
+  const allLocalInstances: IInstances = {};
   let instanceIndex = 0;
 
-  class Root {
-    constructor(el?: Node, settings?: ISettings) {}
+  const start = (el: HTMLElement, settings: ISettings) => {
+    if (typeof settings.beforeInit === `function`) {
+      settings.beforeInit();
+    }
+  };
+
+  class __slider {
+    public element: HTMLElement;
+    constructor(el: HTMLElement, settings: ISettings) {
+      this.element = el;
+      start(el, settings);
+    }
     public getInstance() {}
     public goToNext() {}
     public goToPrevious() {}
@@ -222,26 +225,27 @@ export namespace Carouzel {
     public destroy() {}
   }
 
-  const generate = (el: Node, options: ISettings) => {
+  const instantiate = (el: Node, options: ISettings) => {
     const element = el as HTMLElement;
+    const opts = { ...cDefaults, ...options };
     let elementId = element.getAttribute(`id`);
 
     if (!elementId) {
       elementId = `${
-        { ...cDefaults, ...options }.idPrefix
+        opts.idPrefix
       }_${new Date().getTime()}_root_${instanceIndex++}`;
       element.setAttribute(`id`, elementId);
     }
 
-    if (!allInstances[elementId]) {
-      allInstances[elementId] = new Root(el);
+    if (!allGlobalInstances[elementId]) {
+      allGlobalInstances[elementId] = new __slider(element, opts);
     }
 
-    return allInstances[elementId];
+    return allGlobalInstances[elementId];
   };
 
   const initGlobal = () => {
-    $$(cSelectors.root).forEach((el: Node) => {
+    $$(cSelectors.auto).forEach((el: Node) => {
       const element = el as HTMLElement;
       let newOptions;
       const optionsDataAttr =
@@ -250,18 +254,22 @@ export namespace Carouzel {
         try {
           newOptions = JSON.parse(optionsDataAttr.trim().replace(/'/g, `"`));
         } catch (e) {
-          // throw new TypeError(cOptionsParseTypeError);
           console.error(cOptionsParseTypeError);
         }
       } else {
         newOptions = {};
       }
-      generate(el, newOptions);
+      instantiate(el, newOptions);
     });
   };
 
-  export const init = (el: Node, settings?: ISettings) => {
-    return generate(el, settings || ({} as ISettings));
+  export const init = (selector: string, settings?: ISettings) => {
+    const instanceArr: IInstances[] = [];
+    $$(selector).forEach((el: Node) => {
+      const element = el as HTMLElement;
+      instanceArr.push(instantiate(element, settings || ({} as ISettings)));
+    });
+    return instanceArr;
   };
 
   export const getVersion = () => {
